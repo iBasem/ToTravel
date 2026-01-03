@@ -1,6 +1,5 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
 import { Search, MapPin, Plus, Loader2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
@@ -25,10 +24,12 @@ export function DestinationSearch({ onSelect, isRTL = false }: DestinationSearch
   const [results, setResults] = useState<SearchResult[]>([]);
   const [loading, setLoading] = useState(false);
   const [showResults, setShowResults] = useState(false);
+  const debounceRef = useRef<NodeJS.Timeout | null>(null);
 
   const searchPlaces = useCallback(async (searchQuery: string) => {
-    if (!searchQuery.trim()) {
+    if (!searchQuery.trim() || searchQuery.length < 2) {
       setResults([]);
+      setShowResults(false);
       return;
     }
 
@@ -57,15 +58,27 @@ export function DestinationSearch({ onSelect, isRTL = false }: DestinationSearch
     }
   }, []);
 
-  const handleSearch = () => {
-    searchPlaces(query);
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      handleSearch();
+  // Live search with debounce
+  useEffect(() => {
+    if (debounceRef.current) {
+      clearTimeout(debounceRef.current);
     }
-  };
+
+    if (query.length >= 2) {
+      debounceRef.current = setTimeout(() => {
+        searchPlaces(query);
+      }, 300);
+    } else {
+      setResults([]);
+      setShowResults(false);
+    }
+
+    return () => {
+      if (debounceRef.current) {
+        clearTimeout(debounceRef.current);
+      }
+    };
+  }, [query, searchPlaces]);
 
   const handleSelect = (result: SearchResult) => {
     onSelect(result);
@@ -84,14 +97,13 @@ export function DestinationSearch({ onSelect, isRTL = false }: DestinationSearch
             placeholder={t('packageWizard.searchDestination', 'Search for a destination...')}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            onKeyDown={handleKeyDown}
             onFocus={() => results.length > 0 && setShowResults(true)}
             className={isRTL ? 'pr-10' : 'pl-10'}
           />
+          {loading && (
+            <Loader2 className={`absolute top-1/2 -translate-y-1/2 h-4 w-4 animate-spin text-muted-foreground ${isRTL ? 'left-3' : 'right-3'}`} />
+          )}
         </div>
-        <Button onClick={handleSearch} disabled={loading} variant="secondary">
-          {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />}
-        </Button>
       </div>
 
       {showResults && results.length > 0 && (

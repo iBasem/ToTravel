@@ -160,12 +160,17 @@ export function RouteMap({ routes }: RouteMapProps) {
         <div className="space-y-2">
           {sortedRoutes.map((dest, index) => {
             const displayName = isRTL && dest.name_ar ? dest.name_ar : dest.name;
+            const getStatusLabel = () => {
+              if (dest.destination_type === 'origin') return t('packageDetails.start');
+              if (dest.destination_type === 'destination') return t('packageDetails.end');
+              return t('packageDetails.stop');
+            };
             return (
               <div 
                 key={dest.id} 
-                className={`flex items-center gap-3 p-2 rounded-lg bg-muted/50 ${isRTL ? 'flex-row-reverse' : ''}`}
+                className={`flex items-center gap-3 p-3 rounded-lg bg-muted/50 ${isRTL ? 'flex-row-reverse' : ''}`}
               >
-                <div className={`w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-bold ${
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-bold ${
                   dest.destination_type === 'origin' 
                     ? 'bg-green-500' 
                     : dest.destination_type === 'destination' 
@@ -175,14 +180,25 @@ export function RouteMap({ routes }: RouteMapProps) {
                   {index + 1}
                 </div>
                 <div className="flex-1">
-                  <span className="font-medium">{displayName}</span>
+                  <div className="flex items-center gap-2">
+                    <span className="font-medium">{displayName}</span>
+                    <span className={`text-xs px-2 py-0.5 rounded-full ${
+                      dest.destination_type === 'origin' 
+                        ? 'bg-green-100 text-green-700' 
+                        : dest.destination_type === 'destination' 
+                          ? 'bg-red-100 text-red-700' 
+                          : 'bg-blue-100 text-blue-700'
+                    }`}>
+                      {getStatusLabel()}
+                    </span>
+                  </div>
                   {dest.days_spent && (
-                    <span className="text-sm text-muted-foreground ml-2">
-                      ({dest.days_spent} {t('packageDetails.days')})
+                    <span className="text-sm text-muted-foreground">
+                      {dest.days_spent} {t('packageDetails.days')}
                     </span>
                   )}
                 </div>
-                <MapPin className={`w-4 h-4 text-muted-foreground ${
+                <MapPin className={`w-4 h-4 ${
                   dest.destination_type === 'origin' 
                     ? 'text-green-500' 
                     : dest.destination_type === 'destination' 

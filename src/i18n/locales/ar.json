@@ -1,8 +1,4 @@
 {
-  "packageDetails": {
-    "tourRoute": "مسار الرحلة",
-    "days": "أيام"
-  },
   "common": {
     "search": "بحث",
     "home": "الرئيسية",
@@ -131,6 +127,11 @@
     "extreme": "شديد الصعوبة"
   },
   "packageDetails": {
+    "tourRoute": "مسار الرحلة",
+    "days": "أيام",
+    "start": "بداية",
+    "stop": "توقف",
+    "end": "نهاية",
     "packageNotFound": "الباقة غير موجودة",
     "packageNotFoundDesc": "الباقة التي تبحث عنها غير موجودة أو تمت إزالتها."
   },
