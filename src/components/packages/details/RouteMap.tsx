@@ -61,21 +61,40 @@ export function RouteMap({ routes }: RouteMapProps) {
       sortedRoutes.forEach((dest, index) => {
         const el = document.createElement('div');
         el.className = 'route-marker';
-        el.innerHTML = `
-          <div class="w-8 h-8 rounded-full flex items-center justify-center text-white font-bold text-sm shadow-lg ${
-            dest.destination_type === 'origin' 
-              ? 'bg-green-500' 
-              : dest.destination_type === 'destination' 
-                ? 'bg-red-500' 
-                : 'bg-blue-500'
-          }">
-            ${index + 1}
-          </div>
-        `;
+        
+        const isOrigin = dest.destination_type === 'origin';
+        const isDestination = dest.destination_type === 'destination';
+        
+        if (isOrigin) {
+          // Start marker - red location pin style
+          el.innerHTML = `
+            <div style="position: relative; display: flex; flex-direction: column; align-items: center;">
+              <svg width="28" height="36" viewBox="0 0 28 36" fill="none">
+                <path d="M14 0C6.268 0 0 6.268 0 14c0 10.5 14 22 14 22s14-11.5 14-22c0-7.732-6.268-14-14-14z" fill="#ef4444"/>
+                <circle cx="14" cy="14" r="6" fill="white"/>
+              </svg>
+            </div>
+          `;
+        } else if (isDestination) {
+          // End marker - green location pin style
+          el.innerHTML = `
+            <div style="position: relative; display: flex; flex-direction: column; align-items: center;">
+              <svg width="28" height="36" viewBox="0 0 28 36" fill="none">
+                <path d="M14 0C6.268 0 0 6.268 0 14c0 10.5 14 22 14 22s14-11.5 14-22c0-7.732-6.268-14-14-14z" fill="#22c55e"/>
+                <circle cx="14" cy="14" r="6" fill="white"/>
+              </svg>
+            </div>
+          `;
+        } else {
+          // Stop marker - blue circle with white center
+          el.innerHTML = `
+            <div style="width: 20px; height: 20px; border-radius: 50%; background: #3b82f6; border: 3px solid white; box-shadow: 0 2px 6px rgba(0,0,0,0.3);"></div>
+          `;
+        }
 
         const displayName = isRTL && dest.name_ar ? dest.name_ar : dest.name;
 
-        new mapboxgl.Marker({ element: el })
+        new mapboxgl.Marker({ element: el, anchor: isOrigin || isDestination ? 'bottom' : 'center' })
           .setLngLat([dest.longitude, dest.latitude])
           .setPopup(
             new mapboxgl.Popup({ offset: 25 }).setHTML(
@@ -114,8 +133,7 @@ export function RouteMap({ routes }: RouteMapProps) {
           },
           paint: {
             'line-color': '#3b82f6',
-            'line-width': 3,
-            'line-dasharray': [2, 1]
+            'line-width': 3
           }
         });
       }
