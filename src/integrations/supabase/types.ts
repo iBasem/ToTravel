@@ -353,6 +353,59 @@ export type Database = {
           },
         ]
       }
+      package_routes: {
+        Row: {
+          created_at: string
+          days_spent: number | null
+          destination_order: number
+          destination_type: string
+          id: string
+          latitude: number
+          longitude: number
+          name: string
+          name_ar: string | null
+          package_id: string
+          place_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          days_spent?: number | null
+          destination_order?: number
+          destination_type?: string
+          id?: string
+          latitude: number
+          longitude: number
+          name: string
+          name_ar?: string | null
+          package_id: string
+          place_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          days_spent?: number | null
+          destination_order?: number
+          destination_type?: string
+          id?: string
+          latitude?: number
+          longitude?: number
+          name?: string
+          name_ar?: string | null
+          package_id?: string
+          place_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "package_routes_package_id_fkey"
+            columns: ["package_id"]
+            isOneToOne: false
+            referencedRelation: "packages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       packages: {
         Row: {
           agency_id: string

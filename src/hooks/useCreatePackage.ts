@@ -5,6 +5,18 @@ import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 
+interface RouteDestination {
+  id: string;
+  name: string;
+  nameAr?: string;
+  latitude: number;
+  longitude: number;
+  order: number;
+  type: 'origin' | 'stop' | 'destination';
+  daysSpent: number;
+  placeId?: string;
+}
+
 interface CreatePackageData {
   basicInfo: {
     title: string;
@@ -16,6 +28,11 @@ interface CreatePackageData {
     duration_nights: number;
     max_participants: number;
     featured: boolean;
+  };
+  route?: {
+    destinations: RouteDestination[];
+    travelMode?: string;
+    showDistances?: boolean;
   };
   itinerary: Array<{
     day_number: number;
@@ -84,6 +101,30 @@ export function useCreatePackage() {
       }
 
       const packageId = packageResult.id;
+
+      // Create route destinations if any
+      if (packageData.route?.destinations && packageData.route.destinations.length > 0) {
+        const routeInserts = packageData.route.destinations.map((dest, index) => ({
+          package_id: packageId,
+          destination_order: index,
+          name: dest.name,
+          name_ar: dest.nameAr || null,
+          latitude: dest.latitude,
+          longitude: dest.longitude,
+          place_id: dest.placeId || null,
+          destination_type: dest.type,
+          days_spent: dest.daysSpent
+        }));
+
+        const { error: routeError } = await supabase
+          .from('package_routes')
+          .insert(routeInserts);
+
+        if (routeError) {
+          console.error('Error creating routes:', routeError);
+          // Don't fail the entire package creation for route errors
+        }
+      }
 
       // Create itinerary items if any
       if (packageData.itinerary.length > 0) {

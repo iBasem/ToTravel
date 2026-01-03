@@ -613,6 +613,22 @@
     "unknownPackage": "Unknown Package",
     "bookingUpdated": "Booking {{status}} successfully",
     "failedToUpdate": "Failed to update booking",
-    "lastTrip": "Last trip"
+    "lastTrip": "Last trip",
+    "tourRoute": "Tour Route",
+    "tourRouteDesc": "Define the destinations and route for your tour package",
+    "addDestination": "Add Destination",
+    "searchDestination": "Search for a destination...",
+    "noResultsFound": "No destinations found",
+    "routeMap": "Route Map",
+    "clickMapToAdd": "Click on the map to add a destination",
+    "destinations": "destinations",
+    "totalDays": "total days",
+    "destinationsList": "Destinations",
+    "noDestinationsYet": "No destinations added yet",
+    "searchToAdd": "Search above or click on the map to add destinations",
+    "origin": "Start",
+    "stop": "Stop",
+    "destination": "End",
+    "routeInfo": "Drag destinations to reorder. Set days spent at each location to help travelers understand the tour flow."
   }
 }
