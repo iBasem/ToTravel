@@ -30,8 +30,21 @@ export function ItineraryStep({ data, onUpdate }: ItineraryStepProps) {
   const { t, i18n } = useTranslation();
   const isRTL = i18n.language === 'ar';
 
-  const [itinerary, setItinerary] = useState<ItineraryDay[]>(
-    data.length > 0 ? data : [
+  const [itinerary, setItinerary] = useState<ItineraryDay[]>(() => {
+    if (Array.isArray(data) && data.length > 0) {
+      return data.map((item, index) => ({
+        day: item.day || index + 1,
+        title: item.title || "",
+        description: item.description || "",
+        activities: Array.isArray(item.activities) ? item.activities : [""],
+        meals: Array.isArray(item.meals) ? item.meals : [],
+        accommodation: item.accommodation || "",
+        highlights: Array.isArray(item.highlights) ? item.highlights : [],
+        newActivity: "",
+        newHighlight: ""
+      }));
+    }
+    return [
       {
         day: 1,
         title: "",
@@ -43,8 +56,8 @@ export function ItineraryStep({ data, onUpdate }: ItineraryStepProps) {
         newActivity: "",
         newHighlight: ""
       }
-    ]
-  );
+    ];
+  });
 
   useEffect(() => {
     onUpdate(itinerary);
