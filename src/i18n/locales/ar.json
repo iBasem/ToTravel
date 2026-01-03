@@ -613,6 +613,22 @@
     "unknownPackage": "باقة غير معروفة",
     "bookingUpdated": "تم {{status}} الحجز بنجاح",
     "failedToUpdate": "فشل في تحديث الحجز",
-    "lastTrip": "آخر رحلة"
+    "lastTrip": "آخر رحلة",
+    "tourRoute": "مسار الرحلة",
+    "tourRouteDesc": "حدد الوجهات والمسار لباقة رحلتك",
+    "addDestination": "إضافة وجهة",
+    "searchDestination": "ابحث عن وجهة...",
+    "noResultsFound": "لم يتم العثور على وجهات",
+    "routeMap": "خريطة المسار",
+    "clickMapToAdd": "انقر على الخريطة لإضافة وجهة",
+    "destinations": "وجهات",
+    "totalDays": "إجمالي الأيام",
+    "destinationsList": "الوجهات",
+    "noDestinationsYet": "لم تتم إضافة وجهات بعد",
+    "searchToAdd": "ابحث أعلاه أو انقر على الخريطة لإضافة وجهات",
+    "origin": "البداية",
+    "stop": "محطة",
+    "destination": "النهاية",
+    "routeInfo": "اسحب الوجهات لإعادة ترتيبها. حدد عدد الأيام في كل موقع لمساعدة المسافرين على فهم تدفق الرحلة."
   }
 }

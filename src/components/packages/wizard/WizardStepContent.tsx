@@ -1,5 +1,5 @@
-
 import { BasicInfoStep } from "@/components/packages/wizard-steps/BasicInfoStep";
+import { RouteStep } from "@/components/packages/wizard-steps/RouteStep";
 import { ItineraryStep } from "@/components/packages/wizard-steps/ItineraryStep";
 import { PricingStep } from "@/components/packages/wizard-steps/PricingStep";
 import { MediaStep } from "@/components/packages/wizard-steps/MediaStep";
@@ -28,26 +28,33 @@ export function WizardStepContent({
       );
     case 2:
       return (
+        <RouteStep
+          data={formData.route}
+          onUpdate={(data) => onUpdate('route', data)}
+        />
+      );
+    case 3:
+      return (
         <ItineraryStep
           data={formData.itinerary}
           onUpdate={(data) => onUpdate('itinerary', data)}
         />
       );
-    case 3:
+    case 4:
       return (
         <PricingStep
           data={formData.pricing}
           onUpdate={(data) => onUpdate('pricing', data)}
         />
       );
-    case 4:
+    case 5:
       return (
         <MediaStep
           data={formData.media}
           onUpdate={(data) => onUpdate('media', data)}
         />
       );
-    case 5:
+    case 6:
       return (
         <ReviewStep
           data={formData}

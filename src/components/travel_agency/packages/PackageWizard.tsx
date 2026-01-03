@@ -28,6 +28,11 @@ export function PackageWizard({ isOpen, onClose }: PackageWizardProps) {
       max_participants: 20,
       featured: false
     },
+    route: {
+      destinations: [],
+      travelMode: 'driving',
+      showDistances: true
+    },
     itinerary: [],
     pricing: {
       currency: "USD",
@@ -54,7 +59,7 @@ export function PackageWizard({ isOpen, onClose }: PackageWizardProps) {
 
   console.log('PackageWizard - Current step:', currentStep, 'Form data:', formData);
 
-  const totalSteps = 5;
+  const totalSteps = 6;
   const progress = (currentStep / totalSteps) * 100;
 
   const updateFormData = (stepKey: string, data: any) => {
@@ -133,6 +138,11 @@ export function PackageWizard({ isOpen, onClose }: PackageWizardProps) {
             max_participants: 20,
             featured: false
           },
+          route: {
+            destinations: [],
+            travelMode: 'driving',
+            showDistances: true
+          },
           itinerary: [],
           pricing: {
             currency: "USD",
@@ -163,10 +173,11 @@ export function PackageWizard({ isOpen, onClose }: PackageWizardProps) {
   const getStepTitle = (step: number) => {
     switch (step) {
       case 1: return t('packageWizard.basicInformation');
-      case 2: return t('packageWizard.itinerary');
-      case 3: return t('packageWizard.pricingAndPolicies');
-      case 4: return t('packageWizard.mediaAndPhotos');
-      case 5: return t('packageWizard.reviewAndPublish');
+      case 2: return t('packageWizard.tourRoute', 'Tour Route');
+      case 3: return t('packageWizard.itinerary');
+      case 4: return t('packageWizard.pricingAndPolicies');
+      case 5: return t('packageWizard.mediaAndPhotos');
+      case 6: return t('packageWizard.reviewAndPublish');
       default: return "";
     }
   };
@@ -189,21 +200,24 @@ export function PackageWizard({ isOpen, onClose }: PackageWizardProps) {
         });
         return basicInfoValid;
       case 2:
-        console.log('Step 2 validation: true (itinerary is optional)');
+        console.log('Step 2 validation: true (route is optional)');
         return true;
       case 3:
+        console.log('Step 3 validation: true (itinerary is optional)');
+        return true;
+      case 4:
         const pricingValid = !!(formData.pricing.basePrice && parseFloat(formData.pricing.basePrice) > 0);
-        console.log('Step 3 validation:', {
+        console.log('Step 4 validation:', {
           basePrice: formData.pricing.basePrice,
           parsed: parseFloat(formData.pricing.basePrice),
           valid: pricingValid
         });
         return pricingValid;
-      case 4:
-        console.log('Step 4 validation: true (media is optional)');
-        return true;
       case 5:
-        console.log('Step 5 validation: true');
+        console.log('Step 5 validation: true (media is optional)');
+        return true;
+      case 6:
+        console.log('Step 6 validation: true');
         return true;
       default:
         console.log('Unknown step validation: false');
