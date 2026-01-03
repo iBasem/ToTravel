@@ -44,6 +44,17 @@ export interface PackageDetails {
     accommodation: string;
     transportation: string;
   }>;
+  package_routes?: Array<{
+    id: string;
+    name: string;
+    name_ar: string | null;
+    latitude: number;
+    longitude: number;
+    destination_order: number;
+    destination_type: string;
+    days_spent: number | null;
+    place_id: string | null;
+  }>;
   travel_agencies?: {
     company_name: string;
     contact_person_first_name: string;
@@ -92,6 +103,17 @@ export function usePackageDetails(packageId: string | undefined) {
               meals_included,
               accommodation,
               transportation
+            ),
+            package_routes (
+              id,
+              name,
+              name_ar,
+              latitude,
+              longitude,
+              destination_order,
+              destination_type,
+              days_spent,
+              place_id
             ),
             travel_agencies (
               company_name,

@@ -1,4 +1,8 @@
 {
+  "packageDetails": {
+    "tourRoute": "مسار الرحلة",
+    "days": "أيام"
+  },
   "common": {
     "search": "بحث",
     "home": "الرئيسية",

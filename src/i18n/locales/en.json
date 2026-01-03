@@ -1,4 +1,8 @@
 {
+  "packageDetails": {
+    "tourRoute": "Tour Route",
+    "days": "days"
+  },
   "common": {
     "search": "Search",
     "home": "Home",

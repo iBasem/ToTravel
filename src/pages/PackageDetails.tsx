@@ -4,6 +4,7 @@ import { PackageHeader } from "@/components/packages/details/PackageHeader";
 import { ImageGallery } from "@/components/packages/details/ImageGallery";
 import { DetailedItinerary } from "@/components/packages/details/DetailedItinerary";
 import { BookingSidebar } from "@/components/packages/details/BookingSidebar";
+import { RouteMap } from "@/components/packages/details/RouteMap";
 import { HeaderSection } from "@/components/home/HeaderSection";
 import { FooterSection } from "@/components/home/FooterSection";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
@@ -54,6 +55,10 @@ export default function PackageDetails() {
             
             {packageDetails.package_media && packageDetails.package_media.length > 0 && (
               <ImageGallery images={packageDetails.package_media} />
+            )}
+
+            {packageDetails.package_routes && packageDetails.package_routes.length > 0 && (
+              <RouteMap routes={packageDetails.package_routes} />
             )}
             
             {packageDetails.itineraries && packageDetails.itineraries.length > 0 && (
