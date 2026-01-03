@@ -1,8 +1,4 @@
 {
-  "packageDetails": {
-    "tourRoute": "Tour Route",
-    "days": "days"
-  },
   "common": {
     "search": "Search",
     "home": "Home",
@@ -131,6 +127,11 @@
     "extreme": "Extreme"
   },
   "packageDetails": {
+    "tourRoute": "Tour Route",
+    "days": "days",
+    "start": "Start",
+    "stop": "Stop",
+    "end": "End",
     "packageNotFound": "Package not found",
     "packageNotFoundDesc": "The package you're looking for doesn't exist or has been removed."
   },
