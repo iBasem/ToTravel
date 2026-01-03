@@ -66,21 +66,21 @@ export function RouteMap({ routes }: RouteMapProps) {
         const isDestination = dest.destination_type === 'destination';
         
         if (isOrigin) {
-          // Start marker - red location pin style
+          // Start marker - green location pin style
           el.innerHTML = `
             <div style="position: relative; display: flex; flex-direction: column; align-items: center;">
               <svg width="28" height="36" viewBox="0 0 28 36" fill="none">
-                <path d="M14 0C6.268 0 0 6.268 0 14c0 10.5 14 22 14 22s14-11.5 14-22c0-7.732-6.268-14-14-14z" fill="#ef4444"/>
+                <path d="M14 0C6.268 0 0 6.268 0 14c0 10.5 14 22 14 22s14-11.5 14-22c0-7.732-6.268-14-14-14z" fill="#22c55e"/>
                 <circle cx="14" cy="14" r="6" fill="white"/>
               </svg>
             </div>
           `;
         } else if (isDestination) {
-          // End marker - green location pin style
+          // End marker - red location pin style
           el.innerHTML = `
             <div style="position: relative; display: flex; flex-direction: column; align-items: center;">
               <svg width="28" height="36" viewBox="0 0 28 36" fill="none">
-                <path d="M14 0C6.268 0 0 6.268 0 14c0 10.5 14 22 14 22s14-11.5 14-22c0-7.732-6.268-14-14-14z" fill="#22c55e"/>
+                <path d="M14 0C6.268 0 0 6.268 0 14c0 10.5 14 22 14 22s14-11.5 14-22c0-7.732-6.268-14-14-14z" fill="#ef4444"/>
                 <circle cx="14" cy="14" r="6" fill="white"/>
               </svg>
             </div>
