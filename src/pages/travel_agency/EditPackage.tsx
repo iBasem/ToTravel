@@ -32,6 +32,11 @@ export default function EditPackage() {
       max_participants: 20,
       featured: false
     },
+    route: {
+      destinations: [] as any[],
+      travelMode: 'driving' as 'driving' | 'walking' | 'cycling',
+      showDistances: true
+    },
     itinerary: [] as any[],
     pricing: {
       currency: "USD",
@@ -54,7 +59,7 @@ export default function EditPackage() {
     media: [] as any[]
   });
 
-  const totalSteps = 5;
+  const totalSteps = 6;
   const progress = (currentStep / totalSteps) * 100;
 
   useEffect(() => {
@@ -75,6 +80,13 @@ export default function EditPackage() {
         .single();
       
       if (packageError) throw packageError;
+      
+      // Load route destinations
+      const { data: routeData } = await supabase
+        .from('package_routes')
+        .select('*')
+        .eq('package_id', id)
+        .order('destination_order');
       
       // Load itinerary
       const { data: itineraryData } = await supabase
@@ -102,6 +114,21 @@ export default function EditPackage() {
           duration_nights: packageData.duration_nights || 0,
           max_participants: packageData.max_participants || 20,
           featured: packageData.featured || false
+        },
+        route: {
+          destinations: (routeData || []).map(item => ({
+            id: item.id,
+            name: item.name,
+            nameAr: item.name_ar,
+            latitude: item.latitude,
+            longitude: item.longitude,
+            order: item.destination_order,
+            type: item.destination_type as 'origin' | 'stop' | 'destination',
+            daysSpent: item.days_spent || 1,
+            placeId: item.place_id
+          })),
+          travelMode: 'driving' as 'driving' | 'walking' | 'cycling',
+          showDistances: true
         },
         itinerary: (itineraryData || []).map(item => ({
           day: item.day_number,
@@ -201,6 +228,30 @@ export default function EditPackage() {
       
       if (updateError) throw updateError;
       
+      // Delete old routes and insert new
+      await supabase
+        .from('package_routes')
+        .delete()
+        .eq('package_id', id);
+      
+      if (formData.route?.destinations && formData.route.destinations.length > 0) {
+        const routeInserts = formData.route.destinations.map((dest: any, index: number) => ({
+          package_id: id,
+          destination_order: index,
+          name: dest.name,
+          name_ar: dest.nameAr || null,
+          latitude: dest.latitude,
+          longitude: dest.longitude,
+          place_id: dest.placeId || null,
+          destination_type: dest.type,
+          days_spent: dest.daysSpent || 1
+        }));
+        
+        await supabase
+          .from('package_routes')
+          .insert(routeInserts);
+      }
+      
       // Delete old itinerary and insert new
       await supabase
         .from('itineraries')
@@ -259,10 +310,11 @@ export default function EditPackage() {
   const getStepTitle = (step: number) => {
     switch (step) {
       case 1: return t('packageWizard.basicInformation');
-      case 2: return t('packageWizard.itinerary');
-      case 3: return t('packageWizard.pricingAndPolicies');
-      case 4: return t('packageWizard.mediaAndPhotos');
-      case 5: return t('packageWizard.reviewAndPublish');
+      case 2: return t('packageWizard.tourRoute');
+      case 3: return t('packageWizard.itinerary');
+      case 4: return t('packageWizard.pricingAndPolicies');
+      case 5: return t('packageWizard.mediaAndPhotos');
+      case 6: return t('packageWizard.reviewAndPublish');
       default: return "";
     }
   };
@@ -275,12 +327,14 @@ export default function EditPackage() {
                  formData.basicInfo.category && 
                  formData.basicInfo.duration_days > 0);
       case 2:
-        return true;
+        return true; // Route step is optional
       case 3:
-        return !!(formData.pricing.basePrice && parseFloat(formData.pricing.basePrice) > 0);
+        return true; // Itinerary is optional
       case 4:
-        return true;
+        return !!(formData.pricing.basePrice && parseFloat(formData.pricing.basePrice) > 0);
       case 5:
+        return true; // Media is optional
+      case 6:
         return true;
       default:
         return false;
