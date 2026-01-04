@@ -74,14 +74,17 @@ export function BasicInfoStep({ data, onUpdate }: BasicInfoStepProps) {
   // Debounced destination search
   useEffect(() => {
     const timeoutId = setTimeout(() => {
-      if (destinationQuery && destinationQuery !== formData.destination) {
+      if (destinationQuery && destinationQuery.length >= 2) {
         searchDestinations(destinationQuery);
         setShowResults(true);
+      } else {
+        setDestinationResults([]);
+        setShowResults(false);
       }
     }, 300);
 
     return () => clearTimeout(timeoutId);
-  }, [destinationQuery, searchDestinations, formData.destination]);
+  }, [destinationQuery, searchDestinations]);
 
   const handleDestinationSelect = (result: { name: string; placeName: string }) => {
     setDestinationQuery(result.name);
