@@ -1,4 +1,5 @@
 
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, ArrowRight, Check, Loader2 } from "lucide-react";
 
@@ -21,32 +22,43 @@ export function WizardNavigationButtons({
   onSaveDraft,
   onPublish
 }: WizardNavigationButtonsProps) {
+  const { t, i18n } = useTranslation();
+  const isRTL = i18n.language === 'ar';
+
   return (
-    <div className="flex justify-between">
+    <div className={`flex justify-between ${isRTL ? 'flex-row-reverse' : ''}`} dir={isRTL ? 'rtl' : 'ltr'}>
       <Button
         variant="outline"
         onClick={onPrevious}
         disabled={currentStep === 1 || saving}
       >
-        <ArrowLeft className="w-4 h-4 mr-2" />
-        Previous
+        {isRTL ? (
+          <ArrowRight className="w-4 h-4 ml-2" />
+        ) : (
+          <ArrowLeft className="w-4 h-4 mr-2" />
+        )}
+        {t('common.previous')}
       </Button>
 
-      <div className="flex gap-2">
+      <div className={`flex gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
         <Button 
           variant="outline" 
           onClick={onSaveDraft}
           disabled={saving}
         >
           {saving ? (
-            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+            <Loader2 className={`w-4 h-4 animate-spin ${isRTL ? 'ml-2' : 'mr-2'}`} />
           ) : null}
-          Save as Draft
+          {t('packageWizard.saveAsDraft')}
         </Button>
         {currentStep < totalSteps ? (
           <Button onClick={onNext} disabled={saving}>
-            Next
-            <ArrowRight className="w-4 h-4 ml-2" />
+            {t('common.next')}
+            {isRTL ? (
+              <ArrowLeft className="w-4 h-4 mr-2" />
+            ) : (
+              <ArrowRight className="w-4 h-4 ml-2" />
+            )}
           </Button>
         ) : (
           <Button 
@@ -55,11 +67,11 @@ export function WizardNavigationButtons({
             disabled={saving}
           >
             {saving ? (
-              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+              <Loader2 className={`w-4 h-4 animate-spin ${isRTL ? 'ml-2' : 'mr-2'}`} />
             ) : (
-              <Check className="w-4 h-4 mr-2" />
+              <Check className={`w-4 h-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
             )}
-            Publish Package
+            {t('packageWizard.publishPackage')}
           </Button>
         )}
       </div>

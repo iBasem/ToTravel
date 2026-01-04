@@ -22,15 +22,16 @@ export function TourListingSection({
   showViewAll = true, 
   backgroundClass = "" 
 }: TourListingSectionProps) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const isRTL = i18n.language === 'ar';
 
   const displayTitle = titleKey ? t(titleKey) : title;
   const displayDescription = descriptionKey ? t(descriptionKey) : description;
 
   return (
     <section className={`max-w-7xl mx-auto px-4 sm:px-6 py-12 sm:py-16 ${backgroundClass}`}>
-      <div className="flex items-center justify-between mb-6 sm:mb-8">
-        <div>
+      <div className={`flex items-center justify-between mb-6 sm:mb-8 ${isRTL ? 'flex-row-reverse' : ''}`}>
+        <div className={isRTL ? 'text-right' : 'text-left'}>
           <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2 sm:mb-4">{displayTitle}</h2>
           <p className="text-sm sm:text-base text-gray-600">{displayDescription}</p>
         </div>

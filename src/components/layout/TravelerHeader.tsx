@@ -54,10 +54,10 @@ export function TravelerHeader() {
 
           {/* Search bar - responsive */}
           <div className="relative flex-1 max-w-xs sm:max-w-md">
-            <Search className="absolute left-2 sm:left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-3 h-3 sm:w-4 sm:h-4" />
+            <Search className={`absolute top-1/2 transform -translate-y-1/2 text-gray-400 w-3 h-3 sm:w-4 sm:h-4 ${isRTL ? 'right-2 sm:right-3' : 'left-2 sm:left-3'}`} />
             <Input
               placeholder={t('travelerDashboard.searchDestinationsTours')}
-              className="ltr:pl-7 rtl:pr-7 sm:ltr:pl-10 sm:rtl:pr-10 bg-gray-50 border-0 h-8 sm:h-9 lg:h-10 text-xs sm:text-sm"
+              className={`bg-gray-50 border-0 h-8 sm:h-9 lg:h-10 text-xs sm:text-sm ${isRTL ? 'pr-7 sm:pr-10' : 'pl-7 sm:pl-10'}`}
             />
           </div>
         </div>
@@ -78,7 +78,7 @@ export function TravelerHeader() {
           {/* Notifications */}
           <Button variant="ghost" size="sm" className="relative p-1 sm:p-2">
             <Bell className="w-3 h-3 sm:w-4 sm:h-4 lg:w-5 lg:h-5" />
-            <span className="absolute -top-0.5 -right-0.5 sm:-top-1 sm:-right-1 w-2.5 h-2.5 sm:w-3 sm:h-3 lg:w-4 lg:h-4 bg-red-500 text-white text-[8px] sm:text-[10px] lg:text-xs rounded-full flex items-center justify-center">
+            <span className={`absolute w-2.5 h-2.5 sm:w-3 sm:h-3 lg:w-4 lg:h-4 bg-red-500 text-white text-[8px] sm:text-[10px] lg:text-xs rounded-full flex items-center justify-center ${isRTL ? '-top-0.5 -left-0.5 sm:-top-1 sm:-left-1' : '-top-0.5 -right-0.5 sm:-top-1 sm:-right-1'}`}>
               2
             </span>
           </Button>
@@ -86,7 +86,7 @@ export function TravelerHeader() {
           {/* User menu */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="flex items-center gap-1 sm:gap-2 p-0.5 sm:p-1 lg:p-2">
+              <Button variant="ghost" className={`flex items-center gap-1 sm:gap-2 p-0.5 sm:p-1 lg:p-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
                 <Avatar className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8">
                   <AvatarImage src={profile?.avatar_url || "/placeholder.svg"} />
                   <AvatarFallback className="text-[10px] sm:text-xs lg:text-sm">{getInitials()}</AvatarFallback>

@@ -83,6 +83,7 @@
   },
   "tours": {
     "title": "الرحلات",
+    "tour": "رحلة",
     "featuredAdventures": "مغامرات مميزة",
     "featuredDescription": "اكتشف أشهر مغامراتنا",
     "latestAdventures": "أحدث المغامرات",
@@ -129,9 +130,21 @@
   "packageDetails": {
     "tourRoute": "مسار الرحلة",
     "days": "أيام",
+    "nights": "ليالي",
     "start": "بداية",
     "stop": "توقف",
     "end": "وجهة",
+    "max": "الحد الأقصى",
+    "people": "شخص",
+    "perPerson": "للشخص",
+    "signInToBook": "سجل الدخول للحجز",
+    "requestBooking": "طلب حجز",
+    "packageDetails": "تفاصيل الباقة",
+    "duration": "المدة",
+    "maxParticipants": "الحد الأقصى للمشاركين",
+    "difficulty": "الصعوبة",
+    "secureBooking": "حجز آمن",
+    "noPaymentRequired": "لا يلزم دفع للحجز",
     "packageNotFound": "الباقة غير موجودة",
     "packageNotFoundDesc": "الباقة التي تبحث عنها غير موجودة أو تمت إزالتها."
   },
@@ -634,6 +647,10 @@
     "origin": "البداية",
     "stop": "محطة",
     "destinationType": "وجهة",
-    "routeInfo": "اسحب الوجهات لإعادة ترتيبها. حدد عدد الأيام في كل موقع لمساعدة المسافرين على فهم تدفق الرحلة."
+    "routeInfo": "اسحب الوجهات لإعادة ترتيبها. حدد عدد الأيام في كل موقع لمساعدة المسافرين على فهم تدفق الرحلة.",
+    "saveAsDraft": "حفظ كمسودة",
+    "publishPackage": "نشر الباقة",
+    "step": "خطوة",
+    "of": "من"
   }
 }

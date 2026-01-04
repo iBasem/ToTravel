@@ -83,6 +83,7 @@
   },
   "tours": {
     "title": "Tours",
+    "tour": "tour",
     "featuredAdventures": "Featured Adventures",
     "featuredDescription": "Discover our most popular adventures",
     "latestAdventures": "Latest Adventures",
@@ -129,9 +130,21 @@
   "packageDetails": {
     "tourRoute": "Tour Route",
     "days": "days",
+    "nights": "nights",
     "start": "Start",
     "stop": "Stop",
     "end": "Destination",
+    "max": "Max",
+    "people": "people",
+    "perPerson": "per person",
+    "signInToBook": "Sign In to Book",
+    "requestBooking": "Request Booking",
+    "packageDetails": "Package Details",
+    "duration": "Duration",
+    "maxParticipants": "Max Participants",
+    "difficulty": "Difficulty",
+    "secureBooking": "Secure booking",
+    "noPaymentRequired": "No payment required to reserve",
     "packageNotFound": "Package not found",
     "packageNotFoundDesc": "The package you're looking for doesn't exist or has been removed."
   },
@@ -634,6 +647,10 @@
     "origin": "Start",
     "stop": "Stop",
     "destinationType": "Destination",
-    "routeInfo": "Drag destinations to reorder. Set days spent at each location to help travelers understand the tour flow."
+    "routeInfo": "Drag destinations to reorder. Set days spent at each location to help travelers understand the tour flow.",
+    "saveAsDraft": "Save as Draft",
+    "publishPackage": "Publish Package",
+    "step": "Step",
+    "of": "of"
   }
 }
