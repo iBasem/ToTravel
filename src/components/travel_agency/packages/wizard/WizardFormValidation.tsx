@@ -5,6 +5,7 @@ interface FormData {
   basicInfo: {
     title?: string;
     destination?: string;
+    destinations?: string[];
     category?: string;
     duration_days?: number;
   };

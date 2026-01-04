@@ -21,6 +21,7 @@ export function PackageWizard({ isOpen, onClose }: PackageWizardProps) {
       title: '',
       description: '',
       destination: '',
+      destinations: [] as string[],
       category: '',
       difficulty_level: 'moderate',
       duration_days: 1,
@@ -131,6 +132,7 @@ export function PackageWizard({ isOpen, onClose }: PackageWizardProps) {
             title: '',
             description: '',
             destination: '',
+            destinations: [],
             category: '',
             difficulty_level: 'moderate',
             duration_days: 1,
@@ -187,12 +189,16 @@ export function PackageWizard({ isOpen, onClose }: PackageWizardProps) {
     
     switch (step) {
       case 1:
+        // Support both destinations array and legacy destination field
+        const hasDestination = (formData.basicInfo.destinations && formData.basicInfo.destinations.length > 0) || 
+                               formData.basicInfo.destination;
         const basicInfoValid = !!(formData.basicInfo.title && 
-                 formData.basicInfo.destination && 
+                 hasDestination && 
                  formData.basicInfo.category && 
                  formData.basicInfo.duration_days > 0);
         console.log('Step 1 validation:', {
           title: formData.basicInfo.title,
+          destinations: formData.basicInfo.destinations,
           destination: formData.basicInfo.destination,
           category: formData.basicInfo.category,
           duration: formData.basicInfo.duration_days,
