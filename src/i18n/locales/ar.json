@@ -501,7 +501,7 @@
     "packageSubtitle": "العنوان الفرعي للباقة",
     "packageSubtitlePlaceholder": "مثال: رحلة لا تُنسى عبر أبرز معالم فيتنام",
     "destination": "الوجهة",
-    "selectDestination": "اختر الوجهة",
+    "destinationPlaceholder": "ابحث عن بلد أو منطقة...",
     "category": "الفئة",
     "selectCategory": "اختر الفئة",
     "durationDays": "المدة (أيام)",
