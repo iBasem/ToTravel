@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { X, Plus, MapPin } from "lucide-react";
+import { X, Plus, Search, Loader2 } from "lucide-react";
 
 interface BasicInfoStepProps {
   data: any;
@@ -29,8 +29,6 @@ export function BasicInfoStep({ data, onUpdate }: BasicInfoStepProps) {
     packageType: "group",
     highlights: [],
     newHighlight: "",
-    cities: [],
-    newCity: { name: "", description: "", image: "" },
     rating: 4.5,
     category: "",
     difficulty_level: "moderate",
@@ -40,6 +38,57 @@ export function BasicInfoStep({ data, onUpdate }: BasicInfoStepProps) {
     featured: false,
     ...data
   });
+
+  // Destination search state
+  const [destinationQuery, setDestinationQuery] = useState(data?.destination || "");
+  const [destinationResults, setDestinationResults] = useState<Array<{ id: string; name: string; placeName: string }>>([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const [showResults, setShowResults] = useState(false);
+
+  const searchDestinations = useCallback(async (query: string) => {
+    if (!query || query.length < 2) {
+      setDestinationResults([]);
+      return;
+    }
+
+    setIsSearching(true);
+    try {
+      const response = await fetch(
+        `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(query)}.json?access_token=pk.eyJ1IjoibG92YWJsZSIsImEiOiJjbTl5cjByNmMwMzRsMmtzOGo2Y2xtOGU1In0.5M6BSu3cYkuAdCB0QjVIXQ&types=country,region&limit=5`
+      );
+      const data = await response.json();
+      const results = data.features?.map((feature: any) => ({
+        id: feature.id,
+        name: feature.text,
+        placeName: feature.place_name,
+      })) || [];
+      setDestinationResults(results);
+    } catch (error) {
+      console.error('Error searching destinations:', error);
+      setDestinationResults([]);
+    } finally {
+      setIsSearching(false);
+    }
+  }, []);
+
+  // Debounced destination search
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      if (destinationQuery && destinationQuery !== formData.destination) {
+        searchDestinations(destinationQuery);
+        setShowResults(true);
+      }
+    }, 300);
+
+    return () => clearTimeout(timeoutId);
+  }, [destinationQuery, searchDestinations, formData.destination]);
+
+  const handleDestinationSelect = (result: { name: string; placeName: string }) => {
+    setDestinationQuery(result.name);
+    handleInputChange("destination", result.name);
+    setShowResults(false);
+    setDestinationResults([]);
+  };
 
   useEffect(() => {
     console.log('BasicInfoStep formData updated:', formData);
@@ -68,29 +117,6 @@ export function BasicInfoStep({ data, onUpdate }: BasicInfoStepProps) {
     }));
   };
 
-  const addCity = () => {
-    if (formData.newCity.name.trim() && formData.newCity.description.trim()) {
-      setFormData(prev => ({
-        ...prev,
-        cities: [...prev.cities, { ...prev.newCity }],
-        newCity: { name: "", description: "", image: "" }
-      }));
-    }
-  };
-
-  const removeCity = (index: number) => {
-    setFormData(prev => ({
-      ...prev,
-      cities: prev.cities.filter((_, i) => i !== index)
-    }));
-  };
-
-  const handleCityChange = (field: string, value: string) => {
-    setFormData(prev => ({
-      ...prev,
-      newCity: { ...prev.newCity, [field]: value }
-    }));
-  };
 
   return (
     <div className="space-y-6" dir={isRTL ? 'rtl' : 'ltr'}>
@@ -121,22 +147,38 @@ export function BasicInfoStep({ data, onUpdate }: BasicInfoStepProps) {
               />
             </div>
 
-            <div className="space-y-2">
+            <div className="space-y-2 relative">
               <Label htmlFor="destination">{t('packageWizard.destination')} *</Label>
-              <Select value={formData.destination} onValueChange={(value) => handleInputChange("destination", value)}>
-                <SelectTrigger>
-                  <SelectValue placeholder={t('packageWizard.selectDestination')} />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="vietnam">{t('packageWizard.vietnam')}</SelectItem>
-                  <SelectItem value="thailand">{t('packageWizard.thailand')}</SelectItem>
-                  <SelectItem value="japan">{t('packageWizard.japan')}</SelectItem>
-                  <SelectItem value="south-korea">{t('packageWizard.southKorea')}</SelectItem>
-                  <SelectItem value="italy">{t('packageWizard.italy')}</SelectItem>
-                  <SelectItem value="france">{t('packageWizard.france')}</SelectItem>
-                  <SelectItem value="spain">{t('packageWizard.spain')}</SelectItem>
-                </SelectContent>
-              </Select>
+              <div className="relative">
+                <Search className={`absolute top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground ${isRTL ? 'right-3' : 'left-3'}`} />
+                {isSearching && (
+                  <Loader2 className={`absolute top-1/2 -translate-y-1/2 h-4 w-4 animate-spin text-muted-foreground ${isRTL ? 'left-3' : 'right-3'}`} />
+                )}
+                <Input
+                  id="destination"
+                  value={destinationQuery}
+                  onChange={(e) => setDestinationQuery(e.target.value)}
+                  onFocus={() => destinationResults.length > 0 && setShowResults(true)}
+                  onBlur={() => setTimeout(() => setShowResults(false), 200)}
+                  placeholder={t('packageWizard.destinationPlaceholder')}
+                  className={isRTL ? 'pr-10' : 'pl-10'}
+                />
+              </div>
+              {showResults && destinationResults.length > 0 && (
+                <div className="absolute z-50 w-full mt-1 bg-background border border-border rounded-md shadow-lg max-h-60 overflow-auto">
+                  {destinationResults.map((result) => (
+                    <button
+                      key={result.id}
+                      type="button"
+                      className="w-full px-4 py-2 text-left hover:bg-muted transition-colors"
+                      onClick={() => handleDestinationSelect(result)}
+                    >
+                      <div className="font-medium">{result.name}</div>
+                      <div className="text-sm text-muted-foreground">{result.placeName}</div>
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
 
             <div className="space-y-2">
@@ -252,75 +294,6 @@ export function BasicInfoStep({ data, onUpdate }: BasicInfoStepProps) {
         </CardContent>
       </Card>
 
-      {/* Cities to Visit */}
-      <Card>
-        <CardHeader>
-          <CardTitle className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
-            <MapPin className="w-5 h-5" />
-            {t('packageWizard.citiesYoullVisit')}
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="space-y-2">
-              <Label>{t('packageWizard.cityName')}</Label>
-              <Input
-                value={formData.newCity.name}
-                onChange={(e) => handleCityChange("name", e.target.value)}
-                placeholder={t('packageWizard.cityNamePlaceholder')}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label>{t('packageWizard.cityDescription')}</Label>
-              <Input
-                value={formData.newCity.description}
-                onChange={(e) => handleCityChange("description", e.target.value)}
-                placeholder={t('packageWizard.cityDescriptionPlaceholder')}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label>{t('packageWizard.imageUrlOptional')}</Label>
-              <div className={`flex gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                <Input
-                  value={formData.newCity.image}
-                  onChange={(e) => handleCityChange("image", e.target.value)}
-                  placeholder="https://..."
-                />
-                <Button type="button" onClick={addCity} size="sm">
-                  <Plus className="w-4 h-4" />
-                </Button>
-              </div>
-            </div>
-          </div>
-
-          {formData.cities.length > 0 && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
-              {formData.cities.map((city: any, index: number) => (
-                <div key={index} className="border rounded-lg p-3">
-                  <div className={`flex justify-between items-start mb-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                    <h4 className="font-medium">{city.name}</h4>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => removeCity(index)}
-                    >
-                      <X className="w-4 h-4" />
-                    </Button>
-                  </div>
-                  <p className="text-sm text-gray-600">{city.description}</p>
-                  {city.image && (
-                    <img
-                      src={city.image}
-                      alt={city.name}
-                      className="w-full h-20 object-cover rounded mt-2"
-                    />
-                  )}
-                </div>
-              ))}
-            </div>
-          )}
-        </CardContent>
-      </Card>
     </div>
   );
 }

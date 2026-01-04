@@ -501,7 +501,7 @@
     "packageSubtitle": "Package Subtitle",
     "packageSubtitlePlaceholder": "e.g., An unforgettable journey through Vietnam's highlights",
     "destination": "Destination",
-    "selectDestination": "Select destination",
+    "destinationPlaceholder": "Search for a country or region...",
     "category": "Category",
     "selectCategory": "Select category",
     "durationDays": "Duration (Days)",
