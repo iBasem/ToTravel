@@ -119,8 +119,8 @@ export function HeaderSection() {
                     </Avatar>
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-56" align="end" forceMount>
-                  <div className="flex flex-col space-y-1 p-2">
+                <DropdownMenuContent className="w-56" align={i18n.language === 'ar' ? 'start' : 'end'} forceMount>
+                  <div className={`flex flex-col space-y-1 p-2 ${i18n.language === 'ar' ? 'text-right' : 'text-left'}`}>
                     <p className="text-sm font-medium leading-none">{getUserDisplayName()}</p>
                     <p className="text-xs leading-none text-muted-foreground">
                       {user.email}
@@ -130,13 +130,13 @@ export function HeaderSection() {
                     </p>
                   </div>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => navigate(getDashboardPath())}>
-                    <LayoutDashboard className="mr-2 h-4 w-4" />
+                  <DropdownMenuItem onClick={() => navigate(getDashboardPath())} className={i18n.language === 'ar' ? 'flex-row-reverse' : ''}>
+                    <LayoutDashboard className={`h-4 w-4 ${i18n.language === 'ar' ? 'ml-2' : 'mr-2'}`} />
                     {t('nav.dashboard', 'Dashboard')}
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={handleLogout} className="text-red-600">
-                    <LogOut className="mr-2 h-4 w-4" />
+                  <DropdownMenuItem onClick={handleLogout} className={`text-red-600 ${i18n.language === 'ar' ? 'flex-row-reverse' : ''}`}>
+                    <LogOut className={`h-4 w-4 ${i18n.language === 'ar' ? 'ml-2' : 'mr-2'}`} />
                     {t('nav.logout', 'Logout')}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
