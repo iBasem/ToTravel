@@ -27,6 +27,7 @@ interface FormData {
     title?: string;
     description?: string;
     destination?: string;
+    destinations?: string[];
     duration?: number;
     maxGroupSize?: number;
     difficulty?: string;

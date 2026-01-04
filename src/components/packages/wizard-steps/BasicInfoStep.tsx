@@ -1,5 +1,5 @@
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -8,61 +8,82 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { X, Plus, Search, Loader2 } from "lucide-react";
+import { X, Plus, Search, Loader2, MapPin } from "lucide-react";
+
+const MAPBOX_TOKEN = 'pk.eyJ1IjoiYmFzb29vbSIsImEiOiJjbWp5bmQwNzIxaGt0M2VzOWhnbGQwbzhvIn0.B__V-cVYI0fJZ6Fc9YtD-w';
 
 interface BasicInfoStepProps {
   data: any;
   onUpdate: (data: any) => void;
 }
 
+interface DestinationResult {
+  id: string;
+  name: string;
+  placeName: string;
+}
+
 export function BasicInfoStep({ data, onUpdate }: BasicInfoStepProps) {
   const { t, i18n } = useTranslation();
   const isRTL = i18n.language === 'ar';
 
-  const [formData, setFormData] = useState({
-    title: "",
-    subtitle: "",
-    description: "",
-    destination: "",
-    duration: "",
-    maxGroupSize: "",
-    packageType: "group",
-    highlights: [],
-    newHighlight: "",
-    rating: 4.5,
-    category: "",
-    difficulty_level: "moderate",
-    duration_days: 1,
-    duration_nights: 0,
-    max_participants: 20,
-    featured: false,
-    ...data
+  const [formData, setFormData] = useState(() => {
+    // Handle legacy single destination field and ensure destinations is an array
+    const initialDestinations = data?.destinations || (data?.destination ? [data.destination] : []);
+    return {
+      title: "",
+      subtitle: "",
+      description: "",
+      destination: "", // Keep for backward compatibility
+      duration: "",
+      maxGroupSize: "",
+      packageType: "group",
+      highlights: [] as string[],
+      newHighlight: "",
+      rating: 4.5,
+      category: "",
+      difficulty_level: "moderate",
+      duration_days: 1,
+      duration_nights: 0,
+      max_participants: 20,
+      featured: false,
+      ...data,
+      destinations: initialDestinations as string[]
+    };
   });
 
   // Destination search state
-  const [destinationQuery, setDestinationQuery] = useState(data?.destination || "");
-  const [destinationResults, setDestinationResults] = useState<Array<{ id: string; name: string; placeName: string }>>([]);
+  const [destinationQuery, setDestinationQuery] = useState("");
+  const [destinationResults, setDestinationResults] = useState<DestinationResult[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [showResults, setShowResults] = useState(false);
+  const debounceRef = useRef<NodeJS.Timeout | null>(null);
 
   const searchDestinations = useCallback(async (query: string) => {
     if (!query || query.length < 2) {
       setDestinationResults([]);
+      setShowResults(false);
       return;
     }
 
     setIsSearching(true);
     try {
       const response = await fetch(
-        `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(query)}.json?access_token=pk.eyJ1IjoibG92YWJsZSIsImEiOiJjbTl5cjByNmMwMzRsMmtzOGo2Y2xtOGU1In0.5M6BSu3cYkuAdCB0QjVIXQ&types=country,region&limit=5`
+        `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(query)}.json?access_token=${MAPBOX_TOKEN}&types=country,region&limit=5`
       );
       const data = await response.json();
-      const results = data.features?.map((feature: any) => ({
-        id: feature.id,
-        name: feature.text,
-        placeName: feature.place_name,
-      })) || [];
-      setDestinationResults(results);
+      
+      if (data.features) {
+        const results: DestinationResult[] = data.features.map((feature: any) => ({
+          id: feature.id,
+          name: feature.text,
+          placeName: feature.place_name,
+        }));
+        setDestinationResults(results);
+        setShowResults(true);
+      } else {
+        setDestinationResults([]);
+      }
     } catch (error) {
       console.error('Error searching destinations:', error);
       setDestinationResults([]);
@@ -71,26 +92,51 @@ export function BasicInfoStep({ data, onUpdate }: BasicInfoStepProps) {
     }
   }, []);
 
-  // Debounced destination search
+  // Live search with debounce
   useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      if (destinationQuery && destinationQuery.length >= 2) {
-        searchDestinations(destinationQuery);
-        setShowResults(true);
-      } else {
-        setDestinationResults([]);
-        setShowResults(false);
-      }
-    }, 300);
+    if (debounceRef.current) {
+      clearTimeout(debounceRef.current);
+    }
 
-    return () => clearTimeout(timeoutId);
+    if (destinationQuery.length >= 2) {
+      debounceRef.current = setTimeout(() => {
+        searchDestinations(destinationQuery);
+      }, 300);
+    } else {
+      setDestinationResults([]);
+      setShowResults(false);
+    }
+
+    return () => {
+      if (debounceRef.current) {
+        clearTimeout(debounceRef.current);
+      }
+    };
   }, [destinationQuery, searchDestinations]);
 
-  const handleDestinationSelect = (result: { name: string; placeName: string }) => {
-    setDestinationQuery(result.name);
-    handleInputChange("destination", result.name);
+  const handleDestinationSelect = (result: DestinationResult) => {
+    // Add to destinations array if not already present
+    if (!formData.destinations.includes(result.name)) {
+      const newDestinations = [...formData.destinations, result.name];
+      setFormData(prev => ({ 
+        ...prev, 
+        destinations: newDestinations,
+        // Keep backward compatibility with single destination field
+        destination: newDestinations[0] || ""
+      }));
+    }
+    setDestinationQuery("");
     setShowResults(false);
     setDestinationResults([]);
+  };
+
+  const removeDestination = (index: number) => {
+    const newDestinations = formData.destinations.filter((_: string, i: number) => i !== index);
+    setFormData(prev => ({
+      ...prev,
+      destinations: newDestinations,
+      destination: newDestinations[0] || ""
+    }));
   };
 
   useEffect(() => {
@@ -119,7 +165,6 @@ export function BasicInfoStep({ data, onUpdate }: BasicInfoStepProps) {
       highlights: prev.highlights.filter((_, i) => i !== index)
     }));
   };
-
 
   return (
     <div className="space-y-6" dir={isRTL ? 'rtl' : 'ltr'}>
@@ -150,35 +195,60 @@ export function BasicInfoStep({ data, onUpdate }: BasicInfoStepProps) {
               />
             </div>
 
-            <div className="space-y-2 relative">
-              <Label htmlFor="destination">{t('packageWizard.destination')} *</Label>
+            <div className="space-y-2 md:col-span-2">
+              <Label>{t('packageWizard.destination')} *</Label>
               <div className="relative">
-                <Search className={`absolute top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground ${isRTL ? 'right-3' : 'left-3'}`} />
+                <Search className={`absolute top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground z-10 ${isRTL ? 'right-3' : 'left-3'}`} />
                 {isSearching && (
-                  <Loader2 className={`absolute top-1/2 -translate-y-1/2 h-4 w-4 animate-spin text-muted-foreground ${isRTL ? 'left-3' : 'right-3'}`} />
+                  <Loader2 className={`absolute top-1/2 -translate-y-1/2 h-4 w-4 animate-spin text-muted-foreground z-10 ${isRTL ? 'left-3' : 'right-3'}`} />
                 )}
                 <Input
-                  id="destination"
                   value={destinationQuery}
                   onChange={(e) => setDestinationQuery(e.target.value)}
                   onFocus={() => destinationResults.length > 0 && setShowResults(true)}
-                  onBlur={() => setTimeout(() => setShowResults(false), 200)}
                   placeholder={t('packageWizard.destinationPlaceholder')}
                   className={isRTL ? 'pr-10' : 'pl-10'}
                 />
+                
+                {showResults && destinationResults.length > 0 && (
+                  <div className="absolute z-50 w-full mt-1 bg-background border border-border rounded-md shadow-lg max-h-60 overflow-auto">
+                    {destinationResults.map((result) => (
+                      <button
+                        key={result.id}
+                        type="button"
+                        className={`w-full p-3 hover:bg-muted flex items-center gap-3 text-left border-b last:border-b-0 transition-colors ${isRTL ? 'flex-row-reverse text-right' : ''}`}
+                        onClick={() => handleDestinationSelect(result)}
+                      >
+                        <MapPin className="h-4 w-4 text-primary flex-shrink-0" />
+                        <div className="flex-1 min-w-0">
+                          <p className="font-medium truncate">{result.name}</p>
+                          <p className="text-sm text-muted-foreground truncate">{result.placeName}</p>
+                        </div>
+                        <Plus className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                      </button>
+                    ))}
+                  </div>
+                )}
+
+                {showResults && destinationQuery.length >= 2 && destinationResults.length === 0 && !isSearching && (
+                  <div className="absolute z-50 w-full mt-1 bg-background border border-border rounded-md shadow-lg p-4 text-center text-muted-foreground">
+                    {t('packageWizard.noResultsFound', 'No destinations found')}
+                  </div>
+                )}
               </div>
-              {showResults && destinationResults.length > 0 && (
-                <div className="absolute z-50 w-full mt-1 bg-background border border-border rounded-md shadow-lg max-h-60 overflow-auto">
-                  {destinationResults.map((result) => (
-                    <button
-                      key={result.id}
-                      type="button"
-                      className="w-full px-4 py-2 text-left hover:bg-muted transition-colors"
-                      onClick={() => handleDestinationSelect(result)}
-                    >
-                      <div className="font-medium">{result.name}</div>
-                      <div className="text-sm text-muted-foreground">{result.placeName}</div>
-                    </button>
+              
+              {/* Selected destinations as badges */}
+              {formData.destinations.length > 0 && (
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {formData.destinations.map((dest: string, index: number) => (
+                    <Badge key={index} variant="secondary" className="flex items-center gap-1 py-1 px-2">
+                      <MapPin className="w-3 h-3" />
+                      {dest}
+                      <X
+                        className="w-3 h-3 cursor-pointer ml-1 hover:text-destructive"
+                        onClick={() => removeDestination(index)}
+                      />
+                    </Badge>
                   ))}
                 </div>
               )}
