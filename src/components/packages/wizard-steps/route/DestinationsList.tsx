@@ -91,7 +91,7 @@ function SortableDestination({ destination, index, onUpdate, onRemove, isRTL }: 
               <SelectContent>
                 <SelectItem value="origin">{t('packageWizard.origin', 'Start')}</SelectItem>
                 <SelectItem value="stop">{t('packageWizard.stop', 'Stop')}</SelectItem>
-                <SelectItem value="destination">{t('packageWizard.destination', 'End')}</SelectItem>
+                <SelectItem value="destination">{t('packageWizard.destinationType', 'Destination')}</SelectItem>
               </SelectContent>
             </Select>
 

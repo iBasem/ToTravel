@@ -131,7 +131,7 @@
     "days": "days",
     "start": "Start",
     "stop": "Stop",
-    "end": "End",
+    "end": "Destination",
     "packageNotFound": "Package not found",
     "packageNotFoundDesc": "The package you're looking for doesn't exist or has been removed."
   },
@@ -633,7 +633,7 @@
     "searchToAdd": "Search above or click on the map to add destinations",
     "origin": "Start",
     "stop": "Stop",
-    "destination": "End",
+    "destinationType": "Destination",
     "routeInfo": "Drag destinations to reorder. Set days spent at each location to help travelers understand the tour flow."
   }
 }
