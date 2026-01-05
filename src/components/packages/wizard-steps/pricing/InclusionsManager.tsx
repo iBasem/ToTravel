@@ -57,27 +57,27 @@ export function InclusionsManager({ inclusions, onToggle, onAddDetail, onRemoveD
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{t('packageWizard.whatsIncluded')}</CardTitle>
+        <CardTitle className={isRTL ? 'text-right' : 'text-left'}>{t('packageWizard.whatsIncluded')}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-6" dir={isRTL ? 'rtl' : 'ltr'}>
         {inclusionCategories.map(({ key, label, icon: Icon }) => (
           <div key={key} className="space-y-3">
-            <div className={`flex items-center space-x-2 ${isRTL ? 'space-x-reverse' : ''}`}>
+            <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
               <Checkbox
                 id={key}
                 checked={inclusions[key]?.included || false}
                 onCheckedChange={(checked) => onToggle(key, checked as boolean)}
               />
-              <Label htmlFor={key} className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
+              <Label htmlFor={key} className={`flex items-center gap-2 cursor-pointer ${isRTL ? 'flex-row-reverse' : ''}`}>
                 <Icon className="w-4 h-4" />
                 {label}
               </Label>
             </div>
 
             {inclusions[key]?.included && (
-              <div className={`${isRTL ? 'mr-6' : 'ml-6'} space-y-2`}>
+              <div className={`space-y-2 ${isRTL ? 'mr-6' : 'ml-6'}`}>
                 {presetOptions[key] && (
-                  <div className="grid grid-cols-3 gap-2">
+                  <div className={`grid grid-cols-2 sm:grid-cols-3 gap-2 ${isRTL ? 'text-right' : 'text-left'}`}>
                     {presetOptions[key].map((option) => (
                       <Button
                         key={option.key}
@@ -85,7 +85,7 @@ export function InclusionsManager({ inclusions, onToggle, onAddDetail, onRemoveD
                         variant="outline"
                         size="sm"
                         onClick={() => onAddDetail(key, option.label)}
-                        className="text-xs"
+                        className={`text-xs ${isRTL ? 'flex-row-reverse' : ''}`}
                       >
                         + {option.label}
                       </Button>
@@ -93,9 +93,9 @@ export function InclusionsManager({ inclusions, onToggle, onAddDetail, onRemoveD
                   </div>
                 )}
 
-                <div className="flex flex-wrap gap-1 mt-2">
+                <div className={`flex flex-wrap gap-1 mt-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
                   {(inclusions[key]?.details || []).map((detail: string, index: number) => (
-                    <Badge key={index} variant="secondary" className="flex items-center gap-1">
+                    <Badge key={index} variant="secondary" className={`flex items-center gap-1 ${isRTL ? 'flex-row-reverse' : ''}`}>
                       {detail}
                       <X
                         className="w-3 h-3 cursor-pointer"

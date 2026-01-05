@@ -161,15 +161,15 @@ export function MediaStep({ data, onUpdate }: MediaStepProps) {
 
   return (
     <div className="space-y-6" dir={isRTL ? 'rtl' : 'ltr'}>
-      <div>
+      <div className={isRTL ? 'text-right' : 'text-left'}>
         <h3 className="text-lg font-semibold mb-2">{t('packageWizard.packageMedia')}</h3>
-        <p className="text-gray-600">{t('packageWizard.uploadPhotosVideos')}</p>
+        <p className="text-muted-foreground">{t('packageWizard.uploadPhotosVideos')}</p>
       </div>
 
       <div className="space-y-4">
         <div
           className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
-            dragOver ? "border-blue-500 bg-blue-50" : "border-gray-300"
+            dragOver ? "border-primary bg-primary/5" : "border-border"
           } ${uploading ? 'opacity-50 pointer-events-none' : ''}`}
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
@@ -177,10 +177,10 @@ export function MediaStep({ data, onUpdate }: MediaStepProps) {
         >
           <div className="space-y-4">
             <div>
-              <h3 className="text-lg font-medium text-gray-900 mb-2">
+              <h3 className="text-lg font-medium mb-2">
                 {t('packageWizard.uploadYourMedia')}
               </h3>
-              <p className="text-gray-600 mb-4">
+              <p className="text-muted-foreground mb-4">
                 {t('packageWizard.dragDropFiles')}
               </p>
             </div>
@@ -191,7 +191,7 @@ export function MediaStep({ data, onUpdate }: MediaStepProps) {
                 <span>{t('packageWizard.uploading') || 'Uploading...'}</span>
               </div>
             ) : (
-              <div className={`flex gap-2 justify-center ${isRTL ? 'flex-row-reverse' : ''}`}>
+              <div className={`flex gap-2 justify-center flex-wrap ${isRTL ? 'flex-row-reverse' : ''}`}>
                 <input
                   type="file"
                   id="photo-upload"
@@ -224,7 +224,7 @@ export function MediaStep({ data, onUpdate }: MediaStepProps) {
                   </Button>
                 </label>
                 
-                <Button onClick={addMockImages} className="bg-blue-600 hover:bg-blue-700">
+                <Button onClick={addMockImages} className="bg-primary hover:bg-primary/90">
                   {t('packageWizard.addSampleImages')}
                 </Button>
               </div>
@@ -240,9 +240,9 @@ export function MediaStep({ data, onUpdate }: MediaStepProps) {
         onUpdateCaption={updateCaption}
       />
 
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-        <h4 className="font-medium text-blue-900 mb-2">{t('packageWizard.mediaGuidelines')}</h4>
-        <ul className={`text-sm text-blue-800 space-y-1 ${isRTL ? 'pr-4' : 'pl-4'}`}>
+      <div className="bg-primary/5 border border-primary/20 rounded-lg p-4">
+        <h4 className={`font-medium text-primary mb-2 ${isRTL ? 'text-right' : 'text-left'}`}>{t('packageWizard.mediaGuidelines')}</h4>
+        <ul className={`text-sm text-primary/80 space-y-1 ${isRTL ? 'pr-4 text-right' : 'pl-4 text-left'}`}>
           <li>• {t('packageWizard.guidelineMinResolution')}</li>
           <li>• {t('packageWizard.guidelinePrimaryImage')}</li>
           <li>• {t('packageWizard.guidelineFormats')}</li>

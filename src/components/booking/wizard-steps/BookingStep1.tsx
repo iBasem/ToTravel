@@ -24,13 +24,14 @@ interface BookingStep1Props {
 }
 
 export function BookingStep1({ formData, updateFormData, packageData }: BookingStep1Props) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const isRTL = i18n.language === 'ar';
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6" dir={isRTL ? 'rtl' : 'ltr'}>
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+          <CardTitle className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
             <Calendar className="w-5 h-5" />
             {t('booking.selectTravelDate')}
           </CardTitle>
@@ -44,22 +45,22 @@ export function BookingStep1({ formData, updateFormData, packageData }: BookingS
                   selectedDate: availability.date,
                   totalAmount: availability.price * formData.travelers
                 })}
-                className={`p-4 border rounded-lg text-left transition-colors ${
+                className={`p-4 border rounded-lg transition-colors ${
                   formData.selectedDate === availability.date
-                    ? 'border-blue-500 bg-blue-50'
-                    : 'border-gray-200 hover:border-gray-300'
-                }`}
+                    ? 'border-primary bg-primary/5'
+                    : 'border-border hover:border-primary/50'
+                } ${isRTL ? 'text-right' : 'text-left'}`}
               >
-                <div className="flex items-center justify-between">
+                <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
                   <div>
                     <div className="font-medium">{availability.date}</div>
-                    <div className="text-sm text-gray-600">
+                    <div className="text-sm text-muted-foreground">
                       {availability.spotsLeft} {t('booking.spotsLeft')}
                     </div>
                   </div>
-                  <div className="text-right">
+                  <div className={isRTL ? 'text-left' : 'text-right'}>
                     <div className="font-medium">${availability.price}</div>
-                    <div className="text-sm text-gray-600">{t('common.perPerson')}</div>
+                    <div className="text-sm text-muted-foreground">{t('common.perPerson')}</div>
                   </div>
                 </div>
               </button>
@@ -70,15 +71,15 @@ export function BookingStep1({ formData, updateFormData, packageData }: BookingS
 
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+          <CardTitle className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
             <Users className="w-5 h-5" />
             {t('booking.numberOfTravelers')}
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            <div>
-              <Label htmlFor="travelers">{t('booking.howManyTraveling')}</Label>
+            <div className="space-y-2">
+              <Label htmlFor="travelers" className={isRTL ? 'text-right block' : 'text-left block'}>{t('booking.howManyTraveling')}</Label>
               <Select
                 value={formData.travelers.toString()}
                 onValueChange={(value) => {
@@ -94,7 +95,7 @@ export function BookingStep1({ formData, updateFormData, packageData }: BookingS
                   });
                 }}
               >
-                <SelectTrigger>
+                <SelectTrigger className={isRTL ? 'text-right' : 'text-left'}>
                   <SelectValue placeholder={t('booking.selectNumberTravelers')} />
                 </SelectTrigger>
                 <SelectContent>
@@ -108,17 +109,17 @@ export function BookingStep1({ formData, updateFormData, packageData }: BookingS
             </div>
 
             {formData.selectedDate && (
-              <div className="p-4 bg-blue-50 rounded-lg">
-                <div className="flex items-center justify-between">
-                  <div>
+              <div className="p-4 bg-primary/5 rounded-lg border border-primary/20">
+                <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
+                  <div className={isRTL ? 'text-right' : 'text-left'}>
                     <div className="font-medium">{t('booking.selectedDate')}: {formData.selectedDate}</div>
-                    <div className="text-sm text-gray-600">{formData.travelers} {formData.travelers === 1 ? t('booking.travelerSingular') : t('booking.travelerPlural')}</div>
+                    <div className="text-sm text-muted-foreground">{formData.travelers} {formData.travelers === 1 ? t('booking.travelerSingular') : t('booking.travelerPlural')}</div>
                   </div>
-                  <div className="text-right">
-                    <div className="text-2xl font-bold text-blue-600">
+                  <div className={isRTL ? 'text-left' : 'text-right'}>
+                    <div className="text-2xl font-bold text-primary">
                       ${formData.totalAmount}
                     </div>
-                    <div className="text-sm text-gray-600">{t('booking.totalEstimatedCost')}</div>
+                    <div className="text-sm text-muted-foreground">{t('booking.totalEstimatedCost')}</div>
                   </div>
                 </div>
               </div>
@@ -129,14 +130,14 @@ export function BookingStep1({ formData, updateFormData, packageData }: BookingS
 
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+          <CardTitle className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
             <MapPin className="w-5 h-5" />
             {t('booking.specialRequests')}
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div>
-            <Label htmlFor="special-requests">
+          <div className="space-y-2">
+            <Label htmlFor="special-requests" className={isRTL ? 'text-right block' : 'text-left block'}>
               {t('booking.specialRequestsOptional')}
             </Label>
             <Textarea
@@ -144,7 +145,8 @@ export function BookingStep1({ formData, updateFormData, packageData }: BookingS
               placeholder={t('booking.specialRequestsPlaceholder')}
               value={formData.specialRequests}
               onChange={(e) => updateFormData({ specialRequests: e.target.value })}
-              className="mt-2"
+              className={`mt-2 ${isRTL ? 'text-right' : 'text-left'}`}
+              dir={isRTL ? 'rtl' : 'ltr'}
             />
           </div>
         </CardContent>

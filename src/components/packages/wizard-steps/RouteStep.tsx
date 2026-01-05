@@ -104,18 +104,18 @@ export function RouteStep({ data, onUpdate }: RouteStepProps) {
     <div className="space-y-6" dir={isRTL ? 'rtl' : 'ltr'}>
       <Card>
         <CardHeader>
-          <CardTitle className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
+          <CardTitle className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse text-right' : 'text-left'}`}>
             <Route className="h-5 w-5 text-primary" />
             {t('packageWizard.tourRoute', 'Tour Route')}
           </CardTitle>
-          <CardDescription>
+          <CardDescription className={isRTL ? 'text-right' : 'text-left'}>
             {t('packageWizard.tourRouteDesc', 'Define the destinations and route for your tour package')}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           {/* Search */}
           <div>
-            <Label className="mb-2 block">
+            <Label className={`mb-2 block ${isRTL ? 'text-right' : 'text-left'}`}>
               {t('packageWizard.addDestination', 'Add Destination')}
             </Label>
             <DestinationSearch 
@@ -126,7 +126,7 @@ export function RouteStep({ data, onUpdate }: RouteStepProps) {
 
           {/* Map */}
           <div>
-            <Label className="mb-2 block">
+            <Label className={`mb-2 block ${isRTL ? 'text-right' : 'text-left'}`}>
               {t('packageWizard.routeMap', 'Route Map')}
             </Label>
             <MapboxMap
@@ -134,7 +134,7 @@ export function RouteStep({ data, onUpdate }: RouteStepProps) {
               onMapClick={handleMapClick}
               isRTL={isRTL}
             />
-            <p className="text-sm text-muted-foreground mt-2">
+            <p className={`text-sm text-muted-foreground mt-2 ${isRTL ? 'text-right' : 'text-left'}`}>
               {t('packageWizard.clickMapToAdd', 'Click on the map to add a destination')}
             </p>
           </div>
@@ -161,7 +161,7 @@ export function RouteStep({ data, onUpdate }: RouteStepProps) {
 
           {/* Destinations List */}
           <div>
-            <Label className="mb-3 block">
+            <Label className={`mb-3 block ${isRTL ? 'text-right' : 'text-left'}`}>
               {t('packageWizard.destinationsList', 'Destinations')}
             </Label>
             <DestinationsList
@@ -176,7 +176,7 @@ export function RouteStep({ data, onUpdate }: RouteStepProps) {
           {/* Info Alert */}
           <Alert>
             <Info className="h-4 w-4" />
-            <AlertDescription>
+            <AlertDescription className={isRTL ? 'text-right' : 'text-left'}>
               {t('packageWizard.routeInfo', 'Drag destinations to reorder. Set days spent at each location to help travelers understand the tour flow.')}
             </AlertDescription>
           </Alert>

@@ -171,32 +171,36 @@ export function BasicInfoStep({ data, onUpdate }: BasicInfoStepProps) {
       {/* Basic Package Information */}
       <Card>
         <CardHeader>
-          <CardTitle>{t('packageWizard.basicPackageInfo')}</CardTitle>
+          <CardTitle className={isRTL ? 'text-right' : 'text-left'}>{t('packageWizard.basicPackageInfo')}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="title">{t('packageWizard.packageTitle')} *</Label>
+              <Label htmlFor="title" className={isRTL ? 'text-right block' : 'text-left block'}>{t('packageWizard.packageTitle')} *</Label>
               <Input
                 id="title"
                 value={formData.title}
                 onChange={(e) => handleInputChange("title", e.target.value)}
                 placeholder={t('packageWizard.packageTitlePlaceholder')}
+                className={isRTL ? 'text-right' : 'text-left'}
+                dir={isRTL ? 'rtl' : 'ltr'}
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="subtitle">{t('packageWizard.packageSubtitle')}</Label>
+              <Label htmlFor="subtitle" className={isRTL ? 'text-right block' : 'text-left block'}>{t('packageWizard.packageSubtitle')}</Label>
               <Input
                 id="subtitle"
                 value={formData.subtitle}
                 onChange={(e) => handleInputChange("subtitle", e.target.value)}
                 placeholder={t('packageWizard.packageSubtitlePlaceholder')}
+                className={isRTL ? 'text-right' : 'text-left'}
+                dir={isRTL ? 'rtl' : 'ltr'}
               />
             </div>
 
             <div className="space-y-2 md:col-span-2">
-              <Label>{t('packageWizard.destination')} *</Label>
+              <Label className={isRTL ? 'text-right block' : 'text-left block'}>{t('packageWizard.destination')} *</Label>
               <div className="relative">
                 <Search className={`absolute top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground z-10 ${isRTL ? 'right-3' : 'left-3'}`} />
                 {isSearching && (
@@ -207,7 +211,8 @@ export function BasicInfoStep({ data, onUpdate }: BasicInfoStepProps) {
                   onChange={(e) => setDestinationQuery(e.target.value)}
                   onFocus={() => destinationResults.length > 0 && setShowResults(true)}
                   placeholder={t('packageWizard.destinationPlaceholder')}
-                  className={isRTL ? 'pr-10' : 'pl-10'}
+                  className={isRTL ? 'pr-10 text-right' : 'pl-10 text-left'}
+                  dir={isRTL ? 'rtl' : 'ltr'}
                 />
                 
                 {showResults && destinationResults.length > 0 && (
@@ -216,7 +221,7 @@ export function BasicInfoStep({ data, onUpdate }: BasicInfoStepProps) {
                       <button
                         key={result.id}
                         type="button"
-                        className={`w-full p-3 hover:bg-muted flex items-center gap-3 text-left border-b last:border-b-0 transition-colors ${isRTL ? 'flex-row-reverse text-right' : ''}`}
+                        className={`w-full p-3 hover:bg-muted flex items-center gap-3 border-b last:border-b-0 transition-colors ${isRTL ? 'flex-row-reverse text-right' : 'text-left'}`}
                         onClick={() => handleDestinationSelect(result)}
                       >
                         <MapPin className="h-4 w-4 text-primary flex-shrink-0" />
@@ -239,13 +244,13 @@ export function BasicInfoStep({ data, onUpdate }: BasicInfoStepProps) {
               
               {/* Selected destinations as badges */}
               {formData.destinations.length > 0 && (
-                <div className="flex flex-wrap gap-2 mt-2">
+                <div className={`flex flex-wrap gap-2 mt-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
                   {formData.destinations.map((dest: string, index: number) => (
-                    <Badge key={index} variant="secondary" className="flex items-center gap-1 py-1 px-2">
+                    <Badge key={index} variant="secondary" className={`flex items-center gap-1 py-1 px-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
                       <MapPin className="w-3 h-3" />
                       {dest}
                       <X
-                        className="w-3 h-3 cursor-pointer ml-1 hover:text-destructive"
+                        className={`w-3 h-3 cursor-pointer hover:text-destructive ${isRTL ? 'mr-1' : 'ml-1'}`}
                         onClick={() => removeDestination(index)}
                       />
                     </Badge>
@@ -255,9 +260,9 @@ export function BasicInfoStep({ data, onUpdate }: BasicInfoStepProps) {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="category">{t('packageWizard.category')} *</Label>
+              <Label htmlFor="category" className={isRTL ? 'text-right block' : 'text-left block'}>{t('packageWizard.category')} *</Label>
               <Select value={formData.category} onValueChange={(value) => handleInputChange("category", value)}>
-                <SelectTrigger>
+                <SelectTrigger className={isRTL ? 'text-right' : 'text-left'}>
                   <SelectValue placeholder={t('packageWizard.selectCategory')} />
                 </SelectTrigger>
                 <SelectContent>
@@ -272,7 +277,7 @@ export function BasicInfoStep({ data, onUpdate }: BasicInfoStepProps) {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="duration_days">{t('packageWizard.durationDays')} *</Label>
+              <Label htmlFor="duration_days" className={isRTL ? 'text-right block' : 'text-left block'}>{t('packageWizard.durationDays')} *</Label>
               <Input
                 id="duration_days"
                 type="number"
@@ -280,11 +285,13 @@ export function BasicInfoStep({ data, onUpdate }: BasicInfoStepProps) {
                 value={formData.duration_days}
                 onChange={(e) => handleInputChange("duration_days", parseInt(e.target.value) || 1)}
                 placeholder="14"
+                className={isRTL ? 'text-right' : 'text-left'}
+                dir="ltr"
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="duration_nights">{t('packageWizard.durationNights')}</Label>
+              <Label htmlFor="duration_nights" className={isRTL ? 'text-right block' : 'text-left block'}>{t('packageWizard.durationNights')}</Label>
               <Input
                 id="duration_nights"
                 type="number"
@@ -292,11 +299,13 @@ export function BasicInfoStep({ data, onUpdate }: BasicInfoStepProps) {
                 value={formData.duration_nights}
                 onChange={(e) => handleInputChange("duration_nights", parseInt(e.target.value) || 0)}
                 placeholder="13"
+                className={isRTL ? 'text-right' : 'text-left'}
+                dir="ltr"
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="max_participants">{t('packageWizard.maxParticipants')}</Label>
+              <Label htmlFor="max_participants" className={isRTL ? 'text-right block' : 'text-left block'}>{t('packageWizard.maxParticipants')}</Label>
               <Input
                 id="max_participants"
                 type="number"
@@ -304,13 +313,15 @@ export function BasicInfoStep({ data, onUpdate }: BasicInfoStepProps) {
                 value={formData.max_participants}
                 onChange={(e) => handleInputChange("max_participants", parseInt(e.target.value) || 20)}
                 placeholder="16"
+                className={isRTL ? 'text-right' : 'text-left'}
+                dir="ltr"
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="difficulty_level">{t('packageWizard.difficultyLevel')}</Label>
+              <Label htmlFor="difficulty_level" className={isRTL ? 'text-right block' : 'text-left block'}>{t('packageWizard.difficultyLevel')}</Label>
               <Select value={formData.difficulty_level} onValueChange={(value) => handleInputChange("difficulty_level", value)}>
-                <SelectTrigger>
+                <SelectTrigger className={isRTL ? 'text-right' : 'text-left'}>
                   <SelectValue placeholder={t('packageWizard.selectDifficulty')} />
                 </SelectTrigger>
                 <SelectContent>
@@ -324,13 +335,14 @@ export function BasicInfoStep({ data, onUpdate }: BasicInfoStepProps) {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="description">{t('packageWizard.description')} *</Label>
+            <Label htmlFor="description" className={isRTL ? 'text-right block' : 'text-left block'}>{t('packageWizard.description')} *</Label>
             <Textarea
               id="description"
               value={formData.description}
               onChange={(e) => handleInputChange("description", e.target.value)}
               placeholder={t('packageWizard.descriptionPlaceholder')}
-              className="min-h-[100px]"
+              className={`min-h-[100px] ${isRTL ? 'text-right' : 'text-left'}`}
+              dir={isRTL ? 'rtl' : 'ltr'}
             />
           </div>
         </CardContent>
@@ -339,7 +351,7 @@ export function BasicInfoStep({ data, onUpdate }: BasicInfoStepProps) {
       {/* Package Highlights */}
       <Card>
         <CardHeader>
-          <CardTitle>{t('packageWizard.packageHighlights')}</CardTitle>
+          <CardTitle className={isRTL ? 'text-right' : 'text-left'}>{t('packageWizard.packageHighlights')}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className={`flex gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
@@ -348,14 +360,16 @@ export function BasicInfoStep({ data, onUpdate }: BasicInfoStepProps) {
               onChange={(e) => handleInputChange("newHighlight", e.target.value)}
               placeholder={t('packageWizard.addHighlight')}
               onKeyPress={(e) => e.key === "Enter" && addHighlight()}
+              className={isRTL ? 'text-right' : 'text-left'}
+              dir={isRTL ? 'rtl' : 'ltr'}
             />
             <Button type="button" onClick={addHighlight} size="sm">
               <Plus className="w-4 h-4" />
             </Button>
           </div>
-          <div className="flex flex-wrap gap-2">
+          <div className={`flex flex-wrap gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
             {formData.highlights.map((highlight: string, index: number) => (
-              <Badge key={index} variant="secondary" className="flex items-center gap-1">
+              <Badge key={index} variant="secondary" className={`flex items-center gap-1 ${isRTL ? 'flex-row-reverse' : ''}`}>
                 {highlight}
                 <X
                   className="w-3 h-3 cursor-pointer"
