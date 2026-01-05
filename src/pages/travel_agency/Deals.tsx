@@ -69,9 +69,11 @@ export default function Deals() {
   };
 
   return (
-    <div className="space-y-6">
-      <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
-        <h1 className="text-3xl font-bold">{t('agencyDashboard.dealsAndPromotions')}</h1>
+    <div className="space-y-6" dir={isRTL ? 'rtl' : 'ltr'}>
+      <div className={`flex flex-col gap-3 sm:flex-row sm:items-center justify-between ${isRTL ? 'sm:flex-row-reverse' : ''}`}>
+        <h1 className={`text-2xl sm:text-3xl font-bold ${isRTL ? 'text-right' : ''}`}>
+          {t('agencyDashboard.dealsAndPromotions')}
+        </h1>
         <Button className={`flex items-center ${isRTL ? 'flex-row-reverse' : ''}`}>
           <Plus className={`w-4 h-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
           {t('agencyDashboard.createDeal')}
@@ -91,24 +93,24 @@ export default function Deals() {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                <p className="text-sm text-gray-600">{deal.description}</p>
+                <p className={`text-sm text-gray-600 ${isRTL ? 'text-right' : ''}`}>{deal.description}</p>
                 
-                <div className={`flex items-center space-x-2 ${isRTL ? 'flex-row-reverse space-x-reverse' : ''}`}>
+                <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse justify-end' : ''}`}>
                   <Percent className="w-4 h-4 text-green-600" />
-                  <span className="text-2xl font-bold text-green-600">{deal.discount}%</span>
+                  <span className="text-2xl font-bold text-green-600 tabular-nums">{deal.discount}%</span>
                   <span className="text-sm text-gray-600">{t('common.off')}</span>
                 </div>
                 
-                <div className={`flex items-center space-x-2 text-sm text-gray-600 ${isRTL ? 'flex-row-reverse space-x-reverse' : ''}`}>
+                <div className={`flex items-center gap-2 text-sm text-gray-600 ${isRTL ? 'flex-row-reverse justify-end' : ''}`}>
                   <Calendar className="w-4 h-4" />
                   <span>{t('agencyDashboard.validUntil')} {deal.validUntil}</span>
                 </div>
                 
-                <div className="pt-2 border-t">
+                <div className={`pt-2 border-t ${isRTL ? 'text-right' : ''}`}>
                   <p className="text-sm text-gray-600">{deal.bookings} {t('agencyDashboard.bookingsUsed')}</p>
                 </div>
                 
-                <div className={`flex space-x-2 ${isRTL ? 'flex-row-reverse space-x-reverse' : ''}`}>
+                <div className={`flex gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
                   <Button variant="outline" size="sm" className="flex-1">
                     {t('common.edit')}
                   </Button>

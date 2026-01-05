@@ -39,7 +39,8 @@
     "added": "أضيف",
     "off": "خصم",
     "total": "الإجمالي",
-    "required": "مطلوب"
+    "required": "مطلوب",
+    "refresh": "تحديث"
   },
   "nav": {
     "home": "الرئيسية",
@@ -414,7 +415,31 @@
     "creatingPackage": "جاري الإنشاء...",
     "errorLoadingDashboard": "خطأ في تحميل لوحة التحكم",
     "errorLoadingPackages": "خطأ في تحميل الباقات",
-    "errorLoadingBookings": "خطأ في تحميل الحجوزات"
+    "errorLoadingBookings": "خطأ في تحميل الحجوزات",
+    "bookings": "حجوزات",
+    "reviews": "تقييمات",
+    "supportedFormatsImages": "يدعم صيغ JPG, PNG, WebP",
+    "supportedFormatsVideos": "يدعم صيغ MP4, WebM",
+    "messagesCommunication": "الرسائل والتواصل"
+  },
+  "admin": {
+    "dashboard": "لوحة تحكم المسؤول",
+    "overview": "نظرة عامة على سوق ترافيل الخاص بك",
+    "quickActions": "إجراءات سريعة",
+    "totalUsers": "إجمالي المستخدمين",
+    "travelAgencies": "وكالات السفر",
+    "totalBookings": "إجمالي الحجوزات",
+    "platformRevenue": "إيرادات المنصة",
+    "fromLastMonth": "من الشهر الماضي",
+    "newThisMonth": "جديد هذا الشهر",
+    "revenueBookingsTrend": "اتجاه الإيرادات والحجوزات",
+    "last6Months": "آخر 6 أشهر",
+    "pendingActions": "الإجراءات المعلقة",
+    "allCaughtUp": "كل شيء محدث!",
+    "resolve": "حل",
+    "viewAllActions": "عرض جميع الإجراءات",
+    "recentActivity": "النشاط الأخير",
+    "noRecentActivity": "لا يوجد نشاط حديث"
   },
   "travelerDashboard": {
     "welcomeBack": "مرحباً بعودتك",

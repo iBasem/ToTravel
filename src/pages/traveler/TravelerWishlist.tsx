@@ -71,7 +71,8 @@ const wishlistItems = [
 
 export default function TravelerWishlist() {
   const [items, setItems] = useState(wishlistItems);
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const isRTL = i18n.language === 'ar';
 
   const removeFromWishlist = (id: number) => {
     setItems(items.filter(item => item.id !== id));
@@ -90,14 +91,14 @@ export default function TravelerWishlist() {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
+    <div className="space-y-6" dir={isRTL ? 'rtl' : 'ltr'}>
+      <div className={`flex flex-col gap-3 sm:flex-row sm:items-center justify-between ${isRTL ? 'sm:flex-row-reverse' : ''}`}>
+        <div className={isRTL ? 'text-right' : ''}>
           <h1 className="text-2xl font-bold text-gray-900">{t('travelerDashboard.myWishlist')}</h1>
           <p className="text-gray-600">{items.length} {t('travelerDashboard.toursSavedForLater')}</p>
         </div>
-        <Button variant="outline">
-          <Share2 className="w-4 h-4 ltr:mr-2 rtl:ml-2" />
+        <Button variant="outline" className={`flex items-center ${isRTL ? 'flex-row-reverse' : ''}`}>
+          <Share2 className={`w-4 h-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
           {t('travelerDashboard.shareWishlist')}
         </Button>
       </div>
@@ -123,11 +124,11 @@ export default function TravelerWishlist() {
                     className="w-full h-48 object-cover"
                   />
                   {item.discount > 0 && (
-                    <Badge className="absolute top-2 left-2 bg-red-500 text-white">
+                    <Badge className={`absolute top-2 bg-red-500 text-white ${isRTL ? 'right-2' : 'left-2'}`}>
                       -{item.discount}% {t('common.off')}
                     </Badge>
                   )}
-                  <div className="absolute top-2 right-2 flex gap-2">
+                  <div className={`absolute top-2 flex gap-2 ${isRTL ? 'left-2' : 'right-2'}`}>
                     <Button 
                       variant="ghost" 
                       size="icon"
@@ -147,27 +148,27 @@ export default function TravelerWishlist() {
                   </div>
                 </div>
                 <div className="p-4">
-                  <h3 className="font-semibold text-gray-900 mb-2">{item.title}</h3>
-                  <div className="flex items-center gap-2 mb-2">
+                  <h3 className={`font-semibold text-gray-900 mb-2 ${isRTL ? 'text-right' : ''}`}>{item.title}</h3>
+                  <div className={`flex items-center gap-2 mb-2 ${isRTL ? 'flex-row-reverse justify-end' : ''}`}>
                     <MapPin className="w-4 h-4 text-gray-500" />
                     <span className="text-sm text-gray-600">{item.destination}</span>
                     <span className="text-sm text-gray-600">• {item.duration}</span>
                   </div>
-                  <div className="flex items-center gap-2 mb-3">
-                    <div className="flex items-center gap-1">
+                  <div className={`flex items-center gap-2 mb-3 ${isRTL ? 'flex-row-reverse justify-end' : ''}`}>
+                    <div className={`flex items-center gap-1 ${isRTL ? 'flex-row-reverse' : ''}`}>
                       <Star className="w-4 h-4 text-yellow-500 fill-current" />
-                      <span className="text-sm font-medium">{item.rating}</span>
+                      <span className="text-sm font-medium tabular-nums">{item.rating}</span>
                       <span className="text-sm text-gray-500">({item.reviews})</span>
                     </div>
                   </div>
-                  <div className="flex items-center justify-between mb-3">
-                    <div>
+                  <div className={`flex items-center justify-between mb-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                    <div className={isRTL ? 'text-left' : ''}>
                       {item.discount > 0 && (
-                        <span className="text-sm text-gray-500 line-through ltr:mr-2 rtl:ml-2">
+                        <span className={`text-sm text-gray-500 line-through ${isRTL ? 'ml-2' : 'mr-2'}`}>
                           ${item.originalPrice.toLocaleString()}
                         </span>
                       )}
-                      <span className="text-lg font-bold text-gray-900">
+                      <span className="text-lg font-bold text-gray-900 tabular-nums">
                         ${item.currentPrice.toLocaleString()}
                       </span>
                     </div>
@@ -179,8 +180,8 @@ export default function TravelerWishlist() {
                       </Button>
                     </Link>
                   </div>
-                  <p className="text-xs text-gray-500 mt-2">
-                    {t('common.added')} {new Date(item.addedDate).toLocaleDateString()}
+                  <p className={`text-xs text-gray-500 mt-2 ${isRTL ? 'text-right' : ''}`}>
+                    {t('common.added')} {new Date(item.addedDate).toLocaleDateString(isRTL ? 'ar-SA' : 'en-US')}
                   </p>
                 </div>
               </CardContent>

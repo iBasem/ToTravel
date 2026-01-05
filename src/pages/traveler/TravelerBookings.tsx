@@ -56,7 +56,8 @@ const bookings = [
 
 export default function TravelerBookings() {
   const [activeTab, setActiveTab] = useState("all");
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const isRTL = i18n.language === 'ar';
 
   const filteredBookings = bookings.filter(booking => {
     if (activeTab === "all") return true;
@@ -84,8 +85,8 @@ export default function TravelerBookings() {
   };
 
   return (
-    <div className="space-y-6">
-      <div>
+    <div className="space-y-6" dir={isRTL ? 'rtl' : 'ltr'}>
+      <div className={isRTL ? 'text-right' : ''}>
         <h1 className="text-2xl font-bold text-gray-900">{t('travelerDashboard.myBookings')}</h1>
         <p className="text-gray-600">{t('travelerDashboard.manageBookings')}</p>
       </div>
@@ -101,7 +102,7 @@ export default function TravelerBookings() {
           {filteredBookings.map((booking) => (
             <Card key={booking.id} className="overflow-hidden">
               <CardContent className="p-0">
-                <div className="flex flex-col md:flex-row">
+                <div className={`flex flex-col md:flex-row ${isRTL ? 'md:flex-row-reverse' : ''}`}>
                   <div className="md:w-64">
                     <img 
                       src={booking.image} 
@@ -110,49 +111,49 @@ export default function TravelerBookings() {
                     />
                   </div>
                   <div className="flex-1 p-6">
-                    <div className="flex items-start justify-between mb-4">
-                      <div>
+                    <div className={`flex flex-col sm:flex-row sm:items-start justify-between mb-4 gap-3 ${isRTL ? 'sm:flex-row-reverse' : ''}`}>
+                      <div className={isRTL ? 'text-right' : ''}>
                         <h3 className="text-xl font-semibold text-gray-900 mb-2">{booking.title}</h3>
-                        <div className="flex items-center gap-4 text-sm text-gray-600 mb-3 flex-wrap">
-                          <div className="flex items-center gap-1">
+                        <div className={`flex items-center gap-4 text-sm text-gray-600 mb-3 flex-wrap ${isRTL ? 'flex-row-reverse justify-end' : ''}`}>
+                          <div className={`flex items-center gap-1 ${isRTL ? 'flex-row-reverse' : ''}`}>
                             <MapPin className="w-4 h-4" />
                             {booking.destination}
                           </div>
-                          <div className="flex items-center gap-1">
+                          <div className={`flex items-center gap-1 ${isRTL ? 'flex-row-reverse' : ''}`}>
                             <Calendar className="w-4 h-4" />
                             {booking.date}
                           </div>
-                          <div className="flex items-center gap-1">
+                          <div className={`flex items-center gap-1 ${isRTL ? 'flex-row-reverse' : ''}`}>
                             <Clock className="w-4 h-4" />
                             {booking.duration}
                           </div>
-                          <div className="flex items-center gap-1">
+                          <div className={`flex items-center gap-1 ${isRTL ? 'flex-row-reverse' : ''}`}>
                             <Users className="w-4 h-4" />
                             {booking.travelers} {booking.travelers === 1 ? t('booking.travelerSingular') : t('booking.travelerPlural')}
                           </div>
                         </div>
                         <p className="text-sm text-gray-600">{t('travelerDashboard.bookingRef')}: {booking.bookingRef}</p>
                       </div>
-                      <div className="text-right">
+                      <div className={isRTL ? 'text-left' : 'text-right'}>
                         <Badge className={getStatusColor(booking.status)}>
                           {getStatusTranslation(booking.status)}
                         </Badge>
-                        <p className="text-xl font-bold text-gray-900 mt-2">{booking.price}</p>
+                        <p className="text-xl font-bold text-gray-900 mt-2 tabular-nums">{booking.price}</p>
                       </div>
                     </div>
                     
-                    <div className="flex gap-2 flex-wrap">
-                      <Button size="sm" variant="outline">
-                        <Download className="w-4 h-4 ltr:mr-2 rtl:ml-2" />
+                    <div className={`flex gap-2 flex-wrap ${isRTL ? 'flex-row-reverse justify-end' : ''}`}>
+                      <Button size="sm" variant="outline" className={`flex items-center ${isRTL ? 'flex-row-reverse' : ''}`}>
+                        <Download className={`w-4 h-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
                         {t('travelerDashboard.downloadVoucher')}
                       </Button>
-                      <Button size="sm" variant="outline">
-                        <MessageSquare className="w-4 h-4 ltr:mr-2 rtl:ml-2" />
+                      <Button size="sm" variant="outline" className={`flex items-center ${isRTL ? 'flex-row-reverse' : ''}`}>
+                        <MessageSquare className={`w-4 h-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
                         {t('travelerDashboard.contactSupport')}
                       </Button>
                       {booking.status === "Completed" && (
-                        <Button size="sm" variant="outline">
-                          <Star className="w-4 h-4 ltr:mr-2 rtl:ml-2" />
+                        <Button size="sm" variant="outline" className={`flex items-center ${isRTL ? 'flex-row-reverse' : ''}`}>
+                          <Star className={`w-4 h-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
                           {t('travelerDashboard.writeReview')}
                         </Button>
                       )}

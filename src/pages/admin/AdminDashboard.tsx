@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useTranslation } from "react-i18next";
 import { 
   Users, 
   Building2, 
@@ -16,15 +17,6 @@ import {
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from "recharts";
 import { useAdminDashboard } from "@/hooks/useAdminDashboard";
 import { formatDistanceToNow } from "date-fns";
-
-const formatCurrency = (amount: number) => {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  }).format(amount);
-};
 
 const formatActionType = (type: string) => {
   return type
@@ -54,6 +46,9 @@ const getActivityTypeColor = (type: string) => {
 };
 
 export default function AdminDashboard() {
+  const { t, i18n } = useTranslation();
+  const isRTL = i18n.language === 'ar';
+  
   const { 
     stats, 
     activityLogs, 
@@ -64,14 +59,23 @@ export default function AdminDashboard() {
     updatePendingAction 
   } = useAdminDashboard();
 
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat(isRTL ? 'ar-SA' : 'en-US', {
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(amount);
+  };
+
   const handleResolveAction = async (actionId: string) => {
     await updatePendingAction(actionId, 'resolved');
   };
 
   if (loading) {
     return (
-      <div className="space-y-6">
-        <div className="flex items-center justify-between">
+      <div className="space-y-6" dir={isRTL ? 'rtl' : 'ltr'}>
+        <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
           <div>
             <Skeleton className="h-8 w-48 mb-2" />
             <Skeleton className="h-4 w-64" />
@@ -95,75 +99,75 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
-          <p className="text-gray-600">Overview of your Travelle marketplace</p>
+    <div className="space-y-6" dir={isRTL ? 'rtl' : 'ltr'}>
+      <div className={`flex flex-col gap-3 sm:flex-row sm:items-center justify-between ${isRTL ? 'sm:flex-row-reverse' : ''}`}>
+        <div className={isRTL ? 'text-right' : ''}>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">{t('admin.dashboard')}</h1>
+          <p className="text-gray-600">{t('admin.overview')}</p>
         </div>
-        <div className="flex items-center gap-3">
-          <Button variant="outline" onClick={refetch}>
-            <RefreshCw className="w-4 h-4 mr-2" />
-            Refresh
+        <div className={`flex items-center gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
+          <Button variant="outline" onClick={refetch} className={`flex items-center ${isRTL ? 'flex-row-reverse' : ''}`}>
+            <RefreshCw className={`w-4 h-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
+            {t('common.refresh')}
           </Button>
-          <Button>Quick Actions</Button>
+          <Button>{t('admin.quickActions')}</Button>
         </div>
       </div>
 
       {/* Key Metrics */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-gray-500">Total Users</CardTitle>
+          <CardHeader className={`flex flex-row items-center justify-between space-y-0 pb-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
+            <CardTitle className="text-sm font-medium text-gray-500">{t('admin.totalUsers')}</CardTitle>
             <Users className="h-4 w-4 text-gray-400" />
           </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.totalUsers.toLocaleString()}</div>
-            <div className="flex items-center text-sm text-green-600">
-              <TrendingUp className="w-4 h-4 mr-1" />
-              +{stats.usersGrowth}% from last month
+          <CardContent className={isRTL ? 'text-right' : ''}>
+            <div className="text-2xl font-bold tabular-nums">{stats.totalUsers.toLocaleString()}</div>
+            <div className={`flex items-center text-sm text-green-600 ${isRTL ? 'flex-row-reverse justify-end' : ''}`}>
+              <TrendingUp className={`w-4 h-4 ${isRTL ? 'ml-1' : 'mr-1'}`} />
+              +{stats.usersGrowth}% {t('admin.fromLastMonth')}
             </div>
           </CardContent>
         </Card>
 
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-gray-500">Travel Agencies</CardTitle>
+          <CardHeader className={`flex flex-row items-center justify-between space-y-0 pb-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
+            <CardTitle className="text-sm font-medium text-gray-500">{t('admin.travelAgencies')}</CardTitle>
             <Building2 className="h-4 w-4 text-gray-400" />
           </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.totalAgencies}</div>
-            <div className="flex items-center text-sm text-green-600">
-              <TrendingUp className="w-4 h-4 mr-1" />
-              +{stats.agenciesGrowth} new this month
+          <CardContent className={isRTL ? 'text-right' : ''}>
+            <div className="text-2xl font-bold tabular-nums">{stats.totalAgencies}</div>
+            <div className={`flex items-center text-sm text-green-600 ${isRTL ? 'flex-row-reverse justify-end' : ''}`}>
+              <TrendingUp className={`w-4 h-4 ${isRTL ? 'ml-1' : 'mr-1'}`} />
+              +{stats.agenciesGrowth} {t('admin.newThisMonth')}
             </div>
           </CardContent>
         </Card>
 
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-gray-500">Total Bookings</CardTitle>
+          <CardHeader className={`flex flex-row items-center justify-between space-y-0 pb-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
+            <CardTitle className="text-sm font-medium text-gray-500">{t('admin.totalBookings')}</CardTitle>
             <BookOpen className="h-4 w-4 text-gray-400" />
           </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.totalBookings.toLocaleString()}</div>
-            <div className="flex items-center text-sm text-green-600">
-              <TrendingUp className="w-4 h-4 mr-1" />
-              +{stats.bookingsGrowth}% from last month
+          <CardContent className={isRTL ? 'text-right' : ''}>
+            <div className="text-2xl font-bold tabular-nums">{stats.totalBookings.toLocaleString()}</div>
+            <div className={`flex items-center text-sm text-green-600 ${isRTL ? 'flex-row-reverse justify-end' : ''}`}>
+              <TrendingUp className={`w-4 h-4 ${isRTL ? 'ml-1' : 'mr-1'}`} />
+              +{stats.bookingsGrowth}% {t('admin.fromLastMonth')}
             </div>
           </CardContent>
         </Card>
 
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-gray-500">Platform Revenue</CardTitle>
+          <CardHeader className={`flex flex-row items-center justify-between space-y-0 pb-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
+            <CardTitle className="text-sm font-medium text-gray-500">{t('admin.platformRevenue')}</CardTitle>
             <DollarSign className="h-4 w-4 text-gray-400" />
           </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{formatCurrency(stats.platformRevenue)}</div>
-            <div className="flex items-center text-sm text-green-600">
-              <TrendingUp className="w-4 h-4 mr-1" />
-              +{stats.revenueGrowth}% from last month
+          <CardContent className={isRTL ? 'text-right' : ''}>
+            <div className="text-2xl font-bold tabular-nums">{formatCurrency(stats.platformRevenue)}</div>
+            <div className={`flex items-center text-sm text-green-600 ${isRTL ? 'flex-row-reverse justify-end' : ''}`}>
+              <TrendingUp className={`w-4 h-4 ${isRTL ? 'ml-1' : 'mr-1'}`} />
+              +{stats.revenueGrowth}% {t('admin.fromLastMonth')}
             </div>
           </CardContent>
         </Card>
@@ -173,9 +177,9 @@ export default function AdminDashboard() {
         {/* Revenue Chart */}
         <Card className="lg:col-span-2">
           <CardHeader>
-            <div className="flex items-center justify-between">
-              <CardTitle>Revenue & Bookings Trend</CardTitle>
-              <Button variant="outline" size="sm">Last 6 months</Button>
+            <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
+              <CardTitle>{t('admin.revenueBookingsTrend')}</CardTitle>
+              <Button variant="outline" size="sm">{t('admin.last6Months')}</Button>
             </div>
           </CardHeader>
           <CardContent>
@@ -184,8 +188,8 @@ export default function AdminDashboard() {
                 <LineChart data={revenueData}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="name" />
-                  <YAxis yAxisId="left" />
-                  <YAxis yAxisId="right" orientation="right" />
+                  <YAxis yAxisId="left" orientation={isRTL ? "right" : "left"} />
+                  <YAxis yAxisId="right" orientation={isRTL ? "left" : "right"} />
                   <Line 
                     yAxisId="left"
                     type="monotone" 
@@ -211,8 +215,8 @@ export default function AdminDashboard() {
         {/* Pending Actions */}
         <Card>
           <CardHeader>
-            <div className="flex items-center justify-between">
-              <CardTitle>Pending Actions</CardTitle>
+            <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
+              <CardTitle>{t('admin.pendingActions')}</CardTitle>
               <Badge variant="destructive">{pendingActions.length}</Badge>
             </div>
           </CardHeader>
@@ -220,14 +224,14 @@ export default function AdminDashboard() {
             {pendingActions.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-8 text-gray-500">
                 <CheckCircle className="w-12 h-12 mb-2 text-green-500" />
-                <p className="text-sm">All caught up!</p>
+                <p className="text-sm">{t('admin.allCaughtUp')}</p>
               </div>
             ) : (
               pendingActions.slice(0, 3).map((action) => (
-                <div key={action.id} className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
+                <div key={action.id} className={`flex items-start gap-3 p-3 bg-gray-50 rounded-lg ${isRTL ? 'flex-row-reverse' : ''}`}>
                   <AlertCircle className="w-5 h-5 text-orange-500 mt-0.5" />
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2">
+                  <div className={`flex-1 min-w-0 ${isRTL ? 'text-right' : ''}`}>
+                    <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse justify-end' : ''}`}>
                       <Badge variant="outline" className="text-xs">
                         {formatActionType(action.action_type)}
                       </Badge>
@@ -237,7 +241,7 @@ export default function AdminDashboard() {
                     </div>
                     <h4 className="font-medium text-sm mt-1">{action.title}</h4>
                     <p className="text-xs text-gray-600">{action.description}</p>
-                    <div className="flex items-center justify-between mt-2">
+                    <div className={`flex items-center justify-between mt-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
                       <span className="text-xs text-gray-500">
                         {formatDistanceToNow(new Date(action.created_at), { addSuffix: true })}
                       </span>
@@ -247,7 +251,7 @@ export default function AdminDashboard() {
                         className="h-6 text-xs"
                         onClick={() => handleResolveAction(action.id)}
                       >
-                        Resolve
+                        {t('admin.resolve')}
                       </Button>
                     </div>
                   </div>
@@ -256,7 +260,7 @@ export default function AdminDashboard() {
             )}
             {pendingActions.length > 3 && (
               <Button className="w-full" size="sm" variant="outline">
-                View All Actions ({pendingActions.length})
+                {t('admin.viewAllActions')} ({pendingActions.length})
               </Button>
             )}
           </CardContent>
@@ -266,25 +270,25 @@ export default function AdminDashboard() {
       {/* Recent Activity */}
       <Card>
         <CardHeader>
-          <div className="flex items-center justify-between">
-            <CardTitle>Recent Activity</CardTitle>
-            <Button variant="ghost" size="sm">View All</Button>
+          <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
+            <CardTitle>{t('admin.recentActivity')}</CardTitle>
+            <Button variant="ghost" size="sm">{t('common.viewAll')}</Button>
           </div>
         </CardHeader>
         <CardContent>
           {activityLogs.length === 0 ? (
             <div className="text-center py-8 text-gray-500">
-              <p>No recent activity</p>
+              <p>{t('admin.noRecentActivity')}</p>
             </div>
           ) : (
             <div className="space-y-4">
               {activityLogs.map((activity) => (
-                <div key={activity.id} className="flex items-start gap-3">
+                <div key={activity.id} className={`flex items-start gap-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
                   <Avatar className="w-8 h-8">
                     <AvatarImage src="/placeholder.svg" />
                     <AvatarFallback>{activity.user_name[0]}</AvatarFallback>
                   </Avatar>
-                  <div className="flex-1">
+                  <div className={`flex-1 ${isRTL ? 'text-right' : ''}`}>
                     <p className="text-sm">
                       <span className="font-medium">{activity.user_name}</span> {activity.action_description}
                     </p>
