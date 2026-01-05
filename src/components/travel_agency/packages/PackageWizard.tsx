@@ -234,16 +234,19 @@ export function PackageWizard({ isOpen, onClose }: PackageWizardProps) {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto" dir={isRTL ? 'rtl' : 'ltr'}>
-        <DialogHeader>
+        <DialogHeader className={isRTL ? 'text-right' : 'text-left'}>
           <DialogTitle className="text-2xl font-bold">
             {t('packageWizard.createNewPackage')} - {getStepTitle(currentStep)}
           </DialogTitle>
           <div className="mt-4">
-            <div className="flex justify-between text-sm text-gray-600 mb-2">
-              <span>{t('packageWizard.stepOf', { current: currentStep, total: totalSteps })}</span>
+            <div className={`flex justify-between text-sm text-muted-foreground mb-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
+              <span>{t('packageWizard.step')} {currentStep} {t('packageWizard.of')} {totalSteps}</span>
               <span>{Math.round(progress)}% {t('packageWizard.complete')}</span>
             </div>
-            <Progress value={progress} className="w-full" />
+            {/* Progress bar - direction adjusted for RTL */}
+            <div className={isRTL ? 'transform scale-x-[-1]' : ''}>
+              <Progress value={progress} className="w-full" />
+            </div>
           </div>
         </DialogHeader>
 
@@ -256,7 +259,13 @@ export function PackageWizard({ isOpen, onClose }: PackageWizardProps) {
           />
         </div>
 
+        {/* 
+         * RTL Wizard Navigation:
+         * - Previous action on the RIGHT (going back = going right in RTL)
+         * - Next action on the LEFT (going forward = going left in RTL)
+         */}
         <div className={`flex justify-between pt-4 border-t ${isRTL ? 'flex-row-reverse' : ''}`}>
+          {/* Previous button - appears on right in RTL, left in LTR */}
           <Button
             variant="outline"
             onClick={prevStep}
@@ -265,6 +274,7 @@ export function PackageWizard({ isOpen, onClose }: PackageWizardProps) {
             {t('common.previous')}
           </Button>
 
+          {/* Action buttons - appear on left in RTL, right in LTR */}
           <div className={`flex gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
             <Button variant="outline" onClick={onClose}>
               {t('common.cancel')}
@@ -274,6 +284,7 @@ export function PackageWizard({ isOpen, onClose }: PackageWizardProps) {
               <Button 
                 onClick={handleSubmit} 
                 disabled={loading || !isStepValid(currentStep)}
+                className="bg-primary hover:bg-primary/90"
               >
                 {loading ? t('packageWizard.creating') : t('packageWizard.createPackage')}
               </Button>
@@ -281,6 +292,7 @@ export function PackageWizard({ isOpen, onClose }: PackageWizardProps) {
               <Button 
                 onClick={nextStep} 
                 disabled={!isStepValid(currentStep)}
+                className="bg-primary hover:bg-primary/90"
               >
                 {t('common.next')}
               </Button>

@@ -36,16 +36,21 @@ export default function Dashboard() {
 
   return (
     <div className="space-y-6" dir={isRTL ? 'rtl' : 'ltr'}>
-      <h1 className="text-3xl font-bold">{t('agencyDashboard.title')}</h1>
+      {/* Page Header - Title anchored to start (right in RTL) */}
+      <div className={isRTL ? 'text-right' : 'text-left'}>
+        <h1 className="text-3xl font-bold">{t('agencyDashboard.title')}</h1>
+      </div>
       
+      {/* KPI Cards - Grid flows naturally with RTL */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {/* First KPI - Most important, appears first in reading order (right in RTL) */}
         <Card>
           <CardHeader className={`flex flex-row items-center justify-between space-y-0 pb-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
             <CardTitle className="text-sm font-medium">{t('agencyDashboard.totalPackages')}</CardTitle>
             <Package className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
-          <CardContent className={isRTL ? 'text-right' : ''}>
-            <div className="text-2xl font-bold">{stats.totalPackages}</div>
+          <CardContent className={isRTL ? 'text-right' : 'text-left'}>
+            <div className="text-2xl font-bold tabular-nums">{stats.totalPackages}</div>
             <p className="text-xs text-muted-foreground">
               {stats.totalPackages === 0 
                 ? t('agencyDashboard.createFirstPackage')
@@ -60,8 +65,8 @@ export default function Dashboard() {
             <CardTitle className="text-sm font-medium">{t('agencyDashboard.totalBookings')}</CardTitle>
             <Calendar className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
-          <CardContent className={isRTL ? 'text-right' : ''}>
-            <div className="text-2xl font-bold">{stats.totalBookings}</div>
+          <CardContent className={isRTL ? 'text-right' : 'text-left'}>
+            <div className="text-2xl font-bold tabular-nums">{stats.totalBookings}</div>
             <p className="text-xs text-muted-foreground">
               {stats.totalBookings === 0 
                 ? t('agencyDashboard.noBookingsYet')
@@ -76,8 +81,8 @@ export default function Dashboard() {
             <CardTitle className="text-sm font-medium">{t('agencyDashboard.totalCustomers')}</CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
-          <CardContent className={isRTL ? 'text-right' : ''}>
-            <div className="text-2xl font-bold">{stats.totalCustomers}</div>
+          <CardContent className={isRTL ? 'text-right' : 'text-left'}>
+            <div className="text-2xl font-bold tabular-nums">{stats.totalCustomers}</div>
             <p className="text-xs text-muted-foreground">
               {stats.totalCustomers === 0 
                 ? t('agencyDashboard.noCustomersYet')
@@ -92,8 +97,8 @@ export default function Dashboard() {
             <CardTitle className="text-sm font-medium">{t('agencyDashboard.totalRevenue')}</CardTitle>
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
-          <CardContent className={isRTL ? 'text-right' : ''}>
-            <div className="text-2xl font-bold">{formatCurrency(stats.totalRevenue)}</div>
+          <CardContent className={isRTL ? 'text-right' : 'text-left'}>
+            <div className="text-2xl font-bold tabular-nums">{formatCurrency(stats.totalRevenue)}</div>
             <p className="text-xs text-muted-foreground">
               {stats.totalRevenue === 0 
                 ? t('agencyDashboard.noRevenueYet')
@@ -104,12 +109,13 @@ export default function Dashboard() {
         </Card>
       </div>
 
+      {/* Empty State Card */}
       {stats.totalPackages === 0 && (
         <Card>
           <CardContent className="flex flex-col items-center justify-center py-12">
-            <Package className="w-16 h-16 text-gray-400 mb-4" />
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">{t('agencyDashboard.welcomeToDashboard')}</h3>
-            <p className="text-gray-600 text-center mb-6">
+            <Package className="w-16 h-16 text-muted-foreground mb-4" />
+            <h3 className="text-lg font-semibold mb-2">{t('agencyDashboard.welcomeToDashboard')}</h3>
+            <p className="text-muted-foreground text-center mb-6 max-w-md">
               {t('agencyDashboard.startByCreating')}
             </p>
           </CardContent>
