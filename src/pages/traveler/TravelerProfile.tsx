@@ -23,7 +23,9 @@ import {
 } from "lucide-react";
 
 export default function TravelerProfile() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const isRTL = i18n.language === 'ar';
+  
   const [profileData, setProfileData] = useState({
     firstName: "John",
     lastName: "Doe",
@@ -66,9 +68,9 @@ export default function TravelerProfile() {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">{t('travelerDashboard.myProfile')}</h1>
+    <div className="space-y-6" dir={isRTL ? 'rtl' : 'ltr'}>
+      <div className={`flex flex-col gap-3 sm:flex-row sm:items-center justify-between ${isRTL ? 'sm:flex-row-reverse' : ''}`}>
+        <h1 className={`text-2xl font-bold ${isRTL ? 'text-right' : ''}`}>{t('travelerDashboard.myProfile')}</h1>
         <Button>{t('travelerDashboard.saveChanges')}</Button>
       </div>
 
@@ -84,29 +86,29 @@ export default function TravelerProfile() {
               <Button
                 variant="outline"
                 size="icon"
-                className="absolute -bottom-2 -right-2 rounded-full"
+                className={`absolute -bottom-2 rounded-full ${isRTL ? '-left-2' : '-right-2'}`}
               >
                 <Camera className="w-4 h-4" />
               </Button>
             </div>
             <CardTitle>{profileData.firstName} {profileData.lastName}</CardTitle>
             <p className="text-gray-600">{profileData.email}</p>
-            <div className="flex justify-center gap-2 mt-4">
+            <div className={`flex justify-center gap-2 mt-4 ${isRTL ? 'flex-row-reverse' : ''}`}>
               <Badge variant="secondary">{t('travelerDashboard.verifiedTraveler')}</Badge>
               <Badge variant="outline">12 {t('travelerDashboard.countriesVisited')}</Badge>
             </div>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              <div className="flex items-center gap-3 text-sm text-gray-600">
+              <div className={`flex items-center gap-3 text-sm text-gray-600 ${isRTL ? 'flex-row-reverse' : ''}`}>
                 <MapPin className="w-4 h-4" />
                 <span>{profileData.nationality}</span>
               </div>
-              <div className="flex items-center gap-3 text-sm text-gray-600">
+              <div className={`flex items-center gap-3 text-sm text-gray-600 ${isRTL ? 'flex-row-reverse' : ''}`}>
                 <Calendar className="w-4 h-4" />
                 <span>{t('travelerDashboard.memberSince')} 2023</span>
               </div>
-              <div className="flex items-center gap-3 text-sm text-gray-600">
+              <div className={`flex items-center gap-3 text-sm text-gray-600 ${isRTL ? 'flex-row-reverse' : ''}`}>
                 <User className="w-4 h-4" />
                 <span>5 {t('travelerDashboard.completedTours')}</span>
               </div>
@@ -119,7 +121,7 @@ export default function TravelerProfile() {
           {/* Personal Information */}
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+              <CardTitle className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
                 <User className="w-5 h-5" />
                 {t('travelerDashboard.personalInformation')}
               </CardTitle>
@@ -127,75 +129,83 @@ export default function TravelerProfile() {
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="firstName">{t('auth.firstName')}</Label>
+                  <Label htmlFor="firstName" className={isRTL ? 'text-right block' : ''}>{t('auth.firstName')}</Label>
                   <Input
                     id="firstName"
                     value={profileData.firstName}
                     onChange={(e) => handleProfileUpdate('firstName', e.target.value)}
+                    className={isRTL ? 'text-right' : ''}
                   />
                 </div>
                 <div>
-                  <Label htmlFor="lastName">{t('auth.lastName')}</Label>
+                  <Label htmlFor="lastName" className={isRTL ? 'text-right block' : ''}>{t('auth.lastName')}</Label>
                   <Input
                     id="lastName"
                     value={profileData.lastName}
                     onChange={(e) => handleProfileUpdate('lastName', e.target.value)}
+                    className={isRTL ? 'text-right' : ''}
                   />
                 </div>
               </div>
               <div>
-                <Label htmlFor="email">{t('auth.email')}</Label>
+                <Label htmlFor="email" className={isRTL ? 'text-right block' : ''}>{t('auth.email')}</Label>
                 <Input
                   id="email"
                   type="email"
                   value={profileData.email}
                   onChange={(e) => handleProfileUpdate('email', e.target.value)}
+                  dir="ltr"
                 />
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="phone">{t('travelerDashboard.phone')}</Label>
+                  <Label htmlFor="phone" className={isRTL ? 'text-right block' : ''}>{t('travelerDashboard.phone')}</Label>
                   <Input
                     id="phone"
                     value={profileData.phone}
                     onChange={(e) => handleProfileUpdate('phone', e.target.value)}
+                    dir="ltr"
                   />
                 </div>
                 <div>
-                  <Label htmlFor="dateOfBirth">{t('booking.dateOfBirth')}</Label>
+                  <Label htmlFor="dateOfBirth" className={isRTL ? 'text-right block' : ''}>{t('booking.dateOfBirth')}</Label>
                   <Input
                     id="dateOfBirth"
                     type="date"
                     value={profileData.dateOfBirth}
                     onChange={(e) => handleProfileUpdate('dateOfBirth', e.target.value)}
+                    dir="ltr"
                   />
                 </div>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="nationality">{t('booking.nationality')}</Label>
+                  <Label htmlFor="nationality" className={isRTL ? 'text-right block' : ''}>{t('booking.nationality')}</Label>
                   <Input
                     id="nationality"
                     value={profileData.nationality}
                     onChange={(e) => handleProfileUpdate('nationality', e.target.value)}
+                    className={isRTL ? 'text-right' : ''}
                   />
                 </div>
                 <div>
-                  <Label htmlFor="address">{t('travelerDashboard.address')}</Label>
+                  <Label htmlFor="address" className={isRTL ? 'text-right block' : ''}>{t('travelerDashboard.address')}</Label>
                   <Input
                     id="address"
                     value={profileData.address}
                     onChange={(e) => handleProfileUpdate('address', e.target.value)}
+                    className={isRTL ? 'text-right' : ''}
                   />
                 </div>
               </div>
               <div>
-                <Label htmlFor="bio">{t('travelerDashboard.bio')}</Label>
+                <Label htmlFor="bio" className={isRTL ? 'text-right block' : ''}>{t('travelerDashboard.bio')}</Label>
                 <Textarea
                   id="bio"
                   value={profileData.bio}
                   onChange={(e) => handleProfileUpdate('bio', e.target.value)}
                   rows={3}
+                  className={isRTL ? 'text-right' : ''}
                 />
               </div>
             </CardContent>
@@ -204,7 +214,7 @@ export default function TravelerProfile() {
           {/* Emergency Contact */}
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+              <CardTitle className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
                 <Phone className="w-5 h-5" />
                 {t('travelerDashboard.emergencyContact')}
               </CardTitle>
@@ -212,7 +222,7 @@ export default function TravelerProfile() {
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="emergencyName">{t('travelerDashboard.name')}</Label>
+                  <Label htmlFor="emergencyName" className={isRTL ? 'text-right block' : ''}>{t('travelerDashboard.name')}</Label>
                   <Input
                     id="emergencyName"
                     value={profileData.emergencyContact.name}
@@ -220,10 +230,11 @@ export default function TravelerProfile() {
                       ...prev,
                       emergencyContact: { ...prev.emergencyContact, name: e.target.value }
                     }))}
+                    className={isRTL ? 'text-right' : ''}
                   />
                 </div>
                 <div>
-                  <Label htmlFor="emergencyPhone">{t('travelerDashboard.phone')}</Label>
+                  <Label htmlFor="emergencyPhone" className={isRTL ? 'text-right block' : ''}>{t('travelerDashboard.phone')}</Label>
                   <Input
                     id="emergencyPhone"
                     value={profileData.emergencyContact.phone}
@@ -231,11 +242,12 @@ export default function TravelerProfile() {
                       ...prev,
                       emergencyContact: { ...prev.emergencyContact, phone: e.target.value }
                     }))}
+                    dir="ltr"
                   />
                 </div>
               </div>
               <div>
-                <Label htmlFor="emergencyRelationship">{t('travelerDashboard.relationship')}</Label>
+                <Label htmlFor="emergencyRelationship" className={isRTL ? 'text-right block' : ''}>{t('travelerDashboard.relationship')}</Label>
                 <Input
                   id="emergencyRelationship"
                   value={profileData.emergencyContact.relationship}
@@ -243,6 +255,7 @@ export default function TravelerProfile() {
                     ...prev,
                     emergencyContact: { ...prev.emergencyContact, relationship: e.target.value }
                   }))}
+                  className={isRTL ? 'text-right' : ''}
                 />
               </div>
             </CardContent>
@@ -251,14 +264,14 @@ export default function TravelerProfile() {
           {/* Notification Preferences */}
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+              <CardTitle className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
                 <Bell className="w-5 h-5" />
                 {t('travelerDashboard.notificationPreferences')}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div>
+              <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
+                <div className={isRTL ? 'text-right' : ''}>
                   <Label htmlFor="emailBookings">{t('travelerDashboard.emailForBookings')}</Label>
                   <p className="text-sm text-gray-600">{t('travelerDashboard.emailForBookingsDesc')}</p>
                 </div>
@@ -269,8 +282,8 @@ export default function TravelerProfile() {
                 />
               </div>
               <Separator />
-              <div className="flex items-center justify-between">
-                <div>
+              <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
+                <div className={isRTL ? 'text-right' : ''}>
                   <Label htmlFor="emailPromotions">{t('travelerDashboard.emailPromotions')}</Label>
                   <p className="text-sm text-gray-600">{t('travelerDashboard.emailPromotionsDesc')}</p>
                 </div>
@@ -281,8 +294,8 @@ export default function TravelerProfile() {
                 />
               </div>
               <Separator />
-              <div className="flex items-center justify-between">
-                <div>
+              <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
+                <div className={isRTL ? 'text-right' : ''}>
                   <Label htmlFor="smsReminders">{t('travelerDashboard.smsReminders')}</Label>
                   <p className="text-sm text-gray-600">{t('travelerDashboard.smsRemindersDesc')}</p>
                 </div>
@@ -293,8 +306,8 @@ export default function TravelerProfile() {
                 />
               </div>
               <Separator />
-              <div className="flex items-center justify-between">
-                <div>
+              <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
+                <div className={isRTL ? 'text-right' : ''}>
                   <Label htmlFor="pushNotifications">{t('travelerDashboard.pushNotifications')}</Label>
                   <p className="text-sm text-gray-600">{t('travelerDashboard.pushNotificationsDesc')}</p>
                 </div>
@@ -310,14 +323,14 @@ export default function TravelerProfile() {
           {/* Privacy Settings */}
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+              <CardTitle className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
                 <Shield className="w-5 h-5" />
                 {t('travelerDashboard.privacySettings')}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div>
+              <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
+                <div className={isRTL ? 'text-right' : ''}>
                   <Label htmlFor="profileVisible">{t('travelerDashboard.publicProfile')}</Label>
                   <p className="text-sm text-gray-600">{t('travelerDashboard.publicProfileDesc')}</p>
                 </div>
@@ -328,8 +341,8 @@ export default function TravelerProfile() {
                 />
               </div>
               <Separator />
-              <div className="flex items-center justify-between">
-                <div>
+              <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
+                <div className={isRTL ? 'text-right' : ''}>
                   <Label htmlFor="showTravelHistory">{t('travelerDashboard.showTravelHistory')}</Label>
                   <p className="text-sm text-gray-600">{t('travelerDashboard.showTravelHistoryDesc')}</p>
                 </div>
@@ -340,8 +353,8 @@ export default function TravelerProfile() {
                 />
               </div>
               <Separator />
-              <div className="flex items-center justify-between">
-                <div>
+              <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
+                <div className={isRTL ? 'text-right' : ''}>
                   <Label htmlFor="allowMessages">{t('travelerDashboard.allowMessages')}</Label>
                   <p className="text-sm text-gray-600">{t('travelerDashboard.allowMessagesDesc')}</p>
                 </div>

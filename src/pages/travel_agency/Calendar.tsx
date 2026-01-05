@@ -8,8 +8,10 @@ export default function Calendar() {
   const isRTL = i18n.language === 'ar';
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-3xl font-bold">{t('agencyDashboard.calendarScheduling')}</h1>
+    <div className="space-y-6" dir={isRTL ? 'rtl' : 'ltr'}>
+      <h1 className={`text-2xl sm:text-3xl font-bold ${isRTL ? 'text-right' : ''}`}>
+        {t('agencyDashboard.calendarScheduling')}
+      </h1>
 
       <Card>
         <CardHeader>

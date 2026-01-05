@@ -39,7 +39,8 @@
     "added": "Added",
     "off": "OFF",
     "total": "Total",
-    "required": "required"
+    "required": "required",
+    "refresh": "Refresh"
   },
   "nav": {
     "home": "Home",
@@ -414,7 +415,31 @@
     "creatingPackage": "Creating...",
     "errorLoadingDashboard": "Error loading dashboard",
     "errorLoadingPackages": "Error loading packages",
-    "errorLoadingBookings": "Error loading bookings"
+    "errorLoadingBookings": "Error loading bookings",
+    "bookings": "bookings",
+    "reviews": "reviews",
+    "supportedFormatsImages": "Support for JPG, PNG, WebP formats",
+    "supportedFormatsVideos": "Support for MP4, WebM formats",
+    "messagesCommunication": "Messages & Communication"
+  },
+  "admin": {
+    "dashboard": "Admin Dashboard",
+    "overview": "Overview of your Travelle marketplace",
+    "quickActions": "Quick Actions",
+    "totalUsers": "Total Users",
+    "travelAgencies": "Travel Agencies",
+    "totalBookings": "Total Bookings",
+    "platformRevenue": "Platform Revenue",
+    "fromLastMonth": "from last month",
+    "newThisMonth": "new this month",
+    "revenueBookingsTrend": "Revenue & Bookings Trend",
+    "last6Months": "Last 6 months",
+    "pendingActions": "Pending Actions",
+    "allCaughtUp": "All caught up!",
+    "resolve": "Resolve",
+    "viewAllActions": "View All Actions",
+    "recentActivity": "Recent Activity",
+    "noRecentActivity": "No recent activity"
   },
   "travelerDashboard": {
     "welcomeBack": "Welcome back",

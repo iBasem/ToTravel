@@ -72,14 +72,16 @@ export default function Feedback() {
   };
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-3xl font-bold">{t('agencyDashboard.customerFeedback')}</h1>
+    <div className="space-y-6" dir={isRTL ? 'rtl' : 'ltr'}>
+      <h1 className={`text-2xl sm:text-3xl font-bold ${isRTL ? 'text-right' : ''}`}>
+        {t('agencyDashboard.customerFeedback')}
+      </h1>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
         <Card>
           <CardContent className="p-6">
             <div className="text-center">
-              <div className="text-3xl font-bold text-blue-600">4.8</div>
+              <div className="text-3xl font-bold text-blue-600 tabular-nums">4.8</div>
               <div className={`flex justify-center mt-1 ${isRTL ? 'flex-row-reverse' : ''}`}>
                 {renderStars(5)}
               </div>
@@ -91,7 +93,7 @@ export default function Feedback() {
         <Card>
           <CardContent className="p-6">
             <div className="text-center">
-              <div className="text-3xl font-bold text-green-600">127</div>
+              <div className="text-3xl font-bold text-green-600 tabular-nums">127</div>
               <p className="text-sm text-gray-600">{t('agencyDashboard.totalReviews')}</p>
             </div>
           </CardContent>
@@ -100,7 +102,7 @@ export default function Feedback() {
         <Card>
           <CardContent className="p-6">
             <div className="text-center">
-              <div className="text-3xl font-bold text-yellow-600">3</div>
+              <div className="text-3xl font-bold text-yellow-600 tabular-nums">3</div>
               <p className="text-sm text-gray-600">{t('agencyDashboard.pendingReviews')}</p>
             </div>
           </CardContent>
@@ -109,7 +111,7 @@ export default function Feedback() {
         <Card>
           <CardContent className="p-6">
             <div className="text-center">
-              <div className="text-3xl font-bold text-purple-600">95%</div>
+              <div className="text-3xl font-bold text-purple-600 tabular-nums">95%</div>
               <p className="text-sm text-gray-600">{t('agencyDashboard.satisfactionRate')}</p>
             </div>
           </CardContent>
@@ -127,8 +129,8 @@ export default function Feedback() {
           <div className="space-y-6">
             {feedbacks.map((feedback) => (
               <div key={feedback.id} className="border-b pb-6 last:border-b-0">
-                <div className={`flex items-start justify-between mb-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                  <div>
+                <div className={`flex flex-col sm:flex-row sm:items-start justify-between mb-3 gap-2 ${isRTL ? 'sm:flex-row-reverse' : ''}`}>
+                  <div className={isRTL ? 'text-right' : ''}>
                     <p className="font-medium">{feedback.traveler}</p>
                     <p className="text-sm text-gray-600">{feedback.package}</p>
                   </div>
@@ -139,11 +141,11 @@ export default function Feedback() {
                     <p className="text-xs text-gray-500 mt-1">{feedback.date}</p>
                   </div>
                 </div>
-                <div className={`flex items-center mb-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                <div className={`flex items-center mb-2 ${isRTL ? 'flex-row-reverse justify-end' : ''}`}>
                   {renderStars(feedback.rating)}
                   <span className={`text-sm text-gray-600 ${isRTL ? 'mr-2' : 'ml-2'}`}>({feedback.rating}/5)</span>
                 </div>
-                <p className="text-gray-700">{feedback.comment}</p>
+                <p className={`text-gray-700 ${isRTL ? 'text-right' : ''}`}>{feedback.comment}</p>
               </div>
             ))}
           </div>
