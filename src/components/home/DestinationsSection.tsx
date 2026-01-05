@@ -3,7 +3,8 @@ import { useTranslation } from "react-i18next";
 import { Card, CardContent } from "@/components/ui/card";
 
 export function DestinationsSection() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const isRTL = i18n.language === 'ar';
 
   const destinationCards = [
     {
@@ -44,12 +45,12 @@ export function DestinationsSection() {
   ];
 
   return (
-    <section className="max-w-7xl mx-auto px-6 py-16">
+    <section className="max-w-7xl mx-auto px-6 py-16" dir={isRTL ? 'rtl' : 'ltr'}>
       <div className="text-center mb-8">
-        <h2 className="text-3xl font-bold text-gray-900 mb-4">{t('destinations.title')}</h2>
-        <p className="text-gray-600">{t('destinations.subtitle')}</p>
+        <h2 className="text-3xl font-bold mb-4">{t('destinations.title')}</h2>
+        <p className="text-muted-foreground">{t('destinations.subtitle')}</p>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
+      <div className={`grid grid-cols-1 md:grid-cols-5 gap-6 ${isRTL ? 'direction-rtl' : ''}`}>
         {destinationCards.map((destination) => (
           <Link key={destination.id} to="/destinations">
             <Card className={`overflow-hidden cursor-pointer hover:shadow-lg transition-shadow ${destination.color}`}>
@@ -62,8 +63,8 @@ export function DestinationsSection() {
                   />
                 </div>
                 <div className="p-4 text-center">
-                  <h3 className="font-semibold text-gray-900">{destination.title}</h3>
-                  <p className="text-sm text-gray-600">{destination.subtitle}</p>
+                  <h3 className="font-semibold">{destination.title}</h3>
+                  <p className="text-sm text-muted-foreground">{destination.subtitle}</p>
                 </div>
               </CardContent>
             </Card>

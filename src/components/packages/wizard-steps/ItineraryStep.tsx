@@ -163,35 +163,36 @@ export function ItineraryStep({ data, onUpdate }: ItineraryStepProps) {
   return (
     <div className="space-y-6" dir={isRTL ? 'rtl' : 'ltr'}>
       <div className={`flex justify-between items-center ${isRTL ? 'flex-row-reverse' : ''}`}>
-        <div>
+        <div className={isRTL ? 'text-right' : 'text-left'}>
           <h3 className="text-lg font-semibold">{t('packageWizard.dailyItinerary')}</h3>
-          <p className="text-gray-600">{t('packageWizard.dailyItineraryDesc')}</p>
+          <p className="text-muted-foreground">{t('packageWizard.dailyItineraryDesc')}</p>
         </div>
-        <Button onClick={addDay}>
-          <Plus className={`w-4 h-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
+        <Button onClick={addDay} className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
+          <Plus className="w-4 h-4" />
           {t('packageWizard.addDay')}
         </Button>
       </div>
 
       <div className="space-y-6">
         {itinerary.map((day, dayIndex) => (
-          <Card key={dayIndex} className={`border-l-4 border-l-blue-500 ${isRTL ? 'border-l-0 border-r-4 border-r-blue-500' : ''}`}>
+          <Card key={dayIndex} className={`${isRTL ? 'border-r-4 border-r-primary' : 'border-l-4 border-l-primary'}`}>
             <CardHeader className={`flex flex-row items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
               <div className={`flex items-center gap-4 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                <div className="flex-shrink-0 w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                  <span className="font-semibold text-blue-600">{isRTL ? `ي${day.day}` : `D${day.day}`}</span>
+                <div className="flex-shrink-0 w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+                  <span className="font-semibold text-primary">{isRTL ? `ي${day.day}` : `D${day.day}`}</span>
                 </div>
                 <div className="flex-1">
                   <Input
                     value={day.title}
                     onChange={(e) => updateDay(dayIndex, "title", e.target.value)}
                     placeholder={t('packageWizard.accommodationPlaceholder')}
-                    className="font-medium text-lg border-none px-0 focus-visible:ring-0"
+                    className={`font-medium text-lg border-none px-0 focus-visible:ring-0 ${isRTL ? 'text-right' : 'text-left'}`}
+                    dir={isRTL ? 'rtl' : 'ltr'}
                   />
                 </div>
               </div>
               <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                <GripVertical className="w-4 h-4 text-gray-400 cursor-move" />
+                <GripVertical className="w-4 h-4 text-muted-foreground cursor-move" />
                 {itinerary.length > 1 && (
                   <Button
                     variant="outline"
@@ -206,12 +207,13 @@ export function ItineraryStep({ data, onUpdate }: ItineraryStepProps) {
             <CardContent className="space-y-6">
               {/* Description */}
               <div className="space-y-2">
-                <Label>{t('packageWizard.dayDescription')}</Label>
+                <Label className={isRTL ? 'text-right block' : 'text-left block'}>{t('packageWizard.dayDescription')}</Label>
                 <Textarea
                   value={day.description}
                   onChange={(e) => updateDay(dayIndex, "description", e.target.value)}
                   placeholder={t('packageWizard.dayDescriptionPlaceholder')}
-                  className="min-h-[80px]"
+                  className={`min-h-[80px] ${isRTL ? 'text-right' : 'text-left'}`}
+                  dir={isRTL ? 'rtl' : 'ltr'}
                 />
               </div>
 
@@ -225,7 +227,7 @@ export function ItineraryStep({ data, onUpdate }: ItineraryStepProps) {
                   
                   <div className="space-y-2">
                     {day.activities.filter(a => a.trim()).map((activity, activityIndex) => (
-                      <div key={activityIndex} className={`flex items-start gap-2 p-2 bg-gray-50 rounded ${isRTL ? 'flex-row-reverse' : ''}`}>
+                      <div key={activityIndex} className={`flex items-start gap-2 p-2 bg-muted rounded ${isRTL ? 'flex-row-reverse text-right' : 'text-left'}`}>
                         <ChevronRight className={`w-3 h-3 mt-0.5 text-green-600 flex-shrink-0 ${isRTL ? 'rotate-180' : ''}`} />
                         <span className="text-sm flex-1">{activity}</span>
                         <Button
@@ -246,6 +248,8 @@ export function ItineraryStep({ data, onUpdate }: ItineraryStepProps) {
                       onChange={(e) => updateDay(dayIndex, "newActivity", e.target.value)}
                       placeholder={t('packageWizard.addNewActivity')}
                       onKeyPress={(e) => e.key === "Enter" && addActivity(dayIndex)}
+                      className={isRTL ? 'text-right' : 'text-left'}
+                      dir={isRTL ? 'rtl' : 'ltr'}
                     />
                     <Button
                       type="button"
@@ -268,6 +272,8 @@ export function ItineraryStep({ data, onUpdate }: ItineraryStepProps) {
                     value={day.accommodation}
                     onChange={(e) => updateDay(dayIndex, "accommodation", e.target.value)}
                     placeholder={t('packageWizard.accommodationPlaceholder')}
+                    className={isRTL ? 'text-right' : 'text-left'}
+                    dir={isRTL ? 'rtl' : 'ltr'}
                   />
                 </div>
               </div>
@@ -278,22 +284,22 @@ export function ItineraryStep({ data, onUpdate }: ItineraryStepProps) {
                   <Utensils className="w-4 h-4 text-orange-600" />
                   <Label className="font-medium">{t('packageWizard.mealsIncluded')}</Label>
                 </div>
-                <div className={`flex gap-4 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                <div className={`flex gap-4 flex-wrap ${isRTL ? 'flex-row-reverse' : ''}`}>
                   {mealOptions.map((meal) => (
-                    <div key={meal.key} className={`flex items-center space-x-2 ${isRTL ? 'space-x-reverse' : ''}`}>
+                    <div key={meal.key} className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
                       <Checkbox
                         id={`${dayIndex}-${meal.key}`}
                         checked={day.meals.includes(meal.key)}
                         onCheckedChange={() => toggleMeal(dayIndex, meal.key)}
                       />
-                      <Label htmlFor={`${dayIndex}-${meal.key}`} className="text-sm">
+                      <Label htmlFor={`${dayIndex}-${meal.key}`} className="text-sm cursor-pointer">
                         {meal.label}
                       </Label>
                     </div>
                   ))}
                 </div>
                 {day.meals.length > 0 && (
-                  <div className="flex flex-wrap gap-1">
+                  <div className={`flex flex-wrap gap-1 ${isRTL ? 'flex-row-reverse' : ''}`}>
                     {day.meals.map((meal, index) => (
                       <Badge key={index} variant="secondary" className="text-xs bg-orange-50 text-orange-700">
                         {mealOptions.find(m => m.key === meal)?.label || meal}
@@ -310,9 +316,9 @@ export function ItineraryStep({ data, onUpdate }: ItineraryStepProps) {
                   <Label className="font-medium">{t('packageWizard.dayHighlights')}</Label>
                 </div>
                 
-                <div className="flex flex-wrap gap-1">
+                <div className={`flex flex-wrap gap-1 ${isRTL ? 'flex-row-reverse' : ''}`}>
                   {day.highlights.map((highlight, index) => (
-                    <Badge key={index} variant="outline" className="text-xs border-yellow-200 text-yellow-700 flex items-center gap-1">
+                    <Badge key={index} variant="outline" className={`text-xs border-yellow-200 text-yellow-700 flex items-center gap-1 ${isRTL ? 'flex-row-reverse' : ''}`}>
                       {highlight}
                       <X
                         className="w-3 h-3 cursor-pointer"
@@ -328,6 +334,8 @@ export function ItineraryStep({ data, onUpdate }: ItineraryStepProps) {
                     onChange={(e) => updateDay(dayIndex, "newHighlight", e.target.value)}
                     placeholder={t('packageWizard.addDayHighlight')}
                     onKeyPress={(e) => e.key === "Enter" && addHighlight(dayIndex)}
+                    className={isRTL ? 'text-right' : 'text-left'}
+                    dir={isRTL ? 'rtl' : 'ltr'}
                   />
                   <Button
                     type="button"

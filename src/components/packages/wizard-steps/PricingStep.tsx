@@ -145,7 +145,7 @@ export function PricingStep({ data, onUpdate }: PricingStepProps) {
       {/* Additional Inclusions */}
       <Card>
         <CardHeader>
-          <CardTitle>{t('packageWizard.additionalInclusions')}</CardTitle>
+          <CardTitle className={isRTL ? 'text-right' : 'text-left'}>{t('packageWizard.additionalInclusions')}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className={`flex gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
@@ -154,14 +154,16 @@ export function PricingStep({ data, onUpdate }: PricingStepProps) {
               onChange={(e) => handleInputChange("newInclusion", e.target.value)}
               placeholder={t('packageWizard.additionalInclusionPlaceholder')}
               onKeyPress={(e) => e.key === "Enter" && addAdditionalInclusion()}
+              className={isRTL ? 'text-right' : 'text-left'}
+              dir={isRTL ? 'rtl' : 'ltr'}
             />
             <Button type="button" onClick={addAdditionalInclusion} size="sm">
               <Plus className="w-4 h-4" />
             </Button>
           </div>
-          <div className="flex flex-wrap gap-2">
+          <div className={`flex flex-wrap gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
             {formData.additionalInclusions.map((inclusion: string, index: number) => (
-              <Badge key={index} variant="secondary" className="flex items-center gap-1">
+              <Badge key={index} variant="secondary" className={`flex items-center gap-1 ${isRTL ? 'flex-row-reverse' : ''}`}>
                 {inclusion}
                 <X
                   className="w-3 h-3 cursor-pointer"
@@ -176,7 +178,7 @@ export function PricingStep({ data, onUpdate }: PricingStepProps) {
       {/* Exclusions */}
       <Card>
         <CardHeader>
-          <CardTitle>{t('packageWizard.whatsNotIncluded')}</CardTitle>
+          <CardTitle className={isRTL ? 'text-right' : 'text-left'}>{t('packageWizard.whatsNotIncluded')}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className={`flex gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
@@ -185,14 +187,16 @@ export function PricingStep({ data, onUpdate }: PricingStepProps) {
               onChange={(e) => handleInputChange("newExclusion", e.target.value)}
               placeholder={t('packageWizard.exclusionPlaceholder')}
               onKeyPress={(e) => e.key === "Enter" && addExclusion()}
+              className={isRTL ? 'text-right' : 'text-left'}
+              dir={isRTL ? 'rtl' : 'ltr'}
             />
             <Button type="button" onClick={addExclusion} size="sm">
               <Plus className="w-4 h-4" />
             </Button>
           </div>
-          <div className="flex flex-wrap gap-2">
+          <div className={`flex flex-wrap gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
             {formData.exclusions.map((exclusion: string, index: number) => (
-              <Badge key={index} variant="outline" className="flex items-center gap-1">
+              <Badge key={index} variant="outline" className={`flex items-center gap-1 ${isRTL ? 'flex-row-reverse' : ''}`}>
                 {exclusion}
                 <X
                   className="w-3 h-3 cursor-pointer"
@@ -207,23 +211,27 @@ export function PricingStep({ data, onUpdate }: PricingStepProps) {
       {/* Policies */}
       <Card>
         <CardHeader>
-          <CardTitle>{t('packageWizard.policiesAndTerms')}</CardTitle>
+          <CardTitle className={isRTL ? 'text-right' : 'text-left'}>{t('packageWizard.policiesAndTerms')}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label>{t('packageWizard.cancellationPolicy')}</Label>
+            <Label className={isRTL ? 'text-right block' : 'text-left block'}>{t('packageWizard.cancellationPolicy')}</Label>
             <Input
               value={formData.cancellation_policy}
               onChange={(e) => handleInputChange("cancellation_policy", e.target.value)}
               placeholder={t('packageWizard.cancellationPlaceholder')}
+              className={isRTL ? 'text-right' : 'text-left'}
+              dir={isRTL ? 'rtl' : 'ltr'}
             />
           </div>
           <div className="space-y-2">
-            <Label>{t('packageWizard.termsAndConditions')}</Label>
+            <Label className={isRTL ? 'text-right block' : 'text-left block'}>{t('packageWizard.termsAndConditions')}</Label>
             <Input
               value={formData.terms_conditions}
               onChange={(e) => handleInputChange("terms_conditions", e.target.value)}
               placeholder={t('packageWizard.termsPlaceholder')}
+              className={isRTL ? 'text-right' : 'text-left'}
+              dir={isRTL ? 'rtl' : 'ltr'}
             />
           </div>
         </CardContent>
