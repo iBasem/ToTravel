@@ -42,22 +42,24 @@ export function TravelerSidebar() {
 
   return (
     <Sidebar 
-      className="hidden lg:flex"
+      className="hidden lg:flex border-border"
       collapsible="icon"
       side={isRTL ? "right" : "left"}
     >
-      <SidebarContent className="bg-white border-gray-200">
-        <div className="p-4 border-b border-gray-200">
+      <SidebarContent className="bg-background">
+        {/* Logo - anchored to start */}
+        <div className="p-4 border-b border-border">
           <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
-            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center flex-shrink-0">
-              <MapPin className="w-5 h-5 text-white" />
+            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center flex-shrink-0">
+              <MapPin className="w-5 h-5 text-primary-foreground" />
             </div>
             {!isCollapsed && (
-              <span className="text-xl font-bold text-blue-600">travelle</span>
+              <span className="text-xl font-bold text-primary">travelle</span>
             )}
           </div>
         </div>
 
+        {/* Navigation Menu */}
         <SidebarGroup className="px-4 py-2">
           <SidebarGroupContent>
             <SidebarMenu>
@@ -70,8 +72,8 @@ export function TravelerSidebar() {
                       className={({ isActive }) =>
                         `flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${isRTL ? 'flex-row-reverse text-right' : 'text-left'} ${
                           isActive
-                            ? "bg-blue-50 text-blue-600 font-medium"
-                            : "text-gray-700 hover:bg-gray-50"
+                            ? `bg-primary/10 text-primary font-medium ${isRTL ? 'border-r-2 border-primary' : 'border-l-2 border-primary'}`
+                            : "text-muted-foreground hover:bg-muted hover:text-foreground"
                         }`
                       }
                     >
@@ -85,13 +87,14 @@ export function TravelerSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
 
+        {/* CTA Card */}
         {!isCollapsed && (
-          <div className="mt-auto p-4 border-t border-gray-200">
-            <div className={`bg-blue-50 rounded-lg p-4 ${isRTL ? 'text-right' : 'text-left'}`}>
-              <h3 className="font-medium text-blue-900 mb-2">
+          <div className="mt-auto p-4 border-t border-border">
+            <div className={`bg-primary/5 border border-primary/20 rounded-lg p-4 ${isRTL ? 'text-right' : 'text-left'}`}>
+              <h3 className="font-medium text-primary mb-2">
                 {t('travelerDashboard.planNextAdventure')}
               </h3>
-              <NavLink to="/" className="w-full bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors block text-center">
+              <NavLink to="/" className="w-full bg-primary text-primary-foreground px-4 py-2 rounded-lg text-sm font-medium hover:bg-primary/90 transition-colors block text-center">
                 {t('travelerDashboard.browseTours')}
               </NavLink>
             </div>

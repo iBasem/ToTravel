@@ -10,15 +10,20 @@ const TravelerLayout = () => {
 
   return (
     <SidebarProvider>
-      <div className="min-h-screen flex w-full bg-gray-50" dir={isRTL ? 'rtl' : 'ltr'}>
-        {/* Sidebar - Hidden on mobile, shown on desktop */}
+      <div 
+        className="min-h-screen flex w-full bg-muted/30" 
+        dir={isRTL ? 'rtl' : 'ltr'}
+      >
+        {/* Sidebar - anchored based on language direction */}
         <TravelerSidebar />
         
         {/* Main content area */}
-        <SidebarInset className="flex-1 flex flex-col w-full">
+        <SidebarInset className="flex-1 flex flex-col w-full min-w-0">
           <TravelerHeader />
-          <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto w-full">
-            <Outlet />
+          <main className="flex-1 p-4 sm:p-6 lg:p-8 w-full">
+            <div className="max-w-7xl mx-auto w-full">
+              <Outlet />
+            </div>
           </main>
         </SidebarInset>
       </div>

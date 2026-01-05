@@ -79,33 +79,35 @@ export function HeaderSection() {
     }
   };
 
+  const isRTL = i18n.language === 'ar';
+
   return (
-    <header className="bg-white shadow-sm relative z-50">
+    <header className="bg-background border-b border-border sticky top-0 z-50" dir={isRTL ? 'rtl' : 'ltr'}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
-          {/* Logo */}
-          <Link to="/" className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-              <MapPin className="w-5 h-5 text-white" />
+        <div className={`flex items-center justify-between h-16 ${isRTL ? 'flex-row-reverse' : ''}`}>
+          {/* Logo - anchored to start (right in RTL) */}
+          <Link to="/" className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
+            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+              <MapPin className="w-5 h-5 text-primary-foreground" />
             </div>
-            <span className="text-xl font-bold text-blue-600">travelle</span>
+            <span className="text-xl font-bold text-primary">travelle</span>
           </Link>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-6 rtl:space-x-reverse">
-            <Link to="/" className="text-gray-600 hover:text-gray-900 transition-colors">
+          {/* Desktop Navigation - flows with direction */}
+          <nav className={`hidden md:flex items-center gap-6 ${isRTL ? 'flex-row-reverse' : ''}`}>
+            <Link to="/" className="text-muted-foreground hover:text-foreground transition-colors">
               {t('nav.home')}
             </Link>
-            <Link to="/packages" className="text-gray-600 hover:text-gray-900 transition-colors">
+            <Link to="/packages" className="text-muted-foreground hover:text-foreground transition-colors">
               {t('nav.packages')}
             </Link>
-            <Link to="/destinations" className="text-gray-600 hover:text-gray-900 transition-colors">
+            <Link to="/destinations" className="text-muted-foreground hover:text-foreground transition-colors">
               {t('nav.destinations')}
             </Link>
           </nav>
 
-          {/* Desktop Auth Buttons & Language Switcher */}
-          <div className="hidden md:flex items-center gap-2">
+          {/* Desktop Auth & Language - anchored to end (left in RTL) */}
+          <div className={`hidden md:flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
             <LanguageSwitcher />
             {!loading && user && profile ? (
               <DropdownMenu>
@@ -113,58 +115,58 @@ export function HeaderSection() {
                   <Button variant="ghost" className="relative h-10 w-10 rounded-full">
                     <Avatar className="h-10 w-10">
                       <AvatarImage src={profile.avatar_url || undefined} alt={getUserDisplayName()} />
-                      <AvatarFallback className="bg-blue-600 text-white">
+                      <AvatarFallback className="bg-primary text-primary-foreground">
                         {getUserInitials()}
                       </AvatarFallback>
                     </Avatar>
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-56" align={i18n.language === 'ar' ? 'start' : 'end'} forceMount>
-                  <div className={`flex flex-col space-y-1 p-2 ${i18n.language === 'ar' ? 'text-right' : 'text-left'}`}>
+                <DropdownMenuContent className="w-56 bg-background" align={isRTL ? 'start' : 'end'} forceMount>
+                  <div className={`flex flex-col space-y-1 p-2 ${isRTL ? 'text-right' : 'text-left'}`}>
                     <p className="text-sm font-medium leading-none">{getUserDisplayName()}</p>
                     <p className="text-xs leading-none text-muted-foreground">
                       {user.email}
                     </p>
-                    <p className="text-xs leading-none text-blue-600 font-medium">
+                    <p className="text-xs leading-none text-primary font-medium">
                       {getRoleLabel()}
                     </p>
                   </div>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => navigate(getDashboardPath())} className={i18n.language === 'ar' ? 'flex-row-reverse' : ''}>
-                    <LayoutDashboard className={`h-4 w-4 ${i18n.language === 'ar' ? 'ml-2' : 'mr-2'}`} />
+                  <DropdownMenuItem onClick={() => navigate(getDashboardPath())} className={isRTL ? 'flex-row-reverse' : ''}>
+                    <LayoutDashboard className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
                     {t('nav.dashboard', 'Dashboard')}
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={handleLogout} className={`text-red-600 ${i18n.language === 'ar' ? 'flex-row-reverse' : ''}`}>
-                    <LogOut className={`h-4 w-4 ${i18n.language === 'ar' ? 'ml-2' : 'mr-2'}`} />
+                  <DropdownMenuItem onClick={handleLogout} className={`text-destructive ${isRTL ? 'flex-row-reverse' : ''}`}>
+                    <LogOut className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
                     {t('nav.logout', 'Logout')}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : !loading ? (
-              <>
+              <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
                 <Link to="/auth?type=traveler">
-                  <Button variant="ghost" size="sm" className="flex items-center gap-1">
+                  <Button variant="ghost" size="sm" className={`flex items-center gap-1 ${isRTL ? 'flex-row-reverse' : ''}`}>
                     <Users className="w-4 h-4" />
                     {t('common.traveler')}
                   </Button>
                 </Link>
                 <Link to="/auth?type=agency">
-                  <Button size="sm" className="flex items-center gap-1">
+                  <Button size="sm" className={`flex items-center gap-1 ${isRTL ? 'flex-row-reverse' : ''}`}>
                     <Building className="w-4 h-4" />
                     {t('common.agency')}
                   </Button>
                 </Link>
-              </>
+              </div>
             ) : null}
           </div>
 
           {/* Mobile Menu Button */}
-          <div className="md:hidden flex items-center gap-2">
+          <div className={`md:hidden flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
             <LanguageSwitcher />
             <button
               onClick={toggleMenu}
-              className="p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-colors"
+              className="p-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
               aria-label="Toggle menu"
             >
               {isMenuOpen ? (
@@ -176,79 +178,79 @@ export function HeaderSection() {
           </div>
         </div>
 
-        {/* Mobile Menu */}
+        {/* Mobile Menu - slides from appropriate side */}
         {isMenuOpen && (
-          <div className="md:hidden absolute top-16 left-0 right-0 bg-white border-t border-gray-200 shadow-lg">
-            <div className="px-4 py-3 space-y-3">
+          <div className={`md:hidden absolute top-16 bg-background border-t border-border shadow-lg ${isRTL ? 'right-0 left-0' : 'left-0 right-0'}`}>
+            <div className={`px-4 py-3 space-y-3 ${isRTL ? 'text-right' : 'text-left'}`}>
               {/* Navigation Links */}
               <Link
                 to="/"
-                className="block py-2 text-gray-600 hover:text-gray-900 transition-colors"
+                className="block py-2 text-muted-foreground hover:text-foreground transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
                 {t('nav.home')}
               </Link>
               <Link
                 to="/packages"
-                className="block py-2 text-gray-600 hover:text-gray-900 transition-colors"
+                className="block py-2 text-muted-foreground hover:text-foreground transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
                 {t('nav.packages')}
               </Link>
               <Link
                 to="/destinations"
-                className="block py-2 text-gray-600 hover:text-gray-900 transition-colors"
+                className="block py-2 text-muted-foreground hover:text-foreground transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
                 {t('nav.destinations')}
               </Link>
               
               {/* Auth Section */}
-              <div className="pt-3 border-t border-gray-200 space-y-2">
+              <div className="pt-3 border-t border-border space-y-2">
                 {!loading && user && profile ? (
                   <>
-                    <div className="flex items-center gap-3 py-2">
+                    <div className={`flex items-center gap-3 py-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
                       <Avatar className="h-10 w-10">
                         <AvatarImage src={profile.avatar_url || undefined} alt={getUserDisplayName()} />
-                        <AvatarFallback className="bg-blue-600 text-white">
+                        <AvatarFallback className="bg-primary text-primary-foreground">
                           {getUserInitials()}
                         </AvatarFallback>
                       </Avatar>
-                      <div>
+                      <div className={isRTL ? 'text-right' : 'text-left'}>
                         <p className="text-sm font-medium">{getUserDisplayName()}</p>
                         <p className="text-xs text-muted-foreground">{getRoleLabel()}</p>
                       </div>
                     </div>
                     <Link to={getDashboardPath()} onClick={() => setIsMenuOpen(false)}>
-                      <Button variant="ghost" size="sm" className="w-full justify-start">
-                        <LayoutDashboard className="w-4 h-4 me-2" />
+                      <Button variant="ghost" size="sm" className={`w-full ${isRTL ? 'justify-end flex-row-reverse' : 'justify-start'}`}>
+                        <LayoutDashboard className={`w-4 h-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
                         {t('nav.dashboard', 'Dashboard')}
                       </Button>
                     </Link>
                     <Button 
                       variant="ghost" 
                       size="sm" 
-                      className="w-full justify-start text-red-600"
+                      className={`w-full text-destructive ${isRTL ? 'justify-end flex-row-reverse' : 'justify-start'}`}
                       onClick={() => {
                         setIsMenuOpen(false);
                         handleLogout();
                       }}
                     >
-                      <LogOut className="w-4 h-4 me-2" />
+                      <LogOut className={`w-4 h-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
                       {t('nav.logout', 'Logout')}
                     </Button>
                   </>
                 ) : !loading ? (
                   <>
                     <Link to="/auth?type=traveler" onClick={() => setIsMenuOpen(false)}>
-                      <Button variant="ghost" size="sm" className="w-full justify-start">
-                        <Users className="w-4 h-4 me-2" />
+                      <Button variant="ghost" size="sm" className={`w-full ${isRTL ? 'justify-end flex-row-reverse' : 'justify-start'}`}>
+                        <Users className={`w-4 h-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
                         {t('nav.travelerLogin')}
                       </Button>
                     </Link>
                     <Link to="/auth?type=agency" onClick={() => setIsMenuOpen(false)}>
-                      <Button size="sm" className="w-full justify-start">
-                        <Building className="w-4 h-4 me-2" />
+                      <Button size="sm" className={`w-full ${isRTL ? 'justify-end flex-row-reverse' : 'justify-start'}`}>
+                        <Building className={`w-4 h-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
                         {t('nav.agencyLogin')}
                       </Button>
                     </Link>
