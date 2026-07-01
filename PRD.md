@@ -580,7 +580,6 @@ erDiagram
 | `Dashboard.tsx` root | `src/pages/` | Legacy redirect |
 | Duplicate `Messages.tsx` | `src/pages/` | Confusing with agency version |
 | Duplicate `Deals.tsx` | `src/pages/` | Confusing with agency version |
-| `lovable-tagger` reference | `package.json` | Lovable.dev leftover |
 
 ---
 

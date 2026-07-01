@@ -167,7 +167,7 @@ Effectively **nonexistent**, and this is a production blocker on its own:
 
 - **No CI/CD** (no `.github/workflows`). No automated lint/typecheck/test/build gate. Nothing stops a broken commit from shipping.
 - **No environment strategy** — hardcoded Supabase creds mean no clean dev/staging/prod separation.
-- **No IaC / deploy config** (no Dockerfile, Vercel, or Netlify config in-repo). Deployment is presumably manual/Lovable-hosted and undocumented.
+- **No IaC / deploy config** (no Dockerfile, Vercel, or Netlify config in-repo). Deployment is manual and undocumented.
 - **No monitoring/alerting** (no Sentry/Datadog/error tracking) — you'd learn about outages from users.
 - **No backup/DR plan documented.** Supabase does automated backups on paid tiers, but there's no documented restore runbook or RPO/RTO.
 

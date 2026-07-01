@@ -1,73 +1,86 @@
-# Welcome to your Lovable project
+# Tour Vendor Hub
 
-## Project info
+A comprehensive tour management platform connecting travel agencies and travelers — package creation and publishing, a multi-step booking flow, agency and admin dashboards, reviews, and wishlists. Fully bilingual (English / Arabic) with first-class RTL support.
 
-**URL**: https://lovable.dev/projects/2f7c8a77-a2e9-4d80-9016-9fecf53dfaa9
+## Tech stack
 
-## How can I edit this code?
+- **Build tool:** Vite
+- **Language:** TypeScript
+- **UI:** React 18, shadcn/ui (Radix primitives), Tailwind CSS
+- **Routing:** React Router
+- **Data/state:** TanStack Query
+- **Backend:** Supabase (Postgres, Auth, Storage)
+- **Maps:** Mapbox GL (geocoding + route maps)
+- **i18n:** i18next / react-i18next (EN/AR, RTL)
+- **Testing:** Vitest + Testing Library
 
-There are several ways of editing your application.
+## Getting started
 
-**Use Lovable**
-
-Simply visit the [Lovable Project](https://lovable.dev/projects/2f7c8a77-a2e9-4d80-9016-9fecf53dfaa9) and start prompting.
-
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
+Requires Node.js 18+ and npm.
 
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+# 1. Install dependencies
+npm install
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+# 2. Configure environment (see below)
+cp .env.example .env   # then fill in the values
 
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# 3. Start the dev server
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+## Environment variables
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+All client-side config uses Vite's `VITE_` prefix. Copy `.env.example` to `.env` and fill in:
 
-**Use GitHub Codespaces**
+| Variable | Purpose |
+|----------|---------|
+| `VITE_SUPABASE_URL` | Supabase project URL |
+| `VITE_SUPABASE_PROJECT_ID` | Supabase project ID |
+| `VITE_SUPABASE_PUBLISHABLE_KEY` | Supabase anon/publishable key (safe for the browser) |
+| `VITE_MAPBOX_TOKEN` | Mapbox **public** token (`pk.*`) — add URL restrictions in the Mapbox dashboard |
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+> These are all publishable/client keys and are inlined into the browser bundle at build time. Never put secret keys in `VITE_*` variables. Set them in your host's environment for production builds.
 
-## What technologies are used for this project?
+## Scripts
 
-This project is built with:
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Start the Vite dev server |
+| `npm run build` | Production build |
+| `npm run build:dev` | Build in development mode |
+| `npm run preview` | Preview the production build locally |
+| `npm run lint` | Run ESLint |
+| `npm test` | Run the Vitest suite |
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+## Project structure
 
-## How can I deploy this project?
+```
+src/
+  features/        # feature modules (self-contained: components, hooks, pages)
+    admin/         # admin dashboard
+    agency/        # agency dashboard
+    auth/          # authentication
+    bookings/      # booking flow
+    home/          # public landing / listings
+    packages/      # tour package creation + details
+    reviews/       # reviews
+    traveler/      # traveler dashboard
+  integrations/    # external service clients (Supabase)
+  layouts/         # shared layout shells (headers, sidebars)
+  ui/              # shadcn/ui component library
+  hooks/           # shared hooks
+  i18n/            # translations + i18next config
+  lib/             # shared utilities
+  pages/           # top-level route entries
+supabase/
+  migrations/      # database migrations
+```
 
-Simply open [Lovable](https://lovable.dev/projects/2f7c8a77-a2e9-4d80-9016-9fecf53dfaa9) and click on Share -> Publish.
+## Backend
 
-## Can I connect a custom domain to my Lovable project?
+The database schema and migrations live in [`supabase/migrations`](supabase/migrations). See [`BACKEND-HOSTING-COMPARISON.md`](BACKEND-HOSTING-COMPARISON.md) for hosting options.
 
-Yes, you can!
+## Deployment
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+This is a static Vite build (`npm run build` → `dist/`) and can be hosted on any static host or platform (Vercel, Netlify, Cloudflare Pages, S3+CloudFront, a container, etc.). Provide the environment variables above through your host's configuration.
