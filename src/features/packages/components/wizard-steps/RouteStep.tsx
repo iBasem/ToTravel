@@ -9,6 +9,8 @@ import { DestinationSearch } from './route/DestinationSearch';
 import { DestinationsList } from './route/DestinationsList';
 import { RouteData, RouteDestination, defaultRouteData } from './route/types';
 
+const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN;
+
 interface RouteStepProps {
   data: RouteData;
   onUpdate: (data: RouteData) => void;
@@ -42,7 +44,7 @@ export function RouteStep({ data, onUpdate }: RouteStepProps) {
 
   const handleMapClick = useCallback((lngLat: { lng: number; lat: number }) => {
     // Reverse geocode to get place name
-    fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${lngLat.lng},${lngLat.lat}.json?access_token=pk.eyJ1IjoiYmFzb29vbSIsImEiOiJjbWp5bmQwNzIxaGt0M2VzOWhnbGQwbzhvIn0.B__V-cVYI0fJZ6Fc9YtD-w&types=place,locality,region&limit=1`)
+    fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${lngLat.lng},${lngLat.lat}.json?access_token=${MAPBOX_TOKEN}&types=place,locality,region&limit=1`)
       .then(res => res.json())
       .then(data => {
         if (data.features && data.features.length > 0) {

@@ -3,7 +3,7 @@ import { Input } from '@/ui/input';
 import { Search, MapPin, Plus, Loader2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
-const MAPBOX_TOKEN = 'pk.eyJ1IjoiYmFzb29vbSIsImEiOiJjbWp5bmQwNzIxaGt0M2VzOWhnbGQwbzhvIn0.B__V-cVYI0fJZ6Fc9YtD-w';
+const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN;
 
 interface SearchResult {
   id: string;

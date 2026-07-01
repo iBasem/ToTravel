@@ -9,8 +9,7 @@
  * @see https://docs.mapbox.com/api/maps/static-images/
  */
 
-const MAPBOX_TOKEN =
-  'pk.eyJ1IjoiYmFzb29vbSIsImEiOiJjbWp5bmQwNzIxaGt0M2VzOWhnbGQwbzhvIn0.B__V-cVYI0fJZ6Fc9YtD-w';
+const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN;
 
 interface RoutePoint {
   latitude: number;
