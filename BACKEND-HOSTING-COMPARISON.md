@@ -1,4 +1,4 @@
-# Backend Hosting Decision — Tour Vendor Hub (MVP)
+# Backend Hosting Decision — ToTravel (MVP)
 
 **Question:** Should I use **Cloudflare as the backend** instead of Supabase, or **self-host Supabase on Hostinger**? Full comparison + alternatives.
 **Context:** MVP, not large-scale. The app already runs on **managed Supabase** (Postgres + Auth + Storage + RLS) and has a working normalized schema and RLS policies.

@@ -14,7 +14,7 @@ export function FooterSection() {
               <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
                 <MapPin className="w-5 h-5 text-primary-foreground" />
               </div>
-              <span className="text-xl font-bold">travelle</span>
+              <span className="text-xl font-bold">ToTravel</span>
             </div>
             <p className="text-muted">{t('footer.tagline')}</p>
           </div>

@@ -1,5 +1,5 @@
 # Product Requirements Document (PRD)
-## Tour Vendor Hub - Current State Analysis
+## ToTravel - Current State Analysis
 
 **Document Version:** 1.0  
 **Date:** January 6, 2026  
@@ -9,7 +9,7 @@
 
 ## Executive Summary
 
-Tour Vendor Hub is a multi-tenant tour management platform connecting travel agencies with travelers. Built with React 18, TypeScript, Vite, and Supabase, the platform enables agencies to create and manage tour packages while travelers can browse, book, and review tours.
+ToTravel is a multi-tenant tour management platform connecting travel agencies with travelers. Built with React 18, TypeScript, Vite, and Supabase, the platform enables agencies to create and manage tour packages while travelers can browse, book, and review tours.
 
 > [!CAUTION]
 > This PRD documents the **actual implemented state** of the codebase, not aspirational features. Features marked as "Partial" or "Stubbed" have code present but are not fully functional.
@@ -704,4 +704,4 @@ erDiagram
 
 **Document End**
 
-*This PRD represents the current state of the Tour Vendor Hub codebase as of January 6, 2026. It should be updated as implementation progresses.*
+*This PRD represents the current state of the ToTravel codebase as of January 6, 2026. It should be updated as implementation progresses.*

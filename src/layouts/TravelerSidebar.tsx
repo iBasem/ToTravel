@@ -54,7 +54,7 @@ export function TravelerSidebar() {
               <MapPin className="w-5 h-5 text-primary-foreground" />
             </div>
             {!isCollapsed && (
-              <span className="text-xl font-bold text-primary">travelle</span>
+              <span className="text-xl font-bold text-primary">ToTravel</span>
             )}
           </div>
         </div>

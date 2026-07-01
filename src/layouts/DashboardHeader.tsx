@@ -93,7 +93,7 @@ export function DashboardHeader() {
                     <div className="w-8 h-8 bg-blue-600 rounded-xl flex items-center justify-center flex-shrink-0">
                       <MapPin className="w-4 h-4 text-white" />
                     </div>
-                    <span className="text-xl font-bold text-gray-900">Travelle</span>
+                    <span className="text-xl font-bold text-gray-900">ToTravel</span>
                   </div>
                 </div>
 

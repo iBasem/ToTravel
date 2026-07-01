@@ -1,4 +1,4 @@
-# Tour Vendor Hub — Production Readiness & Architecture Audit
+# ToTravel — Production Readiness & Architecture Audit
 
 **Reviewer role:** Senior Full-Stack Architect / Principal Engineer / PM / UX / DB / DevOps / Security / QA / Startup CTO
 **Scope:** `tour-vendor-hub-1` — full codebase, database migrations, and product docs

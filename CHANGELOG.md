@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to the Tour Vendor Hub project will be documented in this file.
+All notable changes to the ToTravel project will be documented in this file.
 
 ## [Unreleased] - 2026-01-07
 

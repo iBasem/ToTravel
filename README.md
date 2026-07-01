@@ -1,4 +1,4 @@
-# Tour Vendor Hub
+# ToTravel
 
 A comprehensive tour management platform connecting travel agencies and travelers — package creation and publishing, a multi-step booking flow, agency and admin dashboards, reviews, and wishlists. Fully bilingual (English / Arabic) with first-class RTL support.
 

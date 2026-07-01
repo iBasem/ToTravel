@@ -61,7 +61,7 @@ export function AppSidebar() {
               <MapPin className="w-4 h-4 text-primary-foreground" />
             </div>
             {!isCollapsed && (
-              <span className="text-xl font-bold">Travelle</span>
+              <span className="text-xl font-bold">ToTravel</span>
             )}
           </div>
         </div>
