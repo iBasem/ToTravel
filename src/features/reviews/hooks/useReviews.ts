@@ -102,28 +102,31 @@ export function useReviews() {
 
         setSubmitting(true);
         try {
-            const { error } = await supabase
-                .from('reviews')
-                .insert({
-                    traveler_id: user.id,
-                    package_id: packageId,
+            // The edge function verifies the booking belongs to the caller and
+            // is completed; package_id is derived server-side from the booking.
+            const { error } = await supabase.functions.invoke('create-review', {
+                body: {
                     booking_id: bookingId,
                     rating,
                     comment
-                });
+                },
+            });
 
-            if (error) throw error;
+            if (error) {
+                let message = 'Failed to submit review';
+                try {
+                    const body = await (error as { context?: Response }).context?.json();
+                    if (body?.error) message = body.error;
+                } catch { /* keep generic message */ }
+                throw new Error(message);
+            }
 
             toast.success('Review submitted successfully');
             fetchPackageReviews(packageId);
             return true;
-        } catch (error: any) {
+        } catch (error) {
             console.error('Error submitting review:', error);
-            if (error.code === '23505') {
-                toast.error('You have already reviewed this booking');
-            } else {
-                toast.error('Failed to submit review');
-            }
+            toast.error(error instanceof Error ? error.message : 'Failed to submit review');
             return false;
         } finally {
             setSubmitting(false);
