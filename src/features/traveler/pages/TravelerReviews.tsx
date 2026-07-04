@@ -8,7 +8,7 @@ import { LoadingSpinner } from "@/ui/loading-spinner";
 import { Card, CardContent } from "@/ui/card";
 import { StarRating } from "@/features/reviews/components/StarRating";
 import { useReviews } from "@/features/reviews/hooks/useReviews";
-import { format } from "date-fns";
+import { formatDate } from "@/lib/formatters";
 
 export default function TravelerReviews() {
   const { t } = useTranslation();
@@ -61,7 +61,7 @@ export default function TravelerReviews() {
                           <Link to={`/packages/${review.package.id}`}>{review.package.title}</Link>
                         </h3>
                         <span className="text-sm text-gray-500 whitespace-nowrap">
-                          {format(new Date(review.created_at), 'MMM d, yyyy')}
+                          {formatDate(review.created_at, 'MMM d, yyyy')}
                         </span>
                       </div>
                       <StarRating rating={review.rating} readonly size="sm" />

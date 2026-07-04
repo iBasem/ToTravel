@@ -141,7 +141,6 @@
     "discoverTours": "Discover Amazing Tours",
     "findPerfect": "Find and book the perfect tour from our curated selection",
     "searchPlaceholder": "Search destinations, packages...",
-    "toursFound": "tours found",
     "filterTours": "Filter Tours",
     "viewAllTours": "View All Tours",
     "noPackages": "No packages available",
@@ -184,7 +183,9 @@
       "minDays_other": "min. {{count}} days",
       "maxDays_one": "{{count}}{{plus}} day",
       "maxDays_other": "{{count}}{{plus}} days"
-    }
+    },
+    "toursFound_one": "{{count}} tour found",
+    "toursFound_other": "{{count}} tours found"
   },
   "categories": {
     "adventure": "Adventure",
@@ -343,10 +344,8 @@
     "dairyFree": "Dairy-free",
     "other": "Other",
     "travelInsurance": "Travel Insurance",
-    "addTravelInsurance": "Add comprehensive travel insurance (+$49 per person)",
     "travelInsuranceDesc": "Covers trip cancellation, medical emergencies, and lost luggage",
     "airportTransfer": "Airport Transfer",
-    "addAirportTransfer": "Add round-trip airport transfer (+$35 per person)",
     "airportTransferDesc": "Private transfer from/to the airport for your convenience",
     "costSummary": "Cost Summary",
     "tourPackage": "Tour package",
@@ -421,8 +420,6 @@
     "noPackagesFound": "No packages found",
     "tryAdjustingSearch": "Try adjusting your search terms",
     "createFirstPackageDesc": "Create your first travel package to get started",
-    "daysPlanned": "day planned",
-    "daysPlannedPlural": "days planned",
     "unpublish": "Unpublish",
     "publish": "Publish",
     "published": "Published",
@@ -510,7 +507,9 @@
     "reviews": "reviews",
     "supportedFormatsImages": "Support for JPG, PNG, WebP formats",
     "supportedFormatsVideos": "Support for MP4, WebM formats",
-    "messagesCommunication": "Messages & Communication"
+    "messagesCommunication": "Messages & Communication",
+    "daysPlanned_one": "{{count}} day planned",
+    "daysPlanned_other": "{{count}} days planned"
   },
   "admin": {
     "dashboard": "Admin Dashboard",
@@ -684,7 +683,6 @@
     "shareExperience": "Share your experience...",
     "submitReview": "Submit Review",
     "publishedReviews": "Your Published Reviews",
-    "peopleFoundHelpful": "people found this helpful",
     "reviewedOn": "Reviewed on",
     "myWishlist": "My Wishlist",
     "toursSavedForLater": "tours saved for later",
@@ -698,7 +696,9 @@
     "noBookingsYet": "You don't have any bookings yet",
     "noRecentlyViewed": "No recently viewed tours",
     "cancelled": "Cancelled",
-    "package": "Package"
+    "package": "Package",
+    "peopleFoundHelpful_one": "{{count}} person found this helpful",
+    "peopleFoundHelpful_other": "{{count}} people found this helpful"
   },
   "packageWizard": {
     "createNewPackage": "Create New Package",
@@ -866,14 +866,15 @@
     "subtitle": "View your bookings and availability at a glance",
     "bookingDetails": "Booking Details",
     "today": "Today",
-    "bookingsCount": "bookings",
     "sun": "Sun",
     "mon": "Mon",
     "tue": "Tue",
     "wed": "Wed",
     "thu": "Thu",
     "fri": "Fri",
-    "sat": "Sat"
+    "sat": "Sat",
+    "bookingsCount_one": "{{count}} booking",
+    "bookingsCount_other": "{{count}} bookings"
   },
   "reports": {
     "subtitle": "Comprehensive insights and analytics",
@@ -938,7 +939,15 @@
   "errors": {
     "somethingWentWrong": "Something went wrong",
     "unexpectedError": "An unexpected error occurred.",
-    "refreshPage": "Refresh Page"
+    "refreshPage": "Refresh Page",
+    "404": "404",
+    "pageNotFound": "Oops! Page not found",
+    "returnHome": "Return to Home",
+    "networkError": "Network error — please check your connection",
+    "timeout": "The request took too long. Please try again.",
+    "tryAgain": "Try again",
+    "requiredField": "This field is required",
+    "invalidEmail": "Please enter a valid email address"
   },
   "ui": {
     "toggleSidebar": "Toggle Sidebar",

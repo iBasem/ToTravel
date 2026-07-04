@@ -128,7 +128,7 @@ export function CalendarView() {
                                         </span>
                                         {dayBookings.length > 0 && (
                                             <span className="text-xs text-gray-500 font-normal">
-                                                {dayBookings.length} {t('calendar.bookingsCount')}
+                                                {t('calendar.bookingsCount', { count: dayBookings.length })}
                                             </span>
                                         )}
                                     </div>

@@ -7,7 +7,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/ui/avatar";
 import { StarRating } from "./StarRating";
 import { ReviewForm } from "./ReviewForm";
 import { useReviews } from "@/features/reviews/hooks/useReviews";
-import { format } from "date-fns";
+import { formatDate } from "@/lib/formatters";
 import { useTranslation } from "react-i18next";
 
 interface ReviewsSectionProps {
@@ -100,7 +100,7 @@ export function ReviewsSection({ packageId }: ReviewsSectionProps) {
                                             {review.traveler.first_name} {review.traveler.last_name}
                                         </h4>
                                         <span className="text-sm text-gray-500">
-                                            {format(new Date(review.created_at), 'MMM d, yyyy')}
+                                            {formatDate(review.created_at, 'MMM d, yyyy')}
                                         </span>
                                     </div>
                                     <div>

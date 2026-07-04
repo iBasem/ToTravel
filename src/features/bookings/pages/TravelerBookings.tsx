@@ -16,7 +16,7 @@ import {
 import { useBookings } from "@/features/bookings/hooks/useBookings";
 import { LoadingSpinner } from "@/ui/loading-spinner";
 import { EmptyState } from "@/ui/empty-state";
-import { format } from "date-fns";
+import { formatCurrency, formatDate } from "@/lib/formatters";
 
 import { useNavigate } from "react-router-dom";
 
@@ -132,7 +132,7 @@ export default function TravelerBookings() {
                               </div>
                               <div className="flex items-center gap-1">
                                 <Calendar className="w-4 h-4" />
-                                {format(new Date(booking.booking_date), 'MMM dd, yyyy')}
+                                {formatDate(booking.booking_date, 'MMM dd, yyyy')}
                               </div>
                               <div className="flex items-center gap-1">
                                 <Clock className="w-4 h-4" />
@@ -149,7 +149,7 @@ export default function TravelerBookings() {
                             <Badge className={getStatusColor(booking.status)}>
                               {getStatusTranslation(booking.status)}
                             </Badge>
-                            <p className="text-xl font-bold text-gray-900 mt-2 tabular-nums">${booking.total_price.toLocaleString()}</p>
+                            <p className="text-xl font-bold text-gray-900 mt-2 tabular-nums">{formatCurrency(booking.total_price)}</p>
                           </div>
                         </div>
 

@@ -10,6 +10,7 @@ import { Badge } from "@/ui/badge";
 import { usePackages } from "@/features/packages/hooks/usePackages";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
+import { formatCurrency } from "@/lib/formatters";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -207,12 +208,12 @@ export default function Packages() {
                   <p className="text-xs sm:text-sm text-gray-600">{pkg.duration_days} {t('common.days')}, {pkg.duration_nights} {t('agencyDashboard.nights')}</p>
                   <div className="flex items-center justify-between">
                     <p className="text-base sm:text-lg lg:text-xl font-bold text-blue-600">
-                      ${pkg.base_price}
+                      {formatCurrency(pkg.base_price)}
                     </p>
                   </div>
                   <div className="flex items-center justify-between pt-1 sm:pt-2 border-t border-gray-100">
                     <span className="text-xs sm:text-sm text-gray-600">
-                      {pkg.itineraries?.length || 0} {(pkg.itineraries?.length || 0) !== 1 ? t('agencyDashboard.daysPlannedPlural') : t('agencyDashboard.daysPlanned')}
+                      {t('agencyDashboard.daysPlanned', { count: pkg.itineraries?.length || 0 })}
                     </span>
                     <Button
                       variant="ghost"

@@ -7,6 +7,7 @@ import { Textarea } from '@/ui/textarea';
 import { Calendar, Users, MapPin } from 'lucide-react';
 import { BookingFormData } from '../BookingWizard';
 import { useTranslation } from 'react-i18next';
+import { formatCurrency } from '@/lib/formatters';
 
 interface BookingStep1Props {
   formData: BookingFormData;
@@ -57,7 +58,7 @@ export function BookingStep1({ formData, updateFormData, packageData }: BookingS
                     </div>
                   </div>
                   <div className="text-end">
-                    <div className="font-medium">${availability.price}</div>
+                    <div className="font-medium">{formatCurrency(availability.price)}</div>
                     <div className="text-sm text-muted-foreground">{t('common.perPerson')}</div>
                   </div>
                 </div>
