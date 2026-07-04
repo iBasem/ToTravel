@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/features/auth/context/AuthContext';
+import { formatDate } from '@/lib/formatters';
 
 interface Payout {
   id: string;
@@ -125,7 +126,9 @@ export function useAdminFinancials() {
 
       // Calculate revenue data by month
       const monthlyData = new Map<string, { revenue: number; commission: number }>();
-      const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      const months = Array.from({ length: 12 }, (_, m) =>
+        formatDate(new Date(2026, m, 1), 'MMM')
+      );
       
       // Initialize last 6 months
       const now = new Date();

@@ -8,6 +8,7 @@ import { HeaderSection } from "@/features/home/components/HeaderSection";
 import { FooterSection } from "@/features/home/components/FooterSection";
 import { useTranslation } from "react-i18next";
 import { Seo } from "@/lib/seo";
+import { formatCurrency } from "@/lib/formatters";
 import {
   Search,
   MapPin,
@@ -17,94 +18,90 @@ import {
   Plane
 } from "lucide-react";
 
-const destinations = [
+// Language-independent data. Names/regions/descriptions/highlights live in
+// the locale files under destinations.items.<id>; slug feeds the packages
+// search query and must stay English.
+const DESTINATION_DATA = [
   {
-    id: 1,
-    name: "Vietnam",
-    region: "Southeast Asia",
+    id: "vietnam",
+    slug: "vietnam",
+    regionKeys: ["asia"],
     image: "https://images.unsplash.com/photo-1528127269322-539801943592?w=600&h=400&fit=crop",
-    description: "From bustling cities to serene countryside, Vietnam offers incredible diversity.",
     tourCount: 45,
     averagePrice: 899,
     rating: 4.8,
-    highlights: ["Halong Bay", "Ho Chi Minh City", "Hoi An", "Hanoi"]
   },
   {
-    id: 2,
-    name: "Turkey",
-    region: "Europe/Asia",
+    id: "turkey",
+    slug: "turkey",
+    regionKeys: ["europe", "asia"],
     image: "https://images.unsplash.com/photo-1559592413-7cec4d0cae2b?w=600&h=400&fit=crop",
-    description: "Where East meets West - ancient history and modern culture collide.",
     tourCount: 38,
     averagePrice: 1299,
     rating: 4.9,
-    highlights: ["Cappadocia", "Istanbul", "Pamukkale", "Ephesus"]
   },
   {
-    id: 3,
-    name: "Morocco",
-    region: "North Africa",
+    id: "morocco",
+    slug: "morocco",
+    regionKeys: ["africa"],
     image: "https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?w=600&h=400&fit=crop",
-    description: "Desert adventures, imperial cities, and exotic markets await.",
     tourCount: 52,
     averagePrice: 756,
     rating: 4.7,
-    highlights: ["Marrakech", "Sahara Desert", "Fez", "Casablanca"]
   },
   {
-    id: 4,
-    name: "Japan",
-    region: "East Asia",
+    id: "japan",
+    slug: "japan",
+    regionKeys: ["asia"],
     image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=600&h=400&fit=crop",
-    description: "Ancient traditions blend seamlessly with cutting-edge technology.",
     tourCount: 29,
     averagePrice: 2199,
     rating: 4.9,
-    highlights: ["Tokyo", "Kyoto", "Mount Fuji", "Osaka"]
   },
   {
-    id: 5,
-    name: "Peru",
-    region: "South America",
+    id: "peru",
+    slug: "peru",
+    regionKeys: ["americas"],
     image: "https://images.unsplash.com/photo-1482938289607-e9573fc25ebb?w=600&h=400&fit=crop",
-    description: "Home to ancient civilizations and breathtaking landscapes.",
     tourCount: 34,
     averagePrice: 1499,
     rating: 4.8,
-    highlights: ["Machu Picchu", "Cusco", "Sacred Valley", "Lima"]
   },
   {
-    id: 6,
-    name: "Italy",
-    region: "Southern Europe",
+    id: "italy",
+    slug: "italy",
+    regionKeys: ["europe"],
     image: "https://images.unsplash.com/photo-1469041797191-50ace28483c3?w=600&h=400&fit=crop",
-    description: "Art, history, cuisine, and romance in the heart of Europe.",
     tourCount: 67,
     averagePrice: 1189,
     rating: 4.6,
-    highlights: ["Rome", "Florence", "Venice", "Tuscany"]
-  }
+  },
 ];
+
+const REGION_KEYS = ["all", "europe", "asia", "africa", "americas", "oceania"] as const;
 
 export default function Destinations() {
   const { t } = useTranslation();
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedRegion, setSelectedRegion] = useState("All Regions");
+  // Stable key, not a translated label — labels change with the language.
+  const [selectedRegion, setSelectedRegion] = useState<(typeof REGION_KEYS)[number]>("all");
 
-  const regions = [
-    t('destinations.allRegions'),
-    t('destinations.europe'),
-    t('destinations.asia'),
-    t('destinations.africa'),
-    t('destinations.americas'),
-    t('destinations.oceania')
-  ];
+  const destinations = DESTINATION_DATA.map((d) => ({
+    ...d,
+    name: t(`destinations.items.${d.id}.name`),
+    region: t(`destinations.items.${d.id}.region`),
+    description: t(`destinations.items.${d.id}.description`),
+    highlights: [0, 1, 2, 3].map((i) => t(`destinations.items.${d.id}.highlights.${i}`)),
+  }));
 
   const filteredDestinations = destinations.filter(dest => {
-    const matchesSearch = dest.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      dest.region.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesRegion = selectedRegion === t('destinations.allRegions') ||
-      dest.region.toLowerCase().includes(selectedRegion.toLowerCase());
+    const q = searchTerm.toLowerCase();
+    const matchesSearch =
+      dest.name.toLowerCase().includes(q) ||
+      dest.region.toLowerCase().includes(q) ||
+      dest.slug.includes(q);
+    const matchesRegion =
+      selectedRegion === "all" || dest.regionKeys.includes(selectedRegion);
     return matchesSearch && matchesRegion;
   });
 
@@ -143,14 +140,14 @@ export default function Destinations() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Region Filter */}
         <div className="flex flex-wrap gap-2 mb-8">
-          {regions.map((region) => (
+          {REGION_KEYS.map((regionKey) => (
             <Button
-              key={region}
-              variant={selectedRegion === region ? "default" : "outline"}
-              onClick={() => setSelectedRegion(region)}
+              key={regionKey}
+              variant={selectedRegion === regionKey ? "default" : "outline"}
+              onClick={() => setSelectedRegion(regionKey)}
               className="rounded-full"
             >
-              {region}
+              {t(`destinations.${regionKey === 'all' ? 'allRegions' : regionKey}`)}
             </Button>
           ))}
         </div>
@@ -191,7 +188,7 @@ export default function Destinations() {
                 />
                 <div className="absolute top-4 start-4">
                   <Badge className="bg-blue-600 text-white">
-                    {destination.tourCount} tours
+                    {t('destinations.tourCount', { count: destination.tourCount })}
                   </Badge>
                 </div>
                 <div className="absolute top-4 end-4">
@@ -235,11 +232,11 @@ export default function Destinations() {
                     <div>
                       <div className="text-sm text-gray-600">{t('destinations.toursFrom')}</div>
                       <div className="text-2xl font-bold text-blue-600">
-                        ${destination.averagePrice}
+                        {formatCurrency(destination.averagePrice)}
                       </div>
                     </div>
                     <Button asChild className="bg-blue-600 hover:bg-blue-700">
-                      <Link to={`/packages?destination=${destination.name.toLowerCase()}`}>
+                      <Link to={`/packages?destination=${destination.slug}`}>
                         <Plane className="w-4 h-4 me-2" />
                         {t('destinations.exploreTours')}
                       </Link>
@@ -261,7 +258,7 @@ export default function Destinations() {
             <p className="text-gray-600 mb-6">{t('destinations.tryAdjusting')}</p>
             <Button onClick={() => {
               setSearchTerm("");
-              setSelectedRegion(t('destinations.allRegions'));
+              setSelectedRegion("all");
             }}>
               {t('common.clearFilters')}
             </Button>

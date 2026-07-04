@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/features/auth/context/AuthContext';
+import { formatDate } from '@/lib/formatters';
 
 interface ReportStats {
   growthRate: number;
@@ -113,7 +114,9 @@ export function useAdminReports() {
       });
 
       // Process monthly data from platform_stats or calculate from bookings
-      const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      const months = Array.from({ length: 12 }, (_, m) =>
+        formatDate(new Date(2026, m, 1), 'MMM')
+      );
       
       if (platformStats && platformStats.length > 0) {
         const monthly: MonthlyData[] = platformStats.map((s: any) => {

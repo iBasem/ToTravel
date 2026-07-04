@@ -1,6 +1,8 @@
 import * as React from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { DayPicker } from "react-day-picker";
+import { ar, enUS } from "date-fns/locale";
+import { useTranslation } from "react-i18next";
 
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/ui/button";
@@ -13,8 +15,12 @@ function Calendar({
   showOutsideDays = true,
   ...props
 }: CalendarProps) {
+  const { i18n } = useTranslation();
+  const isArabic = i18n.language.startsWith("ar");
   return (
     <DayPicker
+      locale={isArabic ? ar : enUS}
+      dir={i18n.dir()}
       showOutsideDays={showOutsideDays}
       className={cn("p-3", className)}
       classNames={{

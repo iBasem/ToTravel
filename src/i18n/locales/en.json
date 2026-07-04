@@ -91,7 +91,21 @@
     "authError": "Authentication failed. Please try again.",
     "deletePackageConfirm": "Are you sure you want to delete",
     "justNow": "Just now",
-    "saving": "Saving..."
+    "saving": "Saving...",
+    "email": "Email",
+    "password": "Password",
+    "error": "Error",
+    "newUsers": "New Users",
+    "noItemsFound": "No items found",
+    "participants": "Participants",
+    "period": "Period",
+    "processed": "Processed",
+    "reports": "Reports",
+    "toggleSidebar": "Toggle Sidebar",
+    "totalPrice": "Total Price",
+    "tourImage": "Tour image",
+    "unknownPackage": "Unknown package",
+    "updateError": "Failed to update"
   },
   "nav": {
     "home": "Home",
@@ -132,7 +146,77 @@
     "adventureTours": "Adventure Tours",
     "wildExpeditions": "Wild Expeditions",
     "safariAdventures": "Safari Adventures",
-    "islandEscapes": "Island Escapes"
+    "islandEscapes": "Island Escapes",
+    "tourCount_one": "{{count}} tour",
+    "tourCount_other": "{{count}} tours",
+    "items": {
+      "vietnam": {
+        "name": "Vietnam",
+        "region": "Southeast Asia",
+        "description": "From bustling cities to serene countryside, Vietnam offers incredible diversity.",
+        "highlights": {
+          "0": "Halong Bay",
+          "1": "Ho Chi Minh City",
+          "2": "Hoi An",
+          "3": "Hanoi"
+        }
+      },
+      "turkey": {
+        "name": "Turkey",
+        "region": "Europe/Asia",
+        "description": "Where East meets West - ancient history and modern culture collide.",
+        "highlights": {
+          "0": "Cappadocia",
+          "1": "Istanbul",
+          "2": "Pamukkale",
+          "3": "Ephesus"
+        }
+      },
+      "morocco": {
+        "name": "Morocco",
+        "region": "North Africa",
+        "description": "Desert adventures, imperial cities, and exotic markets await.",
+        "highlights": {
+          "0": "Marrakech",
+          "1": "Sahara Desert",
+          "2": "Fez",
+          "3": "Casablanca"
+        }
+      },
+      "japan": {
+        "name": "Japan",
+        "region": "East Asia",
+        "description": "Ancient traditions blend seamlessly with cutting-edge technology.",
+        "highlights": {
+          "0": "Tokyo",
+          "1": "Kyoto",
+          "2": "Mount Fuji",
+          "3": "Osaka"
+        }
+      },
+      "peru": {
+        "name": "Peru",
+        "region": "South America",
+        "description": "Home to ancient civilizations and breathtaking landscapes.",
+        "highlights": {
+          "0": "Machu Picchu",
+          "1": "Cusco",
+          "2": "Sacred Valley",
+          "3": "Lima"
+        }
+      },
+      "italy": {
+        "name": "Italy",
+        "region": "Southern Europe",
+        "description": "Art, history, cuisine, and romance in the heart of Europe.",
+        "highlights": {
+          "0": "Rome",
+          "1": "Florence",
+          "2": "Venice",
+          "3": "Tuscany"
+        }
+      }
+    }
   },
   "tours": {
     "title": "Tours",
@@ -811,7 +895,13 @@
     "peopleFoundHelpful_other": "{{count}} people found this helpful",
     "explorePackages": "Explore Packages",
     "noBookingsDesc": "You haven't made any bookings yet. Browse our packages to find your next adventure!",
-    "noBookingsFound": "No bookings found"
+    "noBookingsFound": "No bookings found",
+    "browseMoreTours": "Browse More Tours",
+    "emptyWishlistTitle": "Your wishlist is empty",
+    "emptyWishlistDesc": "Save tours you love to revisit them later.",
+    "noReviewsTitle": "No Reviews Yet",
+    "noReviewsDesc": "You haven't written any reviews yet. Complete a booking to leave a review!",
+    "viewBookings": "View My Bookings"
   },
   "packageWizard": {
     "createNewPackage": "Create New Package",
@@ -1050,7 +1140,8 @@
     "registrationDate": "Registration Date",
     "totalBookings": "Total Bookings",
     "statusUpdateSuccess": "Traveler status updated successfully",
-    "statusUpdateError": "Failed to update traveler status"
+    "statusUpdateError": "Failed to update traveler status",
+    "searchPlaceholder": "Search travelers..."
   },
   "errors": {
     "somethingWentWrong": "Something went wrong",

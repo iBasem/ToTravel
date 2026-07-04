@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/features/auth/context/AuthContext';
+import { formatDate } from '@/lib/formatters';
 
 interface AdminStats {
   totalUsers: number;
@@ -128,7 +129,9 @@ export function useAdminDashboard() {
       }
 
       // Build revenue chart from real booking data (last 6 months)
-      const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      const months = Array.from({ length: 12 }, (_, m) =>
+        formatDate(new Date(2026, m, 1), 'MMM')
+      );
       const monthlyMap = new Map<string, { bookings: number; revenue: number }>();
       for (let i = 5; i >= 0; i--) {
         const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
