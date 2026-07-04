@@ -8,7 +8,6 @@ export interface BookingFormData {
     bookingDate: string;
     participants: number;
     specialRequests?: string;
-    // basePrice removed, will fetch from DB
 }
 
 export function useCreateBooking() {
@@ -23,35 +22,29 @@ export function useCreateBooking() {
 
         setLoading(true);
         try {
-            // Fetch fresh price from DB
-            const { data: packageData, error: priceError } = await supabase
-                .from('packages')
-                .select('base_price')
-                .eq('id', formData.packageId)
-                .single();
-
-            if (priceError) throw new Error('Could not fetch package details');
-
-            const totalPrice = packageData.base_price * formData.participants;
-
-            const { data, error } = await supabase
-                .from('package_bookings')
-                .insert({
+            // Price is computed server-side by the edge function; the client
+            // never supplies total_price.
+            const { data, error } = await supabase.functions.invoke('create-booking', {
+                body: {
                     package_id: formData.packageId,
-                    traveler_id: user.id,
                     booking_date: formData.bookingDate,
                     participants: formData.participants,
-                    total_price: totalPrice,
                     special_requests: formData.specialRequests || null,
-                    status: 'pending',
-                })
-                .select()
-                .single();
+                },
+            });
 
-            if (error) throw error;
+            if (error) {
+                // Surface the function's error message when available
+                let message = 'Failed to create booking';
+                try {
+                    const body = await (error as { context?: Response }).context?.json();
+                    if (body?.error) message = body.error;
+                } catch { /* keep generic message */ }
+                throw new Error(message);
+            }
 
             toast.success('Booking created successfully! We will contact you shortly.');
-            return { success: true, data };
+            return { success: true, data: data?.booking };
         } catch (error) {
             console.error('Booking creation error:', error);
             const errorMessage = error instanceof Error ? error.message : 'Failed to create booking';
