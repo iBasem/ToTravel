@@ -25,7 +25,7 @@ export function LanguageSwitcher() {
           </span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
+      <DropdownMenuContent align={i18n.dir() === 'rtl' ? 'start' : 'end'}>
         <DropdownMenuItem
           onClick={() => changeLanguage('en')}
           className={i18n.language === 'en' ? 'bg-accent' : ''}

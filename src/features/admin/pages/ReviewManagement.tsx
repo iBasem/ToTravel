@@ -32,13 +32,15 @@ import { Search, MoreHorizontal, Trash2, Star, TrendingUp, MessageSquare, Calend
 import { useAdminReviews } from "@/features/admin/hooks/useAdminReviews";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
+import { formatDate } from "@/lib/formatters";
 
 export default function ReviewManagement() {
     const { reviews, stats, loading, error, deleteReview, refetch } = useAdminReviews();
     const [searchTerm, setSearchTerm] = useState("");
     const [ratingFilter, setRatingFilter] = useState<number | null>(null);
     const [deleteId, setDeleteId] = useState<string | null>(null);
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
+    const isRTL = i18n.dir() === 'rtl';
 
     const filteredReviews = reviews.filter(review => {
         const matchesSearch = !searchTerm ||
@@ -254,7 +256,7 @@ export default function ReviewManagement() {
                                             </p>
                                         </TableCell>
                                         <TableCell className="text-sm text-muted-foreground">
-                                            {new Date(review.created_at).toLocaleDateString()}
+                                            {formatDate(review.created_at, 'P')}
                                         </TableCell>
                                         <TableCell>
                                             <DropdownMenu>
@@ -263,7 +265,7 @@ export default function ReviewManagement() {
                                                         <MoreHorizontal className="h-4 w-4" />
                                                     </Button>
                                                 </DropdownMenuTrigger>
-                                                <DropdownMenuContent align="end">
+                                                <DropdownMenuContent align={isRTL ? "start" : "end"}>
                                                     <DropdownMenuItem
                                                         className="text-destructive"
                                                         onClick={() => setDeleteId(review.id)}

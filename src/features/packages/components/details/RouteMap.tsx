@@ -4,6 +4,7 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardHeader, CardTitle } from '@/ui/card';
 import { MapPin, Navigation } from 'lucide-react';
+import { ensureMapboxRTLTextPlugin } from '@/lib/mapbox-rtl';
 
 const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN;
 
@@ -35,6 +36,7 @@ export function RouteMap({ routes }: RouteMapProps) {
     if (!mapContainer.current || map.current || sortedRoutes.length === 0) return;
 
     mapboxgl.accessToken = MAPBOX_TOKEN;
+    ensureMapboxRTLTextPlugin();
 
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
@@ -51,7 +53,7 @@ export function RouteMap({ routes }: RouteMapProps) {
 
     map.current.addControl(
       new mapboxgl.AttributionControl({ compact: true }),
-      'bottom-left'
+      isRTL ? 'bottom-right' : 'bottom-left'
     );
 
     map.current.on('load', () => {

@@ -57,11 +57,13 @@ const Carousel = React.forwardRef<
     },
     ref
   ) => {
-    const { t } = useTranslation()
+    const { t, i18n } = useTranslation()
+    const isRTL = i18n.dir() === "rtl"
     const [carouselRef, api] = useEmblaCarousel(
       {
         ...opts,
         axis: orientation === "horizontal" ? "x" : "y",
+        direction: isRTL ? "rtl" : "ltr",
       },
       plugins
     )
@@ -87,15 +89,18 @@ const Carousel = React.forwardRef<
 
     const handleKeyDown = React.useCallback(
       (event: React.KeyboardEvent<HTMLDivElement>) => {
+        // In RTL the reading direction is mirrored: ArrowLeft advances.
         if (event.key === "ArrowLeft") {
           event.preventDefault()
-          scrollPrev()
+          if (isRTL) scrollNext()
+          else scrollPrev()
         } else if (event.key === "ArrowRight") {
           event.preventDefault()
-          scrollNext()
+          if (isRTL) scrollPrev()
+          else scrollNext()
         }
       },
-      [scrollPrev, scrollNext]
+      [scrollPrev, scrollNext, isRTL]
     )
 
     React.useEffect(() => {
@@ -218,7 +223,7 @@ const CarouselPrevious = React.forwardRef<
       onClick={scrollPrev}
       {...props}
     >
-      <ArrowLeft className="h-4 w-4" />
+      <ArrowLeft className="h-4 w-4 rtl:rotate-180" />
       <span className="sr-only">{t('ui.previousSlide')}</span>
     </Button>
   )
@@ -248,7 +253,7 @@ const CarouselNext = React.forwardRef<
       onClick={scrollNext}
       {...props}
     >
-      <ArrowRight className="h-4 w-4" />
+      <ArrowRight className="h-4 w-4 rtl:rotate-180" />
       <span className="sr-only">{t('ui.nextSlide')}</span>
     </Button>
   )

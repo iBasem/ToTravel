@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import mapboxgl from 'mapbox-gl';
+import { ensureMapboxRTLTextPlugin } from '@/lib/mapbox-rtl';
 
 const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN;
 
@@ -28,6 +29,7 @@ export function RouteMapThumbnail({ routes }: RouteMapThumbnailProps) {
     if (!containerRef.current || mapRef.current || sorted.length === 0) return;
 
     mapboxgl.accessToken = MAPBOX_TOKEN;
+    ensureMapboxRTLTextPlugin();
 
     const map = new mapboxgl.Map({
       container: containerRef.current,

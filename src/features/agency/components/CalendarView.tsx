@@ -69,13 +69,13 @@ export function CalendarView() {
                 </h2>
                 <div className="flex items-center gap-2">
                     <Button variant="outline" size="icon" onClick={prevMonth}>
-                        <ChevronLeft className="h-4 w-4" />
+                        <ChevronLeft className="h-4 w-4 rtl:rotate-180" />
                     </Button>
                     <Button variant="outline" onClick={goToToday}>
                         {t('calendar.today')}
                     </Button>
                     <Button variant="outline" size="icon" onClick={nextMonth}>
-                        <ChevronRight className="h-4 w-4" />
+                        <ChevronRight className="h-4 w-4 rtl:rotate-180" />
                     </Button>
                 </div>
             </div>

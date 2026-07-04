@@ -40,7 +40,8 @@ export function BookingWidget({
     onSelectMonth,
     onCheckAvailability
 }: BookingWidgetProps) {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
+    const isRTL = i18n.dir() === 'rtl';
     const [datePopoverOpen, setDatePopoverOpen] = useState(false);
     const [isWishlisted, setIsWishlisted] = useState(false);
 
@@ -110,7 +111,7 @@ export function BookingWidget({
                             <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform ${datePopoverOpen ? 'rotate-180' : ''}`} />
                         </Button>
                     </PopoverTrigger>
-                    <PopoverContent className="w-80 p-0" align="start">
+                    <PopoverContent className="w-80 p-0" align={isRTL ? "end" : "start"}>
                         <div className="p-4 border-b bg-gray-50">
                             <h4 className="font-semibold text-gray-900">
                                 {t('packageDetails.chooseDepartureMonth', 'Choose Departure Month')}

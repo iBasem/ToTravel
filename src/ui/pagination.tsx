@@ -75,7 +75,7 @@ const PaginationPrevious = ({
       className={cn("gap-1 ps-2.5", className)}
       {...props}
     >
-      <ChevronLeft className="h-4 w-4" />
+      <ChevronLeft className="h-4 w-4 rtl:rotate-180" />
       <span>{t('common.previous')}</span>
     </PaginationLink>
   )
@@ -95,7 +95,7 @@ const PaginationNext = ({
       {...props}
     >
       <span>{t('common.next')}</span>
-      <ChevronRight className="h-4 w-4" />
+      <ChevronRight className="h-4 w-4 rtl:rotate-180" />
     </PaginationLink>
   )
 }

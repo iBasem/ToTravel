@@ -34,7 +34,7 @@ export function Pagination({ currentPage, totalPages, onPageChange }: Pagination
                 disabled={currentPage === 1}
                 aria-label={t('ui.previousPage')}
             >
-                <ChevronLeft size={16} />
+                <ChevronLeft size={16} className="rtl:rotate-180" />
             </button>
 
             {getPageNumbers().map((page) => (
@@ -54,7 +54,7 @@ export function Pagination({ currentPage, totalPages, onPageChange }: Pagination
                 disabled={currentPage === totalPages}
                 aria-label={t('ui.nextPage')}
             >
-                <ChevronRight size={16} />
+                <ChevronRight size={16} className="rtl:rotate-180" />
             </button>
         </nav>
     );
