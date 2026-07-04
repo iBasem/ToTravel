@@ -115,10 +115,18 @@ export function useReviews() {
             });
 
             if (error) {
+                // Prefer the function's stable error code (localizable);
+                // fall back to its English message, then to a generic one.
                 let message = t('toasts.reviewSubmitFailed');
                 try {
                     const body = await (error as { context?: Response }).context?.json();
-                    if (body?.error) message = body.error;
+                    if (body?.code) {
+                        message = t(`serverErrors.${body.code}`, {
+                            defaultValue: body.error || message,
+                        });
+                    } else if (body?.error) {
+                        message = body.error;
+                    }
                 } catch { /* keep generic message */ }
                 throw new Error(message);
             }

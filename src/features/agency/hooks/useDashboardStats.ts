@@ -1,5 +1,6 @@
 
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/features/auth/context/AuthContext';
 
@@ -20,6 +21,7 @@ export function useDashboardStats() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { user } = useAuth();
+  const { t } = useTranslation();
 
   const fetchStats = async () => {
     if (!user) return;
@@ -63,7 +65,7 @@ export function useDashboardStats() {
       });
     } catch (err) {
       console.error('Exception fetching dashboard stats:', err);
-      setError('Failed to fetch dashboard stats');
+      setError(t('toasts.statsLoadFailed', 'Failed to load dashboard stats'));
     } finally {
       setLoading(false);
     }

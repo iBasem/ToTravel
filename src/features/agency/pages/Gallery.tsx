@@ -80,7 +80,7 @@ export default function Gallery() {
       fetchImages();
     } catch (err: any) {
       console.error('Upload error:', err);
-      toast.error(err.message);
+      toast.error(t('toasts.uploadFailed', 'Upload failed'));
     } finally {
       setUploading(false);
       // Reset file input
@@ -102,7 +102,8 @@ export default function Gallery() {
       setImages(prev => prev.filter(img => img.name !== fileName));
       toast.success(t('agencyDashboard.fileDeleted', { defaultValue: 'File deleted' }));
     } catch (err: any) {
-      toast.error(err.message);
+      console.error('Delete error:', err);
+      toast.error(t('toasts.deleteFailed', 'Delete failed'));
     }
   };
 

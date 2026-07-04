@@ -46,7 +46,7 @@ export function MediaStep({ data, onUpdate }: MediaStepProps) {
       id: Math.random().toString(36).substr(2, 9),
       type: 'image' as const,
       url,
-      caption: `Sample image ${index + 1}`,
+      caption: t('packageWizard.sampleImageCaption', 'Sample image {{number}}', { number: index + 1 }),
       isPrimary: index === 0 && media.length === 0,
       file_name: `sample-image-${index + 1}.jpg`,
       file_path: url
@@ -79,8 +79,8 @@ export function MediaStep({ data, onUpdate }: MediaStepProps) {
           .upload(filePath, file);
 
         if (uploadError) {
-          console.error('Upload error:', uploadError);
-          toast.error(`Failed to upload ${file.name}: ${uploadError.message}`);
+          console.error(`Upload error for ${file.name}:`, uploadError.message, uploadError);
+          toast.error(t('toasts.uploadFileFailed', 'Failed to upload {{name}}', { name: file.name }));
           continue;
         }
 

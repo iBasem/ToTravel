@@ -36,11 +36,19 @@ export function useCreateBooking() {
             });
 
             if (error) {
-                // Surface the function's error message when available
+                // Prefer the function's stable error code (localizable);
+                // fall back to its English message, then to a generic one.
                 let message = t('toasts.bookingCreateFailed');
                 try {
                     const body = await (error as { context?: Response }).context?.json();
-                    if (body?.error) message = body.error;
+                    if (body?.code) {
+                        message = t(`serverErrors.${body.code}`, {
+                            defaultValue: body.error || message,
+                            max: body.max,
+                        });
+                    } else if (body?.error) {
+                        message = body.error;
+                    }
                 } catch { /* keep generic message */ }
                 throw new Error(message);
             }

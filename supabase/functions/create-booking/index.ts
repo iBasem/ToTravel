@@ -19,7 +19,7 @@ Deno.serve(async (req: Request) => {
     return new Response("ok", { headers: corsHeaders });
   }
   if (req.method !== "POST") {
-    return json(405, { error: "Method not allowed" });
+    return json(405, { code: "METHOD_NOT_ALLOWED", error: "Method not allowed" });
   }
 
   try {
@@ -34,12 +34,12 @@ Deno.serve(async (req: Request) => {
     });
     const { data: { user }, error: userError } = await userClient.auth.getUser();
     if (userError || !user) {
-      return json(401, { error: "Authentication required" });
+      return json(401, { code: "AUTH_REQUIRED", error: "Authentication required" });
     }
 
     const payload = await req.json().catch(() => null);
     if (!payload) {
-      return json(400, { error: "Invalid JSON body" });
+      return json(400, { code: "INVALID_BODY", error: "Invalid JSON body" });
     }
 
     const { package_id, booking_date, participants, special_requests } = payload as {
@@ -50,13 +50,13 @@ Deno.serve(async (req: Request) => {
     };
 
     if (!package_id || typeof package_id !== "string") {
-      return json(400, { error: "package_id is required" });
+      return json(400, { code: "INVALID_BODY", error: "package_id is required" });
     }
     if (!booking_date || Number.isNaN(Date.parse(booking_date))) {
-      return json(400, { error: "booking_date must be a valid date" });
+      return json(400, { code: "INVALID_DATE", error: "booking_date must be a valid date" });
     }
     if (!Number.isInteger(participants) || (participants as number) < 1) {
-      return json(400, { error: "participants must be a positive integer" });
+      return json(400, { code: "INVALID_PARTICIPANTS", error: "participants must be a positive integer" });
     }
 
     // Service-role client: trusted reads/writes independent of RLS
@@ -69,7 +69,7 @@ Deno.serve(async (req: Request) => {
       .eq("id", user.id)
       .maybeSingle();
     if (!traveler) {
-      return json(403, { error: "Only travelers can create bookings" });
+      return json(403, { code: "TRAVELERS_ONLY", error: "Only travelers can create bookings" });
     }
 
     // Load the package server-side — the client never supplies a price
@@ -79,13 +79,13 @@ Deno.serve(async (req: Request) => {
       .eq("id", package_id)
       .maybeSingle();
     if (pkgError || !pkg) {
-      return json(404, { error: "Package not found" });
+      return json(404, { code: "PKG_NOT_FOUND", error: "Package not found" });
     }
     if (pkg.status !== "published") {
-      return json(400, { error: "Package is not open for booking" });
+      return json(400, { code: "PKG_NOT_BOOKABLE", error: "Package is not open for booking" });
     }
     if (pkg.max_participants != null && (participants as number) > pkg.max_participants) {
-      return json(400, { error: `Maximum ${pkg.max_participants} participants for this package` });
+      return json(400, { code: "MAX_PARTICIPANTS", max: pkg.max_participants, error: `Maximum ${pkg.max_participants} participants for this package` });
     }
 
     const total_price = Number(pkg.base_price) * (participants as number);
@@ -107,12 +107,12 @@ Deno.serve(async (req: Request) => {
 
     if (insertError) {
       console.error("Booking insert failed:", insertError);
-      return json(500, { error: "Failed to create booking" });
+      return json(500, { code: "BOOKING_FAILED", error: "Failed to create booking" });
     }
 
     return json(201, { booking });
   } catch (err) {
     console.error("create-booking error:", err);
-    return json(500, { error: "Internal error" });
+    return json(500, { code: "INTERNAL", error: "Internal error" });
   }
 });

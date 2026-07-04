@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/features/auth/context/AuthContext';
+import { formatDate } from '@/lib/formatters';
 
 export interface Traveler {
     id: string;
@@ -16,6 +18,7 @@ export function useAgencyTravelers() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const { user } = useAuth();
+    const { t } = useTranslation();
 
     useEffect(() => {
         const fetchTravelers = async () => {
@@ -54,8 +57,8 @@ export function useAgencyTravelers() {
                     if (!travelerMap.has(travelerId)) {
                         travelerMap.set(travelerId, {
                             id: travelerId,
-                            name: booking.traveler.full_name || 'Unknown',
-                            email: 'Private', // Email is often not directly exposed in public profile unless verified
+                            name: booking.traveler.full_name || t('common.unknown', 'Unknown'),
+                            email: t('agencyDashboard.privateEmail', 'Private'), // Email is often not directly exposed in public profile unless verified
                             phone: booking.traveler.phone_number,
                             totalBookings: 0,
                             lastTrip: null
@@ -67,7 +70,7 @@ export function useAgencyTravelers() {
 
                     // Since we ordered by date desc, the first time we see a traveler, it's their latest trip
                     if (!traveler.lastTrip) {
-                        traveler.lastTrip = `${booking.packages.title} - ${new Date(booking.booking_date).toLocaleDateString()}`;
+                        traveler.lastTrip = `${booking.packages.title} - ${formatDate(booking.booking_date, 'PP')}`;
                     }
                 });
 

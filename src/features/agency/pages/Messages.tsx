@@ -7,6 +7,7 @@ import { useAgencyMessages } from "@/features/agency/hooks/useAgencyMessages";
 import { LoadingSpinner } from "@/ui/loading-spinner";
 import { EmptyState } from "@/ui/empty-state";
 import { useState, useRef, useEffect } from "react";
+import { formatRelativeTime } from "@/lib/formatters";
 
 export default function Messages() {
   const { t } = useTranslation();
@@ -44,17 +45,7 @@ export default function Messages() {
     }
   };
 
-  const formatTime = (dateStr: string) => {
-    const date = new Date(dateStr);
-    const now = new Date();
-    const diffMs = now.getTime() - date.getTime();
-    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
-
-    if (diffHours < 1) return t('common.justNow', { defaultValue: 'Just now' });
-    if (diffHours < 24) return `${diffHours}h ${t('common.ago', { defaultValue: 'ago' })}`;
-    const diffDays = Math.floor(diffHours / 24);
-    return `${diffDays}d ${t('common.ago', { defaultValue: 'ago' })}`;
-  };
+  const formatTime = (dateStr: string) => formatRelativeTime(dateStr);
 
   if (loading) {
     return (

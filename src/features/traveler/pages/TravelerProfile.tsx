@@ -1,5 +1,6 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useAuth } from "@/features/auth/context/AuthContext";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/card";
 import { Button } from "@/ui/button";
 import { Input } from "@/ui/input";
@@ -24,22 +25,33 @@ import {
 
 export default function TravelerProfile() {
   const { t } = useTranslation();
+  const { user, profile } = useAuth();
 
   const [profileData, setProfileData] = useState({
-    firstName: "John",
-    lastName: "Doe",
-    email: "john.doe@example.com",
-    phone: "+1 (555) 123-4567",
-    dateOfBirth: "1990-05-15",
-    nationality: "United States",
-    address: "123 Main St, New York, NY 10001",
-    bio: "Travel enthusiast who loves exploring new cultures and cuisines.",
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    dateOfBirth: "",
+    nationality: "",
+    address: "",
+    bio: "",
     emergencyContact: {
-      name: "Jane Doe",
-      phone: "+1 (555) 987-6543",
-      relationship: "Spouse"
+      name: "",
+      phone: "",
+      relationship: ""
     }
   });
+
+  // Populate from the signed-in profile once it loads.
+  useEffect(() => {
+    setProfileData(prev => ({
+      ...prev,
+      firstName: profile?.first_name ?? prev.firstName,
+      lastName: profile?.last_name ?? prev.lastName,
+      email: profile?.email ?? user?.email ?? prev.email,
+    }));
+  }, [profile, user]);
 
   const [notifications, setNotifications] = useState({
     emailBookings: true,

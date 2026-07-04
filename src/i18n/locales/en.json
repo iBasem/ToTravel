@@ -105,7 +105,8 @@
     "totalPrice": "Total Price",
     "tourImage": "Tour image",
     "unknownPackage": "Unknown package",
-    "updateError": "Failed to update"
+    "updateError": "Failed to update",
+    "unknown": "Unknown"
   },
   "nav": {
     "home": "Home",
@@ -411,7 +412,10 @@
     "continueGoogle": "Continue with Google",
     "failedToCreate": "Failed to create account",
     "failedToSignIn": "Failed to sign in",
-    "signInRequired": "You must be logged in to upload files"
+    "signInRequired": "You must be logged in to upload files",
+    "emailNotConfirmed": "Please confirm your email address before signing in.",
+    "tooManyAttempts": "Too many attempts. Please wait a moment and try again.",
+    "invalidEmail": "Please enter a valid email address."
   },
   "footer": {
     "tagline": "Discover amazing adventures around the world",
@@ -696,7 +700,8 @@
     "travelersWillAppear": "Travelers who book your packages will appear here.",
     "uploadFirstMedia": "Upload your first photos to showcase your tours and destinations.",
     "uploadSuccess": "Files uploaded successfully",
-    "uploading": "Uploading..."
+    "uploading": "Uploading...",
+    "privateEmail": "Private"
   },
   "admin": {
     "dashboard": "Admin Dashboard",
@@ -813,7 +818,10 @@
     "noAdmins": "No admin users found",
     "saveError": "Failed to save settings",
     "saveSuccess": "Settings saved successfully",
-    "saving": "Saving..."
+    "saving": "Saving...",
+    "currencyUsd": "US Dollar (USD)",
+    "currencySar": "Saudi Riyal (SAR)",
+    "currencyAed": "UAE Dirham (AED)"
   },
   "travelerDashboard": {
     "welcomeBack": "Welcome back",
@@ -1065,7 +1073,8 @@
     "of": "of",
     "followSteps": "Follow the steps below to create your travel package",
     "packageDeleted": "Package deleted successfully",
-    "saveChanges": "Save Changes"
+    "saveChanges": "Save Changes",
+    "sampleImageCaption": "Sample image {{number}}"
   },
   "calendar": {
     "title": "Bookings Calendar",
@@ -1208,7 +1217,12 @@
     "reviewsLoadFailed": "Failed to load reviews",
     "yourReviewsLoadFailed": "Failed to load your reviews",
     "reviewSubmitted": "Review submitted successfully",
-    "reviewSubmitFailed": "Failed to submit review"
+    "reviewSubmitFailed": "Failed to submit review",
+    "calendarLoadFailed": "Failed to load calendar bookings",
+    "statsLoadFailed": "Failed to load dashboard stats",
+    "uploadFileFailed": "Failed to upload {{name}}",
+    "uploadFailed": "Upload failed",
+    "deleteFailed": "Delete failed"
   },
   "packageCard": {
     "viewMap": "View Map",
@@ -1307,5 +1321,24 @@
   },
   "reviews": {
     "title": "Reviews"
+  },
+  "serverErrors": {
+    "METHOD_NOT_ALLOWED": "Request could not be processed.",
+    "AUTH_REQUIRED": "Please sign in and try again.",
+    "INVALID_BODY": "The request was invalid. Please refresh and try again.",
+    "INVALID_DATE": "Please choose a valid travel date.",
+    "INVALID_PARTICIPANTS": "Please choose a valid number of travelers.",
+    "TRAVELERS_ONLY": "Only traveler accounts can book tours.",
+    "PKG_NOT_FOUND": "This package is no longer available.",
+    "PKG_NOT_BOOKABLE": "This package is not open for booking right now.",
+    "MAX_PARTICIPANTS": "This package allows a maximum of {{max}} travelers.",
+    "BOOKING_FAILED": "We couldn't complete your booking. Please try again.",
+    "INTERNAL": "Something went wrong on our side. Please try again.",
+    "INVALID_RATING": "Please choose a rating between 1 and 5.",
+    "BOOKING_NOT_FOUND": "We couldn't find this booking.",
+    "NOT_YOUR_BOOKING": "You can only review your own bookings.",
+    "TRIP_NOT_COMPLETED": "You can review a trip after completing it.",
+    "ALREADY_REVIEWED": "You have already reviewed this booking.",
+    "REVIEW_FAILED": "We couldn't submit your review. Please try again."
   }
 }

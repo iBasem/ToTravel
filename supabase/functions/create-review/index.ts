@@ -19,7 +19,7 @@ Deno.serve(async (req: Request) => {
     return new Response("ok", { headers: corsHeaders });
   }
   if (req.method !== "POST") {
-    return json(405, { error: "Method not allowed" });
+    return json(405, { code: "METHOD_NOT_ALLOWED", error: "Method not allowed" });
   }
 
   try {
@@ -34,12 +34,12 @@ Deno.serve(async (req: Request) => {
     });
     const { data: { user }, error: userError } = await userClient.auth.getUser();
     if (userError || !user) {
-      return json(401, { error: "Authentication required" });
+      return json(401, { code: "AUTH_REQUIRED", error: "Authentication required" });
     }
 
     const payload = await req.json().catch(() => null);
     if (!payload) {
-      return json(400, { error: "Invalid JSON body" });
+      return json(400, { code: "INVALID_BODY", error: "Invalid JSON body" });
     }
 
     const { booking_id, rating, comment } = payload as {
@@ -49,10 +49,10 @@ Deno.serve(async (req: Request) => {
     };
 
     if (!booking_id || typeof booking_id !== "string") {
-      return json(400, { error: "booking_id is required" });
+      return json(400, { code: "INVALID_BODY", error: "booking_id is required" });
     }
     if (!Number.isInteger(rating) || (rating as number) < 1 || (rating as number) > 5) {
-      return json(400, { error: "rating must be an integer between 1 and 5" });
+      return json(400, { code: "INVALID_RATING", error: "rating must be an integer between 1 and 5" });
     }
 
     // Service-role client: trusted reads/writes independent of RLS
@@ -66,13 +66,13 @@ Deno.serve(async (req: Request) => {
       .eq("id", booking_id)
       .maybeSingle();
     if (bookingError || !booking) {
-      return json(404, { error: "Booking not found" });
+      return json(404, { code: "BOOKING_NOT_FOUND", error: "Booking not found" });
     }
     if (booking.traveler_id !== user.id) {
-      return json(403, { error: "You can only review your own bookings" });
+      return json(403, { code: "NOT_YOUR_BOOKING", error: "You can only review your own bookings" });
     }
     if (booking.status !== "completed") {
-      return json(400, { error: "You can only review completed trips" });
+      return json(400, { code: "TRIP_NOT_COMPLETED", error: "You can only review completed trips" });
     }
 
     const { data: review, error: insertError } = await adminClient
@@ -89,15 +89,15 @@ Deno.serve(async (req: Request) => {
 
     if (insertError) {
       if (insertError.code === "23505") {
-        return json(409, { error: "You have already reviewed this booking" });
+        return json(409, { code: "ALREADY_REVIEWED", error: "You have already reviewed this booking" });
       }
       console.error("Review insert failed:", insertError);
-      return json(500, { error: "Failed to submit review" });
+      return json(500, { code: "REVIEW_FAILED", error: "Failed to submit review" });
     }
 
     return json(201, { review });
   } catch (err) {
     console.error("create-review error:", err);
-    return json(500, { error: "Internal error" });
+    return json(500, { code: "INTERNAL", error: "Internal error" });
   }
 });

@@ -6,6 +6,7 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, PieCha
 import { Download, TrendingUp, Users, Package, DollarSign, RefreshCw } from "lucide-react";
 import { useAdminReports } from "@/features/admin/hooks";
 import { useTranslation } from "react-i18next";
+import { formatNumber } from "@/lib/formatters";
 
 export default function ReportsPage() {
   const { t, i18n } = useTranslation();
@@ -117,7 +118,7 @@ export default function ReportsPage() {
             <Package className="h-4 w-4 text-gray-400" />
           </CardHeader>
           <CardContent className="text-start">
-            <div className="text-2xl font-bold tabular-nums">{stats.activePackages.toLocaleString()}</div>
+            <div className="text-2xl font-bold tabular-nums">{formatNumber(stats.activePackages)}</div>
             <p className="text-xs text-gray-500">{t('reports.publishedPackages')}</p>
           </CardContent>
         </Card>

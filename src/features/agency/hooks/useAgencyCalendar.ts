@@ -1,5 +1,6 @@
 
 import { useState, useCallback } from "react";
+import { useTranslation } from "react-i18next";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/features/auth/context/AuthContext";
 import { startOfMonth, endOfMonth, format } from "date-fns";
@@ -22,6 +23,7 @@ export interface CalendarBooking {
 
 export function useAgencyCalendar() {
     const { user } = useAuth();
+    const { t } = useTranslation();
     const [loading, setLoading] = useState(false);
     const [bookings, setBookings] = useState<CalendarBooking[]>([]);
 
@@ -81,18 +83,18 @@ export function useAgencyCalendar() {
                 total_price: b.total_price,
                 participants: b.participants,
                 package: {
-                    title: b.package?.title || 'Unknown Package'
+                    title: b.package?.title || t('common.unknownPackage')
                 },
                 traveler: {
-                    first_name: b.traveler?.first_name || 'Unknown',
-                    last_name: b.traveler?.last_name || 'Traveler'
+                    first_name: b.traveler?.first_name || t('common.unknown', 'Unknown'),
+                    last_name: b.traveler?.last_name || t('common.traveler')
                 }
             }));
 
             setBookings(formattedData);
         } catch (error) {
             console.error('Error fetching calendar bookings:', error);
-            toast.error('Failed to load bookings for calendar');
+            toast.error(t('toasts.calendarLoadFailed', 'Failed to load calendar bookings'));
         } finally {
             setLoading(false);
         }

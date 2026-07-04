@@ -8,6 +8,7 @@ import { EmptyState } from "@/ui/empty-state";
 import { useBookings } from "@/features/bookings/hooks/useBookings";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
+import { formatDate } from "@/lib/formatters";
 
 export default function Bookings() {
   const { t, i18n } = useTranslation();
@@ -185,7 +186,7 @@ export default function Bookings() {
                             {new Intl.NumberFormat(i18n.language === 'ar' ? 'ar-SA' : 'en-US', { style: 'currency', currency: 'USD' }).format(Number(booking.total_price))}
                           </p>
                           <p className="text-xs sm:text-sm text-gray-600">
-                            {new Date(booking.booking_date).toLocaleDateString(i18n.language === 'ar' ? 'ar-SA' : 'en-US')}
+                            {formatDate(booking.booking_date, 'PP')}
                           </p>
                         </div>
                         <Badge className={`${getStatusColor(booking.status)} border font-medium text-xs capitalize`}>

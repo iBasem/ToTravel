@@ -105,7 +105,8 @@
     "totalPrice": "السعر الإجمالي",
     "tourImage": "صورة الرحلة",
     "unknownPackage": "باقة غير معروفة",
-    "updateError": "تعذّر التحديث"
+    "updateError": "تعذّر التحديث",
+    "unknown": "غير معروف"
   },
   "nav": {
     "home": "الرئيسية",
@@ -431,7 +432,10 @@
     "continueGoogle": "المتابعة باستخدام جوجل",
     "failedToCreate": "فشل إنشاء الحساب",
     "failedToSignIn": "فشل تسجيل الدخول",
-    "signInRequired": "يجب تسجيل الدخول لرفع الملفات"
+    "signInRequired": "يجب تسجيل الدخول لرفع الملفات",
+    "emailNotConfirmed": "يرجى تأكيد بريدك الإلكتروني قبل تسجيل الدخول.",
+    "tooManyAttempts": "محاولات كثيرة. يرجى الانتظار قليلاً ثم المحاولة مجدداً.",
+    "invalidEmail": "يرجى إدخال بريد إلكتروني صحيح."
   },
   "footer": {
     "tagline": "اكتشف مغامرات مذهلة حول العالم",
@@ -720,7 +724,8 @@
     "travelersWillAppear": "سيظهر هنا المسافرون الذين يحجزون باقاتك.",
     "uploadFirstMedia": "ارفع أولى صورك لعرض رحلاتك ووجهاتك.",
     "uploadSuccess": "تم رفع الملفات بنجاح",
-    "uploading": "جارٍ الرفع..."
+    "uploading": "جارٍ الرفع...",
+    "privateEmail": "خاص"
   },
   "admin": {
     "dashboard": "لوحة تحكم المسؤول",
@@ -837,7 +842,10 @@
     "noAdmins": "لا يوجد مشرفون",
     "saveError": "تعذّر حفظ الإعدادات",
     "saveSuccess": "تم حفظ الإعدادات بنجاح",
-    "saving": "جارٍ الحفظ..."
+    "saving": "جارٍ الحفظ...",
+    "currencyUsd": "الدولار الأمريكي (USD)",
+    "currencySar": "الريال السعودي (SAR)",
+    "currencyAed": "الدرهم الإماراتي (AED)"
   },
   "travelerDashboard": {
     "welcomeBack": "مرحباً بعودتك",
@@ -1093,7 +1101,8 @@
     "of": "من",
     "followSteps": "اتبع الخطوات أدناه لإنشاء باقة السفر الخاصة بك",
     "packageDeleted": "تم حذف الباقة بنجاح",
-    "saveChanges": "حفظ التغييرات"
+    "saveChanges": "حفظ التغييرات",
+    "sampleImageCaption": "صورة تجريبية {{number}}"
   },
   "calendar": {
     "title": "تقويم الحجوزات",
@@ -1240,7 +1249,12 @@
     "reviewsLoadFailed": "تعذّر تحميل التقييمات",
     "yourReviewsLoadFailed": "تعذّر تحميل تقييماتك",
     "reviewSubmitted": "تم إرسال تقييمك بنجاح",
-    "reviewSubmitFailed": "تعذّر إرسال التقييم"
+    "reviewSubmitFailed": "تعذّر إرسال التقييم",
+    "calendarLoadFailed": "تعذّر تحميل حجوزات التقويم",
+    "statsLoadFailed": "تعذّر تحميل إحصاءات لوحة التحكم",
+    "uploadFileFailed": "تعذّر رفع الملف {{name}}",
+    "uploadFailed": "تعذّر الرفع",
+    "deleteFailed": "تعذّر الحذف"
   },
   "packageCard": {
     "viewMap": "عرض الخريطة",
@@ -1355,5 +1369,24 @@
   },
   "reviews": {
     "title": "التقييمات"
+  },
+  "serverErrors": {
+    "METHOD_NOT_ALLOWED": "تعذّرت معالجة الطلب.",
+    "AUTH_REQUIRED": "يرجى تسجيل الدخول ثم المحاولة مجدداً.",
+    "INVALID_BODY": "الطلب غير صالح. يرجى تحديث الصفحة والمحاولة مجدداً.",
+    "INVALID_DATE": "يرجى اختيار تاريخ سفر صحيح.",
+    "INVALID_PARTICIPANTS": "يرجى اختيار عدد مسافرين صحيح.",
+    "TRAVELERS_ONLY": "الحجز متاح لحسابات المسافرين فقط.",
+    "PKG_NOT_FOUND": "هذه الباقة لم تعد متاحة.",
+    "PKG_NOT_BOOKABLE": "هذه الباقة غير متاحة للحجز حالياً.",
+    "MAX_PARTICIPANTS": "الحد الأقصى لعدد المسافرين في هذه الباقة هو {{max}}.",
+    "BOOKING_FAILED": "تعذّر إتمام حجزك. يرجى المحاولة مجدداً.",
+    "INTERNAL": "حدث خطأ من جهتنا. يرجى المحاولة مجدداً.",
+    "INVALID_RATING": "يرجى اختيار تقييم بين 1 و5.",
+    "BOOKING_NOT_FOUND": "لم نعثر على هذا الحجز.",
+    "NOT_YOUR_BOOKING": "يمكنك تقييم حجوزاتك أنت فقط.",
+    "TRIP_NOT_COMPLETED": "يمكنك تقييم الرحلة بعد إتمامها.",
+    "ALREADY_REVIEWED": "سبق أن قيّمت هذا الحجز.",
+    "REVIEW_FAILED": "تعذّر إرسال تقييمك. يرجى المحاولة مجدداً."
   }
 }

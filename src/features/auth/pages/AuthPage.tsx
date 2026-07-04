@@ -16,6 +16,21 @@ import { useTranslation } from 'react-i18next'
 export default function AuthPage() {
   const { t } = useTranslation()
   const { user, profile, signIn, signUp, loading: authLoading } = useAuth()
+
+  // Supabase auth errors arrive as English sentences; map the known ones
+  // to i18n keys and never surface the raw message to the user.
+  const mapAuthError = (message: string | undefined, fallback: string): string => {
+    if (!message) return fallback
+    const m = message.toLowerCase()
+    if (m.includes('already registered')) return t('auth.accountExists')
+    if (m.includes('invalid login credentials')) return t('auth.invalidCredentials')
+    if (m.includes('email not confirmed')) return t('auth.emailNotConfirmed')
+    if (m.includes('rate limit') || m.includes('too many requests')) return t('auth.tooManyAttempts')
+    if (m.includes('password should be')) return t('auth.passwordLength')
+    if (m.includes('unable to validate email') || m.includes('invalid email')) return t('auth.invalidEmail')
+    console.error('Unmapped auth error:', message)
+    return fallback
+  }
   const navigate = useNavigate()
   const location = useLocation()
   const [searchParams] = useSearchParams()
@@ -76,11 +91,7 @@ export default function AuthPage() {
 
         const { error } = await signUp(email, password, userData)
         if (error) {
-          if (error.message?.includes('already registered')) {
-            setError(t('auth.accountExists'))
-          } else {
-            setError(error.message || t('auth.failedToCreate'))
-          }
+          setError(mapAuthError(error.message, t('auth.failedToCreate')))
         } else {
           setSuccess(t('auth.accountCreated'))
           setEmail('')
@@ -93,11 +104,7 @@ export default function AuthPage() {
       } else {
         const { error } = await signIn(email, password)
         if (error) {
-          if (error.message?.includes('Invalid login credentials')) {
-            setError(t('auth.invalidCredentials'))
-          } else {
-            setError(error.message || t('auth.failedToSignIn'))
-          }
+          setError(mapAuthError(error.message, t('auth.failedToSignIn')))
         }
       }
     } catch (err) {

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/features/auth/context/AuthContext';
 
@@ -30,6 +31,7 @@ export function useAgencyFeedback() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const { user } = useAuth();
+    const { t } = useTranslation();
 
     useEffect(() => {
         const fetchFeedback = async () => {
@@ -58,8 +60,8 @@ export function useAgencyFeedback() {
 
                 const mapped: FeedbackItem[] = (data || []).map((r: any) => ({
                     id: r.id,
-                    travelerName: r.traveler?.full_name || 'Unknown',
-                    packageTitle: r.package?.title || 'Unknown',
+                    travelerName: r.traveler?.full_name || t('common.unknown', 'Unknown'),
+                    packageTitle: r.package?.title || t('common.unknownPackage'),
                     rating: r.rating,
                     comment: r.comment || '',
                     date: r.created_at,

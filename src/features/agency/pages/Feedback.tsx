@@ -3,6 +3,7 @@ import { Badge } from "@/ui/badge";
 import { Star, MessageSquare } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useAgencyFeedback } from "@/features/agency/hooks/useAgencyFeedback";
+import { formatDate } from "@/lib/formatters";
 import { LoadingSpinner } from "@/ui/loading-spinner";
 import { EmptyState } from "@/ui/empty-state";
 
@@ -135,7 +136,7 @@ export default function Feedback() {
                         {getStatusLabel(feedback.status)}
                       </Badge>
                       <p className="text-xs text-gray-500 mt-1">
-                        {new Date(feedback.date).toLocaleDateString()}
+                        {formatDate(feedback.date, 'PP')}
                       </p>
                     </div>
                   </div>

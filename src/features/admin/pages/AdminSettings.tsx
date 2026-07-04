@@ -13,6 +13,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/features/auth/context/AuthContext";
 import { toast } from "sonner";
 import { Save, Users, Shield } from "lucide-react";
+import { getPlatformCurrency } from "@/lib/formatters";
 
 interface AdminUser {
   id: string;
@@ -40,7 +41,7 @@ export default function AdminSettings() {
   const [adminUsers, setAdminUsers] = useState<AdminUser[]>([]);
   const [settings, setSettings] = useState<PlatformSettings>({
     commission_rate: 12,
-    currency: 'usd',
+    currency: getPlatformCurrency(),
     auto_approve: false,
     email_notifications: true,
     maintenance_mode: false,
@@ -171,10 +172,11 @@ export default function AdminSettings() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="usd">USD ($)</SelectItem>
-                  <SelectItem value="eur">EUR (€)</SelectItem>
-                  <SelectItem value="gbp">GBP (£)</SelectItem>
-                  <SelectItem value="sar">SAR (﷼)</SelectItem>
+                  {/* Mirrors SUPPORTED_CURRENCIES; display currency is set via
+                      VITE_PLATFORM_CURRENCY until settings persistence exists. */}
+                  <SelectItem value="USD">{t('adminSettings.currencyUsd', 'US Dollar (USD)')}</SelectItem>
+                  <SelectItem value="SAR">{t('adminSettings.currencySar', 'Saudi Riyal (SAR)')}</SelectItem>
+                  <SelectItem value="AED">{t('adminSettings.currencyAed', 'UAE Dirham (AED)')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
