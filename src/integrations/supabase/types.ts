@@ -10,7 +10,7 @@ export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "14.1"
+    PostgrestVersion: "14.5"
   }
   public: {
     Tables: {
@@ -187,118 +187,6 @@ export type Database = {
           status?: string
           title?: string
           updated_at?: string
-        }
-        Relationships: []
-      }
-      deals: {
-        Row: {
-          id: string
-          agency_id: string
-          title: string
-          discount_percentage: number
-          start_date: string
-          end_date: string
-          status: string
-          package_id: string | null
-          created_at: string
-        }
-        Insert: {
-          id?: string
-          agency_id: string
-          title: string
-          discount_percentage: number
-          start_date: string
-          end_date: string
-          status?: string
-          package_id?: string | null
-          created_at?: string
-        }
-        Update: {
-          id?: string
-          agency_id?: string
-          title?: string
-          discount_percentage?: number
-          start_date?: string
-          end_date?: string
-          status?: string
-          package_id?: string | null
-          created_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "deals_agency_id_fkey"
-            columns: ["agency_id"]
-            isOneToOne: false
-            referencedRelation: "travel_agencies"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      guides: {
-        Row: {
-          id: string
-          agency_id: string
-          name: string
-          specialty: string[]
-          languages: string[]
-          rating: number
-          image_url: string | null
-          created_at: string
-        }
-        Insert: {
-          id?: string
-          agency_id: string
-          name: string
-          specialty?: string[]
-          languages?: string[]
-          rating?: number
-          image_url?: string | null
-          created_at?: string
-        }
-        Update: {
-          id?: string
-          agency_id?: string
-          name?: string
-          specialty?: string[]
-          languages?: string[]
-          rating?: number
-          image_url?: string | null
-          created_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "guides_agency_id_fkey"
-            columns: ["agency_id"]
-            isOneToOne: false
-            referencedRelation: "travel_agencies"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      messages: {
-        Row: {
-          id: string
-          sender_id: string
-          recipient_id: string
-          content: string
-          read_at: string | null
-          created_at: string
-        }
-        Insert: {
-          id?: string
-          sender_id: string
-          recipient_id: string
-          content: string
-          read_at?: string | null
-          created_at?: string
-        }
-        Update: {
-          id?: string
-          sender_id?: string
-          recipient_id?: string
-          content?: string
-          read_at?: string | null
-          created_at?: string
         }
         Relationships: []
       }
@@ -523,6 +411,7 @@ export type Database = {
           agency_id: string
           available_from: string | null
           available_to: string | null
+          average_rating: number | null
           base_price: number
           cancellation_policy: string | null
           category: string | null
@@ -541,12 +430,14 @@ export type Database = {
           status: string | null
           terms_conditions: string | null
           title: string
+          total_reviews: number | null
           updated_at: string
         }
         Insert: {
           agency_id: string
           available_from?: string | null
           available_to?: string | null
+          average_rating?: number | null
           base_price?: number
           cancellation_policy?: string | null
           category?: string | null
@@ -565,12 +456,14 @@ export type Database = {
           status?: string | null
           terms_conditions?: string | null
           title: string
+          total_reviews?: number | null
           updated_at?: string
         }
         Update: {
           agency_id?: string
           available_from?: string | null
           available_to?: string | null
+          average_rating?: number | null
           base_price?: number
           cancellation_policy?: string | null
           category?: string | null
@@ -589,6 +482,7 @@ export type Database = {
           status?: string | null
           terms_conditions?: string | null
           title?: string
+          total_reviews?: number | null
           updated_at?: string
         }
         Relationships: [
@@ -633,6 +527,58 @@ export type Database = {
           total_revenue?: number
         }
         Relationships: []
+      }
+      reviews: {
+        Row: {
+          booking_id: string
+          comment: string | null
+          created_at: string
+          id: string
+          package_id: string
+          rating: number
+          traveler_id: string
+        }
+        Insert: {
+          booking_id: string
+          comment?: string | null
+          created_at?: string
+          id?: string
+          package_id: string
+          rating: number
+          traveler_id: string
+        }
+        Update: {
+          booking_id?: string
+          comment?: string | null
+          created_at?: string
+          id?: string
+          package_id?: string
+          rating?: number
+          traveler_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reviews_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: true
+            referencedRelation: "package_bookings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reviews_package_id_fkey"
+            columns: ["package_id"]
+            isOneToOne: false
+            referencedRelation: "packages"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reviews_traveler_id_fkey"
+            columns: ["traveler_id"]
+            isOneToOne: false
+            referencedRelation: "travelers"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       travel_agencies: {
         Row: {
@@ -780,24 +726,31 @@ export type Database = {
       }
       wishlist: {
         Row: {
-          id: string
-          traveler_id: string
-          package_id: string
           created_at: string
+          id: string
+          package_id: string
+          traveler_id: string
         }
         Insert: {
-          id?: string
-          traveler_id: string
-          package_id: string
           created_at?: string
+          id?: string
+          package_id: string
+          traveler_id: string
         }
         Update: {
-          id?: string
-          traveler_id?: string
-          package_id?: string
           created_at?: string
+          id?: string
+          package_id?: string
+          traveler_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "wishlist_package_id_fkey"
+            columns: ["package_id"]
+            isOneToOne: false
+            referencedRelation: "packages"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "wishlist_traveler_id_fkey"
             columns: ["traveler_id"]
@@ -805,65 +758,6 @@ export type Database = {
             referencedRelation: "travelers"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "wishlist_package_id_fkey"
-            columns: ["package_id"]
-            isOneToOne: false
-            referencedRelation: "packages"
-            referencedColumns: ["id"]
-          }
-        ]
-      }
-      reviews: {
-        Row: {
-          id: string
-          traveler_id: string
-          package_id: string
-          booking_id: string
-          rating: number
-          comment: string | null
-          created_at: string
-        }
-        Insert: {
-          id?: string
-          traveler_id: string
-          package_id: string
-          booking_id: string
-          rating: number
-          comment?: string | null
-          created_at?: string
-        }
-        Update: {
-          id?: string
-          traveler_id?: string
-          package_id?: string
-          booking_id?: string
-          rating?: number
-          comment?: string | null
-          created_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "reviews_traveler_id_fkey"
-            columns: ["traveler_id"]
-            isOneToOne: false
-            referencedRelation: "travelers"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "reviews_package_id_fkey"
-            columns: ["package_id"]
-            isOneToOne: false
-            referencedRelation: "packages"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "reviews_booking_id_fkey"
-            columns: ["booking_id"]
-            isOneToOne: true
-            referencedRelation: "package_bookings"
-            referencedColumns: ["id"]
-          }
         ]
       }
     }
@@ -909,116 +803,116 @@ type DefaultSchema = DatabaseWithoutInternals[Extract<keyof Database, "public">]
 
 export type Tables<
   DefaultSchemaTableNameOrOptions extends
-  | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
-  | { schema: keyof DatabaseWithoutInternals },
+    | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
+    | { schema: keyof DatabaseWithoutInternals },
   TableName extends DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
-  ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
-    DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
-  : never = never,
+    ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+        DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
+    : never = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
   ? (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
-    DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
+      DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
       Row: infer R
     }
-  ? R
-  : never
+    ? R
+    : never
   : DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema["Tables"] &
-    DefaultSchema["Views"])
-  ? (DefaultSchema["Tables"] &
-    DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
-      Row: infer R
-    }
-  ? R
-  : never
-  : never
+        DefaultSchema["Views"])
+    ? (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
+        Row: infer R
+      }
+      ? R
+      : never
+    : never
 
 export type TablesInsert<
   DefaultSchemaTableNameOrOptions extends
-  | keyof DefaultSchema["Tables"]
-  | { schema: keyof DatabaseWithoutInternals },
+    | keyof DefaultSchema["Tables"]
+    | { schema: keyof DatabaseWithoutInternals },
   TableName extends DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
-  ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-  : never = never,
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+    : never = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
   ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
-    Insert: infer I
-  }
-  ? I
-  : never
+      Insert: infer I
+    }
+    ? I
+    : never
   : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
-  ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
-    Insert: infer I
-  }
-  ? I
-  : never
-  : never
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
+        Insert: infer I
+      }
+      ? I
+      : never
+    : never
 
 export type TablesUpdate<
   DefaultSchemaTableNameOrOptions extends
-  | keyof DefaultSchema["Tables"]
-  | { schema: keyof DatabaseWithoutInternals },
+    | keyof DefaultSchema["Tables"]
+    | { schema: keyof DatabaseWithoutInternals },
   TableName extends DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
-  ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-  : never = never,
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+    : never = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
   ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
-    Update: infer U
-  }
-  ? U
-  : never
+      Update: infer U
+    }
+    ? U
+    : never
   : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
-  ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
-    Update: infer U
-  }
-  ? U
-  : never
-  : never
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
+        Update: infer U
+      }
+      ? U
+      : never
+    : never
 
 export type Enums<
   DefaultSchemaEnumNameOrOptions extends
-  | keyof DefaultSchema["Enums"]
-  | { schema: keyof DatabaseWithoutInternals },
+    | keyof DefaultSchema["Enums"]
+    | { schema: keyof DatabaseWithoutInternals },
   EnumName extends DefaultSchemaEnumNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
-  ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
-  : never = never,
+    ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
+    : never = never,
 > = DefaultSchemaEnumNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
   ? DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]
   : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema["Enums"]
-  ? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]
-  : never
+    ? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]
+    : never
 
 export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
-  | keyof DefaultSchema["CompositeTypes"]
-  | { schema: keyof DatabaseWithoutInternals },
+    | keyof DefaultSchema["CompositeTypes"]
+    | { schema: keyof DatabaseWithoutInternals },
   CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
-  ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
-  : never = never,
+    ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
+    : never = never,
 > = PublicCompositeTypeNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
   ? DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
   : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema["CompositeTypes"]
-  ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
-  : never
+    ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
+    : never
 
 export const Constants = {
   public: {

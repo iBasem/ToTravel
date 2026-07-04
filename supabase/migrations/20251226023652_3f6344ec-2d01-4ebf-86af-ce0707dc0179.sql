@@ -112,7 +112,7 @@ EXECUTE FUNCTION public.update_updated_at_column();
 
 -- Insert sample content pages
 INSERT INTO public.content_pages (title, slug, content_type, content, status) VALUES
-('About Travelle', 'about', 'page', 'Welcome to Travelle, your premier travel marketplace...', 'published'),
+('About ToTravel', 'about', 'page', 'Welcome to ToTravel, your premier travel marketplace...', 'published'),
 ('Terms & Conditions', 'terms', 'legal', 'These terms and conditions outline the rules...', 'published'),
 ('Privacy Policy', 'privacy', 'legal', 'Your privacy is important to us...', 'published'),
 ('Travel Safety Tips', 'travel-safety-tips', 'blog', 'Top 10 safety tips for your next adventure...', 'draft'),

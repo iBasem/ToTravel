@@ -491,8 +491,10 @@ CREATE POLICY "Travelers can update their own bookings"
 -- =============================================
 -- STORAGE BUCKET: package-media
 -- =============================================
+-- (bucket may already exist from the June-era migration; identical config)
 INSERT INTO storage.buckets (id, name, public)
-VALUES ('package-media', 'package-media', true);
+VALUES ('package-media', 'package-media', true)
+ON CONFLICT (id) DO NOTHING;
 
 -- Storage policies for package media
 CREATE POLICY "Anyone can view package media files"
