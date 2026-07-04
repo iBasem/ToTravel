@@ -9,6 +9,7 @@ import { PackageCard } from '../components/PackageCard';
 import { FiltersSidebar, type FilterState } from '../components/filters/FiltersSidebar';
 import { Pagination } from '../components/Pagination';
 import { Seo } from '@/lib/seo';
+import { pickLocalized } from '@/lib/localized';
 import '../styles/packages-listing.css';
 
 const ITEMS_PER_PAGE = 15;
@@ -240,7 +241,7 @@ export default function PackagesList() {
                       key={pkg.id}
                       packageData={{
                         ...pkg,
-                        destinations: pkg.destination
+                        destinations: pickLocalized<string>(pkg, 'destination')
                           ?.split(',')
                           .map((d: string) => d.trim()),
                       }}

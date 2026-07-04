@@ -4,7 +4,7 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardHeader, CardTitle } from '@/ui/card';
 import { MapPin, Navigation } from 'lucide-react';
-import { ensureMapboxRTLTextPlugin } from '@/lib/mapbox-rtl';
+import { applyMapLanguage, ensureMapboxRTLTextPlugin } from '@/lib/mapbox-rtl';
 
 const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN;
 
@@ -57,6 +57,7 @@ export function RouteMap({ routes }: RouteMapProps) {
     );
 
     map.current.on('load', () => {
+      if (map.current) applyMapLanguage(map.current);
       setMapLoaded(true);
 
       // Add markers

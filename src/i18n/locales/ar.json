@@ -1102,7 +1102,15 @@
     "followSteps": "اتبع الخطوات أدناه لإنشاء باقة السفر الخاصة بك",
     "packageDeleted": "تم حذف الباقة بنجاح",
     "saveChanges": "حفظ التغييرات",
-    "sampleImageCaption": "صورة تجريبية {{number}}"
+    "sampleImageCaption": "صورة تجريبية {{number}}",
+    "arabicContent": "المحتوى العربي (اختياري)",
+    "arabicContentHint": "يظهر للمسافرين الناطقين بالعربية، ويُستخدم النص الإنجليزي عند تركه فارغاً",
+    "titleAr": "العنوان (بالعربية)",
+    "descriptionAr": "الوصف (بالعربية)",
+    "destinationAr": "الوجهة (بالعربية)",
+    "inclusionsAr": "ما تشمله الباقة (بالعربية)",
+    "exclusionsAr": "ما لا تشمله الباقة (بالعربية)",
+    "activitiesAr": "الأنشطة (بالعربية)"
   },
   "calendar": {
     "title": "تقويم الحجوزات",

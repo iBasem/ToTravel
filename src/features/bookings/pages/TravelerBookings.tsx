@@ -17,6 +17,7 @@ import { useBookings } from "@/features/bookings/hooks/useBookings";
 import { LoadingSpinner } from "@/ui/loading-spinner";
 import { EmptyState } from "@/ui/empty-state";
 import { formatCurrency, formatDate } from "@/lib/formatters";
+import { localizedText } from "@/lib/localized";
 
 import { useNavigate } from "react-router-dom";
 
@@ -108,6 +109,8 @@ export default function TravelerBookings() {
           ) : (
             filteredBookings.map((booking: any) => {
               const packageData = booking.packages;
+              const packageTitle = localizedText(packageData, 'title');
+              const packageDestination = localizedText(packageData, 'destination');
               const imageUrl = packageData?.package_media?.[0]?.file_path || "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=400&h=300&fit=crop";
 
               return (
@@ -117,18 +120,18 @@ export default function TravelerBookings() {
                       <div className="md:w-64">
                         <img
                           src={imageUrl}
-                          alt={packageData?.title || t('common.tourImage')}
+                          alt={packageTitle || t('common.tourImage')}
                           className="w-full h-48 md:h-full object-cover"
                         />
                       </div>
                       <div className="flex-1 p-6">
                         <div className="flex flex-col sm:flex-row sm:items-start justify-between mb-4 gap-3">
                           <div>
-                            <h3 className="text-xl font-semibold text-gray-900 mb-2">{packageData?.title || t('common.unknownPackage')}</h3>
+                            <h3 className="text-xl font-semibold text-gray-900 mb-2">{packageTitle || t('common.unknownPackage')}</h3>
                             <div className="flex items-center gap-4 text-sm text-gray-600 mb-3 flex-wrap">
                               <div className="flex items-center gap-1">
                                 <MapPin className="w-4 h-4" />
-                                {packageData?.destination}
+                                {packageDestination}
                               </div>
                               <div className="flex items-center gap-1">
                                 <Calendar className="w-4 h-4" />

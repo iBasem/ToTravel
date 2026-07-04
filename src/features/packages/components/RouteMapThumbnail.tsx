@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import mapboxgl from 'mapbox-gl';
-import { ensureMapboxRTLTextPlugin } from '@/lib/mapbox-rtl';
+import { applyMapLanguage, ensureMapboxRTLTextPlugin } from '@/lib/mapbox-rtl';
 
 const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN;
 
@@ -45,6 +45,7 @@ export function RouteMapThumbnail({ routes }: RouteMapThumbnailProps) {
     mapRef.current = map;
 
     map.on('load', () => {
+      applyMapLanguage(map);
       const coordinates = sorted.map((d) => [d.longitude, d.latitude]);
 
       // ---- GeoJSON source: route line ----

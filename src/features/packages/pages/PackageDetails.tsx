@@ -32,6 +32,7 @@ import type { Departure } from "@/features/packages/types";
 
 import { Seo } from "@/lib/seo";
 import { getPlatformCurrency } from "@/lib/formatters";
+import { localizedText, pickLocalized } from "@/lib/localized";
 
 export default function PackageDetails() {
   const { t } = useTranslation();
@@ -120,17 +121,22 @@ export default function PackageDetails() {
     );
   }
 
+  // Localized traveler-facing fields (Arabic sibling columns with English fallback)
+  const localizedTitle = localizedText(packageDetails, 'title');
+  const localizedDescription = pickLocalized<string>(packageDetails, 'description');
+  const localizedDestination = localizedText(packageDetails, 'destination');
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Seo
-        title={packageDetails.title}
-        description={packageDetails.description || undefined}
+        title={localizedTitle}
+        description={localizedDescription || undefined}
         jsonLd={[
           {
             '@context': 'https://schema.org',
             '@type': 'TouristTrip',
-            name: packageDetails.title,
-            description: packageDetails.description || undefined,
+            name: localizedTitle,
+            description: localizedDescription || undefined,
             touristType: packageDetails.category || undefined,
             offers: {
               '@type': 'Offer',
@@ -145,7 +151,7 @@ export default function PackageDetails() {
             itemListElement: [
               { '@type': 'ListItem', position: 1, name: t('nav.home'), item: window.location.origin + '/' },
               { '@type': 'ListItem', position: 2, name: t('nav.packages'), item: window.location.origin + '/packages' },
-              { '@type': 'ListItem', position: 3, name: packageDetails.title },
+              { '@type': 'ListItem', position: 3, name: localizedTitle },
             ],
           },
         ]}
@@ -164,7 +170,7 @@ export default function PackageDetails() {
             {packageDetails.package_media && packageDetails.package_media.length > 0 && (
               <HeroGallery
                 images={packageDetails.package_media}
-                title={packageDetails.title}
+                title={localizedTitle}
                 isBestSeller={packageDetails.featured}
               />
             )}
@@ -184,8 +190,8 @@ export default function PackageDetails() {
 
             {/* What's Included */}
             <WhatsIncluded
-              inclusions={packageDetails.inclusions || []}
-              exclusions={packageDetails.exclusions || []}
+              inclusions={pickLocalized<string[]>(packageDetails, 'inclusions') || []}
+              exclusions={pickLocalized<string[]>(packageDetails, 'exclusions') || []}
             />
 
             {/* Operator Info */}
@@ -223,14 +229,14 @@ export default function PackageDetails() {
               <BookingWidget
                 packageData={{
                   id: packageDetails.id,
-                  title: packageDetails.title,
+                  title: localizedTitle,
                   base_price: packageDetails.base_price,
                   available_from: packageDetails.available_from,
                   available_to: packageDetails.available_to,
                   duration_days: packageDetails.duration_days,
                   duration_nights: packageDetails.duration_nights,
                   max_participants: packageDetails.max_participants,
-                  destination: packageDetails.destination,
+                  destination: localizedDestination,
                 }}
                 monthlyAvailability={monthlyAvailability}
                 onSelectMonth={handleSelectMonth}
@@ -251,7 +257,7 @@ export default function PackageDetails() {
           setSelectedDeparture(null);
         }}
         packageId={packageDetails.id}
-        packageTitle={packageDetails.title}
+        packageTitle={localizedTitle}
         basePrice={selectedDeparture?.discount_price || selectedDeparture?.price || packageDetails.base_price}
         maxParticipants={packageDetails.max_participants}
       />

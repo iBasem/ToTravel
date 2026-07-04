@@ -3,6 +3,8 @@
 **Date:** 2026-07-04 · **Branch audited:** `feat/arabic-first` (after all 6 localization stages)
 **Question:** where does a user with Arabic active still see English — traveler, agency, admin — and how do we close each gap?
 
+> **STATUS UPDATE (2026-07-04):** P0, P1, and P2 are implemented. Categories A (via `_ar` columns + bilingual wizard + `pickLocalized`), B (edge-function error codes + auth error mapping, deployed), C (all items), and D (Mapbox Arabic labels via `applyMapLanguage`) are closed. Remaining known limits: browser-native validation bubbles follow the browser language; user-generated content (reviews) stays in its authored language; MT-assist for the wizard is an optional follow-up.
+
 Method: three role-scoped code sweeps (traveler/public, agency, admin) + automated key-coverage analysis + schema analysis + third-party surface review.
 
 ---

@@ -25,6 +25,9 @@ export default function EditPackage() {
       title: '',
       description: '',
       destination: '',
+      title_ar: '',
+      description_ar: '',
+      destination_ar: '',
       category: '',
       difficulty_level: 'moderate',
       duration_days: 1,
@@ -53,6 +56,8 @@ export default function EditPackage() {
       },
       additionalInclusions: [] as string[],
       exclusions: [] as string[],
+      inclusions_ar: [] as string[],
+      exclusions_ar: [] as string[],
       cancellation_policy: '',
       terms_conditions: ''
     },
@@ -108,6 +113,9 @@ export default function EditPackage() {
           title: packageData.title || '',
           description: packageData.description || '',
           destination: packageData.destination || '',
+          title_ar: packageData.title_ar || '',
+          description_ar: packageData.description_ar || '',
+          destination_ar: packageData.destination_ar || '',
           category: packageData.category || '',
           difficulty_level: packageData.difficulty_level || 'moderate',
           duration_days: packageData.duration_days || 1,
@@ -137,7 +145,10 @@ export default function EditPackage() {
           activities: item.activities || [],
           meals: item.meals_included || [],
           accommodation: item.accommodation || '',
-          transportation: item.transportation || ''
+          transportation: item.transportation || '',
+          title_ar: item.title_ar || '',
+          description_ar: item.description_ar || '',
+          activities_ar: item.activities_ar || []
         })),
         pricing: {
           currency: "USD",
@@ -154,6 +165,8 @@ export default function EditPackage() {
           },
           additionalInclusions: packageData.inclusions || [],
           exclusions: packageData.exclusions || [],
+          inclusions_ar: packageData.inclusions_ar || [],
+          exclusions_ar: packageData.exclusions_ar || [],
           cancellation_policy: packageData.cancellation_policy || '',
           terms_conditions: packageData.terms_conditions || ''
         },
@@ -211,6 +224,9 @@ export default function EditPackage() {
           title: formData.basicInfo.title,
           description: formData.basicInfo.description,
           destination: formData.basicInfo.destination,
+          title_ar: formData.basicInfo.title_ar?.trim() || null,
+          description_ar: formData.basicInfo.description_ar?.trim() || null,
+          destination_ar: formData.basicInfo.destination_ar?.trim() || null,
           category: formData.basicInfo.category,
           difficulty_level: formData.basicInfo.difficulty_level,
           duration_days: formData.basicInfo.duration_days,
@@ -220,6 +236,8 @@ export default function EditPackage() {
           base_price: parseFloat(formData.pricing.basePrice) || 0,
           inclusions: formData.pricing.additionalInclusions,
           exclusions: formData.pricing.exclusions,
+          inclusions_ar: formData.pricing.inclusions_ar?.length ? formData.pricing.inclusions_ar : null,
+          exclusions_ar: formData.pricing.exclusions_ar?.length ? formData.pricing.exclusions_ar : null,
           cancellation_policy: formData.pricing.cancellation_policy,
           terms_conditions: formData.pricing.terms_conditions
         })
@@ -267,7 +285,10 @@ export default function EditPackage() {
           activities: item.activities || [],
           meals_included: item.meals || [],
           accommodation: item.accommodation || '',
-          transportation: item.transportation || ''
+          transportation: item.transportation || '',
+          title_ar: item.title_ar?.trim() || null,
+          description_ar: item.description_ar?.trim() || null,
+          activities_ar: item.activities_ar?.length ? item.activities_ar : null
         }));
 
         await supabase

@@ -3,13 +3,17 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { Badge } from "@/ui/badge";
 import { Calendar, Activity, ChevronRight, Utensils, Bed, Star } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { localizedText, pickLocalized } from "@/lib/localized";
 
 interface ItineraryItem {
   id: string;
   day_number: number;
   title: string;
+  title_ar?: string | null;
   description: string;
+  description_ar?: string | null;
   activities: string[];
+  activities_ar?: string[] | null;
   meals_included: string[];
   accommodation: string;
   transportation: string;
@@ -33,7 +37,11 @@ export function DetailedItinerary({ itinerary }: DetailedItineraryProps) {
         {t('packageDetails.detailedItinerary', 'Detailed Itinerary')}
       </h3>
       <Accordion type="single" collapsible className="w-full">
-        {itinerary.map((item, index) => (
+        {itinerary.map((item) => {
+          const title = localizedText(item, 'title');
+          const description = localizedText(item, 'description');
+          const activities = pickLocalized<string[]>(item, 'activities');
+          return (
           <AccordionItem key={item.id} value={`day-${item.day_number}`} className="border rounded-lg mb-3">
             <AccordionTrigger className="px-4 hover:no-underline">
               <div className="flex items-center gap-4 text-start">
@@ -43,22 +51,22 @@ export function DetailedItinerary({ itinerary }: DetailedItineraryProps) {
                   </span>
                 </div>
                 <div>
-                  <h4 className="font-medium text-gray-900">{item.title}</h4>
-                  <p className="text-sm text-gray-600">{item.description}</p>
+                  <h4 className="font-medium text-gray-900">{title}</h4>
+                  <p className="text-sm text-gray-600">{description}</p>
                 </div>
               </div>
             </AccordionTrigger>
             <AccordionContent className="px-4 pb-4">
               <div className="space-y-4 mt-4">
                 {/* Activities */}
-                {item.activities && item.activities.length > 0 && (
+                {activities && activities.length > 0 && (
                   <div>
                     <h5 className="font-medium text-gray-900 mb-2 flex items-center gap-2">
                       <Activity className="w-4 h-4 text-green-600" />
                       {t('packageDetails.activities', 'Activities')}
                     </h5>
                     <ul className="space-y-1">
-                      {item.activities.map((activity, actIndex) => (
+                      {activities.map((activity, actIndex) => (
                         <li key={actIndex} className="flex items-start gap-2 text-sm text-gray-700 text-start">
                           <ChevronRight className="w-3 h-3 mt-0.5 text-green-600 flex-shrink-0 rtl:rotate-180" />
                           {activity}
@@ -100,7 +108,8 @@ export function DetailedItinerary({ itinerary }: DetailedItineraryProps) {
               </div>
             </AccordionContent>
           </AccordionItem>
-        ))}
+          );
+        })}
       </Accordion>
     </div>
   );

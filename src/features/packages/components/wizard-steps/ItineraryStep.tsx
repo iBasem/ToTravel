@@ -8,7 +8,8 @@ import { Textarea } from "@/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/card";
 import { Badge } from "@/ui/badge";
 import { Checkbox } from "@/ui/checkbox";
-import { Plus, Trash2, GripVertical, Utensils, Bed, Activity, Star, ChevronRight, X } from "lucide-react";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/ui/collapsible";
+import { Plus, Trash2, GripVertical, Utensils, Bed, Activity, Star, ChevronRight, ChevronDown, X, Languages } from "lucide-react";
 
 interface ItineraryStepProps {
   data: any[];
@@ -23,8 +24,12 @@ interface ItineraryDay {
   meals: string[];
   accommodation: string;
   highlights: string[];
+  title_ar: string;
+  description_ar: string;
+  activities_ar: string[];
   newActivity: string;
   newHighlight: string;
+  newActivityAr: string;
 }
 
 export function ItineraryStep({ data, onUpdate }: ItineraryStepProps) {
@@ -40,8 +45,12 @@ export function ItineraryStep({ data, onUpdate }: ItineraryStepProps) {
         meals: Array.isArray(item.meals) ? item.meals : [],
         accommodation: item.accommodation || "",
         highlights: Array.isArray(item.highlights) ? item.highlights : [],
+        title_ar: item.title_ar || "",
+        description_ar: item.description_ar || "",
+        activities_ar: Array.isArray(item.activities_ar) ? item.activities_ar : [],
         newActivity: "",
-        newHighlight: ""
+        newHighlight: "",
+        newActivityAr: ""
       }));
     }
     return [
@@ -53,8 +62,12 @@ export function ItineraryStep({ data, onUpdate }: ItineraryStepProps) {
         meals: [],
         accommodation: "",
         highlights: [],
+        title_ar: "",
+        description_ar: "",
+        activities_ar: [],
         newActivity: "",
-        newHighlight: ""
+        newHighlight: "",
+        newActivityAr: ""
       }
     ];
   });
@@ -72,8 +85,12 @@ export function ItineraryStep({ data, onUpdate }: ItineraryStepProps) {
       meals: [],
       accommodation: "",
       highlights: [],
+      title_ar: "",
+      description_ar: "",
+      activities_ar: [],
       newActivity: "",
-      newHighlight: ""
+      newHighlight: "",
+      newActivityAr: ""
     };
     setItinerary([...itinerary, newDay]);
   };
@@ -134,6 +151,30 @@ export function ItineraryStep({ data, onUpdate }: ItineraryStepProps) {
         ? {
           ...day,
           highlights: day.highlights.filter((_, hIndex) => hIndex !== highlightIndex)
+        }
+        : day
+    );
+    setItinerary(updatedItinerary);
+  };
+
+  const addActivityAr = (dayIndex: number) => {
+    const day = itinerary[dayIndex];
+    if (day.newActivityAr.trim()) {
+      const updatedItinerary = itinerary.map((d, index) =>
+        index === dayIndex
+          ? { ...d, activities_ar: [...d.activities_ar.filter(a => a.trim()), d.newActivityAr.trim()], newActivityAr: "" }
+          : d
+      );
+      setItinerary(updatedItinerary);
+    }
+  };
+
+  const removeActivityAr = (dayIndex: number, activityIndex: number) => {
+    const updatedItinerary = itinerary.map((day, index) =>
+      index === dayIndex
+        ? {
+          ...day,
+          activities_ar: day.activities_ar.filter((_, actIndex) => actIndex !== activityIndex)
         }
         : day
     );
@@ -339,6 +380,85 @@ export function ItineraryStep({ data, onUpdate }: ItineraryStepProps) {
                   </Button>
                 </div>
               </div>
+
+              {/* Arabic Content */}
+              <Collapsible className="border rounded-md">
+                <CollapsibleTrigger asChild>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    className="w-full justify-between px-4"
+                  >
+                    <span className="flex items-center gap-2">
+                      <Languages className="w-4 h-4 text-muted-foreground" />
+                      {t('packageWizard.arabicContent', 'Arabic content (optional)')}
+                    </span>
+                    <ChevronDown className="w-4 h-4 text-muted-foreground" />
+                  </Button>
+                </CollapsibleTrigger>
+                <CollapsibleContent className="px-4 pb-4 space-y-4">
+                  <p className="text-sm text-muted-foreground text-start">
+                    {t('packageWizard.arabicContentHint', 'Shown to Arabic-speaking travelers; English is used when empty')}
+                  </p>
+
+                  <div className="space-y-2">
+                    <Label className="text-start block">{t('packageWizard.titleAr', 'Title (Arabic)')}</Label>
+                    <Input
+                      dir="rtl"
+                      value={day.title_ar}
+                      onChange={(e) => updateDay(dayIndex, "title_ar", e.target.value)}
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label className="text-start block">{t('packageWizard.descriptionAr', 'Description (Arabic)')}</Label>
+                    <Textarea
+                      dir="rtl"
+                      value={day.description_ar}
+                      onChange={(e) => updateDay(dayIndex, "description_ar", e.target.value)}
+                      className="min-h-[80px]"
+                    />
+                  </div>
+
+                  <div className="space-y-3">
+                    <Label className="text-start block">{t('packageWizard.activitiesAr', 'Activities (Arabic)')}</Label>
+
+                    <div className="space-y-2">
+                      {day.activities_ar.filter(a => a.trim()).map((activity, activityIndex) => (
+                        <div key={activityIndex} className="flex items-start gap-2 p-2 bg-muted rounded text-start" dir="rtl">
+                          <ChevronRight className="w-3 h-3 mt-0.5 text-green-600 flex-shrink-0 rotate-180" />
+                          <span className="text-sm flex-1">{activity}</span>
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => removeActivityAr(dayIndex, activityIndex)}
+                          >
+                            <X className="w-3 h-3" />
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+
+                    <div className="flex gap-2">
+                      <Input
+                        dir="rtl"
+                        value={day.newActivityAr}
+                        onChange={(e) => updateDay(dayIndex, "newActivityAr", e.target.value)}
+                        onKeyPress={(e) => e.key === "Enter" && addActivityAr(dayIndex)}
+                      />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => addActivityAr(dayIndex)}
+                      >
+                        <Plus className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </div>
+                </CollapsibleContent>
+              </Collapsible>
             </CardContent>
           </Card>
         ))}

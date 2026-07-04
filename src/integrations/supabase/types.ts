@@ -194,39 +194,48 @@ export type Database = {
         Row: {
           accommodation: string | null
           activities: string[] | null
+          activities_ar: string[] | null
           created_at: string
           day_number: number
           description: string | null
+          description_ar: string | null
           id: string
           meals_included: string[] | null
           package_id: string
           title: string
+          title_ar: string | null
           transportation: string | null
           updated_at: string
         }
         Insert: {
           accommodation?: string | null
           activities?: string[] | null
+          activities_ar?: string[] | null
           created_at?: string
           day_number: number
           description?: string | null
+          description_ar?: string | null
           id?: string
           meals_included?: string[] | null
           package_id: string
           title: string
+          title_ar?: string | null
           transportation?: string | null
           updated_at?: string
         }
         Update: {
           accommodation?: string | null
           activities?: string[] | null
+          activities_ar?: string[] | null
           created_at?: string
           day_number?: number
           description?: string | null
+          description_ar?: string | null
           id?: string
           meals_included?: string[] | null
           package_id?: string
           title?: string
+          title_ar?: string | null
           transportation?: string | null
           updated_at?: string
         }
@@ -417,19 +426,24 @@ export type Database = {
           category: string | null
           created_at: string
           description: string | null
+          description_ar: string | null
           destination: string
+          destination_ar: string | null
           difficulty_level: string | null
           duration_days: number
           duration_nights: number
           exclusions: string[] | null
+          exclusions_ar: string[] | null
           featured: boolean | null
           id: string
           inclusions: string[] | null
+          inclusions_ar: string[] | null
           max_participants: number | null
           requirements: string[] | null
           status: string | null
           terms_conditions: string | null
           title: string
+          title_ar: string | null
           total_reviews: number | null
           updated_at: string
         }
@@ -443,19 +457,24 @@ export type Database = {
           category?: string | null
           created_at?: string
           description?: string | null
+          description_ar?: string | null
           destination: string
+          destination_ar?: string | null
           difficulty_level?: string | null
           duration_days?: number
           duration_nights?: number
           exclusions?: string[] | null
+          exclusions_ar?: string[] | null
           featured?: boolean | null
           id?: string
           inclusions?: string[] | null
+          inclusions_ar?: string[] | null
           max_participants?: number | null
           requirements?: string[] | null
           status?: string | null
           terms_conditions?: string | null
           title: string
+          title_ar?: string | null
           total_reviews?: number | null
           updated_at?: string
         }
@@ -469,19 +488,24 @@ export type Database = {
           category?: string | null
           created_at?: string
           description?: string | null
+          description_ar?: string | null
           destination?: string
+          destination_ar?: string | null
           difficulty_level?: string | null
           duration_days?: number
           duration_nights?: number
           exclusions?: string[] | null
+          exclusions_ar?: string[] | null
           featured?: boolean | null
           id?: string
           inclusions?: string[] | null
+          inclusions_ar?: string[] | null
           max_participants?: number | null
           requirements?: string[] | null
           status?: string | null
           terms_conditions?: string | null
           title?: string
+          title_ar?: string | null
           total_reviews?: number | null
           updated_at?: string
         }

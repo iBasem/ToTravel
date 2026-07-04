@@ -15,7 +15,9 @@ export interface Booking {
   updated_at: string;
   packages?: {
     title: string;
+    title_ar?: string | null;
     destination: string;
+    destination_ar?: string | null;
     duration_days: number;
   };
   travelers?: {
@@ -48,7 +50,9 @@ export function useBookings() {
             *,
             packages!inner (
               title,
+              title_ar,
               destination,
+              destination_ar,
               duration_days,
               agency_id,
               package_media (

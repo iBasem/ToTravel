@@ -1074,7 +1074,15 @@
     "followSteps": "Follow the steps below to create your travel package",
     "packageDeleted": "Package deleted successfully",
     "saveChanges": "Save Changes",
-    "sampleImageCaption": "Sample image {{number}}"
+    "sampleImageCaption": "Sample image {{number}}",
+    "arabicContent": "Arabic content (optional)",
+    "arabicContentHint": "Shown to Arabic-speaking travelers; English is used when empty",
+    "titleAr": "Title (Arabic)",
+    "descriptionAr": "Description (Arabic)",
+    "destinationAr": "Destination (Arabic)",
+    "inclusionsAr": "What's included (Arabic)",
+    "exclusionsAr": "What's not included (Arabic)",
+    "activitiesAr": "Activities (Arabic)"
   },
   "calendar": {
     "title": "Bookings Calendar",

@@ -3,7 +3,7 @@ import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { useTranslation } from 'react-i18next';
 import { RouteDestination } from './types';
-import { ensureMapboxRTLTextPlugin } from '@/lib/mapbox-rtl';
+import { applyMapLanguage, ensureMapboxRTLTextPlugin } from '@/lib/mapbox-rtl';
 
 const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN;
 
@@ -46,6 +46,7 @@ export function MapboxMap({ destinations, onMapClick, isRTL = false }: MapboxMap
     );
 
     map.current.on('load', () => {
+      if (map.current) applyMapLanguage(map.current);
       setMapLoaded(true);
     });
 

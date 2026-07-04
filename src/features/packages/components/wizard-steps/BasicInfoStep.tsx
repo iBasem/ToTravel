@@ -34,6 +34,9 @@ export function BasicInfoStep({ data, onUpdate }: BasicInfoStepProps) {
       subtitle: "",
       description: "",
       destination: "", // Keep for backward compatibility
+      title_ar: "",
+      description_ar: "",
+      destination_ar: "",
       duration: "",
       maxGroupSize: "",
       packageType: "group",
@@ -332,6 +335,50 @@ export function BasicInfoStep({ data, onUpdate }: BasicInfoStepProps) {
               value={formData.description}
               onChange={(e) => handleInputChange("description", e.target.value)}
               placeholder={t('packageWizard.descriptionPlaceholder')}
+              className="min-h-[100px]"
+            />
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Arabic Content */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-start">{t('packageWizard.arabicContent', 'Arabic content (optional)')}</CardTitle>
+          <p className="text-sm text-muted-foreground text-start">
+            {t('packageWizard.arabicContentHint', 'Shown to Arabic-speaking travelers; English is used when empty')}
+          </p>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="title_ar" className="text-start block">{t('packageWizard.titleAr', 'Title (Arabic)')}</Label>
+              <Input
+                id="title_ar"
+                dir="rtl"
+                value={formData.title_ar}
+                onChange={(e) => handleInputChange("title_ar", e.target.value)}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="destination_ar" className="text-start block">{t('packageWizard.destinationAr', 'Destination (Arabic)')}</Label>
+              <Input
+                id="destination_ar"
+                dir="rtl"
+                value={formData.destination_ar}
+                onChange={(e) => handleInputChange("destination_ar", e.target.value)}
+              />
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="description_ar" className="text-start block">{t('packageWizard.descriptionAr', 'Description (Arabic)')}</Label>
+            <Textarea
+              id="description_ar"
+              dir="rtl"
+              value={formData.description_ar}
+              onChange={(e) => handleInputChange("description_ar", e.target.value)}
               className="min-h-[100px]"
             />
           </div>

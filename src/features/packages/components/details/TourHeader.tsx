@@ -2,6 +2,7 @@ import { useTranslation } from "react-i18next";
 import { Badge } from "@/ui/badge";
 import { Star, Clock, Users, MapPin, Heart, Share2 } from "lucide-react";
 import { Button } from "@/ui/button";
+import { localizedText } from "@/lib/localized";
 import type { PackageDetails } from "@/features/packages/hooks/usePackageDetails";
 
 interface TourHeaderProps {
@@ -10,6 +11,9 @@ interface TourHeaderProps {
 
 export function TourHeader({ packageData }: TourHeaderProps) {
     const { t } = useTranslation();
+    const title = localizedText(packageData, 'title');
+    const destination = localizedText(packageData, 'destination');
+    const description = localizedText(packageData, 'description');
 
     const getTourTypeBadgeColor = (type: string) => {
         switch (type) {
@@ -41,7 +45,7 @@ export function TourHeader({ packageData }: TourHeaderProps) {
 
             {/* Title */}
             <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 mb-3">
-                {packageData.title}
+                {title}
             </h1>
 
             {/* Rating & Quick Stats Row */}
@@ -74,14 +78,14 @@ export function TourHeader({ packageData }: TourHeaderProps) {
                 {/* Destination */}
                 <div className="flex items-center gap-1.5 text-gray-600">
                     <MapPin className="w-4 h-4 text-blue-600" />
-                    <span>{packageData.destination}</span>
+                    <span>{destination}</span>
                 </div>
             </div>
 
             {/* Description (truncated) */}
-            {packageData.description && (
+            {description && (
                 <p className="mt-4 text-gray-600 leading-relaxed line-clamp-2 md:line-clamp-3">
-                    {packageData.description}
+                    {description}
                 </p>
             )}
 

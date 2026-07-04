@@ -5,8 +5,11 @@ import { supabase } from '@/integrations/supabase/client';
 export interface PackageDetails {
   id: string;
   title: string;
+  title_ar?: string | null;
   description: string;
+  description_ar?: string | null;
   destination: string;
+  destination_ar?: string | null;
   duration_days: number;
   duration_nights: number;
   base_price: number;
@@ -16,7 +19,9 @@ export interface PackageDetails {
   average_rating: number; // Added
   total_reviews: number; // Added
   inclusions: string[];
+  inclusions_ar?: string[] | null;
   exclusions: string[];
+  exclusions_ar?: string[] | null;
   requirements: string[];
   cancellation_policy: string;
   terms_conditions: string;
@@ -40,8 +45,11 @@ export interface PackageDetails {
     id: string;
     day_number: number;
     title: string;
+    title_ar?: string | null;
     description: string;
+    description_ar?: string | null;
     activities: string[];
+    activities_ar?: string[] | null;
     meals_included: string[];
     accommodation: string;
     transportation: string;
@@ -102,8 +110,11 @@ export function usePackageDetails(packageId: string | undefined) {
               id,
               day_number,
               title,
+              title_ar,
               description,
+              description_ar,
               activities,
+              activities_ar,
               meals_included,
               accommodation,
               transportation

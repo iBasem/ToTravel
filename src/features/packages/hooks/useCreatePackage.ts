@@ -22,6 +22,9 @@ interface CreatePackageData {
     title: string;
     description: string;
     destination: string;
+    title_ar?: string;
+    description_ar?: string;
+    destination_ar?: string;
     category: string;
     difficulty_level: string;
     duration_days: number;
@@ -42,11 +45,16 @@ interface CreatePackageData {
     meals_included: string[];
     accommodation?: string;
     transportation?: string;
+    title_ar?: string;
+    description_ar?: string;
+    activities_ar?: string[];
   }>;
   pricing: {
     base_price: number;
     inclusions: string[];
     exclusions: string[];
+    inclusions_ar?: string[];
+    exclusions_ar?: string[];
     cancellation_policy: string;
     terms_conditions: string;
   };
@@ -80,6 +88,9 @@ export function useCreatePackage() {
           title: packageData.basicInfo.title,
           description: packageData.basicInfo.description,
           destination: packageData.basicInfo.destination,
+          title_ar: packageData.basicInfo.title_ar?.trim() || null,
+          description_ar: packageData.basicInfo.description_ar?.trim() || null,
+          destination_ar: packageData.basicInfo.destination_ar?.trim() || null,
           category: packageData.basicInfo.category,
           difficulty_level: packageData.basicInfo.difficulty_level,
           duration_days: packageData.basicInfo.duration_days,
@@ -89,6 +100,8 @@ export function useCreatePackage() {
           base_price: packageData.pricing.base_price,
           inclusions: packageData.pricing.inclusions,
           exclusions: packageData.pricing.exclusions,
+          inclusions_ar: packageData.pricing.inclusions_ar?.length ? packageData.pricing.inclusions_ar : null,
+          exclusions_ar: packageData.pricing.exclusions_ar?.length ? packageData.pricing.exclusions_ar : null,
           cancellation_policy: packageData.pricing.cancellation_policy,
           terms_conditions: packageData.pricing.terms_conditions,
           status: 'draft'
@@ -136,7 +149,10 @@ export function useCreatePackage() {
           activities: item.activities,
           meals_included: item.meals_included,
           accommodation: item.accommodation,
-          transportation: item.transportation
+          transportation: item.transportation,
+          title_ar: item.title_ar?.trim() || null,
+          description_ar: item.description_ar?.trim() || null,
+          activities_ar: item.activities_ar?.length ? item.activities_ar : null
         }));
 
         const { error: itineraryError } = await supabase

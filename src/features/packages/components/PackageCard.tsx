@@ -5,6 +5,7 @@ import { Heart, Star, Map, Info } from 'lucide-react';
 import type { PackageWithMedia } from '../hooks/usePublishedPackages';
 import { RouteMapThumbnail } from './RouteMapThumbnail';
 import { formatCurrency, formatDate, formatNumber } from '@/lib/formatters';
+import { localizedText } from '@/lib/localized';
 
 interface PackageCardProps {
     packageData: PackageWithMedia & {
@@ -23,8 +24,6 @@ export function PackageCard({
     const { t } = useTranslation();
     const {
         id,
-        title,
-        destination,
         base_price,
         duration_days,
         duration_nights,
@@ -36,6 +35,10 @@ export function PackageCard({
         destinations,
         agency_name,
     } = packageData;
+
+    // Localized display fields (fall back to base columns outside Arabic UI)
+    const title = localizedText(packageData, 'title');
+    const destination = localizedText(packageData, 'destination');
 
     // Primary image
     const primaryMedia = package_media?.find((m) => m.is_primary) ?? package_media?.[0];
@@ -53,7 +56,9 @@ export function PackageCard({
     // Destinations list
     const destinationList = destinations?.length
         ? destinations
-        : destination?.split(',').map((d) => d.trim()) ?? [];
+        : destination
+          ? destination.split(',').map((d) => d.trim())
+          : [];
     const visibleDestinations = destinationList.slice(0, 5);
     const moreCount = Math.max(0, destinationList.length - 5);
 
@@ -77,7 +82,7 @@ export function PackageCard({
     const quote = t(`packageCard.quotes.${Math.floor(Math.random() * 4)}`);
 
     // Regions from destination
-    const regions = destination?.split(',').slice(0, 2).map(d => d.trim()).join(', ') || destination;
+    const regions = destination.split(',').slice(0, 2).map(d => d.trim()).join(', ') || destination;
 
     return (
         <article className="pkg-card">

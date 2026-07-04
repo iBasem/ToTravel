@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 import { useAuth } from "@/features/auth/context/AuthContext";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { localizedText } from "@/lib/localized";
 import {
   BookOpen,
   Heart,
@@ -31,7 +32,9 @@ export default function TravelerDashboard() {
           *,
           packages (
             title,
+            title_ar,
             destination,
+            destination_ar,
             duration_days
           )
         `)
@@ -156,7 +159,7 @@ export default function TravelerDashboard() {
                     <MapPin className="w-6 h-6 text-blue-600" />
                   </div>
                   <div className="flex-1">
-                    <h4 className="font-medium">{booking.packages?.title || t('common.package')}</h4>
+                    <h4 className="font-medium">{localizedText(booking.packages, 'title') || t('common.package')}</h4>
                     <p className="text-sm text-gray-600 flex items-center gap-1">
                       <Clock className="w-4 h-4" />
                       {new Date(booking.booking_date).toLocaleDateString(i18n.language === 'ar' ? 'ar-SA' : 'en-US')}

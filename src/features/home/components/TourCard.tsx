@@ -5,6 +5,7 @@ import { Button } from "@/ui/button";
 import { Badge } from "@/ui/badge";
 import { Heart, Star, MapPin } from "lucide-react";
 import { formatCurrency } from "@/lib/formatters";
+import { localizedText } from "@/lib/localized";
 import type { PackageWithMedia } from "@/features/packages/hooks/usePublishedPackages";
 
 interface TourCardProps {
@@ -13,6 +14,8 @@ interface TourCardProps {
 
 export function TourCard({ package: pkg }: TourCardProps) {
   const { t } = useTranslation();
+  const title = localizedText(pkg, 'title');
+  const destination = localizedText(pkg, 'destination');
   const primaryImage = pkg.package_media?.find(m => m.is_primary) || pkg.package_media?.[0];
   const imageUrl = primaryImage?.file_path || "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=400&h=300&fit=crop";
 
@@ -23,7 +26,7 @@ export function TourCard({ package: pkg }: TourCardProps) {
           <div className="relative">
             <img
               src={imageUrl}
-              alt={pkg.title}
+              alt={title}
               className="w-full h-40 sm:h-48 object-cover"
             />
             {pkg.featured && (
@@ -43,11 +46,11 @@ export function TourCard({ package: pkg }: TourCardProps) {
           </div>
           <div className="p-3 sm:p-4">
             <h3 className="font-semibold mb-2 line-clamp-2 text-sm sm:text-base">
-              {pkg.title}
+              {title}
             </h3>
             <div className="flex items-center gap-2 mb-2">
               <MapPin className="w-3 h-3 sm:w-4 sm:h-4 text-muted-foreground flex-shrink-0" />
-              <span className="text-xs sm:text-sm text-muted-foreground truncate">{pkg.destination}</span>
+              <span className="text-xs sm:text-sm text-muted-foreground truncate">{destination}</span>
             </div>
             <div className="flex items-center justify-between mb-2 text-xs sm:text-sm">
               <span className="text-muted-foreground">{pkg.duration_days} {t('common.days')}</span>

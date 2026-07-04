@@ -12,8 +12,10 @@ export type WishlistItem = {
     package: {
         id: string;
         title: string;
+        title_ar?: string | null;
         base_price: number;
         destination: string;
+        destination_ar?: string | null;
         duration_days: number;
         max_participants: number | null;
         difficulty_level: string | null;
@@ -45,8 +47,10 @@ export function useWishlist() {
           package:packages (
             id,
             title,
+            title_ar,
             base_price,
             destination,
+            destination_ar,
             duration_days,
             max_participants,
             difficulty_level,
