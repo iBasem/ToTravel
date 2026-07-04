@@ -1,5 +1,5 @@
-/* Import Arabic-optimized font */
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+/* Fonts (IBM Plex Sans Arabic + Inter) are loaded from index.html via
+   preconnect + <link> so they don't block CSS parsing. */
 
 @tailwind base;
 @tailwind components;
@@ -149,6 +149,17 @@
 
   [dir="rtl"] .leading-relaxed {
     line-height: 1.9;
+  }
+
+  /* Arabic script must never be letter-spaced: tracking breaks the
+     connected letterforms. Neutralize Tailwind tracking utilities. */
+  [dir="rtl"] .tracking-tighter,
+  [dir="rtl"] .tracking-tight,
+  [dir="rtl"] .tracking-normal,
+  [dir="rtl"] .tracking-wide,
+  [dir="rtl"] .tracking-wider,
+  [dir="rtl"] .tracking-widest {
+    letter-spacing: 0;
   }
 
   /* Numbers in Arabic context */
