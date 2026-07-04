@@ -15,6 +15,18 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        // Pin the heaviest vendors to stable, named chunks so they cache
+        // independently and never get merged into route/shared chunks.
+        manualChunks: {
+          "mapbox-gl": ["mapbox-gl"],
+          recharts: ["recharts"],
+        },
+      },
+    },
+  },
   test: {
     globals: true,
     environment: "jsdom",
