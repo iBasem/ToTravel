@@ -8,6 +8,7 @@ import { usePublishedPackages } from '../hooks/usePublishedPackages';
 import { PackageCard } from '../components/PackageCard';
 import { FiltersSidebar, type FilterState } from '../components/filters/FiltersSidebar';
 import { Pagination } from '../components/Pagination';
+import { Seo } from '@/lib/seo';
 import '../styles/packages-listing.css';
 
 const ITEMS_PER_PAGE = 15;
@@ -194,9 +195,10 @@ export default function PackagesList() {
 
   return (
     <div className="min-h-screen bg-white">
+      <Seo title={t('tours.pageHeading')} description={t('tours.findPerfect')} />
       <HeaderSection />
 
-      <div className="pkg-page">
+      <div className="pkg-page" id="main-content">
         <div className="pkg-page-inner">
           {/* Breadcrumbs */}
           <nav className="pkg-breadcrumbs" aria-label={t('ui.breadcrumb')}>

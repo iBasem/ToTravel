@@ -12,3 +12,6 @@ Allow: /
 
 User-agent: *
 Allow: /
+
+# Replace the domain before deploying (see public/sitemap.xml).
+Sitemap: https://totravel.example.com/sitemap.xml

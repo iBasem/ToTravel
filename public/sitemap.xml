@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Static routes only. Replace https://totravel.example.com with the real
+  production domain before deploying. Package detail pages are dynamic;
+  generating them requires a build-time or server-side step (tracked in
+  LOCALIZATION-AUDIT.md).
+-->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url>
+    <loc>https://totravel.example.com/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://totravel.example.com/?lng=en" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://totravel.example.com/?lng=ar" />
+  </url>
+  <url>
+    <loc>https://totravel.example.com/packages</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://totravel.example.com/packages?lng=en" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://totravel.example.com/packages?lng=ar" />
+  </url>
+  <url>
+    <loc>https://totravel.example.com/destinations</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://totravel.example.com/destinations?lng=en" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://totravel.example.com/destinations?lng=ar" />
+  </url>
+  <url>
+    <loc>https://totravel.example.com/auth</loc>
+  </url>
+</urlset>

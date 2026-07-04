@@ -7,6 +7,7 @@ import { Input } from "@/ui/input";
 import { HeaderSection } from "@/features/home/components/HeaderSection";
 import { FooterSection } from "@/features/home/components/FooterSection";
 import { useTranslation } from "react-i18next";
+import { Seo } from "@/lib/seo";
 import {
   Search,
   MapPin,
@@ -109,10 +110,11 @@ export default function Destinations() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <Seo title={t('destinations.exploreWorld')} description={t('destinations.exploreDescription')} />
       <HeaderSection />
 
       {/* Hero Section */}
-      <div className="bg-gradient-to-r from-blue-600 to-purple-700 text-white">
+      <div id="main-content" className="bg-gradient-to-r from-blue-600 to-purple-700 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
           <div className="text-center">
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6">

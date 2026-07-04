@@ -7,6 +7,7 @@ import { FooterSection } from "@/features/home/components/FooterSection";
 import { useFeaturedPackages } from "@/features/packages/hooks/useFeaturedPackages";
 import { usePublishedPackages } from "@/features/packages/hooks/usePublishedPackages";
 import { LoadingSpinner } from "@/ui/loading-spinner";
+import { Seo } from "@/lib/seo";
 
 export default function Home() {
   const { t } = useTranslation();
@@ -37,8 +38,20 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-white">
+      <Seo
+        title={t('hero.title')}
+        description={t('hero.subtitle')}
+        jsonLd={{
+          '@context': 'https://schema.org',
+          '@type': 'Organization',
+          name: 'ToTravel',
+          url: window.location.origin,
+          description: t('hero.subtitle'),
+        }}
+      />
       <HeaderSection />
 
+      <main id="main-content">
       <HeroSection />
 
       <DestinationsSection />
@@ -65,6 +78,7 @@ export default function Home() {
         showViewAll={false}
         backgroundClass="bg-gray-50"
       />
+      </main>
 
       <FooterSection />
     </div>

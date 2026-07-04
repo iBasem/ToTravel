@@ -990,7 +990,8 @@
     "breadcrumb": "مسار التنقل",
     "pagination": "التنقل بين الصفحات",
     "minValue": "الحد الأدنى",
-    "maxValue": "الحد الأقصى"
+    "maxValue": "الحد الأقصى",
+    "skipToContent": "تخطَّ إلى المحتوى الرئيسي"
   },
   "agencyManagement": {
     "title": "إدارة وكالات السفر",

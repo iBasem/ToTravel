@@ -37,7 +37,7 @@ const DashboardLayout = () => {
       {/* Main content area - flows naturally based on direction */}
       <SidebarInset className="flex-1 flex flex-col min-w-0">
         <DashboardHeader />
-        <main className="flex-1 p-4 lg:p-6 xl:p-8 w-full">
+        <main id="main-content" className="flex-1 p-4 lg:p-6 xl:p-8 w-full">
           <div className="max-w-7xl mx-auto w-full">
             <Outlet />
           </div>

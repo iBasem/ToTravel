@@ -36,6 +36,7 @@ export function TourCard({ package: pkg }: TourCardProps) {
               size="icon"
               className="absolute top-2 end-2 bg-background/80 hover:bg-background w-8 h-8 sm:w-10 sm:h-10"
               onClick={(e) => e.preventDefault()}
+              aria-label={t('packageCard.addToWishlist')}
             >
               <Heart className="w-3 h-3 sm:w-4 sm:h-4" />
             </Button>

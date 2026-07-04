@@ -21,7 +21,10 @@ i18nInstance
       escapeValue: false
     },
     detection: {
-      order: ['localStorage', 'navigator'],
+      // querystring first so hreflang alternates (?lng=ar) actually switch
+      // the language for crawlers and shared links.
+      order: ['querystring', 'localStorage', 'navigator'],
+      lookupQuerystring: 'lng',
       caches: ['localStorage']
     },
     react: {

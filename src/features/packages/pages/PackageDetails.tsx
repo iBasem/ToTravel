@@ -30,6 +30,9 @@ import { useAuth } from "@/features/auth/context/AuthContext";
 // Types
 import type { Departure } from "@/features/packages/types";
 
+import { Seo } from "@/lib/seo";
+import { getPlatformCurrency } from "@/lib/formatters";
+
 export default function PackageDetails() {
   const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
@@ -119,10 +122,38 @@ export default function PackageDetails() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <Seo
+        title={packageDetails.title}
+        description={packageDetails.description || undefined}
+        jsonLd={[
+          {
+            '@context': 'https://schema.org',
+            '@type': 'TouristTrip',
+            name: packageDetails.title,
+            description: packageDetails.description || undefined,
+            touristType: packageDetails.category || undefined,
+            offers: {
+              '@type': 'Offer',
+              price: packageDetails.base_price,
+              priceCurrency: getPlatformCurrency(),
+              availability: 'https://schema.org/InStock',
+            },
+          },
+          {
+            '@context': 'https://schema.org',
+            '@type': 'BreadcrumbList',
+            itemListElement: [
+              { '@type': 'ListItem', position: 1, name: t('nav.home'), item: window.location.origin + '/' },
+              { '@type': 'ListItem', position: 2, name: t('nav.packages'), item: window.location.origin + '/packages' },
+              { '@type': 'ListItem', position: 3, name: packageDetails.title },
+            ],
+          },
+        ]}
+      />
       <HeaderSection />
 
       {/* Main Content Container */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <div id="main-content" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {/* 2-Column Layout: 66% content, 33% sidebar */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
 

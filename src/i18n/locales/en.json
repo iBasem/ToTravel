@@ -962,7 +962,8 @@
     "breadcrumb": "Breadcrumb",
     "pagination": "Pagination",
     "minValue": "Minimum value",
-    "maxValue": "Maximum value"
+    "maxValue": "Maximum value",
+    "skipToContent": "Skip to main content"
   },
   "agencyManagement": {
     "title": "Travel Agency Management",
