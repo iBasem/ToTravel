@@ -23,6 +23,7 @@ import { Search, Filter, MoreHorizontal, Eye, Edit, UserX, UserCheck, RefreshCw 
 import { useAdminTravelers } from "@/features/admin/hooks";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
+import { formatDate, formatNumber } from "@/lib/formatters";
 import { PageHeader } from "@/ui/page-header";
 import { StatsGrid } from "@/ui/stats-card";
 
@@ -106,10 +107,10 @@ export default function TravelerManagement() {
       {/* Stats Cards */}
       <StatsGrid
         stats={[
-          { title: t('travelers.totalTravelers'), value: stats.total.toLocaleString() },
-          { title: t('travelers.activeUsers'), value: stats.active.toLocaleString() },
-          { title: t('common.suspended'), value: stats.suspended.toLocaleString() },
-          { title: t('travelers.newThisMonth'), value: stats.newThisMonth.toLocaleString() },
+          { title: t('travelers.totalTravelers'), value: formatNumber(stats.total) },
+          { title: t('travelers.activeUsers'), value: formatNumber(stats.active) },
+          { title: t('common.suspended'), value: formatNumber(stats.suspended) },
+          { title: t('travelers.newThisMonth'), value: formatNumber(stats.newThisMonth) },
         ]}
       />
 
@@ -185,7 +186,7 @@ export default function TravelerManagement() {
                       </div>
                     </TableCell>
                     <TableCell className="font-mono text-sm text-start">{traveler.id.slice(0, 8)}</TableCell>
-                    <TableCell className="text-start">{new Date(traveler.created_at).toLocaleDateString(isRTL ? 'ar-SA' : 'en-US')}</TableCell>
+                    <TableCell className="text-start">{formatDate(traveler.created_at, "P")}</TableCell>
                     <TableCell className="text-start">{traveler.bookings_count}</TableCell>
                     <TableCell className="text-start">{getStatusBadge(traveler.status)}</TableCell>
                     <TableCell className="text-end">

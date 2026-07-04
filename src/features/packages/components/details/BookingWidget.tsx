@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { format } from "date-fns";
+import { formatCurrency } from "@/lib/formatters";
 import { Button } from "@/ui/button";
 import { Card, CardContent } from "@/ui/card";
 import { Popover, PopoverContent, PopoverTrigger } from "@/ui/popover";
@@ -72,7 +72,7 @@ export function BookingWidget({
                     </div>
                     <div className="flex items-baseline justify-center gap-1">
                         <span className="text-4xl font-bold text-gray-900">
-                            ${lowestPrice.toLocaleString()}
+                            {formatCurrency(lowestPrice)}
                         </span>
                         <span className="text-gray-500 text-sm">
                             {t('packageDetails.perPerson', '/ person')}
@@ -132,7 +132,7 @@ export function BookingWidget({
                                                 {month.monthLabel}
                                             </div>
                                             <div className="text-xs text-gray-500 mt-1">
-                                                {t('packageDetails.fromPrice', 'From')} ${month.startingPrice.toLocaleString()}
+                                                {t('packageDetails.fromPrice', 'From')} {formatCurrency(month.startingPrice)}
                                             </div>
                                             <div className="text-xs text-blue-600 mt-0.5">
                                                 {month.departureCount} {t('packageDetails.departures', 'departures')}

@@ -1,8 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Heart, Star, Map, Info } from 'lucide-react';
 import type { PackageWithMedia } from '../hooks/usePublishedPackages';
 import { RouteMapThumbnail } from './RouteMapThumbnail';
+import { formatCurrency, formatDate, formatNumber } from '@/lib/formatters';
 
 interface PackageCardProps {
     packageData: PackageWithMedia & {
@@ -18,6 +20,7 @@ export function PackageCard({
     isInWishlist = false,
     onToggleWishlist,
 }: PackageCardProps) {
+    const { t } = useTranslation();
     const {
         id,
         title,
@@ -54,25 +57,24 @@ export function PackageCard({
     const visibleDestinations = destinationList.slice(0, 5);
     const moreCount = Math.max(0, destinationList.length - 5);
 
-    // Badge label
+    // Badge label — categories are enum values with i18n entries
     const badgeLabel = category
-        ? category.charAt(0).toUpperCase() + category.slice(1).replace(/_/g, ' ')
-        : 'Explorer';
+        ? t(`categories.${category}`, {
+              defaultValue: category.charAt(0).toUpperCase() + category.slice(1).replace(/_/g, ' '),
+          })
+        : t('packageCard.explorer');
 
     // Simulated review data (in a real app, from joined query)
     const reviewCount = Math.floor(Math.random() * 120 + 10);
     const rating = (Math.random() * 1.5 + 3.5).toFixed(1);
     const reviewerNames = ['Rosalina', 'Marco', 'Elena', 'Omar', 'Layla', 'Ahmed'];
-    const months = ['January', 'February', 'March', 'October', 'November', 'December'];
+    const monthIndexes = [0, 1, 2, 9, 10, 11];
     const reviewerName = reviewerNames[Math.floor(Math.random() * reviewerNames.length)];
-    const travelMonth = months[Math.floor(Math.random() * months.length)];
-    const quotes = [
-        '"The itinerary was very good."',
-        '"An unforgettable journey with stunning views."',
-        '"Perfectly organized from start to finish."',
-        '"Our guide was exceptional and knowledgeable."',
-    ];
-    const quote = quotes[Math.floor(Math.random() * quotes.length)];
+    const travelMonth = formatDate(
+        new Date(2026, monthIndexes[Math.floor(Math.random() * monthIndexes.length)], 1),
+        'MMMM'
+    );
+    const quote = t(`packageCard.quotes.${Math.floor(Math.random() * 4)}`);
 
     // Regions from destination
     const regions = destination?.split(',').slice(0, 2).map(d => d.trim()).join(', ') || destination;
@@ -96,7 +98,7 @@ export function PackageCard({
                     )}
                     <div className="pkg-card-map-overlay">
                         <Map size={12} />
-                        <span>View Map</span>
+                        <span>{t('packageCard.viewMap')}</span>
                     </div>
                 </Link>
 
@@ -105,7 +107,7 @@ export function PackageCard({
                     <button
                         className="pkg-card-wishlist"
                         onClick={() => onToggleWishlist(id)}
-                        aria-label={isInWishlist ? 'Remove from wishlist' : 'Add to wishlist'}
+                        aria-label={isInWishlist ? t('packageCard.removeFromWishlist') : t('packageCard.addToWishlist')}
                     >
                         <Heart
                             size={18}
@@ -123,7 +125,7 @@ export function PackageCard({
                     {featured && (
                         <span className="pkg-badge-bestseller">
                             <Star size={12} />
-                            Best Seller
+                            {t('packageCard.bestSeller')}
                         </span>
                     )}
                     <span className="pkg-badge-category">{badgeLabel}</span>
@@ -132,7 +134,7 @@ export function PackageCard({
                 {/* Title */}
                 <h3 className="pkg-card-title">
                     <Link to={`/packages/${id}`}>
-                        {title} {duration_days} days
+                        {title} {t('packageCard.days', { count: duration_days })}
                     </Link>
                 </h3>
 
@@ -141,50 +143,55 @@ export function PackageCard({
                     <span className="pkg-card-rating-score">{rating}</span>
                     <Star size={14} className="pkg-card-rating-star" fill="currentColor" />
                     <a href="#reviews" className="pkg-card-rating-count">
-                        ({reviewCount} traveler reviews)
+                        ({t('packageCard.travelerReviews', { count: reviewCount })})
                     </a>
                 </div>
 
                 {/* Quote with accent border */}
                 <div className="pkg-card-quote">
                     <p className="pkg-card-quote-text">{quote}</p>
-                    <span className="pkg-card-quote-author">{reviewerName}, traveled in {travelMonth}</span>
+                    <span className="pkg-card-quote-author">
+                        {t('packageCard.traveledIn', { name: reviewerName, month: travelMonth })}
+                    </span>
                 </div>
 
                 {/* Details Grid */}
                 <dl className="pkg-card-meta-grid">
-                    <dt className="pkg-card-meta-label">Duration</dt>
+                    <dt className="pkg-card-meta-label">{t('packageCard.duration')}</dt>
                     <dd className="pkg-card-meta-value">
-                        {duration_days} days{duration_nights ? ` / ${duration_nights} nights` : ''}
+                        {t('packageCard.days', { count: duration_days })}
+                        {duration_nights ? ` / ${t('packageCard.nights', { count: duration_nights })}` : ''}
                     </dd>
 
-                    <dt className="pkg-card-meta-label">Destinations</dt>
+                    <dt className="pkg-card-meta-label">{t('packageCard.destinations')}</dt>
                     <dd className="pkg-card-meta-value">
-                        {visibleDestinations.join(', ')}
+                        {visibleDestinations.join(t('common.listSeparator'))}
                         {moreCount > 0 && (
-                            <a href="#destinations" className="pkg-meta-more">, +{moreCount} more</a>
+                            <a href="#destinations" className="pkg-meta-more">
+                                {t('packageCard.moreCount', { count: moreCount })}
+                            </a>
                         )}
                     </dd>
 
-                    <dt className="pkg-card-meta-label">Age Range</dt>
-                    <dd className="pkg-card-meta-value">All Ages Welcome</dd>
+                    <dt className="pkg-card-meta-label">{t('packageCard.ageRange')}</dt>
+                    <dd className="pkg-card-meta-value">{t('packageCard.allAges')}</dd>
 
-                    <dt className="pkg-card-meta-label">Regions</dt>
+                    <dt className="pkg-card-meta-label">{t('packageCard.regions')}</dt>
                     <dd className="pkg-card-meta-value">{regions}</dd>
 
-                    <dt className="pkg-card-meta-label">Operated in</dt>
+                    <dt className="pkg-card-meta-label">{t('packageCard.operatedIn')}</dt>
                     <dd className="pkg-card-meta-value">
-                        English, Arabic
+                        {t('packageCard.languages')}
                     </dd>
 
                     {agency_name && (
                         <>
-                            <dt className="pkg-card-meta-label">Operator</dt>
+                            <dt className="pkg-card-meta-label">{t('packageCard.operator')}</dt>
                             <dd className="pkg-card-meta-value">
                                 {agency_name}
                                 <span className="pkg-operator-badge">
                                     <span className="pkg-operator-dot" />
-                                    Gold
+                                    {t('packageCard.goldTier')}
                                 </span>
                             </dd>
                         </>
@@ -197,7 +204,9 @@ export function PackageCard({
                 {/* Discount badge */}
                 <div className="pkg-card-price-top">
                     {hasDiscount && discountPercent > 0 && (
-                        <span className="pkg-card-discount">{discountPercent}% Off</span>
+                        <span className="pkg-card-discount">
+                            {t('packageCard.percentOff', { percent: formatNumber(discountPercent) })}
+                        </span>
                     )}
                 </div>
 
@@ -205,26 +214,26 @@ export function PackageCard({
                 <div className="pkg-card-price-block">
                     {hasDiscount && (
                         <div className="pkg-card-price-from">
-                            From <s>${originalPrice.toLocaleString()}</s>
+                            {t('packageCard.from')} <s>{formatCurrency(originalPrice)}</s>
                         </div>
                     )}
                     <div className="pkg-card-price-amount">
-                        US${base_price.toLocaleString()}
-                        <span className="pkg-card-price-per"> per person</span>
+                        {formatCurrency(base_price)}
+                        <span className="pkg-card-price-per"> {t('packageCard.perPerson')}</span>
                     </div>
                     <div className="pkg-card-price-note">
                         <Info size={12} className="pkg-card-price-note-icon" />
-                        Price based on Private Double Room
+                        {t('packageCard.priceNote')}
                     </div>
                 </div>
 
                 {/* CTA buttons */}
                 <div className="pkg-card-actions">
                     <Link to={`/packages/${id}`} className="pkg-btn-view">
-                        View tour
+                        {t('packageCard.viewTour')}
                     </Link>
                     <button className="pkg-btn-brochure" type="button">
-                        Download Brochure
+                        {t('packageCard.downloadBrochure')}
                     </button>
                 </div>
             </div>

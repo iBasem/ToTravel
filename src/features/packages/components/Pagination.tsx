@@ -1,5 +1,6 @@
 import React from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 interface PaginationProps {
     currentPage: number;
@@ -8,6 +9,8 @@ interface PaginationProps {
 }
 
 export function Pagination({ currentPage, totalPages, onPageChange }: PaginationProps) {
+    const { t } = useTranslation();
+
     if (totalPages <= 1) return null;
 
     // Show up to 5 page buttons centered around current page
@@ -24,12 +27,12 @@ export function Pagination({ currentPage, totalPages, onPageChange }: Pagination
     };
 
     return (
-        <nav className="pkg-pagination" aria-label="Pagination">
+        <nav className="pkg-pagination" aria-label={t('ui.pagination', 'Pagination')}>
             <button
                 className="pkg-pagination-btn"
                 onClick={() => onPageChange(currentPage - 1)}
                 disabled={currentPage === 1}
-                aria-label="Previous page"
+                aria-label={t('ui.previousPage')}
             >
                 <ChevronLeft size={16} />
             </button>
@@ -49,7 +52,7 @@ export function Pagination({ currentPage, totalPages, onPageChange }: Pagination
                 className="pkg-pagination-btn"
                 onClick={() => onPageChange(currentPage + 1)}
                 disabled={currentPage === totalPages}
-                aria-label="Next page"
+                aria-label={t('ui.nextPage')}
             >
                 <ChevronRight size={16} />
             </button>

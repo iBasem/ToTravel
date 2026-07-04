@@ -76,6 +76,7 @@ interface InclusionItemProps {
 }
 
 function InclusionItem({ item, isExclusion = false, isOpen, onToggle }: InclusionItemProps) {
+    const { t } = useTranslation();
     const IconComponent = isExclusion ? XCircle : getInclusionIcon(item);
     const iconColor = isExclusion ? 'text-red-500' : 'text-teal-600';
     const showDietary = !isExclusion && hasDietaryOptions(item);
@@ -97,11 +98,11 @@ function InclusionItem({ item, isExclusion = false, isOpen, onToggle }: Inclusio
                             <>
                                 <div className="flex items-center gap-1 text-xs text-gray-500">
                                     <Leaf className="w-4 h-4" />
-                                    <span>Veg</span>
+                                    <span>{t('packageDetails.veg', 'Veg')}</span>
                                 </div>
                                 <div className="flex items-center gap-1 text-xs text-gray-500">
                                     <Salad className="w-4 h-4" />
-                                    <span>Vegan</span>
+                                    <span>{t('packageDetails.vegan', 'Vegan')}</span>
                                 </div>
                             </>
                         )}
@@ -112,8 +113,8 @@ function InclusionItem({ item, isExclusion = false, isOpen, onToggle }: Inclusio
             <CollapsibleContent>
                 <div className="py-3 px-8 bg-gray-50 text-sm text-gray-600 text-start">
                     {isExclusion
-                        ? `${item} is not included in this package. You may need to arrange this separately.`
-                        : `${item} is included in your package. Details will be provided upon booking confirmation.`
+                        ? t('packageDetails.exclusionDetail', { item, defaultValue: '{{item}} is not included in this package. You may need to arrange this separately.' })
+                        : t('packageDetails.inclusionDetail', { item, defaultValue: '{{item}} is included in your package. Details will be provided upon booking confirmation.' })
                     }
                 </div>
             </CollapsibleContent>

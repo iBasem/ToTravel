@@ -1,7 +1,6 @@
 
 import { useState, useEffect } from "react";
 import {
-    format,
     startOfMonth,
     endOfMonth,
     eachDayOfInterval,
@@ -21,6 +20,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/ui/dialog";
 import { useAgencyCalendar, CalendarBooking } from "@/features/agency/hooks/useAgencyCalendar";
 import { LoadingSpinner } from "@/ui/loading-spinner";
 import { useTranslation } from "react-i18next";
+import { formatCurrency, formatDate } from "@/lib/formatters";
 
 export function CalendarView() {
     const { t } = useTranslation();
@@ -65,7 +65,7 @@ export function CalendarView() {
             {/* Header */}
             <div className="flex items-center justify-between">
                 <h2 className="text-2xl font-bold text-gray-900">
-                    {format(currentDate, "MMMM yyyy")}
+                    {formatDate(currentDate, "MMMM yyyy")}
                 </h2>
                 <div className="flex items-center gap-2">
                     <Button variant="outline" size="icon" onClick={prevMonth}>
@@ -124,7 +124,7 @@ export function CalendarView() {
                     ${isToday ? "text-blue-600" : ""}
                   `}>
                                         <span className={isToday ? "bg-blue-600 text-white w-6 h-6 rounded-full flex items-center justify-center" : ""}>
-                                            {format(day, "d")}
+                                            {formatDate(day, "d")}
                                         </span>
                                         {dayBookings.length > 0 && (
                                             <span className="text-xs text-gray-500 font-normal">
@@ -171,11 +171,11 @@ export function CalendarView() {
                                         {selectedBooking.package.title}
                                     </h4>
                                     <p className="text-gray-500 text-sm">
-                                        {format(parseISO(selectedBooking.booking_date), "EEEE, MMMM do, yyyy")}
+                                        {formatDate(selectedBooking.booking_date, "EEEE, MMMM do, yyyy")}
                                     </p>
                                 </div>
                                 <Badge className={getStatusColor(selectedBooking.status)}>
-                                    {selectedBooking.status}
+                                    {t(`common.${selectedBooking.status}`, { defaultValue: selectedBooking.status })}
                                 </Badge>
                             </div>
 
@@ -199,7 +199,7 @@ export function CalendarView() {
                                     </div>
                                     <div>
                                         <p className="text-sm font-medium text-gray-500">{t('common.totalPrice')}</p>
-                                        <p className="font-medium">${selectedBooking.total_price}</p>
+                                        <p className="font-medium">{formatCurrency(selectedBooking.total_price)}</p>
                                     </div>
                                 </div>
                             </div>

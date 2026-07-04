@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/features/auth/context/AuthContext';
 import { toast } from 'sonner';
@@ -13,10 +14,11 @@ export interface BookingFormData {
 export function useCreateBooking() {
     const [loading, setLoading] = useState(false);
     const { user } = useAuth();
+    const { t } = useTranslation();
 
     const createBooking = async (formData: BookingFormData) => {
         if (!user) {
-            toast.error('Please sign in to book this tour');
+            toast.error(t('toasts.signInToBook'));
             return { success: false, error: 'Authentication required' };
         }
 
@@ -35,7 +37,7 @@ export function useCreateBooking() {
 
             if (error) {
                 // Surface the function's error message when available
-                let message = 'Failed to create booking';
+                let message = t('toasts.bookingCreateFailed');
                 try {
                     const body = await (error as { context?: Response }).context?.json();
                     if (body?.error) message = body.error;
@@ -43,11 +45,11 @@ export function useCreateBooking() {
                 throw new Error(message);
             }
 
-            toast.success('Booking created successfully! We will contact you shortly.');
+            toast.success(t('toasts.bookingCreated'));
             return { success: true, data: data?.booking };
         } catch (error) {
             console.error('Booking creation error:', error);
-            const errorMessage = error instanceof Error ? error.message : 'Failed to create booking';
+            const errorMessage = error instanceof Error ? error.message : t('toasts.bookingCreateFailed');
             toast.error(errorMessage);
             return { success: false, error: errorMessage };
         } finally {

@@ -4,10 +4,11 @@ import { useDashboardStats } from "@/features/agency/hooks/useDashboardStats";
 import { LoadingSpinner } from "@/ui/loading-spinner";
 import { EmptyState } from "@/ui/empty-state";
 import { useTranslation } from "react-i18next";
+import { formatCurrency } from "@/lib/formatters";
 
 export default function Dashboard() {
   const { stats, loading, error } = useDashboardStats();
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
 
 
   if (loading) {
@@ -25,15 +26,6 @@ export default function Dashboard() {
       </div>
     );
   }
-
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat(i18n.language === 'ar' ? 'ar-SA' : 'en-US', {
-      style: 'currency',
-      currency: 'USD',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(amount);
-  };
 
   return (
     <div className="space-y-6">

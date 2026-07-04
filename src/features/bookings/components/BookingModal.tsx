@@ -8,6 +8,7 @@ import { Calendar } from '@/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/ui/popover';
 import { CalendarIcon, Users, Loader2 } from 'lucide-react';
 import { format } from 'date-fns';
+import { formatCurrency, formatDate } from '@/lib/formatters';
 import { cn } from '@/lib/utils';
 import { useCreateBooking } from '@/features/bookings/hooks/useCreateBooking';
 import { useAuth } from '@/features/auth/context/AuthContext';
@@ -86,7 +87,7 @@ export function BookingModal({
                                     )}
                                 >
                                     <CalendarIcon className="me-2 h-4 w-4" />
-                                    {date ? format(date, 'PPP') : t('booking.pickDate')}
+                                    {date ? formatDate(date, 'PPP') : t('booking.pickDate')}
                                 </Button>
                             </PopoverTrigger>
                             <PopoverContent className="w-auto p-0">
@@ -142,7 +143,7 @@ export function BookingModal({
                     <div className="bg-gray-50 p-4 rounded-lg">
                         <div className="flex justify-between mb-2">
                             <span>{t('booking.pricePerPerson')}</span>
-                            <span>${basePrice.toLocaleString()}</span>
+                            <span>{formatCurrency(basePrice)}</span>
                         </div>
                         <div className="flex justify-between mb-2">
                             <span>{t('booking.participants')}</span>
@@ -150,7 +151,7 @@ export function BookingModal({
                         </div>
                         <div className="flex justify-between text-lg font-bold border-t pt-2">
                             <span>{t('common.total')}</span>
-                            <span>${totalPrice.toLocaleString()}</span>
+                            <span>{formatCurrency(totalPrice)}</span>
                         </div>
                     </div>
                 </div>

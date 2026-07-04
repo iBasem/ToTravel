@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ChevronUp, SlidersHorizontal } from 'lucide-react';
 import { RangeSlider } from './RangeSlider';
 import { CheckboxFilter } from './CheckboxFilter';
+import { formatCurrency } from '@/lib/formatters';
 
 export interface FilterState {
     sortBy: string;
@@ -58,6 +60,7 @@ export function FiltersSidebar({
     categoryOptions,
     difficultyOptions,
 }: FiltersSidebarProps) {
+    const { t } = useTranslation();
     const update = (partial: Partial<FilterState>) => {
         onFiltersChange({ ...filters, ...partial });
     };
@@ -67,7 +70,7 @@ export function FiltersSidebar({
             {/* Applied Filters Header */}
             <div className="pkg-applied-filters">
                 <SlidersHorizontal size={16} />
-                <span>Applied filters</span>
+                <span>{t('tours.filters.appliedFilters')}</span>
             </div>
 
             {/* Sort */}
@@ -75,44 +78,47 @@ export function FiltersSidebar({
                 <select
                     value={filters.sortBy}
                     onChange={(e) => update({ sortBy: e.target.value })}
-                    aria-label="Sort by"
+                    aria-label={t('tours.filters.sortBy')}
                 >
-                    <option value="popular">Popularity: Most popular first</option>
-                    <option value="price_asc">Total price: Lowest first</option>
-                    <option value="price_desc">Total price: Highest first</option>
-                    <option value="duration_asc">Duration: Shortest first</option>
-                    <option value="duration_desc">Duration: Longest first</option>
-                    <option value="reviews">Reviews: Most reviewed</option>
+                    <option value="popular">{t('tours.filters.sortPopular')}</option>
+                    <option value="price_asc">{t('tours.filters.sortPriceAsc')}</option>
+                    <option value="price_desc">{t('tours.filters.sortPriceDesc')}</option>
+                    <option value="duration_asc">{t('tours.filters.sortDurationAsc')}</option>
+                    <option value="duration_desc">{t('tours.filters.sortDurationDesc')}</option>
+                    <option value="reviews">{t('tours.filters.sortReviews')}</option>
                 </select>
             </div>
 
             {/* Length */}
-            <FilterSection title="Length">
+            <FilterSection title={t('tours.filters.length')}>
                 <RangeSlider
                     min={1}
                     max={maxDuration}
                     value={filters.lengthRange}
                     onChange={(v) => update({ lengthRange: v })}
-                    minLabel={`min. ${filters.lengthRange[0]} day${filters.lengthRange[0] !== 1 ? 's' : ''}`}
-                    maxLabel={`${filters.lengthRange[1]}${filters.lengthRange[1] >= maxDuration ? '+' : ''} days`}
+                    minLabel={t('tours.filters.minDays', { count: filters.lengthRange[0] })}
+                    maxLabel={t('tours.filters.maxDays', {
+                        count: filters.lengthRange[1],
+                        plus: filters.lengthRange[1] >= maxDuration ? '+' : '',
+                    })}
                 />
             </FilterSection>
 
             {/* Price */}
-            <FilterSection title="Price">
+            <FilterSection title={t('tours.filters.price')}>
                 <RangeSlider
                     min={0}
                     max={maxPrice}
                     value={filters.priceRange}
                     onChange={(v) => update({ priceRange: v })}
                     step={50}
-                    formatLabel={(v) => `US$${v.toLocaleString()}`}
+                    formatLabel={(v) => formatCurrency(v)}
                 />
             </FilterSection>
 
             {/* Category / Travel Style */}
             {categoryOptions.length > 0 && (
-                <FilterSection title="Travel Style">
+                <FilterSection title={t('tours.filters.travelStyle')}>
                     <CheckboxFilter
                         items={categoryOptions}
                         selected={filters.categories}
@@ -123,7 +129,7 @@ export function FiltersSidebar({
 
             {/* Difficulty */}
             {difficultyOptions.length > 0 && (
-                <FilterSection title="Difficulty">
+                <FilterSection title={t('tours.filters.difficulty')}>
                     <CheckboxFilter
                         items={difficultyOptions}
                         selected={filters.difficulties}

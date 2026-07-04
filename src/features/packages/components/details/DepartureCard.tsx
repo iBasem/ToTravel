@@ -1,5 +1,6 @@
 import { useTranslation } from "react-i18next";
-import { format, parseISO } from "date-fns";
+import { parseISO } from "date-fns";
+import { formatCurrency, formatDate } from "@/lib/formatters";
 import { Card, CardContent } from "@/ui/card";
 import { Button } from "@/ui/button";
 import { Badge } from "@/ui/badge";
@@ -51,10 +52,10 @@ export function DepartureCard({ departure, durationDays, onConfirm }: DepartureC
                             {/* From Date */}
                             <div>
                                 <p className="text-xs text-gray-500 mb-0.5">
-                                    {t('packageDetails.from', 'From')} {format(startDate, 'EEEE')}
+                                    {t('packageDetails.from', 'From')} {formatDate(startDate, 'EEEE')}
                                 </p>
                                 <p className="text-lg font-bold text-gray-900">
-                                    {format(startDate, 'd MMM, yyyy')}
+                                    {formatDate(startDate, 'd MMM, yyyy')}
                                 </p>
                             </div>
 
@@ -64,10 +65,10 @@ export function DepartureCard({ departure, durationDays, onConfirm }: DepartureC
                             {/* To Date */}
                             <div>
                                 <p className="text-xs text-gray-500 mb-0.5">
-                                    {t('packageDetails.to', 'To')} {format(endDate, 'EEEE')}
+                                    {t('packageDetails.to', 'To')} {formatDate(endDate, 'EEEE')}
                                 </p>
                                 <p className="text-lg font-bold text-gray-900">
-                                    {format(endDate, 'd MMM, yyyy')}
+                                    {formatDate(endDate, 'd MMM, yyyy')}
                                 </p>
                             </div>
                         </div>
@@ -75,7 +76,7 @@ export function DepartureCard({ departure, durationDays, onConfirm }: DepartureC
                         {/* Language Badge */}
                         <div className="flex items-center gap-2 text-sm text-gray-600">
                             <Globe className="w-4 h-4" />
-                            <span>{i18n.language === 'ar' ? 'العربية' : 'English'}</span>
+                            <span>{i18n.language === 'ar' ? t('common.arabic', 'العربية') : t('common.english', 'English')}</span>
                         </div>
                     </div>
 
@@ -90,11 +91,11 @@ export function DepartureCard({ departure, durationDays, onConfirm }: DepartureC
                         <div className="flex items-baseline gap-2 justify-end">
                             {hasDiscount && (
                                 <span className="text-sm text-gray-400 line-through">
-                                    ${departure.price.toLocaleString()}
+                                    {formatCurrency(departure.price)}
                                 </span>
                             )}
                             <span className={`text-2xl font-bold ${hasDiscount ? 'text-green-600' : 'text-gray-900'}`}>
-                                US ${displayPrice.toLocaleString()}
+                                {formatCurrency(displayPrice)}
                             </span>
                             <span className="text-sm text-gray-500">
                                 {t('packageDetails.perPerson', 'per person')}

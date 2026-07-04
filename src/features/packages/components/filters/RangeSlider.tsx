@@ -1,4 +1,5 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface RangeSliderProps {
     min: number;
@@ -21,6 +22,7 @@ export function RangeSlider({
     maxLabel,
     formatLabel = (v) => String(v),
 }: RangeSliderProps) {
+    const { t } = useTranslation();
     // Local state for smooth dragging — only commits to parent on release
     const [localValue, setLocalValue] = useState<[number, number]>(value);
     const isDragging = useRef(false);
@@ -84,7 +86,7 @@ export function RangeSlider({
                     onPointerDown={handlePointerDown}
                     onPointerUp={handlePointerUp}
                     onTouchEnd={handlePointerUp}
-                    aria-label="Minimum value"
+                    aria-label={t('ui.minValue', 'Minimum value')}
                 />
                 <input
                     type="range"
@@ -96,7 +98,7 @@ export function RangeSlider({
                     onPointerDown={handlePointerDown}
                     onPointerUp={handlePointerUp}
                     onTouchEnd={handlePointerUp}
-                    aria-label="Maximum value"
+                    aria-label={t('ui.maxValue', 'Maximum value')}
                 />
             </div>
         </div>

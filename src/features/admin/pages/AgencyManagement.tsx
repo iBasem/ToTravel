@@ -22,6 +22,7 @@ import { Search, Filter, MoreHorizontal, Eye, Edit, CheckCircle, XCircle, Buildi
 import { useAdminAgencies } from "@/features/admin/hooks";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
+import { formatDate, formatNumber } from "@/lib/formatters";
 
 export default function AgencyManagement() {
   const { t, i18n } = useTranslation();
@@ -146,7 +147,7 @@ export default function AgencyManagement() {
             <CardTitle className="text-sm font-medium text-gray-500">{t('agencyManagement.totalToursListed')}</CardTitle>
           </CardHeader>
           <CardContent className="text-start">
-            <div className="text-2xl font-bold tabular-nums">{stats.totalPackages.toLocaleString(isRTL ? 'ar-SA' : 'en-US')}</div>
+            <div className="text-2xl font-bold tabular-nums">{formatNumber(stats.totalPackages)}</div>
           </CardContent>
         </Card>
       </div>
@@ -229,7 +230,7 @@ export default function AgencyManagement() {
                     <TableCell className="text-start">
                       {agency.contact_person_first_name} {agency.contact_person_last_name}
                     </TableCell>
-                    <TableCell className="text-start">{new Date(agency.created_at).toLocaleDateString(isRTL ? 'ar-SA' : 'en-US')}</TableCell>
+                    <TableCell className="text-start">{formatDate(agency.created_at, "P")}</TableCell>
                     <TableCell className="text-start text-gray-900 font-medium">{agency.packages_count}</TableCell>
                     <TableCell className="tabular-nums text-start">{(agency.commission_rate * 100).toFixed(0)}%</TableCell>
                     <TableCell className="text-start">{getStatusBadge(agency.status, agency.is_verified)}</TableCell>

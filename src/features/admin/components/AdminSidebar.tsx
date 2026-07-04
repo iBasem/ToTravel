@@ -58,7 +58,7 @@ export function AdminSidebar() {
               <Shield className="w-4 h-4 text-white" />
             </div>
             {!isCollapsed && (
-              <span className="text-xl font-bold">Admin</span>
+              <span className="text-xl font-bold">{t('common.admin')}</span>
             )}
           </div>
         </div>

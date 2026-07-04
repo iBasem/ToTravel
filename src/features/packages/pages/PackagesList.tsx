@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Star } from 'lucide-react';
 import { HeaderSection } from '@/features/home/components/HeaderSection';
 import { FooterSection } from '@/features/home/components/FooterSection';
@@ -12,6 +13,7 @@ import '../styles/packages-listing.css';
 const ITEMS_PER_PAGE = 15;
 
 export default function PackagesList() {
+  const { t } = useTranslation();
   const { packages, loading, error } = usePublishedPackages();
 
   // Wishlist state
@@ -43,11 +45,13 @@ export default function PackagesList() {
       counts.set(cat, (counts.get(cat) || 0) + 1);
     });
     return Array.from(counts.entries()).map(([value, count]) => ({
-      label: value.charAt(0).toUpperCase() + value.slice(1).replace(/_/g, ' '),
+      label: t(`categories.${value}`, {
+        defaultValue: value.charAt(0).toUpperCase() + value.slice(1).replace(/_/g, ' '),
+      }),
       value,
       count,
     }));
-  }, [packages]);
+  }, [packages, t]);
 
   const difficultyOptions = useMemo(() => {
     const counts = new Map<string, number>();
@@ -56,11 +60,13 @@ export default function PackagesList() {
       if (diff) counts.set(diff, (counts.get(diff) || 0) + 1);
     });
     return Array.from(counts.entries()).map(([value, count]) => ({
-      label: value.charAt(0).toUpperCase() + value.slice(1),
+      label: t(`difficulty.${value}`, {
+        defaultValue: value.charAt(0).toUpperCase() + value.slice(1),
+      }),
       value,
       count,
     }));
-  }, [packages]);
+  }, [packages, t]);
 
   // Filter state
   const [filters, setFilters] = useState<FilterState>({
@@ -176,7 +182,7 @@ export default function PackagesList() {
         <div className="pkg-page">
           <div className="pkg-page-inner">
             <div style={{ textAlign: 'center', padding: '80px 20px', color: '#666' }}>
-              <p style={{ fontSize: 18, marginBottom: 8 }}>Unable to load packages</p>
+              <p style={{ fontSize: 18, marginBottom: 8 }}>{t('tours.loadError')}</p>
               <p style={{ fontSize: 14 }}>{error}</p>
             </div>
           </div>
@@ -193,16 +199,16 @@ export default function PackagesList() {
       <div className="pkg-page">
         <div className="pkg-page-inner">
           {/* Breadcrumbs */}
-          <nav className="pkg-breadcrumbs" aria-label="Breadcrumb">
-            <Link to="/">Home</Link>
+          <nav className="pkg-breadcrumbs" aria-label={t('ui.breadcrumb')}>
+            <Link to="/">{t('nav.home')}</Link>
             <span>/</span>
-            <Link to="/packages">Packages</Link>
+            <Link to="/packages">{t('nav.packages')}</Link>
             <span>/</span>
-            <span>Search results</span>
+            <span>{t('tours.searchResults')}</span>
           </nav>
 
           {/* Page Heading */}
-          <h1 className="pkg-page-heading">Tours & Trips</h1>
+          <h1 className="pkg-page-heading">{t('tours.pageHeading')}</h1>
 
           {/* Two-column layout */}
           <div className="pkg-layout">
@@ -221,7 +227,7 @@ export default function PackagesList() {
               {/* Results count */}
               <div className="pkg-results-count">
                 <Star size={18} className="pkg-results-star" fill="currentColor" />
-                <span>{processedPackages.length} Results</span>
+                <span>{t('tours.resultsCount', { count: processedPackages.length })}</span>
               </div>
 
               {/* Card List */}
@@ -243,8 +249,8 @@ export default function PackagesList() {
                 </div>
               ) : (
                 <div style={{ textAlign: 'center', padding: '60px 20px', color: '#888' }}>
-                  <p style={{ fontSize: 18, marginBottom: 8 }}>No tours match your filters</p>
-                  <p style={{ fontSize: 14 }}>Try adjusting your filter criteria</p>
+                  <p style={{ fontSize: 18, marginBottom: 8 }}>{t('tours.noMatchTitle')}</p>
+                  <p style={{ fontSize: 14 }}>{t('tours.noMatchHint')}</p>
                 </div>
               )}
 

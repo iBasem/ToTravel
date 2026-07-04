@@ -167,7 +167,7 @@ export function HeaderSection() {
             <button
               onClick={toggleMenu}
               className="p-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
-              aria-label="Toggle menu"
+              aria-label={t('ui.toggleMenu')}
             >
               {isMenuOpen ? (
                 <X className="w-5 h-5" />

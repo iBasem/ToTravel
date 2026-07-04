@@ -4,6 +4,7 @@ import { Card, CardContent } from "@/ui/card";
 import { Button } from "@/ui/button";
 import { Badge } from "@/ui/badge";
 import { Heart, Star, MapPin } from "lucide-react";
+import { formatCurrency } from "@/lib/formatters";
 import type { PackageWithMedia } from "@/features/packages/hooks/usePublishedPackages";
 
 interface TourCardProps {
@@ -11,7 +12,7 @@ interface TourCardProps {
 }
 
 export function TourCard({ package: pkg }: TourCardProps) {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const primaryImage = pkg.package_media?.find(m => m.is_primary) || pkg.package_media?.[0];
   const imageUrl = primaryImage?.file_path || "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=400&h=300&fit=crop";
 
@@ -60,7 +61,7 @@ export function TourCard({ package: pkg }: TourCardProps) {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-1">
                 <span className="text-base sm:text-lg font-bold">
-                  {new Intl.NumberFormat(i18n.language === 'ar' ? 'ar-SA' : 'en-US', { style: 'currency', currency: 'USD' }).format(pkg.base_price)}
+                  {formatCurrency(pkg.base_price)}
                 </span>
                 <span className="text-xs sm:text-sm text-muted-foreground">
                   {t('common.perPerson')}

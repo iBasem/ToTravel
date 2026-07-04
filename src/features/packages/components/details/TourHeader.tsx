@@ -32,10 +32,10 @@ export function TourHeader({ packageData }: TourHeaderProps) {
                     </Badge>
                 )}
                 <Badge className={`capitalize ${getTourTypeBadgeColor(packageData.category)}`}>
-                    {packageData.category} {t('tours.tour', 'Tour')}
+                    {t(`categories.${packageData.category}`, { defaultValue: packageData.category })} {t('tours.tour', 'Tour')}
                 </Badge>
                 <Badge variant="outline" className="bg-gray-50">
-                    {packageData.difficulty_level || 'Moderate'}
+                    {t(`difficulty.${(packageData.difficulty_level || 'moderate').toLowerCase()}`, { defaultValue: packageData.difficulty_level || 'Moderate' })}
                 </Badge>
             </div>
 
@@ -51,7 +51,7 @@ export function TourHeader({ packageData }: TourHeaderProps) {
                     <div className={`flex items-center gap-0.5 px-2 py-1 rounded-md ${hasRating ? 'bg-green-100' : 'bg-gray-100'}`}>
                         <Star className={`w-4 h-4 ${hasRating ? 'text-green-600 fill-current' : 'text-gray-400'}`} />
                         <span className={`font-semibold ${hasRating ? 'text-green-700' : 'text-gray-600'}`}>
-                            {hasRating ? packageData.average_rating?.toFixed(1) : 'New'}
+                            {hasRating ? packageData.average_rating?.toFixed(1) : t('packageDetails.new', 'New')}
                         </span>
                     </div>
                     <span className="text-gray-500">

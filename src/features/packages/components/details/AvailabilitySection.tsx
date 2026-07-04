@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { format, parseISO, addDays } from "date-fns";
+import { addDays } from "date-fns";
+import { formatDate } from "@/lib/formatters";
 import { Card, CardContent } from "@/ui/card";
 import { Button } from "@/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/ui/select";
@@ -33,7 +34,7 @@ export function AvailabilitySection({
     const [travellers, setTravellers] = useState("2");
 
     // Promo end date (14 days from now for demo)
-    const promoEndDate = format(addDays(new Date(), 14), 'd MMM, yyyy');
+    const promoEndDate = formatDate(addDays(new Date(), 14), 'd MMM, yyyy');
 
     // Traveller options
     const travellerOptions = Array.from({ length: 10 }, (_, i) => ({

@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from "recharts";
 import { useAdminDashboard } from "@/features/admin/hooks/useAdminDashboard";
-import { formatDistanceToNow } from "date-fns";
+import { formatCurrency, formatNumber, formatRelativeTime } from "@/lib/formatters";
 
 export default function AdminDashboard() {
   const { t, i18n } = useTranslation();
@@ -60,15 +60,6 @@ export default function AdminDashboard() {
     refetch,
     updatePendingAction
   } = useAdminDashboard();
-
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat(isRTL ? 'ar-SA' : 'en-US', {
-      style: 'currency',
-      currency: 'USD',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(amount);
-  };
 
   const handleResolveAction = async (actionId: string) => {
     await updatePendingAction(actionId, 'resolved');
@@ -124,7 +115,7 @@ export default function AdminDashboard() {
             <Users className="h-4 w-4 text-gray-400" />
           </CardHeader>
           <CardContent className="text-start">
-            <div className="text-2xl font-bold tabular-nums">{stats.totalUsers.toLocaleString()}</div>
+            <div className="text-2xl font-bold tabular-nums">{formatNumber(stats.totalUsers)}</div>
             <div className="flex items-center text-sm text-green-600">
               <TrendingUp className="w-4 h-4 me-1" />
               +{stats.usersGrowth}% {t('admin.fromLastMonth')}
@@ -153,7 +144,7 @@ export default function AdminDashboard() {
             <BookOpen className="h-4 w-4 text-gray-400" />
           </CardHeader>
           <CardContent className="text-start">
-            <div className="text-2xl font-bold tabular-nums">{stats.totalBookings.toLocaleString()}</div>
+            <div className="text-2xl font-bold tabular-nums">{formatNumber(stats.totalBookings)}</div>
             <div className="flex items-center text-sm text-green-600">
               <TrendingUp className="w-4 h-4 me-1" />
               +{stats.bookingsGrowth}% {t('admin.fromLastMonth')}
@@ -246,7 +237,7 @@ export default function AdminDashboard() {
                     <p className="text-xs text-gray-600">{action.description}</p>
                     <div className="flex items-center justify-between mt-2">
                       <span className="text-xs text-gray-500">
-                        {formatDistanceToNow(new Date(action.created_at), { addSuffix: true })}
+                        {formatRelativeTime(new Date(action.created_at))}
                       </span>
                       <Button
                         size="sm"
@@ -297,7 +288,7 @@ export default function AdminDashboard() {
                       <span className="font-medium">{activity.user_name}</span> {activity.action_description}
                     </p>
                     <span className="text-xs text-gray-500">
-                      {formatDistanceToNow(new Date(activity.created_at), { addSuffix: true })}
+                      {formatRelativeTime(new Date(activity.created_at))}
                     </span>
                   </div>
                   <Badge className="text-xs">

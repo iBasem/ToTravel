@@ -15,20 +15,12 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer } fro
 import { useAdminFinancials } from "@/features/admin/hooks";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
+import { formatCurrency, formatDate } from "@/lib/formatters";
 
 export default function FinancialManagement() {
   const { t, i18n } = useTranslation();
   const isRTL = i18n.language === 'ar';
   const { payouts, stats, revenueData, loading, refetch, processPayouts } = useAdminFinancials();
-
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat(isRTL ? 'ar-SA' : 'en-US', {
-      style: 'currency',
-      currency: 'USD',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(amount);
-  };
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -230,7 +222,7 @@ export default function FinancialManagement() {
                     <TableCell className="font-mono text-sm text-start">{payout.id.slice(0, 8)}</TableCell>
                     <TableCell className="font-medium text-start">{payout.agency_name}</TableCell>
                     <TableCell className="text-start">
-                      {new Date(payout.period_start).toLocaleDateString(isRTL ? 'ar-SA' : 'en-US')} - {new Date(payout.period_end).toLocaleDateString(isRTL ? 'ar-SA' : 'en-US')}
+                      {formatDate(payout.period_start, "P")} - {formatDate(payout.period_end, "P")}
                     </TableCell>
                     <TableCell className="font-medium tabular-nums text-start">{formatCurrency(payout.amount)}</TableCell>
                     <TableCell className="text-start">{getStatusBadge(payout.status)}</TableCell>

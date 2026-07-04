@@ -85,7 +85,8 @@
     "viewProfile": "View Profile",
     "editDetails": "Edit Details",
     "suspendUser": "Suspend User",
-    "activateUser": "Activate User"
+    "activateUser": "Activate User",
+    "listSeparator": ", "
   },
   "nav": {
     "home": "Home",
@@ -158,7 +159,32 @@
     "priceHighLow": "Price: High to Low",
     "newestFirst": "Newest First",
     "duration": "Duration",
-    "max": "Max"
+    "max": "Max",
+    "loadError": "Unable to load packages",
+    "searchResults": "Search results",
+    "pageHeading": "Tours & Trips",
+    "resultsCount_one": "{{count}} Result",
+    "resultsCount_other": "{{count}} Results",
+    "noMatchTitle": "No tours match your filters",
+    "noMatchHint": "Try adjusting your filter criteria",
+    "filters": {
+      "appliedFilters": "Applied filters",
+      "sortBy": "Sort by",
+      "sortPopular": "Popularity: Most popular first",
+      "sortPriceAsc": "Total price: Lowest first",
+      "sortPriceDesc": "Total price: Highest first",
+      "sortDurationAsc": "Duration: Shortest first",
+      "sortDurationDesc": "Duration: Longest first",
+      "sortReviews": "Reviews: Most reviewed",
+      "length": "Length",
+      "price": "Price",
+      "travelStyle": "Travel Style",
+      "difficulty": "Difficulty",
+      "minDays_one": "min. {{count}} day",
+      "minDays_other": "min. {{count}} days",
+      "maxDays_one": "{{count}}{{plus}} day",
+      "maxDays_other": "{{count}}{{plus}} days"
+    }
   },
   "categories": {
     "adventure": "Adventure",
@@ -527,7 +553,9 @@
     "tourPackages": "Tour Packages",
     "financials": "Financials",
     "reports": "Reports",
-    "content": "Content Management"
+    "content": "Content Management",
+    "adminPortal": "Admin Portal",
+    "administrator": "Administrator"
   },
   "adminBookings": {
     "title": "Booking Management",
@@ -921,7 +949,11 @@
     "carousel": "carousel",
     "slide": "slide",
     "toggleMenu": "Toggle menu",
-    "priceRange": "Price Range"
+    "priceRange": "Price Range",
+    "breadcrumb": "Breadcrumb",
+    "pagination": "Pagination",
+    "minValue": "Minimum value",
+    "maxValue": "Maximum value"
   },
   "agencyManagement": {
     "title": "Travel Agency Management",
@@ -944,5 +976,56 @@
     "approveError": "Failed to approve agency",
     "rejectSuccess": "Agency rejected",
     "rejectError": "Failed to reject agency"
+  },
+  "toasts": {
+    "signInToBook": "Please sign in to book this tour",
+    "bookingCreated": "Booking created successfully! We will contact you shortly.",
+    "bookingCreateFailed": "Failed to create booking",
+    "wishlistLoadFailed": "Failed to load wishlist",
+    "signInToWishlist": "Please sign in to save items to your wishlist",
+    "wishlistRemoved": "Removed from wishlist",
+    "wishlistAdded": "Added to wishlist",
+    "wishlistUpdateFailed": "Failed to update wishlist",
+    "reviewsLoadFailed": "Failed to load reviews",
+    "yourReviewsLoadFailed": "Failed to load your reviews",
+    "reviewSubmitted": "Review submitted successfully",
+    "reviewSubmitFailed": "Failed to submit review"
+  },
+  "packageCard": {
+    "viewMap": "View Map",
+    "addToWishlist": "Add to wishlist",
+    "removeFromWishlist": "Remove from wishlist",
+    "bestSeller": "Best Seller",
+    "explorer": "Explorer",
+    "quotes": {
+      "0": "“The itinerary was very good.”",
+      "1": "“An unforgettable journey with stunning views.”",
+      "2": "“Perfectly organized from start to finish.”",
+      "3": "“Our guide was exceptional and knowledgeable.”"
+    },
+    "days_one": "{{count}} day",
+    "days_other": "{{count}} days",
+    "nights_one": "{{count}} night",
+    "nights_other": "{{count}} nights",
+    "travelerReviews_one": "{{count}} traveler review",
+    "travelerReviews_other": "{{count}} traveler reviews",
+    "traveledIn": "{{name}}, traveled in {{month}}",
+    "duration": "Duration",
+    "destinations": "Destinations",
+    "moreCount_one": ", +{{count}} more",
+    "moreCount_other": ", +{{count}} more",
+    "ageRange": "Age Range",
+    "allAges": "All Ages Welcome",
+    "regions": "Regions",
+    "operatedIn": "Operated in",
+    "languages": "English, Arabic",
+    "operator": "Operator",
+    "goldTier": "Gold",
+    "percentOff": "{{percent}}% Off",
+    "from": "From",
+    "perPerson": "per person",
+    "priceNote": "Price based on Private Double Room",
+    "viewTour": "View tour",
+    "downloadBrochure": "Download Brochure"
   }
 }

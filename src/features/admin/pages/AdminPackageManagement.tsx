@@ -22,6 +22,7 @@ import { Search, MoreHorizontal, Eye, Edit, Star, RefreshCw } from "lucide-react
 import { useAdminPackages } from "@/features/admin/hooks";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
+import { formatCurrency, formatNumber } from "@/lib/formatters";
 
 import { PageHeader } from "@/ui/page-header";
 import { StatsGrid } from "@/ui/stats-card";
@@ -31,14 +32,6 @@ export default function AdminPackageManagement() {
   const isRTL = i18n.language === 'ar';
   const { packages, stats, loading, refetch, updatePackageStatus, toggleFeatured } = useAdminPackages();
   const [searchTerm, setSearchTerm] = useState("");
-
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat(isRTL ? 'ar-SA' : 'en-US', {
-      style: 'currency',
-      currency: 'USD',
-      minimumFractionDigits: 0,
-    }).format(amount);
-  };
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -116,10 +109,10 @@ export default function AdminPackageManagement() {
 
       <StatsGrid
         stats={[
-          { title: t('adminPackages.totalPackages'), value: stats.total.toLocaleString(isRTL ? 'ar-SA' : 'en-US') },
-          { title: t('adminPackages.livePackages'), value: stats.live.toLocaleString(isRTL ? 'ar-SA' : 'en-US') },
-          { title: t('adminPackages.pendingReview'), value: stats.pending.toLocaleString(isRTL ? 'ar-SA' : 'en-US') },
-          { title: t('common.featured'), value: stats.featured.toLocaleString(isRTL ? 'ar-SA' : 'en-US') },
+          { title: t('adminPackages.totalPackages'), value: formatNumber(stats.total) },
+          { title: t('adminPackages.livePackages'), value: formatNumber(stats.live) },
+          { title: t('adminPackages.pendingReview'), value: formatNumber(stats.pending) },
+          { title: t('common.featured'), value: formatNumber(stats.featured) },
         ]}
       />
 

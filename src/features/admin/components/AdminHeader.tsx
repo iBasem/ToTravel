@@ -65,7 +65,7 @@ export function AdminHeader() {
                     <div className="w-8 h-8 bg-purple-600 rounded-xl flex items-center justify-center flex-shrink-0">
                       <Shield className="w-4 h-4 text-white" />
                     </div>
-                    <span className="text-xl font-bold text-gray-900">Admin</span>
+                    <span className="text-xl font-bold text-gray-900">{t('common.admin')}</span>
                   </div>
                 </div>
 
@@ -98,7 +98,7 @@ export function AdminHeader() {
           <div className="relative flex-1 max-w-xs sm:max-w-md hidden sm:block">
             {/* Admin global search placeholder */}
             <div className="flex items-center gap-2 text-sm text-gray-500">
-              <span className="font-semibold text-gray-900">Admin Portal</span>
+              <span className="font-semibold text-gray-900">{t('admin.adminPortal', 'Admin Portal')}</span>
             </div>
           </div>
         </div>
@@ -119,7 +119,7 @@ export function AdminHeader() {
                   <AvatarFallback>AD</AvatarFallback>
                 </Avatar>
                 <div className="hidden md:block text-start">
-                  <div className="text-xs sm:text-sm font-medium">Administrator</div>
+                  <div className="text-xs sm:text-sm font-medium">{t('admin.administrator', 'Administrator')}</div>
                 </div>
                 <ChevronDown className="w-3 h-3 sm:w-4 sm:h-4 hidden md:block rtl-flip" />
               </Button>

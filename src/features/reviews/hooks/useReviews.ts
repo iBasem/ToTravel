@@ -1,5 +1,6 @@
 
 import { useState, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/features/auth/context/AuthContext';
 import { toast } from 'sonner';
@@ -18,6 +19,7 @@ export type Review = {
 
 export function useReviews() {
     const { user } = useAuth();
+    const { t } = useTranslation();
     const [loading, setLoading] = useState(false);
     const [submitting, setSubmitting] = useState(false);
     const [reviews, setReviews] = useState<Review[]>([]);
@@ -47,11 +49,11 @@ export function useReviews() {
             setReviews(typedData || []);
         } catch (error) {
             console.error('Error fetching reviews:', error);
-            toast.error('Failed to load reviews');
+            toast.error(t('toasts.reviewsLoadFailed'));
         } finally {
             setLoading(false);
         }
-    }, []);
+    }, [t]);
 
     const fetchTravelerReviews = useCallback(async () => {
         if (!user) return [];
@@ -80,12 +82,12 @@ export function useReviews() {
             return data;
         } catch (error) {
             console.error('Error fetching traveler reviews:', error);
-            toast.error('Failed to load your reviews');
+            toast.error(t('toasts.yourReviewsLoadFailed'));
             return [];
         } finally {
             setLoading(false);
         }
-    }, [user]);
+    }, [user, t]);
 
     const submitReview = async ({
         packageId,
@@ -113,7 +115,7 @@ export function useReviews() {
             });
 
             if (error) {
-                let message = 'Failed to submit review';
+                let message = t('toasts.reviewSubmitFailed');
                 try {
                     const body = await (error as { context?: Response }).context?.json();
                     if (body?.error) message = body.error;
@@ -121,12 +123,12 @@ export function useReviews() {
                 throw new Error(message);
             }
 
-            toast.success('Review submitted successfully');
+            toast.success(t('toasts.reviewSubmitted'));
             fetchPackageReviews(packageId);
             return true;
         } catch (error) {
             console.error('Error submitting review:', error);
-            toast.error(error instanceof Error ? error.message : 'Failed to submit review');
+            toast.error(error instanceof Error ? error.message : t('toasts.reviewSubmitFailed'));
             return false;
         } finally {
             setSubmitting(false);

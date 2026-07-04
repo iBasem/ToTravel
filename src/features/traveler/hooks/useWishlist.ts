@@ -1,5 +1,6 @@
 
 import { useState, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/features/auth/context/AuthContext';
 import { toast } from 'sonner';
@@ -25,6 +26,7 @@ export type WishlistItem = {
 
 export function useWishlist() {
     const { user } = useAuth();
+    const { t } = useTranslation();
     const [loading, setLoading] = useState(false);
     const [wishlist, setWishlist] = useState<WishlistItem[]>([]);
     const [wishlistIds, setWishlistIds] = useState<Set<string>>(new Set());
@@ -67,15 +69,15 @@ export function useWishlist() {
             setWishlistIds(new Set(typedData?.map(item => item.package_id) || []));
         } catch (error) {
             console.error('Error fetching wishlist:', error);
-            toast.error('Failed to load wishlist');
+            toast.error(t('toasts.wishlistLoadFailed'));
         } finally {
             setLoading(false);
         }
-    }, [user]);
+    }, [user, t]);
 
     const toggleWishlist = async (packageId: string) => {
         if (!user) {
-            toast.error('Please sign in to save items to your wishlist');
+            toast.error(t('toasts.signInToWishlist'));
             return;
         }
 
@@ -101,7 +103,7 @@ export function useWishlist() {
                     .eq('package_id', packageId);
 
                 if (error) throw error;
-                toast.success('Removed from wishlist');
+                toast.success(t('toasts.wishlistRemoved'));
             } else {
                 const { error } = await supabase
                     .from('wishlist')
@@ -111,14 +113,14 @@ export function useWishlist() {
                     });
 
                 if (error) throw error;
-                toast.success('Added to wishlist');
+                toast.success(t('toasts.wishlistAdded'));
             }
 
             // Refresh to ensure sync
             fetchWishlist();
         } catch (error) {
             console.error('Error toggling wishlist:', error);
-            toast.error('Failed to update wishlist');
+            toast.error(t('toasts.wishlistUpdateFailed'));
 
             // Revert optimistic update
             setWishlistIds(prev => {

@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Calendar, Users, MapPin, CreditCard, Check } from 'lucide-react';
 import { BookingFormData } from '../BookingWizard';
 import { useTranslation } from 'react-i18next';
+import { formatCurrency } from '@/lib/formatters';
 
 interface BookingStep4Props {
   formData: BookingFormData;
@@ -123,14 +124,14 @@ export function BookingStep4({ formData, updateFormData, packageData, onSubmit }
               {formData.travelInsurance && (
                 <div className="flex justify-between">
                   <span>{t('booking.travelInsurance')}:</span>
-                  <span>{t('common.added')} (+${49 * formData.travelers})</span>
+                  <span>{t('common.added')} (+{formatCurrency(49 * formData.travelers)})</span>
                 </div>
               )}
 
               {formData.airportTransfer && (
                 <div className="flex justify-between">
                   <span>{t('booking.airportTransfer')}:</span>
-                  <span>{t('common.added')} (+${35 * formData.travelers})</span>
+                  <span>{t('common.added')} (+{formatCurrency(35 * formData.travelers)})</span>
                 </div>
               )}
             </div>
@@ -185,21 +186,21 @@ export function BookingStep4({ formData, updateFormData, packageData, onSubmit }
         <CardContent>
           <div className="space-y-2">
             <div className="flex justify-between">
-              <span>{t('booking.tourPackage')} ({formData.travelers} × ${formData.totalAmount / formData.travelers})</span>
-              <span>${formData.totalAmount}</span>
+              <span>{t('booking.tourPackage')} ({formData.travelers} × {formatCurrency(formData.totalAmount / formData.travelers)})</span>
+              <span>{formatCurrency(formData.totalAmount)}</span>
             </div>
 
             {formData.travelInsurance && (
               <div className="flex justify-between text-sm">
-                <span>{t('booking.travelInsurance')} ({formData.travelers} × $49)</span>
-                <span>+${49 * formData.travelers}</span>
+                <span>{t('booking.travelInsurance')} ({formData.travelers} × {formatCurrency(49)})</span>
+                <span>+{formatCurrency(49 * formData.travelers)}</span>
               </div>
             )}
 
             {formData.airportTransfer && (
               <div className="flex justify-between text-sm">
-                <span>{t('booking.airportTransfer')} ({formData.travelers} × $35)</span>
-                <span>+${35 * formData.travelers}</span>
+                <span>{t('booking.airportTransfer')} ({formData.travelers} × {formatCurrency(35)})</span>
+                <span>+{formatCurrency(35 * formData.travelers)}</span>
               </div>
             )}
 
@@ -207,12 +208,12 @@ export function BookingStep4({ formData, updateFormData, packageData, onSubmit }
 
             <div className="flex justify-between font-bold text-lg">
               <span>{t('booking.totalAmount')}</span>
-              <span className="text-blue-600">${totalCost}</span>
+              <span className="text-blue-600">{formatCurrency(totalCost)}</span>
             </div>
 
             <div className="flex justify-between text-sm text-gray-600">
               <span>{t('booking.depositRequired')}</span>
-              <span>${Math.round(totalCost * 0.25)}</span>
+              <span>{formatCurrency(Math.round(totalCost * 0.25))}</span>
             </div>
           </div>
         </CardContent>

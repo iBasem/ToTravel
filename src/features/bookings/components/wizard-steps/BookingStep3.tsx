@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Bed, Utensils, Shield, Car } from 'lucide-react';
 import { BookingFormData } from '../BookingWizard';
 import { useTranslation } from 'react-i18next';
+import { formatCurrency } from '@/lib/formatters';
 
 interface BookingStep3Props {
   formData: BookingFormData;
@@ -120,7 +121,7 @@ export function BookingStep3({ formData, updateFormData }: BookingStep3Props) {
               />
               <div className="space-y-1">
                 <Label htmlFor="travel-insurance" className="cursor-pointer">
-                  {t('booking.addTravelInsurance')}
+                  {t('booking.insuranceAddon', { price: formatCurrency(49), defaultValue: 'Add comprehensive travel insurance (+{{price}} per person)' })}
                 </Label>
                 <p className="text-sm text-gray-600">
                   {t('booking.travelInsuranceDesc')}
@@ -149,7 +150,7 @@ export function BookingStep3({ formData, updateFormData }: BookingStep3Props) {
               />
               <div className="space-y-1">
                 <Label htmlFor="airport-transfer" className="cursor-pointer">
-                  {t('booking.addAirportTransfer')}
+                  {t('booking.transferAddon', { price: formatCurrency(35), defaultValue: 'Add round-trip airport transfer (+{{price}} per person)' })}
                 </Label>
                 <p className="text-sm text-gray-600">
                   {t('booking.airportTransferDesc')}
@@ -169,27 +170,27 @@ export function BookingStep3({ formData, updateFormData }: BookingStep3Props) {
           <div className="space-y-2">
             <div className="flex justify-between">
               <span>{t('booking.tourPackage')} ({formData.travelers} {formData.travelers === 1 ? t('booking.travelerSingular') : t('booking.travelerPlural')})</span>
-              <span>${formData.totalAmount}</span>
+              <span>{formatCurrency(formData.totalAmount)}</span>
             </div>
             {formData.travelInsurance && (
               <div className="flex justify-between text-sm">
-                <span>{t('booking.travelInsurance')} ({formData.travelers} × $49)</span>
-                <span>+${49 * formData.travelers}</span>
+                <span>{t('booking.travelInsurance')} ({formData.travelers} × {formatCurrency(49)})</span>
+                <span>+{formatCurrency(49 * formData.travelers)}</span>
               </div>
             )}
             {formData.airportTransfer && (
               <div className="flex justify-between text-sm">
-                <span>{t('booking.airportTransfer')} ({formData.travelers} × $35)</span>
-                <span>+${35 * formData.travelers}</span>
+                <span>{t('booking.airportTransfer')} ({formData.travelers} × {formatCurrency(35)})</span>
+                <span>+{formatCurrency(35 * formData.travelers)}</span>
               </div>
             )}
             <hr className="my-2" />
             <div className="flex justify-between font-medium text-lg">
               <span>{t('booking.totalEstimatedCost')}</span>
               <span className="text-blue-600">
-                ${formData.totalAmount +
+                {formatCurrency(formData.totalAmount +
                   (formData.travelInsurance ? 49 * formData.travelers : 0) +
-                  (formData.airportTransfer ? 35 * formData.travelers : 0)}
+                  (formData.airportTransfer ? 35 * formData.travelers : 0))}
               </span>
             </div>
           </div>
