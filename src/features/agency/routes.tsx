@@ -10,7 +10,6 @@ import PackageDetails from "@/features/packages/pages/PackageDetails";
 import AgencyBookings from "@/features/bookings/pages/AgencyBookings";
 import AgencyCalendar from "./pages/AgencyCalendar";
 import Travelers from "./pages/Travelers";
-import Guides from "./pages/Guides";
 import Gallery from "./pages/Gallery";
 import Messages from "./pages/Messages";
 import Deals from "./pages/Deals";
@@ -30,7 +29,6 @@ export const AgencyRoutes = () => {
                         <Route path="bookings" element={<AgencyBookings />} />
                         <Route path="calendar" element={<AgencyCalendar />} />
                         <Route path="travelers" element={<Travelers />} />
-                        <Route path="guides" element={<Guides />} />
                         <Route path="gallery" element={<Gallery />} />
                         <Route path="messages" element={<Messages />} />
                         <Route path="deals" element={<Deals />} />
