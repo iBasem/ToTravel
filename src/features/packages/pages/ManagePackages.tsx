@@ -51,9 +51,15 @@ export default function Packages() {
 
   const togglePublishStatus = async (pkg: any) => {
     try {
-      const newStatus = pkg.status === 'published' ? 'draft' : 'published';
+      // Publishing requires admin approval: submitting sends the package to
+      // 'pending'; unpublishing a live package returns it to 'draft'.
+      const newStatus = pkg.status === 'published' ? 'draft' : 'pending';
       await updatePackage(pkg.id, { status: newStatus });
-      toast.success(newStatus === 'published' ? t('agencyDashboard.published') : t('agencyDashboard.draft'));
+      toast.success(
+        newStatus === 'pending'
+          ? t('agencyDashboard.submittedForReview', 'Submitted for review')
+          : t('agencyDashboard.unpublished', 'Unpublished')
+      );
     } catch (error) {
       toast.error(t('agencyDashboard.errorLoadingPackages'));
     }

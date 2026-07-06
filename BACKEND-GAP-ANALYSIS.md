@@ -433,8 +433,13 @@ dropped on create — the old `handleSubmit` never passed them). Publish flow
 (WIZ-5, owner decision = admin approval): submitting sets `status='pending'`;
 admins approve to `published` via their existing update policy.
 
+### ✅ Also done (2026-07-05)
+- **Wizard typing complete:** all wizard step components typed to the shared `PackageFormData` slices — **0 `no-explicit-any` left in the wizard chain** (lint 55→30 across this + prior increments). Surfaced + fixed a display bug (ReviewStep read non-existent `duration`/`maxGroupSize`/`difficulty`).
+- **WIZ-8 (Security): agencies can no longer self-feature or self-publish via direct table writes.** New `enforce_package_update_guard` trigger (`20260705120000`) blocks non-admin/non-service changes to `featured` and any `status` outside `draft`/`pending` (live-verified). `ManagePackages` publish toggle rerouted: publish → `pending` (submit for review), unpublish → `draft`. Together with the RPC (WIZ-6), the admin-approval publish flow is now enforced end-to-end at the DB level.
+
 ### ⏳ Remaining findings (need decisions / larger scope)
-- **WIZ-5 follow-up:** submit→`pending` is wired end-to-end, but the admin side still needs a "pending approval" queue/action in the admin packages UI, and the ReviewStep toggle copy should read "Submit for review" (not "Publish").
+- **WIZ-5 follow-up:** submit→`pending` is wired and enforced, but the admin side still needs a "pending approval" queue/action in the admin packages UI, and the ReviewStep toggle copy should read "Submit for review" (not "Publish").
+- **WIZ-9 (deferred): strip dead/unpersisted form fields** (`currency`, `base_price` shadow, `originalPrice`/`discount`, `subtitle`, `highlights`, hardcoded `rating`, `route.travelMode`/`showDistances`). Low-risk-but-low-value cleanup; each field must be verified as never read for display before removal — best as a dedicated pass, not bundled with behavioral changes.
 - **WIZ-7: EditPackage drops structured inclusions** (saves only `additionalInclusions`; never rebuilds the category grouping on load).
 - **WIZ-8 (Security, M1): `featured` is agency-writable** via the wizard payload — should be platform-only.
 - **WIZ-9: dead/unpersisted fields** collected but never stored: `pricing.currency`, `pricing.base_price` shadow, `originalPrice`/`discount`, `basicInfo.subtitle`/`highlights`/`rating`, itinerary `highlights`, `route.travelMode`/`showDistances`.
