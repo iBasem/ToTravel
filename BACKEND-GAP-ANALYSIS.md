@@ -452,9 +452,17 @@ admins approve to `published` via their existing update policy.
 ### ✅ WIZ-11 departures editor done (2026-07-05)
 - **Per-package "Manage departures" page** (`ManageDepartures.tsx` + `useDepartures` hook, route `packages/:id/departures`, linked from the ManagePackages card menu). Agencies add/remove real departure dates with total seats + optional price override; the list shows booked/remaining/status derived from bookings. Direct table CRUD gated by the RLS policies (no RPC/step-machine changes). Live-verified: an agency can write departures for its own package but **not** another agency's (RLS blocks it). Delete is refused when a departure already has bookings.
 
-### ⏳ WIZ-11 follow-up (still deferred)
-- **Booking ↔ departure linkage:** `BookingModal` should let the traveler pick a specific real departure and the booking should reference `departure_id` (currently free `booking_date`). The capacity trigger already enforces per-date seats, but bookings aren't yet tied to a specific departure row.
-- **Also open:** WIZ-5 admin "pending" filtered tab (actions exist), and persisting the live-but-ephemeral UI fields (subtitle/highlights) if desired.
+### ✅ WIZ-11b booking↔departure linkage done (2026-07-05) — WIZ-11 fully complete
+- **`package_bookings.departure_id`** column (FK → `package_departures`, `ON DELETE SET NULL`) + index.
+- **Capacity trigger is now departure-aware:** when a booking targets a departure, seats are enforced against that departure's `total_seats` (race-safe row lock); legacy free-date bookings still enforce per-date/`max_participants`. Live-verified: filling a 16-seat departure is allowed, one seat over is blocked.
+- **`create-booking` edge function (v3, deployed):** accepts `departure_id`, validates it belongs to the package and is `scheduled`, derives `booking_date` + unit price (`price_override` ?? `base_price`) **server-side**, links the booking, and returns `DEPARTURE_FULL` (409) on capacity violation.
+- **Frontend:** `BookingModal` shows the chosen departure's date (read-only) + seats-left and caps participants at remaining seats; `useCreateBooking` sends `departure_id`; `PackageDetails` passes the selected departure. `departure_id` added to `types.ts`.
+
+The availability loop is now complete end-to-end: agencies schedule real departures → travelers see real seats → book a specific departure → seats enforced against that departure.
+
+### ⏳ Minor open items
+- WIZ-5 admin "pending" filtered tab (approve/reject actions already exist).
+- Persisting the live-but-ephemeral wizard UI fields (subtitle/highlights) if desired.
 - **WIZ-7: EditPackage drops structured inclusions** (saves only `additionalInclusions`; never rebuilds the category grouping on load).
 - **WIZ-8 (Security, M1): `featured` is agency-writable** via the wizard payload — should be platform-only.
 - **WIZ-9: dead/unpersisted fields** collected but never stored: `pricing.currency`, `pricing.base_price` shadow, `originalPrice`/`discount`, `basicInfo.subtitle`/`highlights`/`rating`, itinerary `highlights`, `route.travelMode`/`showDistances`.

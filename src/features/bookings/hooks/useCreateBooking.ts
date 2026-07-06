@@ -9,6 +9,7 @@ export interface BookingFormData {
     bookingDate: string;
     participants: number;
     specialRequests?: string;
+    departureId?: string;
 }
 
 export function useCreateBooking() {
@@ -32,6 +33,7 @@ export function useCreateBooking() {
                     booking_date: formData.bookingDate,
                     participants: formData.participants,
                     special_requests: formData.specialRequests || null,
+                    departure_id: formData.departureId || null,
                 },
             });
 

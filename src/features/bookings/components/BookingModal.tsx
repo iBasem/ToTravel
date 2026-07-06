@@ -14,6 +14,7 @@ import { useCreateBooking } from '@/features/bookings/hooks/useCreateBooking';
 import { useAuth } from '@/features/auth/context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import type { Departure } from '@/features/packages/types';
 
 interface BookingModalProps {
     isOpen: boolean;
@@ -22,6 +23,7 @@ interface BookingModalProps {
     packageTitle: string;
     basePrice: number;
     maxParticipants?: number;
+    departure?: Departure | null;
 }
 
 export function BookingModal({
@@ -31,6 +33,7 @@ export function BookingModal({
     packageTitle,
     basePrice,
     maxParticipants = 20,
+    departure,
 }: BookingModalProps) {
     const { t } = useTranslation();
     const [date, setDate] = useState<Date>();
@@ -40,6 +43,10 @@ export function BookingModal({
     const { user } = useAuth();
     const navigate = useNavigate();
 
+    // When booking a specific departure, cap participants at its remaining seats.
+    const effectiveMax = departure
+        ? Math.max(1, Math.min(maxParticipants, departure.seats_remaining))
+        : maxParticipants;
     const totalPrice = basePrice * participants;
 
     const handleSubmit = async () => {
@@ -49,15 +56,17 @@ export function BookingModal({
             return;
         }
 
-        if (!date) {
+        const bookingDate = departure ? departure.start_date : (date ? format(date, 'yyyy-MM-dd') : null);
+        if (!bookingDate) {
             return;
         }
 
         const result = await createBooking({
             packageId,
-            bookingDate: format(date, 'yyyy-MM-dd'),
+            bookingDate,
             participants,
             specialRequests,
+            departureId: departure?.id,
         });
 
         if (result.success) {
@@ -74,32 +83,44 @@ export function BookingModal({
                 </DialogHeader>
 
                 <div className="space-y-6 py-4">
-                    {/* Date Selection */}
+                    {/* Date Selection: fixed to the chosen departure, or free-pick */}
                     <div className="space-y-2">
                         <Label>{t('booking.selectDate')} *</Label>
-                        <Popover>
-                            <PopoverTrigger asChild>
-                                <Button
-                                    variant="outline"
-                                    className={cn(
-                                        'w-full justify-start text-start font-normal',
-                                        !date && 'text-muted-foreground'
-                                    )}
-                                >
-                                    <CalendarIcon className="me-2 h-4 w-4" />
-                                    {date ? formatDate(date, 'PPP') : t('booking.pickDate')}
-                                </Button>
-                            </PopoverTrigger>
-                            <PopoverContent className="w-auto p-0">
-                                <Calendar
-                                    mode="single"
-                                    selected={date}
-                                    onSelect={setDate}
-                                    disabled={(date) => date < new Date()}
-                                    initialFocus
-                                />
-                            </PopoverContent>
-                        </Popover>
+                        {departure ? (
+                            <div className="flex items-center justify-between rounded-md border bg-muted/40 px-3 py-2">
+                                <span className="flex items-center gap-2 font-medium">
+                                    <CalendarIcon className="h-4 w-4" />
+                                    {formatDate(new Date(departure.start_date), 'PPP')}
+                                </span>
+                                <span className="text-sm text-muted-foreground">
+                                    {t('booking.seatsLeft', { count: departure.seats_remaining, defaultValue: '{{count}} seats left' })}
+                                </span>
+                            </div>
+                        ) : (
+                            <Popover>
+                                <PopoverTrigger asChild>
+                                    <Button
+                                        variant="outline"
+                                        className={cn(
+                                            'w-full justify-start text-start font-normal',
+                                            !date && 'text-muted-foreground'
+                                        )}
+                                    >
+                                        <CalendarIcon className="me-2 h-4 w-4" />
+                                        {date ? formatDate(date, 'PPP') : t('booking.pickDate')}
+                                    </Button>
+                                </PopoverTrigger>
+                                <PopoverContent className="w-auto p-0">
+                                    <Calendar
+                                        mode="single"
+                                        selected={date}
+                                        onSelect={setDate}
+                                        disabled={(date) => date < new Date()}
+                                        initialFocus
+                                    />
+                                </PopoverContent>
+                            </Popover>
+                        )}
                     </div>
 
                     {/* Participants */}
@@ -121,8 +142,8 @@ export function BookingModal({
                             <Button
                                 variant="outline"
                                 size="icon"
-                                onClick={() => setParticipants(Math.min(maxParticipants, participants + 1))}
-                                disabled={participants >= maxParticipants}
+                                onClick={() => setParticipants(Math.min(effectiveMax, participants + 1))}
+                                disabled={participants >= effectiveMax}
                             >
                                 +
                             </Button>
@@ -162,7 +183,7 @@ export function BookingModal({
                     </Button>
                     <Button
                         onClick={handleSubmit}
-                        disabled={!date || loading}
+                        disabled={loading || (!departure && !date)}
                         className="bg-blue-600 hover:bg-blue-700"
                     >
                         {loading ? (

@@ -260,6 +260,7 @@ export default function PackageDetails() {
         packageTitle={localizedTitle}
         basePrice={selectedDeparture?.discount_price || selectedDeparture?.price || packageDetails.base_price}
         maxParticipants={packageDetails.max_participants}
+        departure={selectedDeparture}
       />
     </div>
   );
