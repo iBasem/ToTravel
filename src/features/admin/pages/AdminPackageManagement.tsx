@@ -18,7 +18,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/ui/dropdown-menu";
-import { Search, MoreHorizontal, Eye, Edit, Star, RefreshCw } from "lucide-react";
+import { Search, MoreHorizontal, Eye, Edit, Star, RefreshCw, CheckCircle2, XCircle } from "lucide-react";
 import { useAdminPackages } from "@/features/admin/hooks";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
@@ -54,6 +54,19 @@ export default function AdminPackageManagement() {
       toast.success(currentFeatured
         ? t('adminPackages.removedFeatured')
         : t('adminPackages.markedFeatured')
+      );
+    } else {
+      toast.error(t('common.updateError'));
+    }
+  };
+
+  // Approve a submitted package (pending -> published) or send it back (-> draft).
+  const handleReview = async (packageId: string, approve: boolean) => {
+    const result = await updatePackageStatus(packageId, approve ? 'published' : 'draft');
+    if (result.success) {
+      toast.success(approve
+        ? t('adminPackages.approved', 'Package approved and published')
+        : t('adminPackages.rejected', 'Package sent back to draft')
       );
     } else {
       toast.error(t('common.updateError'));
@@ -179,6 +192,24 @@ export default function AdminPackageManagement() {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align={isRTL ? "start" : "end"}>
+                          {pkg.status === 'pending' && (
+                            <>
+                              <DropdownMenuItem onClick={() => handleReview(pkg.id, true)}>
+                                <CheckCircle2 className="w-4 h-4 me-2 text-green-600" />
+                                {t('adminPackages.approve', 'Approve & publish')}
+                              </DropdownMenuItem>
+                              <DropdownMenuItem onClick={() => handleReview(pkg.id, false)}>
+                                <XCircle className="w-4 h-4 me-2 text-red-600" />
+                                {t('adminPackages.reject', 'Reject (send to draft)')}
+                              </DropdownMenuItem>
+                            </>
+                          )}
+                          {pkg.status === 'published' && (
+                            <DropdownMenuItem onClick={() => handleReview(pkg.id, false)}>
+                              <XCircle className="w-4 h-4 me-2" />
+                              {t('adminPackages.unpublish', 'Unpublish')}
+                            </DropdownMenuItem>
+                          )}
                           <DropdownMenuItem>
                             <Eye className="w-4 h-4 me-2" />
                             {t('adminPackages.viewPackage')}

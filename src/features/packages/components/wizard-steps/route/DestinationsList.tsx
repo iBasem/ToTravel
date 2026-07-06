@@ -77,6 +77,14 @@ function SortableDestination({ destination, index, onUpdate, onRemove }: Sortabl
             <span className="font-medium truncate">{destination.name}</span>
           </div>
 
+          <Input
+            value={destination.nameAr || ''}
+            onChange={(e) => onUpdate(destination.id, { nameAr: e.target.value })}
+            placeholder={t('packageWizard.destinationNameAr', 'Arabic name (optional)')}
+            dir="rtl"
+            className="h-8 text-sm mb-2"
+          />
+
           <div className="flex items-center gap-3 flex-wrap">
             <Select
               value={destination.type}
