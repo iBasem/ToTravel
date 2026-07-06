@@ -350,9 +350,9 @@
     "semantic_hash": "986b63f1acfedf591cbca5f7a9609081"
   },
   "src/features/packages/components/PackageCard.tsx": {
-    "mtime": 1783330419.7789643,
-    "ast_hash": "66cacdbebb170ebd1db195139824d04d",
-    "semantic_hash": "66cacdbebb170ebd1db195139824d04d"
+    "mtime": 1783341803.807829,
+    "ast_hash": "1dd636388a1b8952c2ff390270b0f399",
+    "semantic_hash": ""
   },
   "src/features/packages/components/PackageWizard.tsx": {
     "mtime": 1783330419.7789643,
@@ -1260,8 +1260,8 @@
     "semantic_hash": "85312fbfb300cb8235184f1566ad81bc"
   },
   "BACKEND-GAP-ANALYSIS.md": {
-    "mtime": 1783338756.8546975,
-    "ast_hash": "154b1408b0b65fb625504f66d9482ec0",
+    "mtime": 1783344779.9787169,
+    "ast_hash": "113e8b0ca1796a833464d17e3e0c45f8",
     "semantic_hash": ""
   },
   "BACKEND-HOSTING-COMPARISON.md": {
@@ -1377,6 +1377,11 @@
   "PAYMENTS-GOLIVE.md": {
     "mtime": 1783338740.124989,
     "ast_hash": "c9e632384ea8583a626e72de68fcecdc",
+    "semantic_hash": ""
+  },
+  "DEPLOY.md": {
+    "mtime": 1783342037.1973155,
+    "ast_hash": "f7311013c1cc86b7b744eeb667c33182",
     "semantic_hash": ""
   }
 }

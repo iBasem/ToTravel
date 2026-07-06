@@ -45,6 +45,33 @@ The security-hardening pass done in the `20260704` migrations is real and effect
 
 ---
 
+## Session Progress (2026-07-05 → 2026-07-06)
+
+Most **Critical/High** blockers from the original audit are now resolved, verified live, and deployed. The 3/10 scores above reflect the *initial* state; the delta is below.
+
+**✅ Resolved & verified**
+- **Security (SEC-1/2/4):** agency self-verify / booking-payment tampering / silent admin no-ops — fixed with RLS guard triggers + admin policies (live-verified).
+- **Data integrity (DATA-1/2/3):** restored `travel_agencies→auth.users` FK (samples → real demo logins), status/payment CHECK constraints, `ON DELETE RESTRICT` on bookings/payouts.
+- **Overbooking (BUS-2):** DB-level, departure-aware capacity guard (race-safe, live-verified).
+- **Package wizard (WIZ-1…11b):** fixed silent data loss (itinerary/media/routes not saving), atomic `save_package` RPC (replaced ~240 lines of non-atomic duplication), admin-approval publish flow + guard (WIZ-8), Guides removed, route Arabic names, and **real departures** replacing faked availability + a "Manage departures" editor + booking↔departure linkage.
+- **Payments (BUS-1): built, deployed, and VERIFIED END-TO-END in test mode** — a real Moyasar payment flowed `create-payment` → hosted checkout → verified webhook → booking `paid`+`confirmed`. Webhook is the sole authority (fail-closed, signature-gated).
+- **CI (OPS-1):** GitHub Actions gate (tests + build blocking; lint/typecheck informational).
+- **Deployment (OPS-4):** live on **Cloudflare Pages** (`totravel.pages.dev`), Git-integration auto-deploy from `develop`, SPA `_redirects` fallback, `VITE_PLATFORM_CURRENCY=SAR`.
+- **OPS-2 (partial):** lint 70→30, wizard `any`s cleared, `noFallthroughCasesInSwitch` on.
+- Removed fabricated data: wizard sample images, faked availability seats/discounts, and the listing-card fake discount.
+
+**⏳ Still open (post-session)**
+- Payments: switch to **live Moyasar keys**; **automated refunds** via Moyasar API (admin refund still flips a flag only).
+- Agency **Deals/Messages** features (tables not built — the two remaining `tsc`-error hooks); persist wizard subtitle/highlights if wanted.
+- Fake **per-card reviews/ratings/quotes** on listings (last mock data).
+- **Observability** (Sentry/structured logs/alerting) — still 1/10.
+- **Test coverage** beyond 2 files; enable `strict:true` (24 tsc errors, mostly Wave-4-blocked); pagination / React-Query migration (ARCH-3).
+- DR/backups posture (Supabase plan), staging environment.
+
+**Full checklists:** [PAYMENTS-GOLIVE.md](PAYMENTS-GOLIVE.md), [DEPLOY.md](DEPLOY.md).
+
+---
+
 ## Architecture Decisions (owner-approved, 2026-07-05)
 
 These decisions were made after the initial audit and shape the roadmap below.
@@ -389,7 +416,7 @@ Ordered by dependency and risk. Each wave is releasable.
 | e | Migrate the ~16 existing files; update `package_media.file_path`; create the missing `agency-gallery` equivalent bucket | S |
 
 ### Wave 1 — Make the product actually transact — ~2–3 weeks
-**BUS-1 (Moyasar payments) — core built & deployed 2026-07-05.** Hosted-invoice flow: `payments` ledger table (RLS); `create-payment` edge function (JWT, creates the invoice server-side from the booking amount); `moyasar-webhook` edge function (`verify_jwt=false`, verifies Moyasar's `secret_token`, **sole authority** for `payment_status='paid'` — idempotent, service-role bypass of the booking guard). Frontend: "Pay now" on unpaid bookings → Moyasar hosted page → `/payment/callback` polling the real status. Verified: webhook is **fail-closed** (503 until secret set; 401 on JWT-less create-payment). **Go-live steps in [PAYMENTS-GOLIVE.md](PAYMENTS-GOLIVE.md)** (owner sets `MOYASAR_SECRET_KEY` / `MOYASAR_WEBHOOK_SECRET` / `APP_URL` + registers the webhook + `VITE_PLATFORM_CURRENCY=SAR`). **Not yet done:** automated refunds via Moyasar's refund API.
+**BUS-1 (Moyasar payments) — built, deployed & VERIFIED END-TO-END (test mode) 2026-07-06.** A real Moyasar test payment marked a booking `paid`+`confirmed` via the verified webhook. Site live on Cloudflare Pages. Hosted-invoice flow: `payments` ledger table (RLS); `create-payment` edge function (JWT, creates the invoice server-side from the booking amount); `moyasar-webhook` edge function (`verify_jwt=false`, verifies Moyasar's `secret_token`, **sole authority** for `payment_status='paid'` — idempotent, service-role bypass of the booking guard). Frontend: "Pay now" on unpaid bookings → Moyasar hosted page → `/payment/callback` polling the real status. Verified: webhook is **fail-closed** (503 until secret set; 401 on JWT-less create-payment). **Go-live steps in [PAYMENTS-GOLIVE.md](PAYMENTS-GOLIVE.md)** (owner sets `MOYASAR_SECRET_KEY` / `MOYASAR_WEBHOOK_SECRET` / `APP_URL` + registers the webhook + `VITE_PLATFORM_CURRENCY=SAR`). **Not yet done:** automated refunds via Moyasar's refund API.
 
 | Order | ID | Item | Effort |
 |---|---|---|---|
