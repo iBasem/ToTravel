@@ -9,8 +9,8 @@ import { useAuth } from "@/features/auth/context/AuthContext";
 import { Loader2 } from "lucide-react";
 
 interface MediaStepProps {
-  data: any[];
-  onUpdate: (data: any[]) => void;
+  data: MediaItem[];
+  onUpdate: (data: MediaItem[]) => void;
 }
 
 interface MediaItem {
@@ -33,27 +33,6 @@ export function MediaStep({ data, onUpdate }: MediaStepProps) {
   useEffect(() => {
     onUpdate(media);
   }, [media, onUpdate]);
-
-  const mockImages = [
-    "https://images.unsplash.com/photo-1539650116574-75c0c6c6178d?w=400&h=300&fit=crop",
-    "https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?w=400&h=300&fit=crop",
-    "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=400&h=300&fit=crop",
-    "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=300&fit=crop"
-  ];
-
-  const addMockImages = () => {
-    const newImages: MediaItem[] = mockImages.map((url, index) => ({
-      id: Math.random().toString(36).substr(2, 9),
-      type: 'image' as const,
-      url,
-      caption: t('packageWizard.sampleImageCaption', 'Sample image {{number}}', { number: index + 1 }),
-      isPrimary: index === 0 && media.length === 0,
-      file_name: `sample-image-${index + 1}.jpg`,
-      file_path: url
-    }));
-    setMedia(prev => [...prev, ...newImages]);
-    toast.success(t('packageWizard.sampleImagesAdded'));
-  };
 
   const handleFileUpload = async (files: FileList) => {
     if (!user) {
@@ -221,10 +200,6 @@ export function MediaStep({ data, onUpdate }: MediaStepProps) {
                     </span>
                   </Button>
                 </label>
-
-                <Button onClick={addMockImages} className="bg-primary hover:bg-primary/90">
-                  {t('packageWizard.addSampleImages')}
-                </Button>
               </div>
             )}
           </div>

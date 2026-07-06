@@ -4,12 +4,13 @@ import { ItineraryStep } from "@/features/packages/components/wizard-steps/Itine
 import { PricingStep } from "@/features/packages/components/wizard-steps/PricingStep";
 import { MediaStep } from "@/features/packages/components/wizard-steps/MediaStep";
 import { ReviewStep } from "@/features/packages/components/wizard-steps/ReviewStep";
+import type { PackageFormData } from "@/features/packages/types/wizard";
 
 interface WizardStepContentProps {
   currentStep: number;
-  formData: any;
-  onUpdate: (stepKey: string, data: any) => void;
-  onFormDataUpdate: (data: any) => void;
+  formData: PackageFormData;
+  onUpdate: <K extends keyof PackageFormData>(stepKey: K, data: PackageFormData[K]) => void;
+  onFormDataUpdate: (data: PackageFormData) => void;
 }
 
 export function WizardStepContent({

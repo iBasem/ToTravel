@@ -28,6 +28,7 @@ export default function EditPackage() {
       title_ar: '',
       description_ar: '',
       destination_ar: '',
+      destinations: [] as string[],
       category: '',
       difficulty_level: 'moderate',
       duration_days: 1,
@@ -116,6 +117,10 @@ export default function EditPackage() {
           title_ar: packageData.title_ar || '',
           description_ar: packageData.description_ar || '',
           destination_ar: packageData.destination_ar || '',
+          // The destinations array is a create-time UI construct (only the scalar
+          // `destination` column is persisted); reconstruct it so step-1 validation
+          // and the array-based UI work in edit mode.
+          destinations: packageData.destination ? [packageData.destination] : [],
           category: packageData.category || '',
           difficulty_level: packageData.difficulty_level || 'moderate',
           duration_days: packageData.duration_days || 1,

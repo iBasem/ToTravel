@@ -406,6 +406,31 @@ Ordered by dependency and risk. Each wave is releasable.
 | 15 | OPS-2 | Fix tsc errors; enable strict | L | in progress |
 
 **OPS-2 progress (2026-07-05):** Enabled `noFallthroughCasesInSwitch` (0 new errors). Fixed all 10 non-`any` lint errors (case-declaration blocks in `PackageWizard`, `prefer-const`, a `no-constant-binary-expression` in `utils.test.ts`, two `no-empty-object-type` in `ui/`, and the `require()` import in `tailwind.config.ts`). Typed `AuthContext`'s 5 `any`s (error results → `Error | PostgrestError | null` with a `toError` normalizer; update objects → generated `…['Update']` types). **Lint 70 → 55 errors** (all 55 remaining are `no-explicit-any`); typecheck steady at 24 with zero regressions; tests + build green. Remaining `any` burn-down, grouped: the package-wizard prop chain (~20, needs a shared `PackageFormData` type — highest value), `EditPackage` (8), misc singles (~13), and ~14 in Wave-4-blocked files (Deals/Messages/Calendar/Feedback/Travelers/Gallery) best done when those are rebuilt. Full `strict:true` measures at only 30 total errors but can't reach 0 until the Wave-4 tables exist.
+
+---
+
+## Package Wizard — Investigation & Fixes (2026-07-05)
+
+Deep review of the create/edit wizard (all wizard-steps, `useCreatePackage`, `EditPackage`, `usePackageDetails`, SEO) against the backend contract.
+
+### ✅ Fixed this session (WIZ)
+- **WIZ-1 (Bug, data loss): itinerary never saved on create.** `ItineraryStep` emits `day`/`meals`; `useCreatePackage` reads `day_number`/`meals_included`; `PackageWizard.handleSubmit` passed itinerary **untransformed**, so rows hit the `day_number` NOT NULL constraint and failed inside a swallowed `toast.warning`. Now mapped in `handleSubmit`.
+- **WIZ-2 (Bug): media `media_type`/`is_primary` written as `undefined`.** Form uses `type`/`isPrimary`; create-path passed media untransformed. Now mapped.
+- **WIZ-3 (Prod hazard): "Add Sample Images" injected hardcoded Unsplash URLs** as real saved media (`MediaStep.addMockImages`). Removed.
+- **WIZ-4 (Bug): EditPackage edit-lock / missing `destinations`.** Edit state omitted `basicInfo.destinations`, diverging from create and blocking step-1 validation for array-created packages. Added + reconstructed from the scalar `destination` on load.
+- **Typed the wizard chain top:** new shared `src/features/packages/types/wizard.ts` (`PackageFormData` reusing the canonical `RouteData`); typed `PackageWizard`, `WizardStepContent`, `MediaStep` (8 `any`s cleared). Striped ~15 debug `console.log`s that leaked full form data (incl. Arabic) on every keystroke.
+
+### ⏳ Remaining findings (need decisions / larger scope)
+- **WIZ-5 (Bug): publish flow dead.** `ReviewStep` collects `isPublished` but no code maps it to `status`; create forces `'draft'`, edit never writes `status` → packages **cannot be published via the wizard**. (Decision: should agency publish directly, or via admin approval?)
+- **WIZ-6 (Arch, data loss): `EditPackage` save is non-atomic** — delete-then-insert of routes/itinerary/media with **unchecked errors**; and it **duplicates ~90%** of `useCreatePackage`. Strongest candidate for a single atomic `save-package` RPC/edge function (same pattern as `create-booking`), which fixes atomicity + error-swallowing + duplication at once.
+- **WIZ-7: EditPackage drops structured inclusions** (saves only `additionalInclusions`; never rebuilds the category grouping on load).
+- **WIZ-8 (Security, M1): `featured` is agency-writable** via the wizard payload — should be platform-only.
+- **WIZ-9: dead/unpersisted fields** collected but never stored: `pricing.currency`, `pricing.base_price` shadow, `originalPrice`/`discount`, `basicInfo.subtitle`/`highlights`/`rating`, itinerary `highlights`, `route.travelMode`/`showDistances`.
+- **WIZ-10: `package_routes.name_ar`** is the one localized column with a DB slot but **no Arabic capture UI** in the route step.
+- **WIZ-11: no `available_from`/`available_to` capture** — the public availability calendar is entirely faked (`useAvailability` random seats/discounts) because the wizard has no departures/date step.
+- **WIZ-12 (validation):** only steps 1 & 4 validate; child-insert errors are swallowed and the user still sees "created successfully."
+- **WIZ-13 (SEO):** detail page is strong (localized title/desc, canonical, en/ar hreflang, TouristTrip + BreadcrumbList JSON-LD) but: SPA client-render only (non-JS scrapers get nothing), `Offer` lacks `image` + `aggregateRating`, captions default to raw filenames (weak alt text), listing page has no `ItemList`.
+- **Arch:** wizard uses per-step `useState` mirrors synced via effects (double-buffering) — the root cause of the `any`s and the edit round-trip bugs; a reducer or react-hook-form + the shared type would remove the class. Edit logic should move to a `useEditPackage`/`useUpsertPackage` hook symmetric with create.
 | 16 | OPS-3 | Sentry + structured edge-function logs + alerting | M |
 | 17 | OPS-4 | Codify deploy + fix config ref + staging env | M |
 | 18 | QA-1 | RLS + edge-function + one e2e test | L |

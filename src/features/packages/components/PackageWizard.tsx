@@ -6,6 +6,7 @@ import { Button } from "@/ui/button";
 import { Progress } from "@/ui/progress";
 import { WizardStepContent } from "@/features/packages/components/wizard/WizardStepContent";
 import { useCreatePackage } from "@/features/packages/hooks/useCreatePackage";
+import type { PackageFormData, InclusionCategory } from "@/features/packages/types/wizard";
 
 interface PackageWizardProps {
   isOpen: boolean;
@@ -16,7 +17,7 @@ export function PackageWizard({ isOpen, onClose }: PackageWizardProps) {
   const { t, i18n } = useTranslation();
 
   const [currentStep, setCurrentStep] = useState(1);
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<PackageFormData>({
     basicInfo: {
       title: '',
       description: '',
@@ -63,73 +64,80 @@ export function PackageWizard({ isOpen, onClose }: PackageWizardProps) {
 
   const { createPackage, loading } = useCreatePackage();
 
-  console.log('PackageWizard - Current step:', currentStep, 'Form data:', formData);
-
   const totalSteps = 6;
   const progress = (currentStep / totalSteps) * 100;
 
-  const updateFormData = (stepKey: string, data: any) => {
-    console.log(`Updating ${stepKey} with:`, data);
+  const updateFormData = <K extends keyof PackageFormData>(stepKey: K, data: PackageFormData[K]) => {
     setFormData(prev => ({
       ...prev,
       [stepKey]: data
     }));
   };
 
-  const handleFormDataUpdate = (data: any) => {
-    console.log('Full form data update:', data);
+  const handleFormDataUpdate = (data: PackageFormData) => {
     setFormData(data);
   };
 
   const nextStep = () => {
-    console.log('Next step clicked, current step:', currentStep, 'Valid:', isStepValid(currentStep));
     if (currentStep < totalSteps && isStepValid(currentStep)) {
       setCurrentStep(currentStep + 1);
     }
   };
 
   const prevStep = () => {
-    console.log('Previous step clicked, current step:', currentStep);
     if (currentStep > 1) {
       setCurrentStep(currentStep - 1);
     }
   };
 
   const handleSubmit = async () => {
-    console.log('Submit clicked, form data:', formData);
+    const inclusions: string[] = [];
+    Object.values(formData.pricing.inclusions).forEach((value: InclusionCategory) => {
+      if (value?.included && value?.details) {
+        inclusions.push(...value.details);
+      }
+    });
+    if (Array.isArray(formData.pricing.additionalInclusions)) {
+      inclusions.push(...formData.pricing.additionalInclusions);
+    }
 
     const transformedData = {
       basicInfo: formData.basicInfo,
-      itinerary: formData.itinerary,
+      // Map the form's itinerary shape (day/meals) to the DB shape
+      // (day_number/meals_included) so itinerary rows actually persist on create.
+      itinerary: formData.itinerary.map((d) => ({
+        day_number: d.day,
+        title: d.title,
+        description: d.description,
+        activities: (d.activities || []).filter((a) => a && a.trim()),
+        meals_included: d.meals || [],
+        accommodation: d.accommodation || undefined,
+        title_ar: d.title_ar,
+        description_ar: d.description_ar,
+        activities_ar: d.activities_ar,
+      })),
       pricing: {
         base_price: parseFloat(formData.pricing.basePrice) || 0,
-        inclusions: [],
+        inclusions,
         exclusions: formData.pricing.exclusions || [],
         inclusions_ar: formData.pricing.inclusions_ar || [],
         exclusions_ar: formData.pricing.exclusions_ar || [],
         cancellation_policy: formData.pricing.cancellation_policy || '',
         terms_conditions: formData.pricing.terms_conditions || ''
       },
-      media: formData.media
+      // Map the form's media shape (type/isPrimary) to the DB shape
+      // (media_type/is_primary) so those columns aren't written as undefined.
+      media: formData.media.map((m) => ({
+        file_name: m.file_name || '',
+        file_path: m.file_path || m.url,
+        media_type: m.type,
+        caption: m.caption,
+        is_primary: m.isPrimary,
+      })),
     };
-
-    if (formData.pricing.inclusions) {
-      Object.entries(formData.pricing.inclusions).forEach(([key, value]: [string, any]) => {
-        if (value?.included && value?.details) {
-          transformedData.pricing.inclusions.push(...value.details);
-        }
-      });
-
-      if (formData.pricing.additionalInclusions && Array.isArray(formData.pricing.additionalInclusions)) {
-        transformedData.pricing.inclusions.push(...formData.pricing.additionalInclusions);
-      }
-    }
-
-    console.log('Transformed data for submission:', transformedData);
 
     try {
       const result = await createPackage(transformedData);
-      console.log('Package creation result:', result);
 
       if (result.success) {
         onClose();
@@ -197,50 +205,27 @@ export function PackageWizard({ isOpen, onClose }: PackageWizardProps) {
   };
 
   const isStepValid = (step: number) => {
-    console.log(`Validating step ${step}`);
-
     switch (step) {
       case 1: {
         // Support both destinations array and legacy destination field
         const hasDestination = (formData.basicInfo.destinations && formData.basicInfo.destinations.length > 0) ||
           formData.basicInfo.destination;
-        const basicInfoValid = !!(formData.basicInfo.title &&
+        return !!(formData.basicInfo.title &&
           hasDestination &&
           formData.basicInfo.category &&
           formData.basicInfo.duration_days > 0);
-        console.log('Step 1 validation:', {
-          title: formData.basicInfo.title,
-          destinations: formData.basicInfo.destinations,
-          destination: formData.basicInfo.destination,
-          category: formData.basicInfo.category,
-          duration: formData.basicInfo.duration_days,
-          valid: basicInfoValid
-        });
-        return basicInfoValid;
       }
-      case 2:
-        console.log('Step 2 validation: true (route is optional)');
+      case 2: // route is optional
         return true;
-      case 3:
-        console.log('Step 3 validation: true (itinerary is optional)');
+      case 3: // itinerary is optional
         return true;
-      case 4: {
-        const pricingValid = !!(formData.pricing.basePrice && parseFloat(formData.pricing.basePrice) > 0);
-        console.log('Step 4 validation:', {
-          basePrice: formData.pricing.basePrice,
-          parsed: parseFloat(formData.pricing.basePrice),
-          valid: pricingValid
-        });
-        return pricingValid;
-      }
-      case 5:
-        console.log('Step 5 validation: true (media is optional)');
+      case 4:
+        return !!(formData.pricing.basePrice && parseFloat(formData.pricing.basePrice) > 0);
+      case 5: // media is optional
         return true;
       case 6:
-        console.log('Step 6 validation: true');
         return true;
       default:
-        console.log('Unknown step validation: false');
         return false;
     }
   };
