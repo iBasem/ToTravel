@@ -6,6 +6,7 @@ import Dashboard from "./pages/Dashboard";
 import ManagePackages from "@/features/packages/pages/ManagePackages";
 import CreatePackage from "@/features/packages/pages/CreatePackage";
 import EditPackage from "@/features/packages/pages/EditPackage";
+import ManageDepartures from "@/features/packages/pages/ManageDepartures";
 import PackageDetails from "@/features/packages/pages/PackageDetails";
 import AgencyBookings from "@/features/bookings/pages/AgencyBookings";
 import AgencyCalendar from "./pages/AgencyCalendar";
@@ -25,6 +26,7 @@ export const AgencyRoutes = () => {
                         <Route path="packages" element={<ManagePackages />} />
                         <Route path="packages/create" element={<CreatePackage />} />
                         <Route path="packages/:id/edit" element={<EditPackage />} />
+                        <Route path="packages/:id/departures" element={<ManageDepartures />} />
                         <Route path="packages/:id" element={<PackageDetails />} />
                         <Route path="bookings" element={<AgencyBookings />} />
                         <Route path="calendar" element={<AgencyCalendar />} />

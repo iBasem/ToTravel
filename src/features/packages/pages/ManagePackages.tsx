@@ -1,6 +1,6 @@
 import { Button } from "@/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/card";
-import { Plus, Search, Filter, Package, Edit, Trash2, MoreVertical, Eye } from "lucide-react";
+import { Plus, Search, Filter, Package, Edit, Trash2, MoreVertical, Eye, CalendarDays } from "lucide-react";
 import { LoadingSpinner } from "@/ui/loading-spinner";
 import { EmptyState } from "@/ui/empty-state";
 import { Input } from "@/ui/input";
@@ -36,6 +36,10 @@ export default function Packages() {
 
   const handleViewPackage = (packageId: string) => {
     navigate(`/travel_agency/packages/${packageId}`);
+  };
+
+  const handleManageDepartures = (packageId: string) => {
+    navigate(`/travel_agency/packages/${packageId}/departures`);
   };
 
   const handleDeletePackage = async (packageId: string, title: string) => {
@@ -194,6 +198,10 @@ export default function Packages() {
                         <DropdownMenuItem onClick={() => handleEditPackage(pkg.id)} className="text-xs sm:text-sm">
                           <Edit className="w-3 h-3 sm:w-4 sm:h-4 me-1 sm:me-2" />
                           {t('common.edit')}
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleManageDepartures(pkg.id)} className="text-xs sm:text-sm">
+                          <CalendarDays className="w-3 h-3 sm:w-4 sm:h-4 me-1 sm:me-2" />
+                          {t('departures.manage', 'Manage departures')}
                         </DropdownMenuItem>
                         <DropdownMenuItem onClick={() => togglePublishStatus(pkg)} className="text-xs sm:text-sm">
                           {pkg.status === 'published' ? t('agencyDashboard.unpublish') : t('agencyDashboard.publish')}

@@ -449,10 +449,12 @@ admins approve to `published` via their existing update policy.
 - **`useAvailability` rewritten** to read real departures and derive seats-remaining from bookings at read time — the fabricated random seats/discounts are gone; discounts are now null (honest) and `hasAvailability=false` when nothing is scheduled.
 - `package_departures` added to generated `types.ts`.
 
-### ⏳ WIZ-11 follow-ups (deferred, documented)
-- **Departures editor UI:** agencies currently can't add/edit departures from the app (only the seed + direct RPC). Add a departures section to the wizard (or a per-package "Manage departures" surface) and extend `save_package` to upsert a `departures` array.
-- **Booking ↔ departure linkage:** `BookingModal` should let the traveler pick a real departure and the booking should reference `departure_id` (currently free `booking_date`); the capacity trigger already enforces per-date seats, but bookings aren't yet tied to a specific departure row.
-- **Also open:** WIZ-5 admin "pending" queue view (actions exist; a filtered tab would help), and persisting the live-but-ephemeral UI fields (subtitle/highlights) if desired.
+### ✅ WIZ-11 departures editor done (2026-07-05)
+- **Per-package "Manage departures" page** (`ManageDepartures.tsx` + `useDepartures` hook, route `packages/:id/departures`, linked from the ManagePackages card menu). Agencies add/remove real departure dates with total seats + optional price override; the list shows booked/remaining/status derived from bookings. Direct table CRUD gated by the RLS policies (no RPC/step-machine changes). Live-verified: an agency can write departures for its own package but **not** another agency's (RLS blocks it). Delete is refused when a departure already has bookings.
+
+### ⏳ WIZ-11 follow-up (still deferred)
+- **Booking ↔ departure linkage:** `BookingModal` should let the traveler pick a specific real departure and the booking should reference `departure_id` (currently free `booking_date`). The capacity trigger already enforces per-date seats, but bookings aren't yet tied to a specific departure row.
+- **Also open:** WIZ-5 admin "pending" filtered tab (actions exist), and persisting the live-but-ephemeral UI fields (subtitle/highlights) if desired.
 - **WIZ-7: EditPackage drops structured inclusions** (saves only `additionalInclusions`; never rebuilds the category grouping on load).
 - **WIZ-8 (Security, M1): `featured` is agency-writable** via the wizard payload — should be platform-only.
 - **WIZ-9: dead/unpersisted fields** collected but never stored: `pricing.currency`, `pricing.base_price` shadow, `originalPrice`/`discount`, `basicInfo.subtitle`/`highlights`/`rating`, itinerary `highlights`, `route.travelMode`/`showDistances`.
