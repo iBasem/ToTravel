@@ -5,6 +5,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/ui/dialog";
 import { Button } from "@/ui/button";
 import { Progress } from "@/ui/progress";
 import { WizardStepContent } from "@/features/packages/components/wizard/WizardStepContent";
+import type { PackageFormData } from "@/features/packages/types/wizard";
+import { buildSavePackagePayload } from "@/features/packages/lib/savePackagePayload";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/features/auth/context/AuthContext";
 import { toast } from "sonner";
@@ -222,106 +224,15 @@ export default function EditPackage() {
 
     setSaving(true);
     try {
-      // Update package
-      const { error: updateError } = await supabase
-        .from('packages')
-        .update({
-          title: formData.basicInfo.title,
-          description: formData.basicInfo.description,
-          destination: formData.basicInfo.destination,
-          title_ar: formData.basicInfo.title_ar?.trim() || null,
-          description_ar: formData.basicInfo.description_ar?.trim() || null,
-          destination_ar: formData.basicInfo.destination_ar?.trim() || null,
-          category: formData.basicInfo.category,
-          difficulty_level: formData.basicInfo.difficulty_level,
-          duration_days: formData.basicInfo.duration_days,
-          duration_nights: formData.basicInfo.duration_nights,
-          max_participants: formData.basicInfo.max_participants,
-          featured: formData.basicInfo.featured,
-          base_price: parseFloat(formData.pricing.basePrice) || 0,
-          inclusions: formData.pricing.additionalInclusions,
-          exclusions: formData.pricing.exclusions,
-          inclusions_ar: formData.pricing.inclusions_ar?.length ? formData.pricing.inclusions_ar : null,
-          exclusions_ar: formData.pricing.exclusions_ar?.length ? formData.pricing.exclusions_ar : null,
-          cancellation_policy: formData.pricing.cancellation_policy,
-          terms_conditions: formData.pricing.terms_conditions
-        })
-        .eq('id', id)
-        .eq('agency_id', user.id);
+      // One atomic multi-table upsert via the save_package RPC (replaces the
+      // former non-atomic delete-then-insert with unchecked errors).
+      const { error } = await supabase.rpc('save_package', {
+        p_package_id: id,
+        p_data: buildSavePackagePayload(formData as PackageFormData),
+        p_submit_for_review: !!(formData as PackageFormData).isPublished,
+      });
 
-      if (updateError) throw updateError;
-
-      // Delete old routes and insert new
-      await supabase
-        .from('package_routes')
-        .delete()
-        .eq('package_id', id);
-
-      if (formData.route?.destinations && formData.route.destinations.length > 0) {
-        const routeInserts = formData.route.destinations.map((dest: any, index: number) => ({
-          package_id: id,
-          destination_order: index,
-          name: dest.name,
-          name_ar: dest.nameAr || null,
-          latitude: dest.latitude,
-          longitude: dest.longitude,
-          place_id: dest.placeId || null,
-          destination_type: dest.type,
-          days_spent: dest.daysSpent || 1
-        }));
-
-        await supabase
-          .from('package_routes')
-          .insert(routeInserts);
-      }
-
-      // Delete old itinerary and insert new
-      await supabase
-        .from('itineraries')
-        .delete()
-        .eq('package_id', id);
-
-      if (formData.itinerary.length > 0) {
-        const itineraryInserts = formData.itinerary.map((item: any, index: number) => ({
-          package_id: id,
-          day_number: item.day || index + 1,
-          title: item.title || `Day ${index + 1}`,
-          description: item.description || '',
-          activities: item.activities || [],
-          meals_included: item.meals || [],
-          accommodation: item.accommodation || '',
-          transportation: item.transportation || '',
-          title_ar: item.title_ar?.trim() || null,
-          description_ar: item.description_ar?.trim() || null,
-          activities_ar: item.activities_ar?.length ? item.activities_ar : null
-        }));
-
-        await supabase
-          .from('itineraries')
-          .insert(itineraryInserts);
-      }
-
-      // Delete old media and insert new
-      await supabase
-        .from('package_media')
-        .delete()
-        .eq('package_id', id);
-
-      if (formData.media.length > 0) {
-        const mediaInserts = formData.media.map((item: any, index: number) => ({
-          package_id: id,
-          file_name: item.file_name || item.caption || 'Image',
-          file_path: item.url || item.file_path,
-          media_type: item.type || 'image',
-          caption: item.caption || '',
-          is_primary: item.isPrimary || false,
-          display_order: index
-        }));
-
-        await supabase
-          .from('package_media')
-          .insert(mediaInserts);
-      }
+      if (error) throw error;
 
       toast.success(t('packageWizard.packageUpdated', 'Package updated successfully!'));
       navigate('/travel_agency/packages');

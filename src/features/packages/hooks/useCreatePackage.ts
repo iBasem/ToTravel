@@ -1,78 +1,20 @@
-
 import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/features/auth/context/AuthContext';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
-
-interface RouteDestination {
-  id: string;
-  name: string;
-  nameAr?: string;
-  latitude: number;
-  longitude: number;
-  order: number;
-  type: 'origin' | 'stop' | 'destination';
-  daysSpent: number;
-  placeId?: string;
-}
-
-interface CreatePackageData {
-  basicInfo: {
-    title: string;
-    description: string;
-    destination: string;
-    title_ar?: string;
-    description_ar?: string;
-    destination_ar?: string;
-    category: string;
-    difficulty_level: string;
-    duration_days: number;
-    duration_nights: number;
-    max_participants: number;
-    featured: boolean;
-  };
-  route?: {
-    destinations: RouteDestination[];
-    travelMode?: string;
-    showDistances?: boolean;
-  };
-  itinerary: Array<{
-    day_number: number;
-    title: string;
-    description: string;
-    activities: string[];
-    meals_included: string[];
-    accommodation?: string;
-    transportation?: string;
-    title_ar?: string;
-    description_ar?: string;
-    activities_ar?: string[];
-  }>;
-  pricing: {
-    base_price: number;
-    inclusions: string[];
-    exclusions: string[];
-    inclusions_ar?: string[];
-    exclusions_ar?: string[];
-    cancellation_policy: string;
-    terms_conditions: string;
-  };
-  media: Array<{
-    file_name: string;
-    file_path: string;
-    media_type: string;
-    caption?: string;
-    is_primary: boolean;
-  }>;
-}
+import type { PackageFormData } from '@/features/packages/types/wizard';
+import { buildSavePackagePayload } from '@/features/packages/lib/savePackagePayload';
 
 export function useCreatePackage() {
   const [loading, setLoading] = useState(false);
   const { user, profile } = useAuth();
   const navigate = useNavigate();
 
-  const createPackage = async (packageData: CreatePackageData) => {
+  // Creates a package atomically via the save_package RPC. `submitForReview`
+  // sets status='pending' (admin approval) vs 'draft'. The RPC is the single
+  // source of truth for the multi-table write — no more per-table inserts.
+  const createPackage = async (formData: PackageFormData, submitForReview = false) => {
     if (!user || !profile || profile.role !== 'agency') {
       toast.error('You must be logged in as a travel agency to create packages');
       return { success: false, error: 'Authentication required' };
@@ -80,118 +22,22 @@ export function useCreatePackage() {
 
     setLoading(true);
     try {
-      // Create the main package
-      const { data: packageResult, error: packageError } = await supabase
-        .from('packages')
-        .insert({
-          agency_id: user.id,
-          title: packageData.basicInfo.title,
-          description: packageData.basicInfo.description,
-          destination: packageData.basicInfo.destination,
-          title_ar: packageData.basicInfo.title_ar?.trim() || null,
-          description_ar: packageData.basicInfo.description_ar?.trim() || null,
-          destination_ar: packageData.basicInfo.destination_ar?.trim() || null,
-          category: packageData.basicInfo.category,
-          difficulty_level: packageData.basicInfo.difficulty_level,
-          duration_days: packageData.basicInfo.duration_days,
-          duration_nights: packageData.basicInfo.duration_nights,
-          max_participants: packageData.basicInfo.max_participants,
-          featured: packageData.basicInfo.featured,
-          base_price: packageData.pricing.base_price,
-          inclusions: packageData.pricing.inclusions,
-          exclusions: packageData.pricing.exclusions,
-          inclusions_ar: packageData.pricing.inclusions_ar?.length ? packageData.pricing.inclusions_ar : null,
-          exclusions_ar: packageData.pricing.exclusions_ar?.length ? packageData.pricing.exclusions_ar : null,
-          cancellation_policy: packageData.pricing.cancellation_policy,
-          terms_conditions: packageData.pricing.terms_conditions,
-          status: 'draft'
-        })
-        .select()
-        .single();
+      const { data, error } = await supabase.rpc('save_package', {
+        p_package_id: null,
+        p_data: buildSavePackagePayload(formData),
+        p_submit_for_review: submitForReview,
+      });
 
-      if (packageError) {
-        throw packageError;
-      }
+      if (error) throw error;
 
-      const packageId = packageResult.id;
-
-      // Create route destinations if any
-      if (packageData.route?.destinations && packageData.route.destinations.length > 0) {
-        const routeInserts = packageData.route.destinations.map((dest, index) => ({
-          package_id: packageId,
-          destination_order: index,
-          name: dest.name,
-          name_ar: dest.nameAr || null,
-          latitude: dest.latitude,
-          longitude: dest.longitude,
-          place_id: dest.placeId || null,
-          destination_type: dest.type,
-          days_spent: dest.daysSpent
-        }));
-
-        const { error: routeError } = await supabase
-          .from('package_routes')
-          .insert(routeInserts);
-
-        if (routeError) {
-          console.error('Error creating routes:', routeError);
-          toast.warning('Package created but route creation failed. You can edit routes later.');
-        }
-      }
-
-      // Create itinerary items if any
-      if (packageData.itinerary.length > 0) {
-        const itineraryInserts = packageData.itinerary.map(item => ({
-          package_id: packageId,
-          day_number: item.day_number,
-          title: item.title,
-          description: item.description,
-          activities: item.activities,
-          meals_included: item.meals_included,
-          accommodation: item.accommodation,
-          transportation: item.transportation,
-          title_ar: item.title_ar?.trim() || null,
-          description_ar: item.description_ar?.trim() || null,
-          activities_ar: item.activities_ar?.length ? item.activities_ar : null
-        }));
-
-        const { error: itineraryError } = await supabase
-          .from('itineraries')
-          .insert(itineraryInserts);
-
-        if (itineraryError) {
-          console.error('Error creating itinerary:', itineraryError);
-          toast.warning('Package created but itinerary creation failed. You can edit itinerary later.');
-        }
-      }
-
-      // Create media items if any
-      if (packageData.media.length > 0) {
-        const mediaInserts = packageData.media.map((media, index) => ({
-          package_id: packageId,
-          file_name: media.file_name,
-          file_path: media.file_path,
-          media_type: media.media_type,
-          caption: media.caption,
-          is_primary: media.is_primary,
-          display_order: index
-        }));
-
-        const { error: mediaError } = await supabase
-          .from('package_media')
-          .insert(mediaInserts);
-
-        if (mediaError) {
-          console.error('Error creating media:', mediaError);
-          toast.warning('Package created but media upload failed. You can add media later.');
-        }
-      }
-
-      toast.success('Package created successfully!');
+      toast.success(
+        submitForReview
+          ? 'Package submitted for review!'
+          : 'Package saved as a draft!'
+      );
       navigate('/travel_agency/packages');
-      return { success: true, data: packageResult };
+      return { success: true, data };
     } catch (error) {
-      console.error('Package creation error:', error);
       const errorMessage = error instanceof Error ? error.message : 'Failed to create package';
       toast.error(errorMessage);
       return { success: false, error: errorMessage };

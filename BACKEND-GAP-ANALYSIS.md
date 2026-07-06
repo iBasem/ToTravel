@@ -420,9 +420,21 @@ Deep review of the create/edit wizard (all wizard-steps, `useCreatePackage`, `Ed
 - **WIZ-4 (Bug): EditPackage edit-lock / missing `destinations`.** Edit state omitted `basicInfo.destinations`, diverging from create and blocking step-1 validation for array-created packages. Added + reconstructed from the scalar `destination` on load.
 - **Typed the wizard chain top:** new shared `src/features/packages/types/wizard.ts` (`PackageFormData` reusing the canonical `RouteData`); typed `PackageWizard`, `WizardStepContent`, `MediaStep` (8 `any`s cleared). Striped ~15 debug `console.log`s that leaked full form data (incl. Arabic) on every keystroke.
 
+### ✅ WIZ-6 done (2026-07-05) — atomic `save_package` RPC
+Replaced the non-atomic, duplicated JS save with one Postgres function
+(`20260705110000_wiz6_save_package_rpc.sql`) doing the full multi-table upsert
+in a single transaction. `useCreatePackage` and `EditPackage` now both call
+`supabase.rpc('save_package', …)` via a shared payload builder
+(`lib/savePackagePayload.ts`) — ~240 lines of duplicated multi-insert deleted.
+Live-verified (as a demo agency): itinerary/routes/media all persist, Arabic
+preserved, `featured` forced false (WIZ-8), ownership enforced, non-agency and
+cross-agency writes rejected. Also fixed **WIZ-14** (routes were silently
+dropped on create — the old `handleSubmit` never passed them). Publish flow
+(WIZ-5, owner decision = admin approval): submitting sets `status='pending'`;
+admins approve to `published` via their existing update policy.
+
 ### ⏳ Remaining findings (need decisions / larger scope)
-- **WIZ-5 (Bug): publish flow dead.** `ReviewStep` collects `isPublished` but no code maps it to `status`; create forces `'draft'`, edit never writes `status` → packages **cannot be published via the wizard**. (Decision: should agency publish directly, or via admin approval?)
-- **WIZ-6 (Arch, data loss): `EditPackage` save is non-atomic** — delete-then-insert of routes/itinerary/media with **unchecked errors**; and it **duplicates ~90%** of `useCreatePackage`. Strongest candidate for a single atomic `save-package` RPC/edge function (same pattern as `create-booking`), which fixes atomicity + error-swallowing + duplication at once.
+- **WIZ-5 follow-up:** submit→`pending` is wired end-to-end, but the admin side still needs a "pending approval" queue/action in the admin packages UI, and the ReviewStep toggle copy should read "Submit for review" (not "Publish").
 - **WIZ-7: EditPackage drops structured inclusions** (saves only `additionalInclusions`; never rebuilds the category grouping on load).
 - **WIZ-8 (Security, M1): `featured` is agency-writable** via the wizard payload — should be platform-only.
 - **WIZ-9: dead/unpersisted fields** collected but never stored: `pricing.currency`, `pricing.base_price` shadow, `originalPrice`/`discount`, `basicInfo.subtitle`/`highlights`/`rating`, itinerary `highlights`, `route.travelMode`/`showDistances`.

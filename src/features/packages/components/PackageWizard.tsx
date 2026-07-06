@@ -6,7 +6,7 @@ import { Button } from "@/ui/button";
 import { Progress } from "@/ui/progress";
 import { WizardStepContent } from "@/features/packages/components/wizard/WizardStepContent";
 import { useCreatePackage } from "@/features/packages/hooks/useCreatePackage";
-import type { PackageFormData, InclusionCategory } from "@/features/packages/types/wizard";
+import type { PackageFormData } from "@/features/packages/types/wizard";
 
 interface PackageWizardProps {
   isOpen: boolean;
@@ -91,53 +91,9 @@ export function PackageWizard({ isOpen, onClose }: PackageWizardProps) {
   };
 
   const handleSubmit = async () => {
-    const inclusions: string[] = [];
-    Object.values(formData.pricing.inclusions).forEach((value: InclusionCategory) => {
-      if (value?.included && value?.details) {
-        inclusions.push(...value.details);
-      }
-    });
-    if (Array.isArray(formData.pricing.additionalInclusions)) {
-      inclusions.push(...formData.pricing.additionalInclusions);
-    }
-
-    const transformedData = {
-      basicInfo: formData.basicInfo,
-      // Map the form's itinerary shape (day/meals) to the DB shape
-      // (day_number/meals_included) so itinerary rows actually persist on create.
-      itinerary: formData.itinerary.map((d) => ({
-        day_number: d.day,
-        title: d.title,
-        description: d.description,
-        activities: (d.activities || []).filter((a) => a && a.trim()),
-        meals_included: d.meals || [],
-        accommodation: d.accommodation || undefined,
-        title_ar: d.title_ar,
-        description_ar: d.description_ar,
-        activities_ar: d.activities_ar,
-      })),
-      pricing: {
-        base_price: parseFloat(formData.pricing.basePrice) || 0,
-        inclusions,
-        exclusions: formData.pricing.exclusions || [],
-        inclusions_ar: formData.pricing.inclusions_ar || [],
-        exclusions_ar: formData.pricing.exclusions_ar || [],
-        cancellation_policy: formData.pricing.cancellation_policy || '',
-        terms_conditions: formData.pricing.terms_conditions || ''
-      },
-      // Map the form's media shape (type/isPrimary) to the DB shape
-      // (media_type/is_primary) so those columns aren't written as undefined.
-      media: formData.media.map((m) => ({
-        file_name: m.file_name || '',
-        file_path: m.file_path || m.url,
-        media_type: m.type,
-        caption: m.caption,
-        is_primary: m.isPrimary,
-      })),
-    };
-
     try {
-      const result = await createPackage(transformedData);
+      // The save_package RPC does the full multi-table write atomically.
+      const result = await createPackage(formData, !!formData.isPublished);
 
       if (result.success) {
         onClose();

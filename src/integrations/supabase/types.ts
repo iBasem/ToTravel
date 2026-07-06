@@ -811,6 +811,14 @@ export type Database = {
         }
         Returns: boolean
       }
+      save_package: {
+        Args: {
+          p_package_id: string | null
+          p_data: Json
+          p_submit_for_review?: boolean
+        }
+        Returns: string
+      }
     }
     Enums: {
       app_role: "admin" | "agency" | "traveler"
