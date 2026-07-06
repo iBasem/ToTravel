@@ -200,7 +200,7 @@ export function PackageWizard({ isOpen, onClose }: PackageWizardProps) {
     console.log(`Validating step ${step}`);
 
     switch (step) {
-      case 1:
+      case 1: {
         // Support both destinations array and legacy destination field
         const hasDestination = (formData.basicInfo.destinations && formData.basicInfo.destinations.length > 0) ||
           formData.basicInfo.destination;
@@ -217,13 +217,14 @@ export function PackageWizard({ isOpen, onClose }: PackageWizardProps) {
           valid: basicInfoValid
         });
         return basicInfoValid;
+      }
       case 2:
         console.log('Step 2 validation: true (route is optional)');
         return true;
       case 3:
         console.log('Step 3 validation: true (itinerary is optional)');
         return true;
-      case 4:
+      case 4: {
         const pricingValid = !!(formData.pricing.basePrice && parseFloat(formData.pricing.basePrice) > 0);
         console.log('Step 4 validation:', {
           basePrice: formData.pricing.basePrice,
@@ -231,6 +232,7 @@ export function PackageWizard({ isOpen, onClose }: PackageWizardProps) {
           valid: pricingValid
         });
         return pricingValid;
+      }
       case 5:
         console.log('Step 5 validation: true (media is optional)');
         return true;

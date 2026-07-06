@@ -17,7 +17,7 @@ export function Pagination({ currentPage, totalPages, onPageChange }: Pagination
     const getPageNumbers = () => {
         const pages: number[] = [];
         let start = Math.max(1, currentPage - 2);
-        let end = Math.min(totalPages, start + 4);
+        const end = Math.min(totalPages, start + 4);
         start = Math.max(1, end - 4);
 
         for (let i = start; i <= end; i++) {

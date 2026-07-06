@@ -95,7 +95,7 @@ export default function PackagesList() {
 
   // Filtered + sorted packages
   const processedPackages = useMemo(() => {
-    let result = packages.filter((pkg) => {
+    const result = packages.filter((pkg) => {
       const matchesLength =
         pkg.duration_days >= filters.lengthRange[0] &&
         pkg.duration_days <= filters.lengthRange[1];

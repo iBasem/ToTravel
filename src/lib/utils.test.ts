@@ -7,7 +7,9 @@ describe('cn utility', () => {
     });
 
     it('handles conditional classes', () => {
-        expect(cn('w-full', true && 'p-4', false && 'm-4')).toBe('w-full p-4');
+        const enabled = true;
+        const disabled = false;
+        expect(cn('w-full', enabled && 'p-4', disabled && 'm-4')).toBe('w-full p-4');
     });
 
     it('resolves tailwind conflicts', () => {

@@ -403,7 +403,9 @@ Ordered by dependency and risk. Each wave is releasable.
 | 14 | OPS-1 | CI: eslint + tsc --noEmit + vitest + build gate | S | ✅ done 2026-07-05 |
 
 **OPS-1 delivered (2026-07-05):** `.github/workflows/ci.yml` runs on every push (`main`, `feat/**`) and PR. **Blocking:** `npm ci` → `vitest run` (`test:ci` script) → `vite build` — all green today. **Informational (`continue-on-error`):** `typecheck` (`tsc --noEmit -p tsconfig.app.json`, 24 errors) and `lint` (~70 errors, 67 in app code) — a pre-existing backlog surfaced but not yet blocking. Added `typecheck` + `test:ci` scripts to `package.json`. Flip the two informational steps to blocking as OPS-2 (the `any` cleanup) and the Wave 4 Deals/Messages tables drive their counts to zero. **Action for owner:** ensure GitHub Actions is enabled for the repo (Settings → Actions).
-| 15 | OPS-2 | Fix 30 tsc errors; enable strict | L |
+| 15 | OPS-2 | Fix tsc errors; enable strict | L | in progress |
+
+**OPS-2 progress (2026-07-05):** Enabled `noFallthroughCasesInSwitch` (0 new errors). Fixed all 10 non-`any` lint errors (case-declaration blocks in `PackageWizard`, `prefer-const`, a `no-constant-binary-expression` in `utils.test.ts`, two `no-empty-object-type` in `ui/`, and the `require()` import in `tailwind.config.ts`). Typed `AuthContext`'s 5 `any`s (error results → `Error | PostgrestError | null` with a `toError` normalizer; update objects → generated `…['Update']` types). **Lint 70 → 55 errors** (all 55 remaining are `no-explicit-any`); typecheck steady at 24 with zero regressions; tests + build green. Remaining `any` burn-down, grouped: the package-wizard prop chain (~20, needs a shared `PackageFormData` type — highest value), `EditPackage` (8), misc singles (~13), and ~14 in Wave-4-blocked files (Deals/Messages/Calendar/Feedback/Travelers/Gallery) best done when those are rebuilt. Full `strict:true` measures at only 30 total errors but can't reach 0 until the Wave-4 tables exist.
 | 16 | OPS-3 | Sentry + structured edge-function logs + alerting | M |
 | 17 | OPS-4 | Codify deploy + fix config ref + staging env | M |
 | 18 | QA-1 | RLS + edge-function + one e2e test | L |

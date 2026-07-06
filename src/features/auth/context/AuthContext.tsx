@@ -1,6 +1,6 @@
 
 import React, { createContext, useContext, useEffect, useState } from 'react'
-import { User, Session } from '@supabase/supabase-js'
+import { User, Session, PostgrestError } from '@supabase/supabase-js'
 import { supabase } from '@/integrations/supabase/client'
 import type { Database } from '@/integrations/supabase/types'
 
@@ -13,15 +13,21 @@ interface UserData {
   company_name?: string;
 }
 
+// Errors surfaced to callers come from Supabase Auth (AuthError, which extends
+// Error), PostgREST (PostgrestError), or a caught exception normalized below.
+type ActionError = Error | PostgrestError | null
+
+const toError = (e: unknown): Error => (e instanceof Error ? e : new Error(String(e)))
+
 interface AuthContextType {
   user: User | null
   session: Session | null
   profile: Profile | null
   loading: boolean
-  signUp: (email: string, password: string, userData: UserData) => Promise<{ error: any }>
-  signIn: (email: string, password: string) => Promise<{ error: any }>
+  signUp: (email: string, password: string, userData: UserData) => Promise<{ error: ActionError }>
+  signIn: (email: string, password: string) => Promise<{ error: ActionError }>
   signOut: () => Promise<void>
-  updateProfile: (updates: Partial<Profile>) => Promise<{ error: any }>
+  updateProfile: (updates: Partial<Profile>) => Promise<{ error: ActionError }>
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -144,7 +150,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return { error: null }
     } catch (err) {
       console.error('Signup exception:', err)
-      return { error: err }
+      return { error: toError(err) }
     }
   }
 
@@ -171,7 +177,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return { error: null }
     } catch (err) {
       console.error('Signin exception:', err)
-      return { error: err }
+      return { error: toError(err) }
     }
   }
 
@@ -192,13 +198,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   const updateProfile = async (updates: Partial<Profile>) => {
-    if (!user || !profile) return { error: 'No user logged in' }
+    if (!user || !profile) return { error: new Error('No user logged in') }
 
     try {
       let error = null
 
       if (profile.role === 'traveler') {
-        const travelerUpdates: any = {}
+        const travelerUpdates: Database['public']['Tables']['travelers']['Update'] = {}
         if (updates.first_name !== undefined) travelerUpdates.first_name = updates.first_name
         if (updates.last_name !== undefined) travelerUpdates.last_name = updates.last_name
         if (updates.phone !== undefined) travelerUpdates.phone = updates.phone
@@ -211,7 +217,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
         error = travelerError
       } else if (profile.role === 'agency') {
-        const agencyUpdates: any = {}
+        const agencyUpdates: Database['public']['Tables']['travel_agencies']['Update'] = {}
         if (updates.first_name !== undefined) agencyUpdates.contact_person_first_name = updates.first_name
         if (updates.last_name !== undefined) agencyUpdates.contact_person_last_name = updates.last_name
         if (updates.phone !== undefined) agencyUpdates.phone = updates.phone
@@ -237,7 +243,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return { error }
     } catch (err) {
       console.error('Update profile error:', err)
-      return { error: err }
+      return { error: toError(err) }
     }
   }
 
