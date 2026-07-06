@@ -400,7 +400,9 @@ Ordered by dependency and risk. Each wave is releasable.
 ### Wave 2 — Operational safety net — ~1 week (parallelizable with Wave 1)
 | Order | ID | Item | Effort |
 |---|---|---|---|
-| 14 | OPS-1 | CI: eslint + tsc --noEmit + vitest + build gate | S |
+| 14 | OPS-1 | CI: eslint + tsc --noEmit + vitest + build gate | S | ✅ done 2026-07-05 |
+
+**OPS-1 delivered (2026-07-05):** `.github/workflows/ci.yml` runs on every push (`main`, `feat/**`) and PR. **Blocking:** `npm ci` → `vitest run` (`test:ci` script) → `vite build` — all green today. **Informational (`continue-on-error`):** `typecheck` (`tsc --noEmit -p tsconfig.app.json`, 24 errors) and `lint` (~70 errors, 67 in app code) — a pre-existing backlog surfaced but not yet blocking. Added `typecheck` + `test:ci` scripts to `package.json`. Flip the two informational steps to blocking as OPS-2 (the `any` cleanup) and the Wave 4 Deals/Messages tables drive their counts to zero. **Action for owner:** ensure GitHub Actions is enabled for the repo (Settings → Actions).
 | 15 | OPS-2 | Fix 30 tsc errors; enable strict | L |
 | 16 | OPS-3 | Sentry + structured edge-function logs + alerting | M |
 | 17 | OPS-4 | Codify deploy + fix config ref + staging env | M |
