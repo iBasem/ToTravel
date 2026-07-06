@@ -10,17 +10,26 @@ import { Button } from "@/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/card";
 import { X, Plus, Search, Loader2, MapPin } from "lucide-react";
 
+import type { PackageFormData } from "@/features/packages/types/wizard";
+
 const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN;
 
 interface BasicInfoStepProps {
-  data: any;
-  onUpdate: (data: any) => void;
+  data: PackageFormData['basicInfo'];
+  onUpdate: (data: PackageFormData['basicInfo']) => void;
 }
 
 interface DestinationResult {
   id: string;
   name: string;
   placeName: string;
+}
+
+// Minimal shape of a Mapbox geocoding feature (the fields we read).
+interface MapboxFeature {
+  id: string;
+  text: string;
+  place_name: string;
 }
 
 export function BasicInfoStep({ data, onUpdate }: BasicInfoStepProps) {
@@ -76,7 +85,7 @@ export function BasicInfoStep({ data, onUpdate }: BasicInfoStepProps) {
       const data = await response.json();
 
       if (data.features) {
-        const results: DestinationResult[] = data.features.map((feature: any) => ({
+        const results: DestinationResult[] = data.features.map((feature: MapboxFeature) => ({
           id: feature.id,
           name: feature.text,
           placeName: feature.place_name,

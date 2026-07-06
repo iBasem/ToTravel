@@ -10,26 +10,11 @@ import { Badge } from "@/ui/badge";
 import { Checkbox } from "@/ui/checkbox";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/ui/collapsible";
 import { Plus, Trash2, GripVertical, Utensils, Bed, Activity, Star, ChevronRight, ChevronDown, X, Languages } from "lucide-react";
+import type { ItineraryDay } from "@/features/packages/types/wizard";
 
 interface ItineraryStepProps {
-  data: any[];
-  onUpdate: (data: any[]) => void;
-}
-
-interface ItineraryDay {
-  day: number;
-  title: string;
-  description: string;
-  activities: string[];
-  meals: string[];
-  accommodation: string;
-  highlights: string[];
-  title_ar: string;
-  description_ar: string;
-  activities_ar: string[];
-  newActivity: string;
-  newHighlight: string;
-  newActivityAr: string;
+  data: ItineraryDay[];
+  onUpdate: (data: ItineraryDay[]) => void;
 }
 
 export function ItineraryStep({ data, onUpdate }: ItineraryStepProps) {
@@ -102,7 +87,7 @@ export function ItineraryStep({ data, onUpdate }: ItineraryStepProps) {
     setItinerary(updatedItinerary);
   };
 
-  const updateDay = (dayIndex: number, field: keyof ItineraryDay, value: any) => {
+  const updateDay = <K extends keyof ItineraryDay>(dayIndex: number, field: K, value: ItineraryDay[K]) => {
     const updatedItinerary = itinerary.map((day, index) =>
       index === dayIndex ? { ...day, [field]: value } : day
     );

@@ -40,7 +40,7 @@ export function DestinationSearch({ onSelect }: DestinationSearchProps) {
       );
       const data = await response.json();
 
-      const searchResults: SearchResult[] = data.features.map((feature: any) => ({
+      const searchResults: SearchResult[] = data.features.map((feature: { id: string; text: string; place_name: string; center: [number, number] }) => ({
         id: feature.id,
         name: feature.text,
         placeName: feature.place_name,

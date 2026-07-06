@@ -7,9 +7,11 @@ import { Checkbox } from "@/ui/checkbox";
 import { Label } from "@/ui/label";
 import { MapPin, Clock, Users, Star, Image } from "lucide-react";
 
+import type { PackageFormData } from "@/features/packages/types/wizard";
+
 interface ReviewStepProps {
-  data: any;
-  onUpdate: (data: any) => void;
+  data: PackageFormData;
+  onUpdate: (data: PackageFormData) => void;
 }
 
 export function ReviewStep({ data, onUpdate }: ReviewStepProps) {
@@ -38,7 +40,7 @@ export function ReviewStep({ data, onUpdate }: ReviewStepProps) {
             <div className="lg:col-span-2">
               {media.length > 0 ? (
                 <img
-                  src={media.find((m: any) => m.isPrimary)?.url || media[0]?.url}
+                  src={media.find((m) => m.isPrimary)?.url || media[0]?.url}
                   alt={basicInfo.title}
                   className="w-full h-64 object-cover rounded-lg"
                 />
@@ -62,19 +64,23 @@ export function ReviewStep({ data, onUpdate }: ReviewStepProps) {
               <div className="space-y-2">
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
                   <Clock className="w-4 h-4" />
-                  <span>{basicInfo.duration || t('tours.duration')}</span>
+                  <span>
+                    {basicInfo.duration_days
+                      ? `${basicInfo.duration_days} ${t('common.days', 'days')}${basicInfo.duration_nights ? ` / ${basicInfo.duration_nights} ${t('common.nights', 'nights')}` : ''}`
+                      : t('tours.duration')}
+                  </span>
                 </div>
-                {basicInfo.maxGroupSize && (
+                {basicInfo.max_participants && (
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
                     <Users className="w-4 h-4" />
-                    <span>{t('tours.max')} {basicInfo.maxGroupSize}</span>
+                    <span>{t('tours.max')} {basicInfo.max_participants}</span>
                   </div>
                 )}
-                {basicInfo.difficulty && (
+                {basicInfo.difficulty_level && (
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
                     <Star className="w-4 h-4" />
                     <Badge variant="outline" className="capitalize">
-                      {basicInfo.difficulty}
+                      {basicInfo.difficulty_level}
                     </Badge>
                   </div>
                 )}

@@ -10,9 +10,11 @@ import { Button } from "@/ui/button";
 import { Badge } from "@/ui/badge";
 import { Plus, X } from "lucide-react";
 
+import type { PackageFormData } from "@/features/packages/types/wizard";
+
 interface PricingStepProps {
-  data: any;
-  onUpdate: (data: any) => void;
+  data: PackageFormData['pricing'];
+  onUpdate: (data: PackageFormData['pricing']) => void;
 }
 
 export function PricingStep({ data, onUpdate }: PricingStepProps) {
@@ -52,7 +54,7 @@ export function PricingStep({ data, onUpdate }: PricingStepProps) {
     onUpdate(formData);
   }, [formData, onUpdate]);
 
-  const handleInputChange = (field: string, value: any) => {
+  const handleInputChange = <K extends keyof typeof formData>(field: K, value: typeof formData[K]) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 

@@ -8,8 +8,10 @@ import { Badge } from "@/ui/badge";
 import { X } from "lucide-react";
 import { Bed, Utensils, Car, Shield } from "lucide-react";
 
+import type { PackageFormData } from "@/features/packages/types/wizard";
+
 interface InclusionsManagerProps {
-  inclusions: any;
+  inclusions: PackageFormData['pricing']['inclusions'];
   onToggle: (category: string, checked: boolean) => void;
   onAddDetail: (category: string, detail: string) => void;
   onRemoveDetail: (category: string, index: number) => void;
