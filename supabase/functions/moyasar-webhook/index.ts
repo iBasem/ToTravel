@@ -24,7 +24,7 @@ Deno.serve(async (req: Request) => {
   try {
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-    const webhookSecret = Deno.env.get("MOYASAR_WEBHOOK_SECRET");
+    const webhookSecret = Deno.env.get("MOYASAR_WEBHOOK_SECRET")?.trim();
 
     // Fail closed if the secret isn't configured.
     if (!webhookSecret) {
