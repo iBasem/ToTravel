@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Heart, Star, Map, Info } from 'lucide-react';
 import type { PackageWithMedia } from '../hooks/usePublishedPackages';
 import { RouteMapThumbnail } from './RouteMapThumbnail';
-import { formatCurrency, formatDate, formatNumber } from '@/lib/formatters';
+import { formatCurrency, formatDate } from '@/lib/formatters';
 import { localizedText } from '@/lib/localized';
 
 interface PackageCardProps {
@@ -45,13 +45,6 @@ export function PackageCard({
     const imageUrl = primaryMedia?.file_path ?? '/placeholder-tour.jpg';
 
     // Whether we have route data for the GL map
-
-    // Discount logic
-    const hasDiscount = featured;
-    const discountPercent = hasDiscount ? 15 : 0;
-    const originalPrice = hasDiscount
-        ? Math.round(base_price / (1 - discountPercent / 100))
-        : base_price;
 
     // Destinations list
     const destinationList = destinations?.length
@@ -206,22 +199,8 @@ export function PackageCard({
 
             {/* ========== PRICE COLUMN ========== */}
             <div className="pkg-card-price-col">
-                {/* Discount badge */}
-                <div className="pkg-card-price-top">
-                    {hasDiscount && discountPercent > 0 && (
-                        <span className="pkg-card-discount">
-                            {t('packageCard.percentOff', { percent: formatNumber(discountPercent) })}
-                        </span>
-                    )}
-                </div>
-
                 {/* Pricing */}
                 <div className="pkg-card-price-block">
-                    {hasDiscount && (
-                        <div className="pkg-card-price-from">
-                            {t('packageCard.from')} <s>{formatCurrency(originalPrice)}</s>
-                        </div>
-                    )}
                     <div className="pkg-card-price-amount">
                         {formatCurrency(base_price)}
                         <span className="pkg-card-price-per"> {t('packageCard.perPerson')}</span>
