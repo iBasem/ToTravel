@@ -5,12 +5,12 @@
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 1138 nodes · 2783 edges · 117 communities (89 shown, 28 thin omitted)
-- Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 26 edges (avg confidence: 0.84)
+- 1318 nodes · 2911 edges · 162 communities (92 shown, 70 thin omitted)
+- Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS · INFERRED: 8 edges (avg confidence: 0.77)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `122ab336`
+- Built from commit: `016f3dd0`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -115,6 +115,51 @@
 - [[_COMMUNITY_WizardProgress.tsx|WizardProgress.tsx]]
 - [[_COMMUNITY_radio-group.tsx|radio-group.tsx]]
 - [[_COMMUNITY_CLAUDE|CLAUDE.md]]
+- [[_COMMUNITY_Unreleased - 2026-01-07|[Unreleased] - 2026-01-07]]
+- [[_COMMUNITY_useBookings.ts|useBookings.ts]]
+- [[_COMMUNITY_Phase 4 System Flows & Communication|Phase 4: System Flows & Communication]]
+- [[_COMMUNITY_useDashboardStats.ts|useDashboardStats.ts]]
+- [[_COMMUNITY_useAdminContent.ts|useAdminContent.ts]]
+- [[_COMMUNITY_Bilingual Package Wizard Inputs (AREN tabs)|Bilingual Package Wizard Inputs (AR/EN tabs)]]
+- [[_COMMUNITY_Category A — Database content is English-only|Category A — Database content is English-only]]
+- [[_COMMUNITY_A4 Machine-Translation Assist for Wizard|A4 Machine-Translation Assist for Wizard]]
+- [[_COMMUNITY_pickLocalized(row, field, lang) Display Helper|pickLocalized(row, field, lang) Display Helper]]
+- [[_COMMUNITY_B1 Server Error Codes → i18n Keys|B1 Server Error Codes → i18n Keys]]
+- [[_COMMUNITY_A1 Sibling _ar Columns Strategy|A1 Sibling _ar Columns Strategy]]
+- [[_COMMUNITY_CRITICAL Client-Trusted Pricing (total_price writable by client)|CRITICAL: Client-Trusted Pricing (total_price writable by client)]]
+- [[_COMMUNITY_CRITICAL Client-Writable payment_status|CRITICAL: Client-Writable payment_status]]
+- [[_COMMUNITY_Central Flaw No Trusted DomainService Layer|Central Flaw: No Trusted Domain/Service Layer]]
+- [[_COMMUNITY_HIGH Review Fraud (no ownedcompleted booking check)|HIGH: Review Fraud (no owned/completed booking check)]]
+- [[_COMMUNITY_RLS as the Sole Trust Boundary|RLS as the Sole Trust Boundary]]
+- [[_COMMUNITY_HIGH Unrestricted File Uploads to package-media|HIGH: Unrestricted File Uploads to package-media]]
+- [[_COMMUNITY_BUS-1 No Payment Integration Exists|BUS-1: No Payment Integration Exists]]
+- [[_COMMUNITY_BUS-2 Booking Capacity Not Enforced (guaranteed overbooking)|BUS-2: Booking Capacity Not Enforced (guaranteed overbooking)]]
+- [[_COMMUNITY_BUS-3 Review Flow Unreachable (nothing sets status='completed')|BUS-3: Review Flow Unreachable (nothing sets status='completed')]]
+- [[_COMMUNITY_Hybrid Supabase + Cloudflare Backend Decision|Hybrid Supabase + Cloudflare Backend Decision]]
+- [[_COMMUNITY_Payments Decision Moyasar (webhook = source of truth)|Payments Decision: Moyasar (webhook = source of truth)]]
+- [[_COMMUNITY_Presigned-Upload Edge Function Gatekeeper (SEC-5SEC-6 on R2)|Presigned-Upload Edge Function Gatekeeper (SEC-5/SEC-6 on R2)]]
+- [[_COMMUNITY_Wave 0.5 Storage Migration to Cloudflare R2|Wave 0.5: Storage Migration to Cloudflare R2]]
+- [[_COMMUNITY_SEC-2 Traveler Rewrites Booking PriceStatusPayment|SEC-2: Traveler Rewrites Booking Price/Status/Payment]]
+- [[_COMMUNITY_Wave 0 Critical Security & Integrity Blockers (complete)|Wave 0: Critical Security & Integrity Blockers (complete)]]
+- [[_COMMUNITY_WIZ-8 DB Guard Blocks Agency Self-Feature  Self-Publish|WIZ-8: DB Guard Blocks Agency Self-Feature / Self-Publish]]
+- [[_COMMUNITY_Recommended Hybrid Supabase + Cloudflare Pages + WorkerEdge Fn|Recommended Hybrid: Supabase + Cloudflare Pages + Worker/Edge Fn]]
+- [[_COMMUNITY_Option C Stay on Managed Supabase|Option C: Stay on Managed Supabase]]
+- [[_COMMUNITY_Option B Self-Host Supabase on Hostinger VPS|Option B: Self-Host Supabase on Hostinger VPS]]
+- [[_COMMUNITY_Trusted Server Tier (Supabase Edge Function or Cloudflare Worker)|Trusted Server Tier (Supabase Edge Function or Cloudflare Worker)]]
+- [[_COMMUNITY_Changelog Server-Side Price Fetching in Booking Flow|Changelog: Server-Side Price Fetching in Booking Flow]]
+- [[_COMMUNITY_Arabic-First Localization Audit & 6-Stage Execution Plan|Arabic-First Localization Audit & 6-Stage Execution Plan]]
+- [[_COMMUNITY_Numeral Policy Western Digits with Arabic Locale Formatting|Numeral Policy: Western Digits with Arabic Locale Formatting]]
+- [[_COMMUNITY_Platform-Configurable Currency (VITE_PLATFORM_CURRENCY USDSARAED)|Platform-Configurable Currency (VITE_PLATFORM_CURRENCY: USD/SAR/AED)]]
+- [[_COMMUNITY_Localized SEO Layer (Seo component, hreflang, JSON-LD, sitemap)|Localized SEO Layer (Seo component, hreflang, JSON-LD, sitemap)]]
+- [[_COMMUNITY_Booking System (package_bookings, BookingModal, useCreateBooking)|Booking System (package_bookings, BookingModal, useCreateBooking)]]
+- [[_COMMUNITY_Data Architecture (packages→itinerariesmediaroutesbookings ER model)|Data Architecture (packages→itineraries/media/routes/bookings ER model)]]
+- [[_COMMUNITY_Messaging System Stub (UI only, no messages table)|Messaging System Stub (UI only, no messages table)]]
+- [[_COMMUNITY_Package Wizard (multi-step createedit)|Package Wizard (multi-step create/edit)]]
+- [[_COMMUNITY_Payment Integration Missing (schema exists, no gateway)|Payment Integration Missing (schema exists, no gateway)]]
+- [[_COMMUNITY_ToTravel Multi-Tenant Tour Marketplace|ToTravel Multi-Tenant Tour Marketplace]]
+- [[_COMMUNITY_robots.txt Crawler Rules + Sitemap Pointer|robots.txt Crawler Rules + Sitemap Pointer]]
+- [[_COMMUNITY_VITE_ Environment Variable Contract|VITE_* Environment Variable Contract]]
+- [[_COMMUNITY_README Project Overview & Structure|README Project Overview & Structure]]
 
 ## God Nodes (most connected - your core abstractions)
 1. `useAuth()` - 79 edges
@@ -129,66 +174,57 @@
 10. `Badge()` - 33 edges
 
 ## Surprising Connections (you probably didn't know these)
-- `CRITICAL: Client-Writable payment_status` --semantically_similar_to--> `SEC-2: Traveler Rewrites Booking Price/Status/Payment`  [INFERRED] [semantically similar]
-  AUDIT.md → BACKEND-GAP-ANALYSIS.md
-- `Payment Integration Missing (schema exists, no gateway)` --semantically_similar_to--> `BUS-1: No Payment Integration Exists`  [INFERRED] [semantically similar]
-  PRD.md → BACKEND-GAP-ANALYSIS.md
-- `Changelog: Server-Side Price Fetching in Booking Flow` --conceptually_related_to--> `CRITICAL: Client-Trusted Pricing (total_price writable by client)`  [INFERRED]
-  CHANGELOG.md → AUDIT.md
-- `Wave 0: Critical Security & Integrity Blockers (complete)` --conceptually_related_to--> `Central Flaw: No Trusted Domain/Service Layer`  [INFERRED]
-  BACKEND-GAP-ANALYSIS.md → AUDIT.md
-- `VITE_* Environment Variable Contract` --conceptually_related_to--> `Central Flaw: No Trusted Domain/Service Layer`  [INFERRED]
-  README.md → AUDIT.md
+- `useIsMobile()` --references--> `react`  [EXTRACTED]
+  src/hooks/use-mobile.tsx → package.json
+- `useCarousel()` --references--> `react`  [EXTRACTED]
+  src/ui/carousel.tsx → package.json
+- `useChart()` --references--> `react`  [EXTRACTED]
+  src/ui/chart.tsx → package.json
+- `useFormField()` --references--> `react`  [EXTRACTED]
+  src/ui/form.tsx → package.json
+- `useSidebar()` --references--> `react`  [EXTRACTED]
+  src/ui/sidebar.tsx → package.json
 
 ## Import Cycles
 - None detected.
 
-## Hyperedges (group relationships)
-- **Server-Side Trust Boundary for Pricing & Payments** — audit_client_trusted_pricing, audit_client_writable_payment_status, audit_missing_trusted_server_tier, backend_gap_analysis_sec2_booking_tampering, backend_gap_analysis_moyasar_decision, backend_hosting_comparison_trusted_server_tier [INFERRED 0.85]
-- **Wave 0 Launch-Gate Critical Blockers** — backend_gap_analysis_wave0, backend_gap_analysis_sec1_agency_self_verify, backend_gap_analysis_sec2_booking_tampering, backend_gap_analysis_bus2_overbooking, backend_gap_analysis_data1_dropped_fk, backend_gap_analysis_arch1_ghost_tables [EXTRACTED 1.00]
-- **Arabic-First Localization Program** — localization_audit_arabic_first_plan, localization_audit_centralized_formatters, localization_audit_rtl_fixes, localization_audit_arabic_pluralization, arabic_gap_analysis_db_content_gap, arabic_gap_analysis_server_error_codes, arabic_gap_analysis_mapbox_arabic_labels [INFERRED 0.85]
-
-## Communities (117 total, 28 thin omitted)
+## Communities (162 total, 70 thin omitted)
 
 ### Community 0 - "Admin & Agency Pages"
-Cohesion: 0.06
-Nodes (64): AdminUser, PlatformSettings, GalleryImage, Messages(), AuthFormProps, BookingFormData, BookingStep1Props, BookingStep2Props (+56 more)
+Cohesion: 0.05
+Nodes (86): AdminUser, PlatformSettings, GalleryImage, AuthFormProps, BookingFormData, BookingStep1Props, BookingStep2Props, BookingStep3Props (+78 more)
 
 ### Community 1 - "Admin Hooks Layer"
-Cohesion: 0.10
-Nodes (49): useAdminAgencies(), useAdminContent(), useAdminDashboard(), useAdminReviews(), useAdminTravelers(), AdminDashboard(), AdminPackageManagement(), AgencyManagement() (+41 more)
+Cohesion: 0.09
+Nodes (44): useAdminAgencies(), useAdminContent(), useAdminDashboard(), useAdminFinancials(), useAdminReports(), Review, ReviewStats, useAdminReviews() (+36 more)
 
 ### Community 2 - "Runtime Dependencies"
 Cohesion: 0.04
 Nodes (52): dependencies, class-variance-authority, clsx, cmdk, date-fns, @dnd-kit/core, @dnd-kit/sortable, @dnd-kit/utilities (+44 more)
 
 ### Community 3 - "Admin Shell & Routing"
-Cohesion: 0.07
-Nodes (42): react, AdminHeader(), AdminSidebar(), CalendarView(), PackagesList(), useIsMobile(), AppSidebar(), DashboardHeader() (+34 more)
+Cohesion: 0.08
+Nodes (35): AdminHeader(), AdminSidebar(), useIsMobile(), AppSidebar(), DashboardHeader(), DashboardLayout(), TravelerHeader(), TravelerSidebar() (+27 more)
 
 ### Community 4 - "Agency Calendar & Booking Modal"
-Cohesion: 0.18
-Nodes (9): BookingNavigation(), BookingNavigationProps, BookingProgressBar(), BookingProgressBarProps, BookingWizardProps, BookingStep1(), BookingStep2(), BookingStep3() (+1 more)
+Cohesion: 0.07
+Nodes (37): CalendarView(), CalendarBooking, useAgencyCalendar(), BookingModal(), BookingModalProps, BookingNavigation(), BookingNavigationProps, BookingProgressBar() (+29 more)
 
 ### Community 5 - "Carousel & React Core"
 Cohesion: 0.15
 Nodes (12): Carousel, CarouselApi, CarouselContent, CarouselContext, CarouselContextProps, CarouselItem, CarouselNext, CarouselOptions (+4 more)
-
-### Community 6 - "Arabic & Security Audits"
-Cohesion: 0.06
-Nodes (36): Bilingual Package Wizard Inputs (AR/EN tabs), Category A — Database content is English-only, A4 Machine-Translation Assist for Wizard, pickLocalized(row, field, lang) Display Helper, B1 Server Error Codes → i18n Keys, A1 Sibling _ar Columns Strategy, CRITICAL: Client-Trusted Pricing (total_price writable by client), CRITICAL: Client-Writable payment_status (+28 more)
 
 ### Community 7 - "Dev Dependencies & Tooling"
 Cohesion: 0.06
 Nodes (34): devDependencies, autoprefixer, eslint, @eslint/js, eslint-plugin-react-hooks, eslint-plugin-react-refresh, globals, jsdom (+26 more)
 
 ### Community 8 - "Route Maps & Itinerary Steps"
-Cohesion: 0.40
-Nodes (7): RouteMap(), RouteMapThumbnail(), RouteMapThumbnailProps, RoutePoint, MapboxMap(), applyMapLanguage(), ensureMapboxRTLTextPlugin()
+Cohesion: 0.10
+Nodes (24): Messages(), RouteMap(), RouteMapThumbnail(), RouteMapThumbnailProps, RoutePoint, MapboxMap(), i18nInstance, Json (+16 more)
 
 ### Community 9 - "Headers & Avatar"
-Cohesion: 0.25
-Nodes (7): SheetContentProps, SheetDescription, SheetFooter(), SheetHeader(), SheetOverlay, SheetTitle, sheetVariants
+Cohesion: 0.18
+Nodes (21): ReviewsSectionProps, Avatar, AvatarFallback, AvatarImage, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel (+13 more)
 
 ### Community 10 - "App Entry & Route Groups"
 Cohesion: 0.13
@@ -203,16 +239,16 @@ Cohesion: 0.16
 Nodes (15): DestinationsSection(), FooterSection(), HeaderSection(), HeroSection(), Home(), useFeaturedPackages(), usePublishedPackages(), DESTINATION_DATA (+7 more)
 
 ### Community 13 - "Auth Guards & Redirects"
-Cohesion: 0.11
-Nodes (18): CalendarBooking, useAgencyCalendar(), Conversation, Message, useAgencyMessages(), DashboardStats, useDashboardStats(), Gallery() (+10 more)
+Cohesion: 0.10
+Nodes (20): AdminSettings(), Deal, useAgencyDeals(), Conversation, Message, useAgencyMessages(), Deals(), Gallery() (+12 more)
 
 ### Community 14 - "Core UI Primitives"
-Cohesion: 0.19
-Nodes (14): cn(), ButtonProps, buttonVariants, DropdownMenuShortcut(), Pagination(), PaginationContent, PaginationEllipsis(), PaginationItem (+6 more)
+Cohesion: 0.14
+Nodes (18): StarRating(), StarRatingProps, cn(), ButtonProps, buttonVariants, Calendar(), CalendarProps, DropdownMenuShortcut() (+10 more)
 
 ### Community 15 - "Package Detail Sections"
 Cohesion: 0.24
-Nodes (13): AdminSettings(), DetailedItinerary(), TourHeader(), TourHeaderProps, useAvailability(), UseAvailabilityOptions, PackageDetails, usePackageDetails() (+5 more)
+Nodes (13): AvailabilitySection(), DetailedItinerary(), OperatorInfo(), TourHeader(), TourHeaderProps, useAvailability(), UseAvailabilityOptions, PackageDetails (+5 more)
 
 ### Community 16 - "Package Filters"
 Cohesion: 0.14
@@ -231,12 +267,12 @@ Cohesion: 0.26
 Nodes (10): TourCard(), TourCardProps, TourListingSection(), TourListingSectionProps, ToursSection(), ToursSectionProps, Package, PackageMedia (+2 more)
 
 ### Community 20 - "Gallery & Inclusions"
-Cohesion: 0.13
-Nodes (15): HeroGallery(), OperatorInfo(), getInclusionIcon(), hasDietaryOptions(), InclusionItem(), InclusionItemProps, WhatsIncluded(), AvailabilitySectionProps (+7 more)
+Cohesion: 0.32
+Nodes (6): getInclusionIcon(), hasDietaryOptions(), InclusionItem(), InclusionItemProps, WhatsIncluded(), WhatsIncludedProps
 
 ### Community 21 - "Star Rating & Utils"
-Cohesion: 0.13
-Nodes (12): BookingModalProps, Calendar(), CalendarProps, DialogDescription, DialogFooter(), DialogOverlay, DialogTitle, HoverCardContent (+4 more)
+Cohesion: 0.17
+Nodes (6): HoverCardContent, RadioGroup, RadioGroupItem, ScrollArea, ScrollBar, Slider
 
 ### Community 22 - "TS Node Config"
 Cohesion: 0.12
@@ -247,12 +283,12 @@ Cohesion: 0.17
 Nodes (12): Package, PackageMedia, PackageWithMedia, CompositeTypes, Constants, Database, DatabaseWithoutInternals, DefaultSchema (+4 more)
 
 ### Community 24 - "Admin Agencies & Travelers Hooks"
-Cohesion: 0.12
-Nodes (11): ContentPage, ContentStats, Traveler, TravelerStats, Deal, useAgencyDeals(), Deals(), Booking (+3 more)
+Cohesion: 0.15
+Nodes (9): Agency, AgencyStats, FinancialStats, Payout, RevenueData, BookingFormData, Package, PackageStats (+1 more)
 
 ### Community 25 - "Auth Context & Admin Content"
 Cohesion: 0.15
-Nodes (11): Agency, AgencyStats, Review, ReviewStats, ActionError, AuthContext, AuthContextType, AuthProvider() (+3 more)
+Nodes (11): Traveler, TravelerStats, ActionError, AuthContext, AuthContextType, AuthProvider(), Profile, toError() (+3 more)
 
 ### Community 26 - "TS Root Config"
 Cohesion: 0.15
@@ -271,7 +307,7 @@ Cohesion: 0.43
 Nodes (5): DetailedItineraryProps, ItineraryItem, AccordionContent, AccordionItem, AccordionTrigger
 
 ### Community 30 - "Package CRUD Hooks"
-Cohesion: 0.20
+Cohesion: 0.22
 Nodes (9): Itinerary, ItineraryInsert, Package, PackageInsert, PackageMedia, PackageUpdate, PackageWithDetails, usePackages() (+1 more)
 
 ### Community 31 - "Context Menu"
@@ -287,12 +323,12 @@ Cohesion: 0.36
 Nodes (8): handle_bookings_updated_at, handle_packages_updated_at, public.handle_bookings_updated_at(), public.handle_packages_updated_at(), public.itineraries, public.package_bookings, public.package_media, public.packages
 
 ### Community 34 - "Booking Widget & Popover"
-Cohesion: 0.16
-Nodes (19): useAdminFinancials(), FinancialManagement(), Dashboard(), Feedback(), useBookings(), Bookings(), TravelerBookings(), AvailabilitySection() (+11 more)
+Cohesion: 0.19
+Nodes (11): AvailabilitySectionProps, BookingWidget(), BookingWidgetProps, DepartureCardProps, AvailabilitySectionProps, BookingWidgetProps, DateSelectorPopoverProps, Departure (+3 more)
 
 ### Community 35 - "Reviews Feature"
-Cohesion: 0.27
-Nodes (9): ReviewForm(), ReviewFormProps, ReviewsSection(), ReviewsSectionProps, StarRating(), StarRatingProps, Review, useReviews() (+1 more)
+Cohesion: 0.06
+Nodes (30): 0. What the system actually is (ground truth), 10. Testing Review, 11. AI Readiness, 12. Marketplace-Specific Review, 13. Scalability Review, 14. Production Readiness Scores (1–10), 15. Prioritized Action Plan, 16. Refactoring Opportunities (+22 more)
 
 ### Community 36 - "Breadcrumb Component"
 Cohesion: 0.25
@@ -323,8 +359,8 @@ Cohesion: 0.33
 Nodes (5): input-otp, InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot
 
 ### Community 43 - "i18n Bootstrap & Formatters"
-Cohesion: 0.36
-Nodes (4): i18nInstance, formatPercent(), intlLocale(), sampleDate
+Cohesion: 0.08
+Nodes (25): 2.1 Translation coverage (Phase 3) — ~50–65% effective coverage, 2.2 Arabic quality (Phase 4) — decent-but-stiff MSA, with real bugs, 2.3 RTL architecture (Phase 6, 9, 11) — strong base, specific breakages, 2.4 Formatting (Phase 15) — the biggest silent Arabic-UX failure, 2.5 Typography (Phase 8), 2.6 SEO (Phase 13) — effectively zero localized SEO, 2.7 Accessibility (Phase 14), 2.8 i18n architecture (Phase 15) (+17 more)
 
 ### Community 44 - "Schema: Profiles Bootstrap"
 Cohesion: 0.47
@@ -339,12 +375,12 @@ Cohesion: 0.40
 Nodes (4): ActivityLog, AdminStats, PendingAction, RevenueData
 
 ### Community 47 - "Agency Feedback"
-Cohesion: 0.50
-Nodes (3): FeedbackItem, FeedbackStats, useAgencyFeedback()
+Cohesion: 0.40
+Nodes (4): FeedbackItem, FeedbackStats, useAgencyFeedback(), Feedback()
 
 ### Community 48 - "Agency Messages"
-Cohesion: 0.19
-Nodes (13): PackageWizard(), PackageWizardProps, BasicInfoStepProps, InclusionsManagerProps, PricingStepProps, ReviewStepProps, WizardStepContent(), useCreatePackage() (+5 more)
+Cohesion: 0.08
+Nodes (24): 0. System Overview (verified), ✅ Also done (2026-07-05), Architecture Decisions (owner-approved, 2026-07-05), CRITICAL, ✅ Fixed this session (WIZ), HIGH, LOW, MEDIUM (+16 more)
 
 ### Community 49 - "Schema: Itineraries & Media"
 Cohesion: 0.40
@@ -359,28 +395,28 @@ Cohesion: 0.83
 Nodes (4): ToTravel Favicon, Map Pin / Location Marker Motif, Teal Brand Color (#0f766e), ToTravel Brand Identity
 
 ### Community 52 - "Admin Financials Hook"
-Cohesion: 0.50
-Nodes (3): FinancialStats, Payout, RevenueData
+Cohesion: 0.10
+Nodes (18): Backend Hosting Decision — ToTravel (MVP), Cost snapshot at MVP scale (rough, monthly), First, reframe the question, Option A — Cloudflare as the backend (Workers + D1 + R2 + Pages), Option B — Self-host Supabase on Hostinger VPS, Option C — Stay on Managed Supabase (recommended baseline), Option D — Alternatives worth knowing, Recommendation & concrete plan (+10 more)
 
 ### Community 53 - "Admin Reports Hook"
-Cohesion: 0.33
-Nodes (5): DestinationData, MonthlyData, ReportStats, useAdminReports(), ReportsPage()
+Cohesion: 0.50
+Nodes (3): DestinationData, MonthlyData, ReportStats
 
 ### Community 54 - "Agency Travelers"
 Cohesion: 0.50
 Nodes (3): Traveler, useAgencyTravelers(), Travelers()
 
 ### Community 55 - "Agency Dashboard Stats"
-Cohesion: 0.20
-Nodes (11): DestinationSearch(), DestinationSearchProps, SearchResult, DestinationsList(), DestinationsListProps, SortableDestinationProps, MapboxMapProps, defaultRouteData (+3 more)
+Cohesion: 0.18
+Nodes (11): 5.1 Partially Implemented Features, 5.2 Missing Core Systems, Agency Deals, Agency Guides Management, Availability & Capacity, Messaging System, Notification System, Payment Integration (+3 more)
 
 ### Community 56 - "Agency Bookings"
 Cohesion: 0.18
 Nodes (9): FormControl, FormDescription, FormFieldContext, FormFieldContextValue, FormItem, FormItemContext, FormItemContextValue, FormLabel (+1 more)
 
 ### Community 57 - "Traveler Wishlist"
-Cohesion: 0.50
-Nodes (3): useWishlist(), WishlistItem, TravelerWishlist()
+Cohesion: 0.36
+Nodes (5): PackageCard(), PackageCardProps, useWishlist(), WishlistItem, TravelerWishlist()
 
 ### Community 58 - "Schema: Admin Activity Logs"
 Cohesion: 0.50
@@ -394,69 +430,85 @@ Nodes (3): public.agency_payouts, public.package_bookings, public.packages
 Cohesion: 0.67
 Nodes (3): OPS-1: No CI/CD, No Automated Gates, OPS-2: TypeScript Strictness Disabled; tsc Errors Ship, CI Verify Job (blocking tests+build, informational lint/typecheck)
 
-### Community 61 - "Package Wizard RPC & Guards"
-Cohesion: 0.67
-Nodes (3): WIZ-6: Atomic save_package Postgres RPC, WIZ-8: DB Guard Blocks Agency Self-Feature / Self-Publish, Package Wizard (multi-step create/edit)
-
-### Community 62 - "Localization Formatting Policy"
-Cohesion: 0.67
-Nodes (3): Centralized Formatters (formatDate/formatCurrency/formatNumber/formatRelativeTime), Numeral Policy: Western Digits with Arabic Locale Formatting, Platform-Configurable Currency (VITE_PLATFORM_CURRENCY: USD/SAR/AED)
-
 ### Community 63 - "Placeholder Asset"
 Cohesion: 0.67
 Nodes (3): Photo/Image Glyph (center icon), Missing-Media Fallback Asset, Placeholder Image (generic gray image stub)
 
 ### Community 89 - "Graphify Assistant Policy"
-Cohesion: 0.20
-Nodes (7): ChartConfig, ChartContainer, ChartContext, ChartContextProps, ChartLegendContent, ChartTooltipContent, THEMES
+Cohesion: 0.13
+Nodes (12): react, PackagesList(), useCarousel(), ChartConfig, ChartContainer, ChartContext, ChartContextProps, ChartLegendContent (+4 more)
 
 ### Community 107 - "Graphify + Obsidian Cheat Sheet (ToTravel)"
 Cohesion: 0.25
 Nodes (7): Daily use — ask questions instead of grepping, Graphify + Obsidian Cheat Sheet (ToTravel), Keeping the graph fresh, Maintenance / troubleshooting, Obsidian workflow, Reading the output honestly, Where everything lives
 
 ### Community 108 - "WizardStepContent.tsx"
-Cohesion: 0.29
-Nodes (6): BasicInfoStep(), ItineraryStep(), PricingStep(), ReviewStep(), RouteStep(), WizardStepContentProps
+Cohesion: 0.18
+Nodes (11): Enforcement Gaps, Enforcement Points, Enforcement Points, Permissions Implemented, Permissions Implemented, Permissions Implemented, Phase 2: User Roles & Permissions, Role: Admin (+3 more)
 
 ### Community 109 - "wizard.ts"
-Cohesion: 0.29
-Nodes (6): ItineraryStepProps, InclusionCategory, ItineraryDay, MediaItem, PackageBasicInfo, PackagePricing
+Cohesion: 0.20
+Nodes (9): A. Database Schema Summary, Appendices, B. Route Map, Executive Summary, Phase 1: Product Overview (Current Reality), Product Requirements Document (PRD), Technology Stack, ToTravel - Current State Analysis (+1 more)
 
 ### Community 110 - "Json"
-Cohesion: 0.29
-Nodes (5): Json, corsHeaders, json(), corsHeaders, json()
+Cohesion: 0.20
+Nodes (10): 1. Authentication System, 2. Package Management (Agency), 3. Public Tour Browsing, 4. Booking System, 5. Reviews & Ratings System, 6. Agency Calendar, 6. Internationalization (i18n), 7. UI/UX & Quality of Life (+2 more)
 
 ### Community 111 - "error-boundary.tsx"
 Cohesion: 0.29
 Nodes (3): ErrorBoundary, Props, State
 
 ### Community 112 - "useAdminBookings.ts"
-Cohesion: 0.40
-Nodes (4): Booking, BookingStats, useAdminBookings(), AdminBookingManagement()
+Cohesion: 0.22
+Nodes (9): 60-Day Sprint: Feature Completion, 7.1 What Should Be Preserved ✅, 7.2 What Must Be Refactored 🔧, 7.3 What Should Be Removed ❌, 7.4 Execution Roadmap, 90-Day Sprint: System Hardening, Phase 1: Critical Core (Completed), Phase 2: Feature Expansion (In Progress) (+1 more)
 
 ### Community 113 - "MediaStep.tsx"
 Cohesion: 0.40
 Nodes (4): MediaGallery(), MediaItem, MediaStep(), MediaStepProps
 
+### Community 114 - "WizardProgress.tsx"
+Cohesion: 0.22
+Nodes (9): 6.1 Duplicate Code, 6.2 Hardcoded Data, 6.3 Over-Engineering, 6.4 Missing Error Handling, 6.5 Unused Database Tables, 6.6 Dead/Unused Code Candidates, Multiple Pages for Same Concept, Package Creation Hooks (+1 more)
+
+### Community 115 - "radio-group.tsx"
+Cohesion: 0.25
+Nodes (7): Category A — Database content (structural; the largest visible gap), Category B — Server-originated English (errors reach users verbatim), Category C — Remaining code-level leaks (concrete file:line list), Category D — Third-party surfaces, Gap map — by category, worst first, Recommended execution order, ToTravel — Arabic Gap Analysis (post-implementation)
+
+### Community 117 - "[Unreleased] - 2026-01-07"
+Cohesion: 0.33
+Nodes (5): Added, Changed, Changelog, Fixed, [Unreleased] - 2026-01-07
+
+### Community 118 - "useBookings.ts"
+Cohesion: 0.40
+Nodes (4): Booking, useBookings(), Bookings(), TravelerBookings()
+
+### Community 119 - "Phase 4: System Flows & Communication"
+Cohesion: 0.50
+Nodes (4): Flow 1: Vendor Onboarding → Package Creation, Flow 2: Traveler Browsing → Booking, Flow 3: Data Architecture, Phase 4: System Flows & Communication
+
+### Community 120 - "useDashboardStats.ts"
+Cohesion: 0.50
+Nodes (3): DashboardStats, useDashboardStats(), Dashboard()
+
 ## Knowledge Gaps
-- **465 isolated node(s):** `graphify`, `Where everything lives`, `Daily use — ask questions instead of grepping`, `Keeping the graph fresh`, `Obsidian workflow` (+460 more)
+- **621 isolated node(s):** `$schema`, `style`, `rsc`, `tsx`, `config` (+616 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **28 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **70 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `cn()` connect `Core UI Primitives` to `Admin & Agency Pages`, `Admin Hooks Layer`, `Admin Shell & Routing`, `Carousel & React Core`, `Headers & Avatar`, `Auth Guards & Redirects`, `Star Rating & Utils`, `Menubar Component`, `Command Palette`, `Itinerary & Localized Picker`, `Context Menu`, `Reviews Feature`, `Breadcrumb Component`, `Drawer Component`, `Navigation Menu`, `Toggle Components`, `OTP Input`, `Agency Messages`, `Agency Bookings`, `Graphify Assistant Policy`, `radio-group.tsx`?**
-  _High betweenness centrality (0.122) - this node is a cross-community bridge._
-- **Why does `dependencies` connect `Runtime Dependencies` to `App Entry & Route Groups`, `OTP Input`, `Admin Shell & Routing`, `Dev Dependencies & Tooling`?**
-  _High betweenness centrality (0.111) - this node is a cross-community bridge._
-- **Why does `react` connect `Admin Shell & Routing` to `Runtime Dependencies`?**
-  _High betweenness centrality (0.047) - this node is a cross-community bridge._
-- **What connects `graphify`, `Where everything lives`, `Daily use — ask questions instead of grepping` to the rest of the system?**
-  _470 weakly-connected nodes found - possible documentation gaps or missing edges._
+- **Why does `cn()` connect `Core UI Primitives` to `Admin & Agency Pages`, `Admin Hooks Layer`, `Admin Shell & Routing`, `Agency Calendar & Booking Modal`, `Breadcrumb Component`, `Carousel & React Core`, `Drawer Component`, `Navigation Menu`, `Headers & Avatar`, `OTP Input`, `Toggle Components`, `Star Rating & Utils`, `Agency Bookings`, `Graphify Assistant Policy`, `Menubar Component`, `Command Palette`, `Itinerary & Localized Picker`, `Context Menu`?**
+  _High betweenness centrality (0.095) - this node is a cross-community bridge._
+- **Why does `dependencies` connect `Runtime Dependencies` to `Graphify Assistant Policy`, `OTP Input`, `App Entry & Route Groups`, `Dev Dependencies & Tooling`?**
+  _High betweenness centrality (0.081) - this node is a cross-community bridge._
+- **Why does `useAuth()` connect `Auth Guards & Redirects` to `Admin & Agency Pages`, `Admin Hooks Layer`, `Admin Shell & Routing`, `Agency Calendar & Booking Modal`, `Headers & Avatar`, `Home Page Sections`, `Package Detail Sections`, `Admin Agencies & Travelers Hooks`, `Auth Context & Admin Content`, `Package CRUD Hooks`, `Admin Dashboard Stats`, `Agency Feedback`, `Admin Reports Hook`, `Agency Travelers`, `Traveler Wishlist`, `MediaStep.tsx`, `useBookings.ts`, `useDashboardStats.ts`, `useAdminContent.ts`?**
+  _High betweenness centrality (0.044) - this node is a cross-community bridge._
+- **What connects `$schema`, `style`, `rsc` to the rest of the system?**
+  _634 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Admin & Agency Pages` be split into smaller, more focused modules?**
-  _Cohesion score 0.064 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.052459580323357416 - nodes in this community are weakly interconnected._
 - **Should `Admin Hooks Layer` be split into smaller, more focused modules?**
-  _Cohesion score 0.09702660406885759 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.09344262295081968 - nodes in this community are weakly interconnected._
 - **Should `Runtime Dependencies` be split into smaller, more focused modules?**
   _Cohesion score 0.038461538461538464 - nodes in this community are weakly interconnected._
