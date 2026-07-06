@@ -443,8 +443,16 @@ admins approve to `published` via their existing update policy.
 - **WIZ-10 (route Arabic names):** added an Arabic-name input per destination in `DestinationsList`; the `save_package` RPC already persists `package_routes.name_ar`.
 - **WIZ-9 (corrected finding):** most "dead" fields are actually **live-but-unpersisted UI features** — `currency` (drives ReviewStep price formatting), `subtitle`/`highlights` (rendered inputs + review display), `route.travelMode`/`showDistances` (drive map rendering). Stripping them would delete working UI; the real question is whether to **persist** them (schema additions). Only `pricing.base_price` (numeric shadow of `basePrice`) is truly never read — left as an inert optional field. No behavioral removal done.
 
-### ⏳ Remaining
-- **WIZ-11:** real availability/departures (replace the faked `useAvailability` random seats/discounts) — in progress.
+### ✅ WIZ-11 (backend + read) done (2026-07-05)
+- New **`package_departures`** table (`20260705130000`) — real departures with `total_seats`, optional `price_override`, status, RLS (public read; agencies manage own package's departures; admins all), indexes, `updated_at` trigger.
+- **Seeded 192 real departures** (weekly, weeks 2–17) for the 12 published packages, so the availability UI shows genuine bookable dates.
+- **`useAvailability` rewritten** to read real departures and derive seats-remaining from bookings at read time — the fabricated random seats/discounts are gone; discounts are now null (honest) and `hasAvailability=false` when nothing is scheduled.
+- `package_departures` added to generated `types.ts`.
+
+### ⏳ WIZ-11 follow-ups (deferred, documented)
+- **Departures editor UI:** agencies currently can't add/edit departures from the app (only the seed + direct RPC). Add a departures section to the wizard (or a per-package "Manage departures" surface) and extend `save_package` to upsert a `departures` array.
+- **Booking ↔ departure linkage:** `BookingModal` should let the traveler pick a real departure and the booking should reference `departure_id` (currently free `booking_date`); the capacity trigger already enforces per-date seats, but bookings aren't yet tied to a specific departure row.
+- **Also open:** WIZ-5 admin "pending" queue view (actions exist; a filtered tab would help), and persisting the live-but-ephemeral UI fields (subtitle/highlights) if desired.
 - **WIZ-7: EditPackage drops structured inclusions** (saves only `additionalInclusions`; never rebuilds the category grouping on load).
 - **WIZ-8 (Security, M1): `featured` is agency-writable** via the wizard payload — should be platform-only.
 - **WIZ-9: dead/unpersisted fields** collected but never stored: `pricing.currency`, `pricing.base_price` shadow, `originalPrice`/`discount`, `basicInfo.subtitle`/`highlights`/`rating`, itinerary `highlights`, `route.travelMode`/`showDistances`.

@@ -1,131 +1,120 @@
-import { useState, useMemo } from 'react';
-import { addDays, format, isAfter, isBefore, parseISO } from 'date-fns';
+import { useState, useEffect, useMemo } from 'react';
+import { addDays, format, parseISO } from 'date-fns';
+import { supabase } from '@/integrations/supabase/client';
 import type { Departure, MonthlyAvailability } from '@/features/packages/types';
 
 interface UseAvailabilityOptions {
     packageId: string;
-    availableFrom: string;
-    availableTo: string;
+    availableFrom?: string;
+    availableTo?: string;
     durationDays: number;
     basePrice: number;
-    maxParticipants: number;
+    maxParticipants?: number;
 }
 
 /**
- * Hook to generate departure/availability data from package date ranges
- * Since departures table doesn't exist, we generate possible departures
- * based on the package's available_from and available_to fields
+ * Reads REAL departures from `package_departures` and derives seats-remaining
+ * from bookings at read time (no denormalized counter). Returns no departures
+ * (hasAvailability=false) when none are scheduled — no fabricated dates,
+ * seats, or discounts (WIZ-11, replacing the former random generation).
  */
 export function useAvailability({
     packageId,
-    availableFrom,
-    availableTo,
     durationDays,
     basePrice,
-    maxParticipants,
 }: UseAvailabilityOptions) {
+    const [departures, setDepartures] = useState<Departure[]>([]);
+    const [loading, setLoading] = useState(true);
     const [selectedMonth, setSelectedMonth] = useState<string | null>(null);
 
-    // Generate departures from the availability window
-    const departures = useMemo((): Departure[] => {
-        const today = new Date();
+    useEffect(() => {
+        let active = true;
 
-        // Parse provided dates or use fallback (next 6 months from today)
-        let startDate: Date;
-        let endDate: Date;
-
-        if (availableFrom && availableTo) {
-            const parsedStart = parseISO(availableFrom);
-            const parsedEnd = parseISO(availableTo);
-
-            // If end date is in the past, use fallback dates
-            if (isBefore(parsedEnd, today)) {
-                startDate = addDays(today, 7); // Start from next week
-                endDate = addDays(today, 180); // 6 months from now
-            } else {
-                // Use max of parsed start or today
-                startDate = isAfter(parsedStart, today) ? parsedStart : addDays(today, 1);
-                endDate = parsedEnd;
-            }
-        } else {
-            // No dates provided - generate 6 months of availability
-            startDate = addDays(today, 7);
-            endDate = addDays(today, 180);
+        if (!packageId) {
+            setDepartures([]);
+            setLoading(false);
+            return;
         }
 
-        // Generate weekly departures within the availability window
-        const generatedDepartures: Departure[] = [];
-        let currentStart = startDate;
-        let idCounter = 1;
+        (async () => {
+            setLoading(true);
+            const today = format(new Date(), 'yyyy-MM-dd');
 
-        while (isBefore(currentStart, endDate) && generatedDepartures.length < 52) { // Max 52 departures (1 year)
-            const departureEnd = addDays(currentStart, durationDays);
+            const [{ data: deps }, { data: bookings }] = await Promise.all([
+                supabase
+                    .from('package_departures')
+                    .select('id, departure_date, return_date, total_seats, price_override, status')
+                    .eq('package_id', packageId)
+                    .eq('status', 'scheduled')
+                    .gte('departure_date', today)
+                    .order('departure_date', { ascending: true }),
+                supabase
+                    .from('package_bookings')
+                    .select('booking_date, participants, status')
+                    .eq('package_id', packageId),
+            ]);
 
-            // Simulate varying seat availability and discounts
-            const seatsBase = maxParticipants;
-            // Use a seeded random based on date for consistent results
-            const seed = currentStart.getTime() % 100;
-            const randomSeats = Math.max(1, Math.floor((seed / 100) * seatsBase));
-            const hasDiscount = seed > 70; // 30% chance of discount
-
-            generatedDepartures.push({
-                id: `${packageId}-dep-${idCounter}`,
-                tour_id: packageId,
-                start_date: format(currentStart, 'yyyy-MM-dd'),
-                end_date: format(departureEnd, 'yyyy-MM-dd'),
-                seats_remaining: randomSeats,
-                price: basePrice,
-                discount_price: hasDiscount ? Math.round(basePrice * 0.85) : null,
-                status: randomSeats <= 3 ? 'limited' : randomSeats === 0 ? 'sold_out' : 'available',
+            // Seats already booked per departure date (cancelled don't count).
+            const bookedByDate = new Map<string, number>();
+            (bookings || []).forEach((b) => {
+                if (b.status === 'cancelled') return;
+                bookedByDate.set(b.booking_date, (bookedByDate.get(b.booking_date) || 0) + (b.participants || 0));
             });
-            idCounter++;
 
-            // Move to next week (7 days)
-            currentStart = addDays(currentStart, 7);
-        }
+            const mapped: Departure[] = (deps || []).map((d) => {
+                const booked = bookedByDate.get(d.departure_date) || 0;
+                const seatsRemaining = Math.max(0, d.total_seats - booked);
+                const end = d.return_date || format(addDays(parseISO(d.departure_date), durationDays), 'yyyy-MM-dd');
+                return {
+                    id: d.id,
+                    tour_id: packageId,
+                    start_date: d.departure_date,
+                    end_date: end,
+                    seats_remaining: seatsRemaining,
+                    price: d.price_override != null ? Number(d.price_override) : basePrice,
+                    discount_price: null,
+                    status: seatsRemaining === 0 ? 'sold_out' : seatsRemaining <= 3 ? 'limited' : 'available',
+                };
+            });
 
-        return generatedDepartures;
-    }, [packageId, availableFrom, availableTo, durationDays, basePrice, maxParticipants]);
+            if (active) {
+                setDepartures(mapped);
+                setLoading(false);
+            }
+        })();
 
+        return () => {
+            active = false;
+        };
+    }, [packageId, durationDays, basePrice]);
 
-    // Calculate monthly availability summaries from generated departures
+    // Monthly summaries from the real departures.
     const monthlyAvailability = useMemo((): MonthlyAvailability[] => {
         if (departures.length === 0) return [];
 
-        // Group departures by month
         const monthMap = new Map<string, Departure[]>();
-
-        departures.forEach(dep => {
+        departures.forEach((dep) => {
             const monthKey = dep.start_date.substring(0, 7); // "YYYY-MM"
-            if (!monthMap.has(monthKey)) {
-                monthMap.set(monthKey, []);
-            }
+            if (!monthMap.has(monthKey)) monthMap.set(monthKey, []);
             monthMap.get(monthKey)!.push(dep);
         });
 
-        // Convert to monthly availability array
         return Array.from(monthMap.entries())
             .map(([monthStr, monthDepartures]) => {
-                const prices = monthDepartures.map(d => d.discount_price || d.price);
-                const startingPrice = Math.min(...prices);
-
+                const prices = monthDepartures.map((d) => d.discount_price || d.price);
                 return {
                     month: monthStr,
                     monthLabel: format(parseISO(`${monthStr}-01`), 'MMMM yyyy'),
-                    startingPrice,
+                    startingPrice: Math.min(...prices),
                     departureCount: monthDepartures.length,
                 };
             })
             .sort((a, b) => a.month.localeCompare(b.month));
     }, [departures]);
 
-    // Filter departures by selected month
     const filteredDepartures = useMemo(() => {
         if (!selectedMonth) return departures;
-
-        return departures.filter(dep => {
-            return dep.start_date.startsWith(selectedMonth);
-        });
+        return departures.filter((dep) => dep.start_date.startsWith(selectedMonth));
     }, [departures, selectedMonth]);
 
     return {
@@ -135,5 +124,6 @@ export function useAvailability({
         selectedMonth,
         setSelectedMonth,
         hasAvailability: departures.length > 0,
+        loading,
     };
 }

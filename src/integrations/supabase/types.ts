@@ -748,6 +748,50 @@ export type Database = {
         }
         Relationships: []
       }
+      package_departures: {
+        Row: {
+          created_at: string
+          departure_date: string
+          id: string
+          package_id: string
+          price_override: number | null
+          return_date: string | null
+          status: string
+          total_seats: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          departure_date: string
+          id?: string
+          package_id: string
+          price_override?: number | null
+          return_date?: string | null
+          status?: string
+          total_seats?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          departure_date?: string
+          id?: string
+          package_id?: string
+          price_override?: number | null
+          return_date?: string | null
+          status?: string
+          total_seats?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "package_departures_package_id_fkey"
+            columns: ["package_id"]
+            isOneToOne: false
+            referencedRelation: "packages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       wishlist: {
         Row: {
           created_at: string
