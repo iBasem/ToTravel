@@ -30,8 +30,8 @@
     "semantic_hash": "5b84f4567208c7c747079c0477373231"
   },
   "src/App.tsx": {
-    "mtime": 1783330419.7619627,
-    "ast_hash": "584f91d08b95f2cba90032a93b4881ed",
+    "mtime": 1783338556.2232995,
+    "ast_hash": "ca5df867543ce4277e8ae3d77436bc3f",
     "semantic_hash": ""
   },
   "src/features/admin/components/AdminHeader.tsx": {
@@ -90,9 +90,9 @@
     "semantic_hash": "54864d84960b330cd61124468202e72d"
   },
   "src/features/admin/pages/AdminPackageManagement.tsx": {
-    "mtime": 1783330419.7649632,
-    "ast_hash": "9cad0d6577eb3adbb80cf630552dba8c",
-    "semantic_hash": "9cad0d6577eb3adbb80cf630552dba8c"
+    "mtime": 1783333824.7742045,
+    "ast_hash": "13d52e95d49af9a406a69771721ea2c3",
+    "semantic_hash": ""
   },
   "src/features/admin/pages/AdminSettings.tsx": {
     "mtime": 1783330419.765963,
@@ -205,9 +205,9 @@
     "semantic_hash": "0bc2f22684069e7cbd39de78995655dc"
   },
   "src/features/agency/routes.tsx": {
-    "mtime": 1783330419.7729633,
-    "ast_hash": "22cda34a9652e50d2b7477ee3f5c46e5",
-    "semantic_hash": "22cda34a9652e50d2b7477ee3f5c46e5"
+    "mtime": 1783336829.988021,
+    "ast_hash": "85826f42d551bd57a3805c1df50ea578",
+    "semantic_hash": ""
   },
   "src/features/auth/components/AuthForm.tsx": {
     "mtime": 1782888287.9270382,
@@ -240,9 +240,9 @@
     "semantic_hash": "d7b8856a6fd6202e1f77f7d7613d8958"
   },
   "src/features/bookings/components/BookingModal.tsx": {
-    "mtime": 1783330419.7739632,
-    "ast_hash": "b0ffbfb087c3224ec5c70ea8f5db9a6f",
-    "semantic_hash": "b0ffbfb087c3224ec5c70ea8f5db9a6f"
+    "mtime": 1783337581.2956393,
+    "ast_hash": "9965f2c9bd04f2d81e2b6dc077ac80c4",
+    "semantic_hash": ""
   },
   "src/features/bookings/components/BookingNavigation.tsx": {
     "mtime": 1782888287.9300401,
@@ -290,9 +290,9 @@
     "semantic_hash": "bb4757f4056a2bbca568033481b23ddf"
   },
   "src/features/bookings/hooks/useCreateBooking.ts": {
-    "mtime": 1783330419.7759626,
-    "ast_hash": "d33fbcb7e9988688216d7077787a60fb",
-    "semantic_hash": "d33fbcb7e9988688216d7077787a60fb"
+    "mtime": 1783337527.1014714,
+    "ast_hash": "984f9e95ac5b9f4f993aa4b5a381bbdc",
+    "semantic_hash": ""
   },
   "src/features/bookings/pages/AdminBookings.tsx": {
     "mtime": 1782888287.9330397,
@@ -305,9 +305,9 @@
     "semantic_hash": "3afcd9992d8106c3115b6840f600e430"
   },
   "src/features/bookings/pages/TravelerBookings.tsx": {
-    "mtime": 1783330419.7769632,
-    "ast_hash": "e66747703df9e70b3e5922ad52e0b919",
-    "semantic_hash": "e66747703df9e70b3e5922ad52e0b919"
+    "mtime": 1783338601.628609,
+    "ast_hash": "4f04baafc9612201bc9df0840ac81a91",
+    "semantic_hash": ""
   },
   "src/features/home/components/DestinationsSection.tsx": {
     "mtime": 1782888287.9340396,
@@ -485,9 +485,9 @@
     "semantic_hash": "ada3ea3a42e2840fca79f78ecec5d7ca"
   },
   "src/features/packages/components/wizard-steps/route/DestinationsList.tsx": {
-    "mtime": 1782888287.9460433,
-    "ast_hash": "19182dc3d7ef047e55785138d085e007",
-    "semantic_hash": "19182dc3d7ef047e55785138d085e007"
+    "mtime": 1783333900.119594,
+    "ast_hash": "1d6ddf0606ad064495a4dbe36d2f32bf",
+    "semantic_hash": ""
   },
   "src/features/packages/components/wizard-steps/route/MapboxMap.tsx": {
     "mtime": 1783330419.787969,
@@ -530,9 +530,9 @@
     "semantic_hash": "c6a1d0fa36ffeba91cb59bde26e868ff"
   },
   "src/features/packages/hooks/useAvailability.ts": {
-    "mtime": 1782888287.9480424,
-    "ast_hash": "edaa30d277ded96a4198bf10b0265865",
-    "semantic_hash": "edaa30d277ded96a4198bf10b0265865"
+    "mtime": 1783334719.9928336,
+    "ast_hash": "f297c1c5259871afaaaeb9031161b8ac",
+    "semantic_hash": ""
   },
   "src/features/packages/hooks/useCreatePackage.ts": {
     "mtime": 1783330419.7889705,
@@ -580,14 +580,14 @@
     "semantic_hash": "d2a6efcdd6f647494070405e585ca5c6"
   },
   "src/features/packages/pages/ManagePackages.tsx": {
-    "mtime": 1783330419.7909691,
-    "ast_hash": "c169a2a6cade7c20e39b54b5b4794835",
-    "semantic_hash": "c169a2a6cade7c20e39b54b5b4794835"
+    "mtime": 1783336837.7764995,
+    "ast_hash": "a323187eec79155febe5ce2b1bb4da6f",
+    "semantic_hash": ""
   },
   "src/features/packages/pages/PackageDetails.tsx": {
-    "mtime": 1783330419.7909691,
-    "ast_hash": "95782166f9e990c27d9b8d890261cae3",
-    "semantic_hash": "95782166f9e990c27d9b8d890261cae3"
+    "mtime": 1783337590.0351071,
+    "ast_hash": "a510248c1183e71ee0401eb29862e7ad",
+    "semantic_hash": ""
   },
   "src/features/packages/pages/PackagesList.tsx": {
     "mtime": 1783330419.7919695,
@@ -690,8 +690,8 @@
     "semantic_hash": "83f621c852514877a7f6d612119fd1e4"
   },
   "src/integrations/supabase/types.ts": {
-    "mtime": 1783330419.796969,
-    "ast_hash": "de6d50ae9a7c665d1e519bb050d7cd73",
+    "mtime": 1783337617.537888,
+    "ast_hash": "0a1a22151bb8169b799cf7cb5a8f8b39",
     "semantic_hash": ""
   },
   "src/layouts/AdminLayout.tsx": {
@@ -1040,8 +1040,8 @@
     "semantic_hash": "7e393cbddcd7aef31ec1c0ca332a4319"
   },
   "supabase/functions/create-booking/index.ts": {
-    "mtime": 1783330419.8064861,
-    "ast_hash": "07fa945ec4493b5dd68e2c7a0f3b8b36",
+    "mtime": 1783337416.0385277,
+    "ast_hash": "951cd27eb16f4eed40bd52d799f9e1e4",
     "semantic_hash": ""
   },
   "supabase/functions/create-review/index.ts": {
@@ -1260,8 +1260,8 @@
     "semantic_hash": "85312fbfb300cb8235184f1566ad81bc"
   },
   "BACKEND-GAP-ANALYSIS.md": {
-    "mtime": 1783330419.7499673,
-    "ast_hash": "b85049b2ac1077898465b3c4088e7fd3",
+    "mtime": 1783338756.8546975,
+    "ast_hash": "154b1408b0b65fb625504f66d9482ec0",
     "semantic_hash": ""
   },
   "BACKEND-HOSTING-COMPARISON.md": {
@@ -1327,6 +1327,56 @@
   "GRAPHIFY-CHEATSHEET.md": {
     "mtime": 1783330419.7509644,
     "ast_hash": "ae994e6e7a356d5fcb2da3e8882689ec",
+    "semantic_hash": ""
+  },
+  "supabase/migrations/20260705130000_wiz11_package_departures.sql": {
+    "mtime": 1783334575.0375419,
+    "ast_hash": "3dc466f102d250346fdabeaa8da7989b",
+    "semantic_hash": ""
+  },
+  "src/features/packages/hooks/useDepartures.ts": {
+    "mtime": 1783336775.563086,
+    "ast_hash": "b64621a56c25f759d3bd27525a61224b",
+    "semantic_hash": ""
+  },
+  "src/features/packages/pages/ManageDepartures.tsx": {
+    "mtime": 1783336916.4033163,
+    "ast_hash": "ef7d0fd0ff27daa8084ae00160fe3c6a",
+    "semantic_hash": ""
+  },
+  "supabase/migrations/20260705140000_wiz11b_booking_departure_link.sql": {
+    "mtime": 1783337352.5813124,
+    "ast_hash": "de8d8ab37670f09342043c8ea0a5e551",
+    "semantic_hash": ""
+  },
+  "src/features/bookings/hooks/usePayment.ts": {
+    "mtime": 1783338500.6544037,
+    "ast_hash": "397bb2f0e9441d420d4c76b9aa895cf2",
+    "semantic_hash": ""
+  },
+  "src/features/bookings/pages/PaymentCallback.tsx": {
+    "mtime": 1783338536.2493076,
+    "ast_hash": "6b42b117f61564db6148043f3b550d48",
+    "semantic_hash": ""
+  },
+  "supabase/functions/create-payment/index.ts": {
+    "mtime": 1783340233.9784493,
+    "ast_hash": "45f17aa70f2641f5139e8ccd1f89d6ee",
+    "semantic_hash": ""
+  },
+  "supabase/functions/moyasar-webhook/index.ts": {
+    "mtime": 1783340235.4601624,
+    "ast_hash": "57d38ae51b31090e2d934e01b994c711",
+    "semantic_hash": ""
+  },
+  "supabase/migrations/20260705150000_wave1_payments.sql": {
+    "mtime": 1783338284.3268447,
+    "ast_hash": "46056135cef40514cd2699a8c8a245e5",
+    "semantic_hash": ""
+  },
+  "PAYMENTS-GOLIVE.md": {
+    "mtime": 1783338740.124989,
+    "ast_hash": "c9e632384ea8583a626e72de68fcecdc",
     "semantic_hash": ""
   }
 }
