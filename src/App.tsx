@@ -17,6 +17,7 @@ const AuthPage = lazy(() => import("@/features/auth/pages/AuthPage"));
 const AdminAuth = lazy(() => import("@/features/auth/pages/AdminAuth"));
 const Destinations = lazy(() => import("@/features/packages/pages/Destinations"));
 const NotFound = lazy(() => import("./pages/NotFound"));
+const PaymentCallback = lazy(() => import("@/features/bookings/pages/PaymentCallback"));
 const PackagesRoutes = lazy(() =>
   import("@/features/packages/routes").then((m) => ({ default: m.PackagesRoutes }))
 );
@@ -74,6 +75,7 @@ const App = () => {
                   <Route path="/auth" element={<AuthPage />} />
                   <Route path="/packages/*" element={<PackagesRoutes />} />
                   <Route path="/destinations" element={<Destinations />} />
+                  <Route path="/payment/callback" element={<PaymentCallback />} />
 
                   {/* Protected Traveler Routes */}
                   <Route path="/traveler/dashboard/*" element={<TravelerRoutes />} />

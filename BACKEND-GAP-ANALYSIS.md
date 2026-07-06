@@ -389,9 +389,11 @@ Ordered by dependency and risk. Each wave is releasable.
 | e | Migrate the ~16 existing files; update `package_media.file_path`; create the missing `agency-gallery` equivalent bucket | S |
 
 ### Wave 1 — Make the product actually transact — ~2–3 weeks
+**BUS-1 (Moyasar payments) — core built & deployed 2026-07-05.** Hosted-invoice flow: `payments` ledger table (RLS); `create-payment` edge function (JWT, creates the invoice server-side from the booking amount); `moyasar-webhook` edge function (`verify_jwt=false`, verifies Moyasar's `secret_token`, **sole authority** for `payment_status='paid'` — idempotent, service-role bypass of the booking guard). Frontend: "Pay now" on unpaid bookings → Moyasar hosted page → `/payment/callback` polling the real status. Verified: webhook is **fail-closed** (503 until secret set; 401 on JWT-less create-payment). **Go-live steps in [PAYMENTS-GOLIVE.md](PAYMENTS-GOLIVE.md)** (owner sets `MOYASAR_SECRET_KEY` / `MOYASAR_WEBHOOK_SECRET` / `APP_URL` + registers the webhook + `VITE_PLATFORM_CURRENCY=SAR`). **Not yet done:** automated refunds via Moyasar's refund API.
+
 | Order | ID | Item | Effort |
 |---|---|---|---|
-| 9 | BUS-1 | Integrate **Moyasar** (webhook = source of truth, Edge Function) | XL |
+| 9 | BUS-1 | Integrate **Moyasar** (webhook = source of truth, Edge Function) | XL — ✅ core done; refunds pending |
 | 10 | BUS-4 | Remove fake availability/discounts or model real departures | M |
 | 11 | BUS-3 | Booking-completion transition → unlocks reviews | M |
 | 12 | BUS-5 | Payout calculation engine + ledger (per-agency `commission_rate`) | L |

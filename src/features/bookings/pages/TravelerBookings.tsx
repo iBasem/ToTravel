@@ -11,9 +11,12 @@ import {
   Users,
   Download,
   MessageSquare,
-  Star
+  Star,
+  CreditCard,
+  Loader2
 } from "lucide-react";
 import { useBookings } from "@/features/bookings/hooks/useBookings";
+import { usePayment } from "@/features/bookings/hooks/usePayment";
 import { LoadingSpinner } from "@/ui/loading-spinner";
 import { EmptyState } from "@/ui/empty-state";
 import { formatCurrency, formatDate } from "@/lib/formatters";
@@ -27,6 +30,7 @@ export default function TravelerBookings() {
   const navigate = useNavigate();
 
   const { bookings, loading, error } = useBookings();
+  const { startPayment, loading: paying } = usePayment();
 
   if (loading) {
     return (
@@ -157,6 +161,17 @@ export default function TravelerBookings() {
                         </div>
 
                         <div className="flex gap-2 flex-wrap">
+                          {booking.payment_status !== 'paid' && booking.status !== 'cancelled' && (
+                            <Button
+                              size="sm"
+                              onClick={() => startPayment(booking.id)}
+                              disabled={paying}
+                              className="flex items-center gap-2 bg-primary hover:bg-primary/90"
+                            >
+                              {paying ? <Loader2 className="w-4 h-4 animate-spin" /> : <CreditCard className="w-4 h-4" />}
+                              {t('payments.payNow', 'Pay now')}
+                            </Button>
+                          )}
                           <Button size="sm" variant="outline" className="flex items-center gap-2">
                             <Download className="w-4 h-4" />
                             {t('travelerDashboard.downloadVoucher')}
