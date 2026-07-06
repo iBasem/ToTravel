@@ -1320,8 +1320,13 @@
     "semantic_hash": "598cb075410bcd95220ac90bbb60344a"
   },
   "CLAUDE.md": {
-    "mtime": 1783326270.662338,
-    "ast_hash": "8a6643a420fdad6bfb583523bc6cef16",
-    "semantic_hash": "8a6643a420fdad6bfb583523bc6cef16"
+    "mtime": 1783328801.6412818,
+    "ast_hash": "f3b9febee3db3e6ea4563f42c7e91d4f",
+    "semantic_hash": ""
+  },
+  "GRAPHIFY-CHEATSHEET.md": {
+    "mtime": 1783328767.1361425,
+    "ast_hash": "24bdfafce8e50b00247102c3daf5f35a",
+    "semantic_hash": ""
   }
 }
