@@ -15,7 +15,7 @@ export default function Feedback() {
     return Array.from({ length: 5 }, (_, index) => (
       <Star
         key={index}
-        className={`w-4 h-4 ${index < rating ? 'text-yellow-400 fill-current' : 'text-gray-300'
+        className={`w-4 h-4 ${index < rating ? 'text-yellow-400 fill-current' : 'text-muted-foreground/30'
           }`}
       />
     ));
@@ -24,11 +24,11 @@ export default function Feedback() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case "published":
-        return "bg-green-100 text-green-800";
+        return "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300";
       case "pending":
-        return "bg-yellow-100 text-yellow-800";
+        return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300";
       default:
-        return "bg-gray-100 text-gray-800";
+        return "bg-muted text-muted-foreground";
     }
   };
 
@@ -54,7 +54,7 @@ export default function Feedback() {
   if (error) {
     return (
       <div className="text-center py-8">
-        <p className="text-red-600">{t('common.error')}: {error}</p>
+        <p className="text-destructive">{t('common.error')}: {error}</p>
       </div>
     );
   }
@@ -70,11 +70,11 @@ export default function Feedback() {
         <Card>
           <CardContent className="p-6">
             <div className="text-center">
-              <div className="text-3xl font-bold text-blue-600 tabular-nums">{stats.averageRating}</div>
+              <div className="text-3xl font-bold tabular-nums">{stats.averageRating}</div>
               <div className="flex justify-center mt-1">
                 {renderStars(Math.round(stats.averageRating))}
               </div>
-              <p className="text-sm text-gray-600 mt-1">{t('agencyDashboard.averageRating')}</p>
+              <p className="text-sm text-muted-foreground mt-1">{t('agencyDashboard.averageRating')}</p>
             </div>
           </CardContent>
         </Card>
@@ -82,8 +82,8 @@ export default function Feedback() {
         <Card>
           <CardContent className="p-6">
             <div className="text-center">
-              <div className="text-3xl font-bold text-green-600 tabular-nums">{stats.totalReviews}</div>
-              <p className="text-sm text-gray-600">{t('agencyDashboard.totalReviews')}</p>
+              <div className="text-3xl font-bold tabular-nums">{stats.totalReviews}</div>
+              <p className="text-sm text-muted-foreground">{t('agencyDashboard.totalReviews')}</p>
             </div>
           </CardContent>
         </Card>
@@ -91,8 +91,8 @@ export default function Feedback() {
         <Card>
           <CardContent className="p-6">
             <div className="text-center">
-              <div className="text-3xl font-bold text-yellow-600 tabular-nums">{stats.pendingReviews}</div>
-              <p className="text-sm text-gray-600">{t('agencyDashboard.pendingReviews')}</p>
+              <div className="text-3xl font-bold tabular-nums">{stats.pendingReviews}</div>
+              <p className="text-sm text-muted-foreground">{t('agencyDashboard.pendingReviews')}</p>
             </div>
           </CardContent>
         </Card>
@@ -100,8 +100,8 @@ export default function Feedback() {
         <Card>
           <CardContent className="p-6">
             <div className="text-center">
-              <div className="text-3xl font-bold text-purple-600 tabular-nums">{stats.satisfactionRate}%</div>
-              <p className="text-sm text-gray-600">{t('agencyDashboard.satisfactionRate')}</p>
+              <div className="text-3xl font-bold tabular-nums">{stats.satisfactionRate}%</div>
+              <p className="text-sm text-muted-foreground">{t('agencyDashboard.satisfactionRate')}</p>
             </div>
           </CardContent>
         </Card>
@@ -129,22 +129,22 @@ export default function Feedback() {
                   <div className="flex flex-col sm:flex-row sm:items-start justify-between mb-3 gap-2">
                     <div>
                       <p className="font-medium">{feedback.travelerName}</p>
-                      <p className="text-sm text-gray-600">{feedback.packageTitle}</p>
+                      <p className="text-sm text-muted-foreground">{feedback.packageTitle}</p>
                     </div>
                     <div className="text-end">
-                      <Badge className={getStatusColor(feedback.status)}>
+                      <Badge variant="outline" className={getStatusColor(feedback.status)}>
                         {getStatusLabel(feedback.status)}
                       </Badge>
-                      <p className="text-xs text-gray-500 mt-1">
+                      <p className="text-xs text-muted-foreground mt-1">
                         {formatDate(feedback.date, 'PP')}
                       </p>
                     </div>
                   </div>
                   <div className="flex items-center mb-2">
                     {renderStars(feedback.rating)}
-                    <span className="text-sm text-gray-600 ms-2">({feedback.rating}/5)</span>
+                    <span className="text-sm text-muted-foreground ms-2">({feedback.rating}/5)</span>
                   </div>
-                  <p className="text-gray-700">{feedback.comment}</p>
+                  <p className="text-foreground">{feedback.comment}</p>
                 </div>
               ))}
             </div>

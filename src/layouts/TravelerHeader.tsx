@@ -36,7 +36,7 @@ export function TravelerHeader() {
   const isRTL = i18n.language === 'ar' || i18n.dir() === 'rtl';
 
   return (
-    <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
+    <header className="bg-background border-b border-border sticky top-0 z-40">
       <div className="flex items-center justify-between px-3 sm:px-4 lg:px-8 py-2 sm:py-3 lg:py-4">
         {/* Mobile menu and search */}
         <div className="flex items-center gap-2 sm:gap-3 flex-1">
@@ -54,10 +54,10 @@ export function TravelerHeader() {
 
           {/* Search bar - responsive */}
           <div className="relative flex-1 max-w-xs sm:max-w-md">
-            <Search className="absolute top-1/2 transform -translate-y-1/2 text-gray-400 w-3 h-3 sm:w-4 sm:h-4 start-2 sm:start-3" />
+            <Search className="absolute top-1/2 transform -translate-y-1/2 text-muted-foreground w-3 h-3 sm:w-4 sm:h-4 start-2 sm:start-3" />
             <Input
               placeholder={t('travelerDashboard.searchDestinationsTours')}
-              className="bg-gray-50 border-0 h-8 sm:h-9 lg:h-10 text-xs sm:text-sm ps-7 sm:ps-10"
+              className="bg-muted border-0 h-8 sm:h-9 lg:h-10 text-xs sm:text-sm ps-7 sm:ps-10"
             />
           </div>
         </div>

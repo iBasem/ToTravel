@@ -41,8 +41,6 @@ export function AppSidebar() {
     { title: t('dashboard.feedback'), url: "/travel_agency/feedback", icon: Star },
   ];
 
-  console.log('AppSidebar - Current path:', location.pathname, 'Sidebar state:', state);
-
   const isCollapsed = state === "collapsed";
 
   return (
@@ -68,25 +66,28 @@ export function AppSidebar() {
         <SidebarGroup className="px-3 py-4 flex-1">
           <SidebarGroupContent>
             <SidebarMenu className="space-y-1">
-              {menuItems.map((item) => (
+              {menuItems.map((item) => {
+                const isActive = item.url === "/travel_agency"
+                  ? location.pathname === "/travel_agency"
+                  : location.pathname.startsWith(item.url);
+                return (
                 <SidebarMenuItem key={item.url}>
                   <SidebarMenuButton asChild>
                     <NavLink
                       to={item.url}
                       end={item.url === "/travel_agency"}
-                      className={({ isActive }) => {
-                        return `flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 text-sm w-full text-start ${isActive
-                          ? `bg-primary/10 text-primary font-semibold shadow-sm border-s-4 border-primary`
-                          : "text-muted-foreground hover:bg-muted hover:text-foreground"
-                          }`;
-                      }}
+                      className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors duration-200 text-sm w-full text-start ${isActive
+                        ? "bg-primary/10 text-primary font-semibold"
+                        : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                        }`}
                     >
-                      <item.icon className="w-5 h-5 flex-shrink-0 rtl-flip" />
+                      <item.icon className="w-5 h-5 flex-shrink-0" />
                       {!isCollapsed && <span className="truncate">{item.title}</span>}
                     </NavLink>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
-              ))}
+                );
+              })}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>

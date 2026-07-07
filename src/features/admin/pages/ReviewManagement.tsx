@@ -69,7 +69,7 @@ export default function ReviewManagement() {
                 {[1, 2, 3, 4, 5].map(star => (
                     <Star
                         key={star}
-                        className={`w-3.5 h-3.5 ${star <= rating ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'}`}
+                        className={`w-3.5 h-3.5 ${star <= rating ? 'text-yellow-400 fill-yellow-400' : 'text-muted-foreground/40'}`}
                     />
                 ))}
             </div>
@@ -261,7 +261,7 @@ export default function ReviewManagement() {
                                         <TableCell>
                                             <DropdownMenu>
                                                 <DropdownMenuTrigger asChild>
-                                                    <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                                                    <Button variant="ghost" size="sm" className="h-8 w-8 p-0" aria-label={t('adminDashboard.actions', 'Actions')}>
                                                         <MoreHorizontal className="h-4 w-4" />
                                                     </Button>
                                                 </DropdownMenuTrigger>

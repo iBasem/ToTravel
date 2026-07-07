@@ -54,8 +54,8 @@ export function AdminSidebar() {
         {/* Brand Header */}
         <div className="p-4 border-b border-border">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 bg-purple-600 rounded-xl flex items-center justify-center flex-shrink-0">
-              <Shield className="w-4 h-4 text-white" />
+            <div className="w-8 h-8 bg-primary rounded-xl flex items-center justify-center flex-shrink-0">
+              <Shield className="w-4 h-4 text-primary-foreground" />
             </div>
             {!isCollapsed && (
               <span className="text-xl font-bold">{t('common.admin')}</span>
@@ -67,25 +67,28 @@ export function AdminSidebar() {
         <SidebarGroup className="px-3 py-4 flex-1">
           <SidebarGroupContent>
             <SidebarMenu className="space-y-1">
-              {menuItems.map((item) => (
+              {menuItems.map((item) => {
+                const isActive = item.url === "/admin"
+                  ? location.pathname === "/admin"
+                  : location.pathname.startsWith(item.url);
+                return (
                 <SidebarMenuItem key={item.url}>
                   <SidebarMenuButton asChild>
                     <NavLink
                       to={item.url}
                       end={item.url === "/admin"}
-                      className={({ isActive }) => {
-                        return `flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 text-sm w-full text-start ${isActive
-                          ? `bg-purple-50 text-purple-700 font-semibold shadow-sm border-s-4 border-purple-600`
-                          : "text-muted-foreground hover:bg-muted hover:text-foreground"
-                          }`;
-                      }}
+                      className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors duration-200 text-sm w-full text-start ${isActive
+                        ? "bg-primary/10 text-primary font-semibold"
+                        : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                        }`}
                     >
-                      <item.icon className="w-5 h-5 flex-shrink-0 rtl-flip" />
+                      <item.icon className="w-5 h-5 flex-shrink-0" />
                       {!isCollapsed && <span className="truncate">{item.title}</span>}
                     </NavLink>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
-              ))}
+                );
+              })}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>

@@ -52,11 +52,11 @@ export function CalendarView() {
 
     const getStatusColor = (status: string) => {
         switch (status) {
-            case 'confirmed': return "bg-green-100 text-green-800 border-green-200";
-            case 'pending': return "bg-yellow-100 text-yellow-800 border-yellow-200";
-            case 'cancelled': return "bg-red-100 text-red-800 border-red-200";
-            case 'completed': return "bg-blue-100 text-blue-800 border-blue-200";
-            default: return "bg-gray-100 text-gray-800 border-gray-200";
+            case 'confirmed': return "bg-green-100 text-green-800 border-green-200 dark:bg-green-900/30 dark:text-green-300 dark:border-green-900";
+            case 'pending': return "bg-yellow-100 text-yellow-800 border-yellow-200 dark:bg-yellow-900/30 dark:text-yellow-300 dark:border-yellow-900";
+            case 'cancelled': return "bg-red-100 text-red-800 border-red-200 dark:bg-red-900/30 dark:text-red-300 dark:border-red-900";
+            case 'completed': return "bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-900";
+            default: return "bg-muted text-muted-foreground border-border";
         }
     };
 
@@ -64,28 +64,28 @@ export function CalendarView() {
         <div className="space-y-4">
             {/* Header */}
             <div className="flex items-center justify-between">
-                <h2 className="text-2xl font-bold text-gray-900">
+                <h2 className="text-2xl font-bold">
                     {formatDate(currentDate, "MMMM yyyy")}
                 </h2>
                 <div className="flex items-center gap-2">
-                    <Button variant="outline" size="icon" onClick={prevMonth}>
+                    <Button variant="outline" size="icon" onClick={prevMonth} aria-label={t('calendar.previousMonth', 'Previous month')}>
                         <ChevronLeft className="h-4 w-4 rtl:rotate-180" />
                     </Button>
                     <Button variant="outline" onClick={goToToday}>
                         {t('calendar.today')}
                     </Button>
-                    <Button variant="outline" size="icon" onClick={nextMonth}>
+                    <Button variant="outline" size="icon" onClick={nextMonth} aria-label={t('calendar.nextMonth', 'Next month')}>
                         <ChevronRight className="h-4 w-4 rtl:rotate-180" />
                     </Button>
                 </div>
             </div>
 
             {loading ? (
-                <div className="flex items-center justify-center h-[500px] border rounded-lg bg-gray-50">
+                <div className="flex items-center justify-center h-[500px] border rounded-lg bg-muted/50">
                     <LoadingSpinner size="lg" />
                 </div>
             ) : (
-                <div className="border rounded-lg bg-white overflow-hidden shadow-sm">
+                <div className="border rounded-lg bg-card overflow-hidden shadow-sm">
                     {/* Days Header */}
                     <div className="grid grid-cols-7 border-b">
                         {[
@@ -97,7 +97,7 @@ export function CalendarView() {
                             t('calendar.fri', { defaultValue: 'Fri' }),
                             t('calendar.sat', { defaultValue: 'Sat' })
                         ].map((day) => (
-                            <div key={day} className="py-2 text-center text-sm font-semibold text-gray-600 bg-gray-50 border-r last:border-0">
+                            <div key={day} className="py-2 text-center text-sm font-semibold text-muted-foreground bg-muted/50 border-e last:border-e-0">
                                 {day}
                             </div>
                         ))}
@@ -114,20 +114,20 @@ export function CalendarView() {
                                 <div
                                     key={day.toString()}
                                     className={`
-                    min-h-[120px] p-2 border-b border-r last:border-r-0 relative
-                    ${!isCurrentMonth ? "bg-gray-50/50 text-gray-400" : "bg-white"}
-                    ${isToday ? "bg-blue-50/30" : ""}
+                    min-h-[120px] p-2 border-b border-e last:border-e-0 relative
+                    ${!isCurrentMonth ? "bg-muted/30 text-muted-foreground/60" : "bg-card"}
+                    ${isToday ? "bg-primary/5" : ""}
                   `}
                                 >
                                     <div className={`
                     text-sm font-medium mb-1 flex justify-between items-center
-                    ${isToday ? "text-blue-600" : ""}
+                    ${isToday ? "text-primary" : ""}
                   `}>
-                                        <span className={isToday ? "bg-blue-600 text-white w-6 h-6 rounded-full flex items-center justify-center" : ""}>
+                                        <span className={isToday ? "bg-primary text-primary-foreground w-6 h-6 rounded-full flex items-center justify-center" : ""}>
                                             {formatDate(day, "d")}
                                         </span>
                                         {dayBookings.length > 0 && (
-                                            <span className="text-xs text-gray-500 font-normal">
+                                            <span className="text-xs text-muted-foreground font-normal">
                                                 {t('calendar.bookingsCount', { count: dayBookings.length })}
                                             </span>
                                         )}
@@ -135,11 +135,12 @@ export function CalendarView() {
 
                                     <div className="space-y-1">
                                         {dayBookings.map((booking) => (
-                                            <div
+                                            <button
                                                 key={booking.id}
+                                                type="button"
                                                 onClick={() => setSelectedBooking(booking)}
                                                 className={`
-                          text-xs p-1.5 rounded border cursor-pointer hover:shadow-sm transition-shadow truncate
+                          w-full text-start text-xs p-1.5 rounded border hover:shadow-sm transition-shadow truncate
                           ${getStatusColor(booking.status)}
                         `}
                                             >
@@ -147,7 +148,7 @@ export function CalendarView() {
                                                     {booking.traveler.first_name} {booking.traveler.last_name}
                                                 </span>
                                                 <span className="opacity-75 truncate">{booking.package.title}</span>
-                                            </div>
+                                            </button>
                                         ))}
                                     </div>
                                 </div>
@@ -170,7 +171,7 @@ export function CalendarView() {
                                     <h4 className="font-semibold text-lg">
                                         {selectedBooking.package.title}
                                     </h4>
-                                    <p className="text-gray-500 text-sm">
+                                    <p className="text-muted-foreground text-sm">
                                         {formatDate(selectedBooking.booking_date, "EEEE, MMMM do, yyyy")}
                                     </p>
                                 </div>
@@ -181,12 +182,12 @@ export function CalendarView() {
 
                             <div className="border-t pt-4 space-y-3">
                                 <div className="flex items-center gap-3">
-                                    <div className="bg-gray-100 p-2 rounded-full">
-                                        <User className="h-5 w-5 text-gray-600" />
+                                    <div className="bg-muted p-2 rounded-full">
+                                        <User className="h-5 w-5 text-muted-foreground" />
                                     </div>
                                     <div>
                                         <p className="text-sm font-medium">{t('common.traveler')}</p>
-                                        <p className="text-gray-700">
+                                        <p className="text-muted-foreground">
                                             {selectedBooking.traveler.first_name} {selectedBooking.traveler.last_name}
                                         </p>
                                     </div>
@@ -194,11 +195,11 @@ export function CalendarView() {
 
                                 <div className="grid grid-cols-2 gap-4">
                                     <div>
-                                        <p className="text-sm font-medium text-gray-500">{t('common.participants')}</p>
+                                        <p className="text-sm font-medium text-muted-foreground">{t('common.participants')}</p>
                                         <p className="font-medium">{selectedBooking.participants}</p>
                                     </div>
                                     <div>
-                                        <p className="text-sm font-medium text-gray-500">{t('common.totalPrice')}</p>
+                                        <p className="text-sm font-medium text-muted-foreground">{t('common.totalPrice')}</p>
                                         <p className="font-medium">{formatCurrency(selectedBooking.total_price)}</p>
                                     </div>
                                 </div>

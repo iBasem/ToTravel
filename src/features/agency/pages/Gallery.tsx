@@ -1,5 +1,15 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/card";
 import { Button } from "@/ui/button";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/ui/alert-dialog";
 import { Upload, Image, Trash2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { LoadingSpinner } from "@/ui/loading-spinner";
@@ -23,6 +33,7 @@ export default function Gallery() {
   const [images, setImages] = useState<GalleryImage[]>([]);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
+  const [pendingDelete, setPendingDelete] = useState<string | null>(null);
 
   // Fetch images from Supabase Storage
   const fetchImages = async () => {
@@ -175,12 +186,13 @@ export default function Gallery() {
                     alt={image.name}
                     className="w-full h-full object-cover"
                   />
-                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors flex items-center justify-center">
+                  <div className="absolute inset-0 bg-black/0 sm:group-hover:bg-black/40 group-focus-within:bg-black/40 transition-colors flex items-center justify-center pointer-events-none">
                     <Button
                       variant="destructive"
                       size="sm"
-                      className="opacity-0 group-hover:opacity-100 transition-opacity"
-                      onClick={() => handleDelete(image.name)}
+                      className="pointer-events-auto opacity-100 sm:opacity-0 sm:group-hover:opacity-100 focus-visible:opacity-100 transition-opacity"
+                      onClick={() => setPendingDelete(image.name)}
+                      aria-label={t('agencyDashboard.deleteImage', 'Delete image')}
                     >
                       <Trash2 className="w-4 h-4" />
                     </Button>
@@ -191,6 +203,28 @@ export default function Gallery() {
           </CardContent>
         </Card>
       )}
+
+      <AlertDialog open={!!pendingDelete} onOpenChange={(open) => !open && setPendingDelete(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t('agencyDashboard.deleteImageTitle', 'Delete this image?')}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {t('agencyDashboard.deleteImageDescription', 'The image will be permanently removed from your gallery. This cannot be undone.')}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{t('common.cancel', 'Cancel')}</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                if (pendingDelete) handleDelete(pendingDelete);
+                setPendingDelete(null);
+              }}
+            >
+              {t('common.delete', 'Delete')}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

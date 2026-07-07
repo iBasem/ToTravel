@@ -22,7 +22,7 @@ export default function Dashboard() {
   if (error) {
     return (
       <div className="text-center py-8">
-        <p className="text-red-600">{t('agencyDashboard.errorLoadingDashboard')}: {error}</p>
+        <p className="text-destructive">{t('agencyDashboard.errorLoadingDashboard')}: {error}</p>
       </div>
     );
   }

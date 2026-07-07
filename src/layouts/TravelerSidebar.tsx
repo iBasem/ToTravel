@@ -69,12 +69,10 @@ export function TravelerSidebar() {
                     <NavLink
                       to={item.url}
                       end={item.url === "/traveler/dashboard"}
-                      className={({ isActive }) =>
-                        `flex items-center gap-3 px-3 py-2 rounded-lg transition-colors text-start ${isActive
-                          ? `bg-primary/10 text-primary font-medium border-s-2 border-primary`
-                          : "text-muted-foreground hover:bg-muted hover:text-foreground"
-                        }`
-                      }
+                      className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors text-start ${isActive(item.url)
+                        ? "bg-primary/10 text-primary font-medium"
+                        : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                        }`}
                     >
                       <item.icon className="w-5 h-5 flex-shrink-0" />
                       {!isCollapsed && <span>{item.title}</span>}

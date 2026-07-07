@@ -58,7 +58,7 @@ export default function Messages() {
   if (error) {
     return (
       <div className="text-center py-8">
-        <p className="text-red-600">{t('common.error')}: {error}</p>
+        <p className="text-destructive">{t('common.error')}: {error}</p>
       </div>
     );
   }
@@ -85,24 +85,30 @@ export default function Messages() {
             <CardContent>
               <div className="space-y-3">
                 {conversations.map((conversation) => (
-                  <div
+                  <button
                     key={conversation.id}
+                    type="button"
                     onClick={() => fetchMessages(conversation.id)}
-                    className={`p-3 rounded-lg cursor-pointer transition-colors ${selectedConversation === conversation.id
-                      ? 'bg-blue-50 border-blue-500 border-s-4'
-                      : conversation.unread
-                        ? 'bg-yellow-50 border-s-4 border-yellow-500'
-                        : 'hover:bg-gray-50'
+                    className={`w-full p-3 rounded-lg text-start transition-colors ${selectedConversation === conversation.id
+                      ? 'bg-primary/10'
+                      : 'hover:bg-muted'
                       }`}
                   >
-                    <div className="flex justify-between items-start mb-1">
-                      <p className="font-medium">{conversation.travelerName}</p>
-                      <span className="text-xs text-gray-500">{formatTime(conversation.lastMessageTime)}</span>
+                    <div className="flex justify-between items-start gap-2 mb-1">
+                      <p className={`truncate ${conversation.unread ? 'font-semibold' : 'font-medium'}`}>
+                        {conversation.travelerName}
+                      </p>
+                      <span className="flex items-center gap-1.5 flex-shrink-0 text-xs text-muted-foreground">
+                        {formatTime(conversation.lastMessageTime)}
+                        {conversation.unread && (
+                          <span className="w-2 h-2 rounded-full bg-primary" aria-label={t('agencyDashboard.unread', 'Unread')} />
+                        )}
+                      </span>
                     </div>
-                    <p className="text-sm text-gray-600 truncate">
+                    <p className={`text-sm truncate ${conversation.unread ? 'text-foreground' : 'text-muted-foreground'}`}>
                       {conversation.lastMessage}
                     </p>
-                  </div>
+                  </button>
                 ))}
               </div>
             </CardContent>
@@ -118,9 +124,9 @@ export default function Messages() {
             </CardHeader>
             <CardContent>
               {!selectedConversation ? (
-                <div className="flex items-center justify-center h-64 text-gray-500">
+                <div className="flex items-center justify-center h-64 text-muted-foreground">
                   <div className="text-center">
-                    <MessageSquare className="w-16 h-16 mx-auto mb-4 text-gray-300" />
+                    <MessageSquare className="w-16 h-16 mx-auto mb-4 text-muted-foreground/40" />
                     <p>{t('agencyDashboard.selectConversation')}</p>
                   </div>
                 </div>
@@ -133,8 +139,8 @@ export default function Messages() {
                     >
                       <div
                         className={`max-w-[70%] px-4 py-2 rounded-lg text-sm ${msg.sender_id === selectedConversation
-                          ? 'bg-gray-100 text-gray-800'
-                          : 'bg-blue-600 text-white'
+                          ? 'bg-muted text-foreground'
+                          : 'bg-primary text-primary-foreground'
                           }`}
                       >
                         <p>{msg.content}</p>
@@ -160,8 +166,9 @@ export default function Messages() {
                 <Button
                   onClick={handleSend}
                   disabled={!selectedConversation || !messageInput.trim()}
+                  aria-label={t('agencyDashboard.sendMessage', 'Send message')}
                 >
-                  <Send className="w-4 h-4" />
+                  <Send className="w-4 h-4 rtl-flip" />
                 </Button>
               </div>
             </CardContent>

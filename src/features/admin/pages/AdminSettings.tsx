@@ -243,8 +243,8 @@ export default function AdminSettings() {
               adminUsers.map(admin => (
                 <div key={admin.id} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
-                      <Shield className="w-4 h-4 text-purple-600" />
+                    <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
+                      <Shield className="w-4 h-4 text-primary" />
                     </div>
                     <div className="text-start">
                       <div className="font-medium text-sm">
