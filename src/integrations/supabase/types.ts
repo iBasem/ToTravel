@@ -190,6 +190,123 @@ export type Database = {
         }
         Relationships: []
       }
+      deals: {
+        Row: {
+          agency_id: string
+          created_at: string
+          discount_percentage: number
+          end_date: string
+          id: string
+          package_id: string | null
+          start_date: string
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          agency_id: string
+          created_at?: string
+          discount_percentage: number
+          end_date: string
+          id?: string
+          package_id?: string | null
+          start_date: string
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          agency_id?: string
+          created_at?: string
+          discount_percentage?: number
+          end_date?: string
+          id?: string
+          package_id?: string | null
+          start_date?: string
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "deals_agency_id_fkey"
+            columns: ["agency_id"]
+            isOneToOne: false
+            referencedRelation: "travel_agencies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "deals_package_id_fkey"
+            columns: ["package_id"]
+            isOneToOne: false
+            referencedRelation: "packages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      destinations: {
+        Row: {
+          color_class: string | null
+          created_at: string
+          description: string | null
+          description_ar: string | null
+          display_order: number
+          featured: boolean
+          highlights: string[]
+          highlights_ar: string[]
+          id: string
+          image_url: string | null
+          kind: string
+          name: string
+          name_ar: string | null
+          region_keys: string[]
+          region_label: string | null
+          region_label_ar: string | null
+          slug: string
+          updated_at: string
+        }
+        Insert: {
+          color_class?: string | null
+          created_at?: string
+          description?: string | null
+          description_ar?: string | null
+          display_order?: number
+          featured?: boolean
+          highlights?: string[]
+          highlights_ar?: string[]
+          id?: string
+          image_url?: string | null
+          kind?: string
+          name: string
+          name_ar?: string | null
+          region_keys?: string[]
+          region_label?: string | null
+          region_label_ar?: string | null
+          slug: string
+          updated_at?: string
+        }
+        Update: {
+          color_class?: string | null
+          created_at?: string
+          description?: string | null
+          description_ar?: string | null
+          display_order?: number
+          featured?: boolean
+          highlights?: string[]
+          highlights_ar?: string[]
+          id?: string
+          image_url?: string | null
+          kind?: string
+          name?: string
+          name_ar?: string | null
+          region_keys?: string[]
+          region_label?: string | null
+          region_label_ar?: string | null
+          slug?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       itineraries: {
         Row: {
           accommodation: string | null
@@ -248,6 +365,33 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      messages: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          read_at: string | null
+          recipient_id: string
+          sender_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          read_at?: string | null
+          recipient_id: string
+          sender_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          read_at?: string | null
+          recipient_id?: string
+          sender_id?: string
+        }
+        Relationships: []
       }
       package_bookings: {
         Row: {
@@ -521,6 +665,36 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      platform_settings: {
+        Row: {
+          auto_approve_agencies: boolean
+          commission_rate: number
+          email_notifications: boolean
+          id: number
+          maintenance_mode: boolean
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          auto_approve_agencies?: boolean
+          commission_rate?: number
+          email_notifications?: boolean
+          id?: number
+          maintenance_mode?: boolean
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          auto_approve_agencies?: boolean
+          commission_rate?: number
+          email_notifications?: boolean
+          id?: number
+          maintenance_mode?: boolean
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: []
       }
       platform_stats: {
         Row: {
@@ -833,6 +1007,23 @@ export type Database = {
       }
     }
     Views: {
+      destination_stats: {
+        Row: {
+          average_price: number | null
+          average_rating: number | null
+          destination_id: string | null
+          slug: string | null
+          tour_count: number | null
+        }
+        Relationships: []
+      }
+      package_region_stats: {
+        Row: {
+          package_count: number | null
+          region_key: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -851,6 +1042,14 @@ export type Database = {
       }
     }
     Functions: {
+      agency_public_stats: {
+        Args: { agency_uuid: string }
+        Returns: {
+          tours_count: number
+          travelers_count: number
+          years_experience: number
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
