@@ -4,7 +4,6 @@ import { useTranslation } from "react-i18next";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/features/auth/context/AuthContext";
 import { startOfMonth, endOfMonth, format } from "date-fns";
-import { toast } from "sonner";
 
 export interface CalendarBooking {
     id: string;
@@ -25,31 +24,21 @@ export function useAgencyCalendar() {
     const { user } = useAuth();
     const { t } = useTranslation();
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
     const [bookings, setBookings] = useState<CalendarBooking[]>([]);
 
     const fetchMonthBookings = useCallback(async (date: Date) => {
         if (!user) return;
 
         setLoading(true);
+        setError(null);
         const start = format(startOfMonth(date), 'yyyy-MM-dd');
         const end = format(endOfMonth(date), 'yyyy-MM-dd');
 
         try {
-            // We need to fetch bookings for packages owned by this agency
-            // 1. Get agency ID for current user
-            const { data: agencyData, error: agencyError } = await supabase
-                .from('travel_agencies')
-                .select('id')
-                .eq('user_id', user.id)
-                .single();
-
-            if (agencyError || !agencyData) {
-                console.error('Error fetching generic agency data', agencyError);
-                return;
-            }
-
-            // 2. Fetch bookings for packages owned by this agency
-            const { data, error } = await supabase
+            // travel_agencies.id IS the auth user id, so packages.agency_id
+            // can be matched against user.id directly (no agency lookup needed).
+            const { data, error: fetchError } = await supabase
                 .from('package_bookings')
                 .select(`
           id,
@@ -66,15 +55,11 @@ export function useAgencyCalendar() {
             last_name
           )
         `)
-                .eq('package.agency_id', agencyData.id)
+                .eq('package.agency_id', user.id)
                 .gte('booking_date', start)
                 .lte('booking_date', end);
 
-            if (error) throw error;
-
-            // Transform to match interface (flattening nested package/traveler if needed, but the select shape matches mostly)
-            // We rely on Supabase returning the shape requested.
-            // Note: !inner on package join ensures we only get bookings for *this* agency's packages.
+            if (fetchError) throw fetchError;
 
             const formattedData = (data || []).map((b: any) => ({
                 id: b.id,
@@ -92,9 +77,13 @@ export function useAgencyCalendar() {
             }));
 
             setBookings(formattedData);
-        } catch (error) {
-            console.error('Error fetching calendar bookings:', error);
-            toast.error(t('toasts.calendarLoadFailed', 'Failed to load calendar bookings'));
+        } catch (err) {
+            const message = err instanceof Error
+                ? err.message
+                : (err as { message?: string })?.message || 'Unknown error';
+            console.error('Error fetching calendar bookings:', message);
+            setError(message);
+            setBookings([]);
         } finally {
             setLoading(false);
         }
@@ -102,6 +91,7 @@ export function useAgencyCalendar() {
 
     return {
         loading,
+        error,
         bookings,
         fetchMonthBookings
     };

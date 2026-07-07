@@ -25,7 +25,7 @@ import { formatCurrency, formatDate } from "@/lib/formatters";
 export function CalendarView() {
     const { t } = useTranslation();
     const [currentDate, setCurrentDate] = useState(new Date());
-    const { bookings, loading, fetchMonthBookings } = useAgencyCalendar();
+    const { bookings, loading, error, fetchMonthBookings } = useAgencyCalendar();
     const [selectedBooking, setSelectedBooking] = useState<CalendarBooking | null>(null);
 
     useEffect(() => {
@@ -83,6 +83,14 @@ export function CalendarView() {
             {loading ? (
                 <div className="flex items-center justify-center h-[500px] border rounded-lg bg-muted/50">
                     <LoadingSpinner size="lg" />
+                </div>
+            ) : error ? (
+                <div className="flex flex-col items-center justify-center gap-3 h-[500px] border rounded-lg bg-gray-50">
+                    <p className="font-medium text-gray-700">{t('calendar.loadError')}</p>
+                    <p className="text-sm text-gray-500">{error}</p>
+                    <Button variant="outline" onClick={() => fetchMonthBookings(currentDate)}>
+                        {t('common.retry')}
+                    </Button>
                 </div>
             ) : (
                 <div className="border rounded-lg bg-card overflow-hidden shadow-sm">
