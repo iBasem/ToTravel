@@ -52,12 +52,30 @@ export function useAgencyMessages() {
                 if (!convMap.has(otherId)) {
                     convMap.set(otherId, {
                         id: otherId,
-                        travelerName: otherId.slice(0, 8), // Will be resolved later if profiles are available
+                        travelerName: otherId.slice(0, 8), // fallback until the profile lookup below resolves
                         lastMessage: msg.content,
                         lastMessageTime: msg.created_at,
                         unread: msg.sender_id !== user.id && !msg.read_at,
                     });
                 }
+            }
+
+            // Resolve display names from traveler/agency profiles (RLS permitting).
+            const otherIds = Array.from(convMap.keys());
+            if (otherIds.length > 0) {
+                const [{ data: travelerRows }, { data: agencyRows }] = await Promise.all([
+                    supabase.from('travelers').select('id, first_name, last_name').in('id', otherIds),
+                    supabase.from('travel_agencies').select('id, company_name').in('id', otherIds),
+                ]);
+                travelerRows?.forEach(tr => {
+                    const conv = convMap.get(tr.id);
+                    const name = `${tr.first_name ?? ''} ${tr.last_name ?? ''}`.trim();
+                    if (conv && name) conv.travelerName = name;
+                });
+                agencyRows?.forEach(ag => {
+                    const conv = convMap.get(ag.id);
+                    if (conv && ag.company_name) conv.travelerName = ag.company_name;
+                });
             }
 
             setConversations(Array.from(convMap.values()));

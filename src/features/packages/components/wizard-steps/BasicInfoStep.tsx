@@ -51,7 +51,6 @@ export function BasicInfoStep({ data, onUpdate }: BasicInfoStepProps) {
       packageType: "group",
       highlights: [] as string[],
       newHighlight: "",
-      rating: 4.5,
       category: "",
       difficulty_level: "moderate",
       duration_days: 1,

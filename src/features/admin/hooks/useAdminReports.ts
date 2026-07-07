@@ -167,34 +167,26 @@ export function useAdminReports() {
         setMonthlyData(monthly);
       }
 
-      // Calculate destination distribution
-      const destinationCounts = new Map<string, number>();
-      packagesData?.forEach(p => {
-        // Extract region from destination
-        const destination = p.destination?.toLowerCase() || 'other';
-        let region = 'Others';
-        
-        if (destination.includes('japan') || destination.includes('china') || 
-            destination.includes('korea') || destination.includes('thailand') ||
-            destination.includes('vietnam') || destination.includes('indonesia') ||
-            destination.includes('asia') || destination.includes('bali') ||
-            destination.includes('tokyo') || destination.includes('bangkok')) {
-          region = 'Asia';
-        } else if (destination.includes('france') || destination.includes('italy') ||
-                   destination.includes('spain') || destination.includes('germany') ||
-                   destination.includes('uk') || destination.includes('europe') ||
-                   destination.includes('paris') || destination.includes('rome')) {
-          region = 'Europe';
-        } else if (destination.includes('usa') || destination.includes('canada') ||
-                   destination.includes('mexico') || destination.includes('brazil') ||
-                   destination.includes('america') || destination.includes('caribbean')) {
-          region = 'Americas';
-        }
-        
-        destinationCounts.set(region, (destinationCounts.get(region) || 0) + 1);
+      // Destination distribution from the package_region_stats view, which
+      // classifies packages by the destinations catalog instead of a
+      // hardcoded keyword list.
+      const { data: regionStats, error: regionError } = await supabase
+        .from('package_region_stats')
+        .select('*');
+
+      if (regionError) throw regionError;
+
+      const regionCounts = new Map<string, number>();
+      (regionStats || []).forEach(r => {
+        const bucket =
+          r.region_key === 'asia' ? 'Asia' :
+          r.region_key === 'europe' ? 'Europe' :
+          r.region_key === 'americas' ? 'Americas' :
+          'Others';
+        regionCounts.set(bucket, (regionCounts.get(bucket) || 0) + (r.package_count || 0));
       });
 
-      const totalDestinations = packagesData?.length || 1;
+      const totalDestinations = Array.from(regionCounts.values()).reduce((a, b) => a + b, 0) || 1;
       const colors = ['#3B82F6', '#10B981', '#F59E0B', '#EF4444'];
       const destinations: DestinationData[] = [
         { name: 'Asia', value: 0, color: colors[0] },
@@ -203,17 +195,8 @@ export function useAdminReports() {
         { name: 'Others', value: 0, color: colors[3] },
       ].map(d => ({
         ...d,
-        value: Math.round(((destinationCounts.get(d.name) || 0) / totalDestinations) * 100) || 
-               (d.name === 'Others' ? 100 : 0),
+        value: Math.round(((regionCounts.get(d.name) || 0) / totalDestinations) * 100),
       }));
-
-      // Ensure at least one has value if no packages
-      if (destinations.every(d => d.value === 0)) {
-        destinations[0].value = 25;
-        destinations[1].value = 25;
-        destinations[2].value = 25;
-        destinations[3].value = 25;
-      }
 
       setDestinationData(destinations);
     } catch (err) {

@@ -21,6 +21,7 @@ interface ActivityLog {
   action_description: string;
   entity_type: string | null;
   created_at: string;
+  avatar_url?: string | null;
 }
 
 interface PendingAction {
@@ -121,7 +122,24 @@ export function useAdminDashboard() {
       });
 
       if (activityResult.data) {
-        setActivityLogs(activityResult.data as ActivityLog[]);
+        // Attach the acting user's avatar where a traveler profile exists
+        const actorIds = Array.from(
+          new Set(activityResult.data.map((a: { user_id?: string | null }) => a.user_id).filter(Boolean))
+        ) as string[];
+        const avatarMap = new Map<string, string | null>();
+        if (actorIds.length > 0) {
+          const { data: actorRows } = await supabase
+            .from('travelers')
+            .select('id, avatar_url')
+            .in('id', actorIds);
+          actorRows?.forEach(r => avatarMap.set(r.id, r.avatar_url));
+        }
+        setActivityLogs(
+          activityResult.data.map((a: ActivityLog & { user_id?: string | null }) => ({
+            ...a,
+            avatar_url: a.user_id ? avatarMap.get(a.user_id) ?? null : null,
+          }))
+        );
       }
 
       if (pendingResult.data) {

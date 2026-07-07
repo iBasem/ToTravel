@@ -4,26 +4,13 @@ import { useTranslation } from 'react-i18next';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/features/auth/context/AuthContext';
 import { toast } from 'sonner';
+import type { PackageWithMedia } from '@/features/packages/hooks/usePublishedPackages';
 
 export type WishlistItem = {
     id: string;
     package_id: string;
     created_at: string;
-    package: {
-        id: string;
-        title: string;
-        title_ar?: string | null;
-        base_price: number;
-        destination: string;
-        destination_ar?: string | null;
-        duration_days: number;
-        max_participants: number | null;
-        difficulty_level: string | null;
-        package_media: {
-            file_path: string;
-            is_primary: boolean;
-        }[];
-    };
+    package: PackageWithMedia;
 };
 
 export function useWishlist() {
@@ -45,19 +32,8 @@ export function useWishlist() {
           package_id,
           created_at,
           package:packages (
-            id,
-            title,
-            title_ar,
-            base_price,
-            destination,
-            destination_ar,
-            duration_days,
-            max_participants,
-            difficulty_level,
-            package_media (
-              file_path,
-              is_primary
-            )
+            *,
+            package_media (*)
           )
         `)
                 .eq('traveler_id', user.id)

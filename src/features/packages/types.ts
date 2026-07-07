@@ -86,6 +86,7 @@ export interface WhatsIncludedProps {
 // Props for the OperatorInfo component
 export interface OperatorInfoProps {
     agency: {
+        id?: string;
         company_name: string;
         contact_person_first_name: string;
         contact_person_last_name: string;

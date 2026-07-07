@@ -31,6 +31,12 @@ interface PlatformSettings {
   maintenance_mode: boolean;
 }
 
+interface EmailTemplate {
+  id: string;
+  title: string;
+  content: string | null;
+}
+
 export default function AdminSettings() {
   const { t, i18n } = useTranslation();
   const { profile } = useAuth();
@@ -39,6 +45,7 @@ export default function AdminSettings() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [adminUsers, setAdminUsers] = useState<AdminUser[]>([]);
+  const [emailTemplates, setEmailTemplates] = useState<EmailTemplate[]>([]);
   const [settings, setSettings] = useState<PlatformSettings>({
     commission_rate: 12,
     currency: getPlatformCurrency(),
@@ -76,18 +83,32 @@ export default function AdminSettings() {
 
       setAdminUsers(admins);
 
-      // Load average commission from agencies as default
-      const { data: agenciesData } = await supabase
-        .from('travel_agencies')
-        .select('commission_rate');
+      // Load the persisted platform settings row
+      const { data: settingsRow, error: settingsError } = await supabase
+        .from('platform_settings')
+        .select('*')
+        .maybeSingle();
 
-      if (agenciesData && agenciesData.length > 0) {
-        const avgCommission = agenciesData.reduce((sum, a) => sum + Number(a.commission_rate || 0.12), 0) / agenciesData.length;
+      if (settingsError) throw settingsError;
+      if (settingsRow) {
         setSettings(prev => ({
           ...prev,
-          commission_rate: Math.round(avgCommission * 100),
+          commission_rate: Math.round(Number(settingsRow.commission_rate) * 100),
+          auto_approve: settingsRow.auto_approve_agencies,
+          email_notifications: settingsRow.email_notifications,
+          maintenance_mode: settingsRow.maintenance_mode,
         }));
       }
+
+      // Load email templates from the content catalog
+      const { data: templatesData, error: templatesError } = await supabase
+        .from('content_pages')
+        .select('id, title, content')
+        .eq('content_type', 'email_template')
+        .order('created_at', { ascending: true });
+
+      if (templatesError) throw templatesError;
+      setEmailTemplates(templatesData || []);
     } catch (err) {
       console.error('Error fetching admin data:', err);
       toast.error(t('adminSettings.loadError', 'Failed to load settings'));
@@ -100,8 +121,24 @@ export default function AdminSettings() {
     try {
       setSaving(true);
 
-      // Update all agency commission rates
       const commissionDecimal = settings.commission_rate / 100;
+
+      // Persist the platform settings row
+      const { error: settingsError } = await supabase
+        .from('platform_settings')
+        .update({
+          commission_rate: commissionDecimal,
+          auto_approve_agencies: settings.auto_approve,
+          email_notifications: settings.email_notifications,
+          maintenance_mode: settings.maintenance_mode,
+          updated_at: new Date().toISOString(),
+          updated_by: profile?.id ?? null,
+        })
+        .eq('id', 1);
+
+      if (settingsError) throw settingsError;
+
+      // Update all agency commission rates to match the platform rate
       const { error: updateError } = await supabase
         .from('travel_agencies')
         .update({ commission_rate: commissionDecimal })
@@ -268,29 +305,17 @@ export default function AdminSettings() {
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="p-4 border rounded-lg text-start">
-              <h3 className="font-medium mb-2">{t('adminSettings.bookingConfirmation', 'Booking Confirmation')}</h3>
-              <p className="text-sm text-muted-foreground mb-3">{t('adminSettings.bookingConfirmationDesc', 'Sent when a booking is confirmed')}</p>
-              <Button variant="outline" size="sm">{t('adminSettings.editTemplate', 'Edit Template')}</Button>
-            </div>
-
-            <div className="p-4 border rounded-lg text-start">
-              <h3 className="font-medium mb-2">{t('adminSettings.agencyApproval', 'Agency Approval')}</h3>
-              <p className="text-sm text-muted-foreground mb-3">{t('adminSettings.agencyApprovalDesc', 'Sent when an agency is approved')}</p>
-              <Button variant="outline" size="sm">{t('adminSettings.editTemplate', 'Edit Template')}</Button>
-            </div>
-
-            <div className="p-4 border rounded-lg text-start">
-              <h3 className="font-medium mb-2">{t('adminSettings.payoutNotification', 'Payout Notification')}</h3>
-              <p className="text-sm text-muted-foreground mb-3">{t('adminSettings.payoutNotificationDesc', 'Sent when a payout is processed')}</p>
-              <Button variant="outline" size="sm">{t('adminSettings.editTemplate', 'Edit Template')}</Button>
-            </div>
-
-            <div className="p-4 border rounded-lg text-start">
-              <h3 className="font-medium mb-2">{t('adminSettings.welcomeEmail', 'Welcome Email')}</h3>
-              <p className="text-sm text-muted-foreground mb-3">{t('adminSettings.welcomeEmailDesc', 'Sent to new user registrations')}</p>
-              <Button variant="outline" size="sm">{t('adminSettings.editTemplate', 'Edit Template')}</Button>
-            </div>
+            {emailTemplates.length === 0 ? (
+              <p className="text-muted-foreground text-sm py-4 text-start">{t('adminSettings.noTemplates', 'No email templates found')}</p>
+            ) : (
+              emailTemplates.map(template => (
+                <div key={template.id} className="p-4 border rounded-lg text-start">
+                  <h3 className="font-medium mb-2">{template.title}</h3>
+                  <p className="text-sm text-muted-foreground mb-3">{template.content}</p>
+                  <Button variant="outline" size="sm">{t('adminSettings.editTemplate', 'Edit Template')}</Button>
+                </div>
+              ))
+            )}
           </div>
         </CardContent>
       </Card>

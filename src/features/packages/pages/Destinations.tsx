@@ -9,74 +9,15 @@ import { FooterSection } from "@/features/home/components/FooterSection";
 import { useTranslation } from "react-i18next";
 import { Seo } from "@/lib/seo";
 import { formatCurrency } from "@/lib/formatters";
+import { localizedText, pickLocalized } from "@/lib/localized";
+import { useDestinations } from "@/features/packages/hooks/useDestinations";
 import {
   Search,
   MapPin,
   Star,
-  Calendar,
-  Users,
+  Loader2,
   Plane
 } from "lucide-react";
-
-// Language-independent data. Names/regions/descriptions/highlights live in
-// the locale files under destinations.items.<id>; slug feeds the packages
-// search query and must stay English.
-const DESTINATION_DATA = [
-  {
-    id: "vietnam",
-    slug: "vietnam",
-    regionKeys: ["asia"],
-    image: "https://images.unsplash.com/photo-1528127269322-539801943592?w=600&h=400&fit=crop",
-    tourCount: 45,
-    averagePrice: 899,
-    rating: 4.8,
-  },
-  {
-    id: "turkey",
-    slug: "turkey",
-    regionKeys: ["europe", "asia"],
-    image: "https://images.unsplash.com/photo-1559592413-7cec4d0cae2b?w=600&h=400&fit=crop",
-    tourCount: 38,
-    averagePrice: 1299,
-    rating: 4.9,
-  },
-  {
-    id: "morocco",
-    slug: "morocco",
-    regionKeys: ["africa"],
-    image: "https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?w=600&h=400&fit=crop",
-    tourCount: 52,
-    averagePrice: 756,
-    rating: 4.7,
-  },
-  {
-    id: "japan",
-    slug: "japan",
-    regionKeys: ["asia"],
-    image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=600&h=400&fit=crop",
-    tourCount: 29,
-    averagePrice: 2199,
-    rating: 4.9,
-  },
-  {
-    id: "peru",
-    slug: "peru",
-    regionKeys: ["americas"],
-    image: "https://images.unsplash.com/photo-1482938289607-e9573fc25ebb?w=600&h=400&fit=crop",
-    tourCount: 34,
-    averagePrice: 1499,
-    rating: 4.8,
-  },
-  {
-    id: "italy",
-    slug: "italy",
-    regionKeys: ["europe"],
-    image: "https://images.unsplash.com/photo-1469041797191-50ace28483c3?w=600&h=400&fit=crop",
-    tourCount: 67,
-    averagePrice: 1189,
-    rating: 4.6,
-  },
-];
 
 const REGION_KEYS = ["all", "europe", "asia", "africa", "americas", "oceania"] as const;
 
@@ -86,12 +27,20 @@ export default function Destinations() {
   // Stable key, not a translated label — labels change with the language.
   const [selectedRegion, setSelectedRegion] = useState<(typeof REGION_KEYS)[number]>("all");
 
-  const destinations = DESTINATION_DATA.map((d) => ({
-    ...d,
-    name: t(`destinations.items.${d.id}.name`),
-    region: t(`destinations.items.${d.id}.region`),
-    description: t(`destinations.items.${d.id}.description`),
-    highlights: [0, 1, 2, 3].map((i) => t(`destinations.items.${d.id}.highlights.${i}`)),
+  const { data: destinationRows = [], isLoading, isError } = useDestinations("country");
+
+  const destinations = destinationRows.map((d) => ({
+    id: d.slug,
+    slug: d.slug,
+    regionKeys: d.region_keys,
+    image: d.image_url ?? "",
+    tourCount: d.tour_count,
+    averagePrice: d.average_price != null ? Number(d.average_price) : 0,
+    rating: d.average_rating != null ? Number(d.average_rating) : null,
+    name: localizedText(d, "name"),
+    region: localizedText(d, "region_label"),
+    description: localizedText(d, "description"),
+    highlights: pickLocalized<string[]>(d, "highlights") ?? [],
   }));
 
   const filteredDestinations = destinations.filter(dest => {
@@ -104,6 +53,11 @@ export default function Destinations() {
       selectedRegion === "all" || dest.regionKeys.includes(selectedRegion);
     return matchesSearch && matchesRegion;
   });
+
+  const ratedDestinations = filteredDestinations.filter(d => d.rating != null);
+  const averageRating = ratedDestinations.length > 0
+    ? (ratedDestinations.reduce((sum, d) => sum + (d.rating ?? 0), 0) / ratedDestinations.length).toFixed(1)
+    : "—";
 
   return (
     <div className="min-h-screen bg-background">
@@ -166,15 +120,23 @@ export default function Destinations() {
               <div className="text-muted-foreground">{t('destinations.toursAvailable')}</div>
             </div>
             <div>
-              <div className="text-3xl font-bold text-foreground">4.8</div>
+              <div className="text-3xl font-bold text-foreground">{averageRating}</div>
               <div className="text-muted-foreground">{t('destinations.averageRating')}</div>
             </div>
             <div>
-              <div className="text-3xl font-bold text-foreground">50+</div>
+              <div className="text-3xl font-bold text-foreground">{destinations.length}</div>
               <div className="text-muted-foreground">{t('destinations.countries')}</div>
             </div>
           </div>
         </div>
+
+        {/* Loading State */}
+        {isLoading && (
+          <div className="flex items-center justify-center py-12">
+            <Loader2 className="w-8 h-8 animate-spin text-primary" />
+            <span className="ms-3 text-muted-foreground">{t('common.loading', 'Loading...')}</span>
+          </div>
+        )}
 
         {/* Destinations Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -191,12 +153,14 @@ export default function Destinations() {
                     {t('destinations.tourCount', { count: destination.tourCount })}
                   </Badge>
                 </div>
-                <div className="absolute top-4 end-4">
-                  <div className="bg-background/90 rounded-full px-2 py-1 flex items-center gap-1">
-                    <Star className="w-4 h-4 text-yellow-500 fill-current" />
-                    <span className="text-sm font-medium">{destination.rating}</span>
+                {destination.rating != null && (
+                  <div className="absolute top-4 end-4">
+                    <div className="bg-background/90 rounded-full px-2 py-1 flex items-center gap-1">
+                      <Star className="w-4 h-4 text-yellow-500 fill-current" />
+                      <span className="text-sm font-medium">{destination.rating.toFixed(1)}</span>
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
 
               <CardContent className="p-6">
@@ -249,7 +213,7 @@ export default function Destinations() {
         </div>
 
         {/* Empty State */}
-        {filteredDestinations.length === 0 && (
+        {!isLoading && !isError && filteredDestinations.length === 0 && (
           <div className="text-center py-12">
             <div className="w-24 h-24 mx-auto mb-4 bg-muted rounded-full flex items-center justify-center">
               <Search className="w-12 h-12 text-muted-foreground" />

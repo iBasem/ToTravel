@@ -51,6 +51,41 @@ export default function TravelerDashboard() {
     enabled: !!user?.id,
   });
 
+  // Wishlist and review counts via SQL aggregates (head-only count queries)
+  const { data: wishlistCount = 0 } = useQuery({
+    queryKey: ['traveler-wishlist-count', user?.id],
+    queryFn: async () => {
+      if (!user?.id) return 0;
+      const { count, error } = await supabase
+        .from('wishlist')
+        .select('*', { count: 'exact', head: true })
+        .eq('traveler_id', user.id);
+      if (error) {
+        console.error('Error counting wishlist:', error);
+        return 0;
+      }
+      return count ?? 0;
+    },
+    enabled: !!user?.id,
+  });
+
+  const { data: reviewsCount = 0 } = useQuery({
+    queryKey: ['traveler-reviews-count', user?.id],
+    queryFn: async () => {
+      if (!user?.id) return 0;
+      const { count, error } = await supabase
+        .from('reviews')
+        .select('*', { count: 'exact', head: true })
+        .eq('traveler_id', user.id);
+      if (error) {
+        console.error('Error counting reviews:', error);
+        return 0;
+      }
+      return count ?? 0;
+    },
+    enabled: !!user?.id,
+  });
+
   // Get stats
   const upcomingBookingsCount = bookings.filter(b =>
     b.status === 'confirmed' || b.status === 'pending'
@@ -109,7 +144,7 @@ export default function TravelerDashboard() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">{t('travelerDashboard.wishlistItems')}</p>
-                <p className="text-2xl font-bold">0</p>
+                <p className="text-2xl font-bold">{wishlistCount}</p>
               </div>
               <Heart className="w-8 h-8 text-red-500" />
             </div>
@@ -120,7 +155,7 @@ export default function TravelerDashboard() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">{t('travelerDashboard.reviewsGiven')}</p>
-                <p className="text-2xl font-bold">0</p>
+                <p className="text-2xl font-bold">{reviewsCount}</p>
               </div>
               <Star className="w-8 h-8 text-yellow-500" />
             </div>

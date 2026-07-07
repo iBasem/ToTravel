@@ -280,7 +280,7 @@ export default function AdminDashboard() {
               {activityLogs.map((activity) => (
                 <div key={activity.id} className="flex items-start gap-3">
                   <Avatar className="w-8 h-8">
-                    <AvatarImage src="/placeholder.svg" />
+                    <AvatarImage src={activity.avatar_url ?? "/placeholder.svg"} />
                     <AvatarFallback>{activity.user_name[0]}</AvatarFallback>
                   </Avatar>
                   <div className="flex-1 text-start">

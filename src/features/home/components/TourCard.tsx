@@ -54,13 +54,15 @@ export function TourCard({ package: pkg }: TourCardProps) {
             </div>
             <div className="flex items-center justify-between mb-2 text-xs sm:text-sm">
               <span className="text-muted-foreground">{pkg.duration_days} {t('common.days')}</span>
-              <div className="flex items-center gap-1">
-                <Star className="w-3 h-3 sm:w-4 sm:h-4 text-yellow-500 fill-current" />
-                <span className="font-medium">4.8</span>
-                <span className="text-muted-foreground hidden sm:inline">
-                  ({t('common.reviewsCount', { count: 24, defaultValue: '24' })})
-                </span>
-              </div>
+              {(pkg.total_reviews ?? 0) > 0 && (
+                <div className="flex items-center gap-1">
+                  <Star className="w-3 h-3 sm:w-4 sm:h-4 text-yellow-500 fill-current" />
+                  <span className="font-medium">{Number(pkg.average_rating ?? 0).toFixed(1)}</span>
+                  <span className="text-muted-foreground hidden sm:inline">
+                    ({t('common.reviewsCount', { count: pkg.total_reviews ?? 0, defaultValue: String(pkg.total_reviews ?? 0) })})
+                  </span>
+                </div>
+              )}
             </div>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-1">

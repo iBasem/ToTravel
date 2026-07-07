@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { addDays } from "date-fns";
 import { formatDate } from "@/lib/formatters";
 import { Card, CardContent } from "@/ui/card";
 import { Button } from "@/ui/button";
@@ -33,8 +32,13 @@ export function AvailabilitySection({
     const { t } = useTranslation();
     const [travellers, setTravellers] = useState("2");
 
-    // Promo end date (14 days from now for demo)
-    const promoEndDate = formatDate(addDays(new Date(), 14), 'd MMM, yyyy');
+    // The promo runs until the last discounted departure leaves.
+    const discountedDates = departures
+        .filter(d => d.discount_price !== null)
+        .map(d => new Date(d.start_date).getTime());
+    const promoEndDate = discountedDates.length > 0
+        ? formatDate(new Date(Math.max(...discountedDates)), 'd MMM, yyyy')
+        : null;
 
     // Traveller options
     const travellerOptions = Array.from({ length: 10 }, (_, i) => ({
@@ -123,7 +127,7 @@ export function AvailabilitySection({
                 </h3>
 
                 {/* Promo Banner */}
-                {departures.some(d => d.discount_price !== null) && (
+                {promoEndDate !== null && (
                     <div className="flex items-center justify-between p-4 mb-4 bg-orange-50 dark:bg-orange-900/30 border border-orange-200 dark:border-orange-800 rounded-lg">
                         <div className="flex items-center gap-2">
                             <Clock className="w-5 h-5 text-orange-500" />

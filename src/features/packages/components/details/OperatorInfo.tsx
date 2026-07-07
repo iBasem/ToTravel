@@ -4,10 +4,12 @@ import { Button } from "@/ui/button";
 import { Avatar, AvatarFallback } from "@/ui/avatar";
 import { Badge } from "@/ui/badge";
 import { Star, ExternalLink, Shield, Clock, CheckCircle } from "lucide-react";
+import { useAgencyStats } from "@/features/packages/hooks/useAgencyStats";
 import type { OperatorInfoProps } from "@/features/packages/types";
 
-export function OperatorInfo({ agency, rating = 4.5, reviewCount = 0 }: OperatorInfoProps) {
+export function OperatorInfo({ agency, rating = 0, reviewCount = 0 }: OperatorInfoProps) {
     const { t } = useTranslation();
+    const { data: stats } = useAgencyStats(agency?.id);
 
     if (!agency) return null;
 
@@ -83,15 +85,15 @@ export function OperatorInfo({ agency, rating = 4.5, reviewCount = 0 }: Operator
                     {/* Stats */}
                     <div className="grid grid-cols-3 gap-4 mt-6 pt-4 border-t border-border">
                         <div className="text-center">
-                            <p className="text-2xl font-bold text-foreground">50+</p>
+                            <p className="text-2xl font-bold text-foreground">{stats?.tours_count ?? '—'}</p>
                             <p className="text-xs text-muted-foreground">{t('packageDetails.tours', 'Tours')}</p>
                         </div>
                         <div className="text-center">
-                            <p className="text-2xl font-bold text-foreground">5+</p>
+                            <p className="text-2xl font-bold text-foreground">{stats ? `${stats.years_experience}+` : '—'}</p>
                             <p className="text-xs text-muted-foreground">{t('packageDetails.yearsExp', 'Years Exp.')}</p>
                         </div>
                         <div className="text-center">
-                            <p className="text-2xl font-bold text-foreground">1K+</p>
+                            <p className="text-2xl font-bold text-foreground">{stats?.travelers_count ?? '—'}</p>
                             <p className="text-xs text-muted-foreground">{t('packageDetails.travelers', 'Travelers')}</p>
                         </div>
                     </div>

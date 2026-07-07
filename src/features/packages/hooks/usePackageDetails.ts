@@ -66,6 +66,7 @@ export interface PackageDetails {
     place_id: string | null;
   }>;
   travel_agencies?: {
+    id?: string;
     company_name: string;
     contact_person_first_name: string;
     contact_person_last_name: string;
@@ -131,6 +132,7 @@ export function usePackageDetails(packageId: string | undefined) {
               place_id
             ),
             travel_agencies (
+              id,
               company_name,
               contact_person_first_name,
               contact_person_last_name,

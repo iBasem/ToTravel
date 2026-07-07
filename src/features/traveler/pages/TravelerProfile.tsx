@@ -1,6 +1,7 @@
 
 import { useState, useEffect } from "react";
 import { useAuth } from "@/features/auth/context/AuthContext";
+import { useTravelerProfile, type TravelerPreferences } from "@/features/traveler/hooks/useTravelerProfile";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/card";
 import { Button } from "@/ui/button";
 import { Input } from "@/ui/input";
@@ -11,6 +12,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/ui/avatar";
 import { Badge } from "@/ui/badge";
 import { Separator } from "@/ui/separator";
 import { useTranslation } from "react-i18next";
+import { toast } from "sonner";
 import {
   User,
   Mail,
@@ -25,7 +27,8 @@ import {
 
 export default function TravelerProfile() {
   const { t } = useTranslation();
-  const { user, profile } = useAuth();
+  const { user } = useAuth();
+  const { profile: travelerRow, stats, updateProfile } = useTravelerProfile(user?.id);
 
   const [profileData, setProfileData] = useState({
     firstName: "",
@@ -43,16 +46,6 @@ export default function TravelerProfile() {
     }
   });
 
-  // Populate from the signed-in profile once it loads.
-  useEffect(() => {
-    setProfileData(prev => ({
-      ...prev,
-      firstName: profile?.first_name ?? prev.firstName,
-      lastName: profile?.last_name ?? prev.lastName,
-      email: profile?.email ?? user?.email ?? prev.email,
-    }));
-  }, [profile, user]);
-
   const [notifications, setNotifications] = useState({
     emailBookings: true,
     emailPromotions: false,
@@ -66,6 +59,34 @@ export default function TravelerProfile() {
     allowMessages: true
   });
 
+  // Populate from the traveler row once it loads.
+  useEffect(() => {
+    if (!travelerRow) return;
+    const prefs = (travelerRow.preferences ?? {}) as TravelerPreferences;
+    setProfileData({
+      firstName: travelerRow.first_name ?? "",
+      lastName: travelerRow.last_name ?? "",
+      email: travelerRow.email ?? user?.email ?? "",
+      phone: travelerRow.phone ?? "",
+      dateOfBirth: travelerRow.date_of_birth ?? "",
+      nationality: travelerRow.nationality ?? "",
+      address: prefs.address ?? "",
+      bio: prefs.bio ?? "",
+      emergencyContact: {
+        name: travelerRow.emergency_contact_name ?? "",
+        phone: travelerRow.emergency_contact_phone ?? "",
+        relationship: prefs.emergency_relationship ?? ""
+      }
+    });
+    if (prefs.notifications) {
+      setNotifications(prev => ({ ...prev, ...prefs.notifications }));
+    }
+    if (prefs.privacy) {
+      setPrivacy(prev => ({ ...prev, ...prefs.privacy }));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [travelerRow]);
+
   const handleProfileUpdate = (field: string, value: string) => {
     setProfileData(prev => ({ ...prev, [field]: value }));
   };
@@ -78,11 +99,45 @@ export default function TravelerProfile() {
     setPrivacy(prev => ({ ...prev, [field]: value }));
   };
 
+  const handleSave = async () => {
+    try {
+      const existingPrefs = (travelerRow?.preferences ?? {}) as TravelerPreferences;
+      await updateProfile.mutateAsync({
+        first_name: profileData.firstName,
+        last_name: profileData.lastName,
+        phone: profileData.phone || null,
+        date_of_birth: profileData.dateOfBirth || null,
+        nationality: profileData.nationality || null,
+        emergency_contact_name: profileData.emergencyContact.name || null,
+        emergency_contact_phone: profileData.emergencyContact.phone || null,
+        preferences: {
+          ...existingPrefs,
+          address: profileData.address,
+          bio: profileData.bio,
+          emergency_relationship: profileData.emergencyContact.relationship,
+          notifications,
+          privacy,
+        },
+      });
+      toast.success(t('travelerDashboard.profileSaved', 'Profile saved'));
+    } catch (err) {
+      console.error('Error saving profile:', err);
+      toast.error(t('travelerDashboard.profileSaveError', 'Failed to save profile'));
+    }
+  };
+
+  const initials = `${profileData.firstName.charAt(0)}${profileData.lastName.charAt(0)}`.toUpperCase() || "?";
+  const memberSinceYear = travelerRow?.created_at
+    ? new Date(travelerRow.created_at).getFullYear()
+    : new Date().getFullYear();
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center justify-between">
         <h1 className="text-2xl font-bold">{t('travelerDashboard.myProfile')}</h1>
-        <Button>{t('travelerDashboard.saveChanges')}</Button>
+        <Button onClick={handleSave} disabled={updateProfile.isPending}>
+          {t('travelerDashboard.saveChanges')}
+        </Button>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -91,8 +146,8 @@ export default function TravelerProfile() {
           <CardHeader className="text-center">
             <div className="relative mx-auto">
               <Avatar className="w-24 h-24 mx-auto mb-4">
-                <AvatarImage src="/placeholder.svg" />
-                <AvatarFallback className="text-2xl">JD</AvatarFallback>
+                <AvatarImage src={travelerRow?.avatar_url ?? "/placeholder.svg"} />
+                <AvatarFallback className="text-2xl">{initials}</AvatarFallback>
               </Avatar>
               <Button
                 variant="outline"
@@ -106,7 +161,7 @@ export default function TravelerProfile() {
             <p className="text-muted-foreground">{profileData.email}</p>
             <div className="flex justify-center gap-2 mt-4">
               <Badge variant="secondary">{t('travelerDashboard.verifiedTraveler')}</Badge>
-              <Badge variant="outline">12 {t('travelerDashboard.countriesVisited')}</Badge>
+              <Badge variant="outline">{stats.countriesVisited} {t('travelerDashboard.countriesVisited')}</Badge>
             </div>
           </CardHeader>
           <CardContent>
@@ -117,11 +172,11 @@ export default function TravelerProfile() {
               </div>
               <div className="flex items-center gap-3 text-sm text-muted-foreground">
                 <Calendar className="w-4 h-4" />
-                <span>{t('travelerDashboard.memberSince')} 2023</span>
+                <span>{t('travelerDashboard.memberSince')} {memberSinceYear}</span>
               </div>
               <div className="flex items-center gap-3 text-sm text-muted-foreground">
                 <User className="w-4 h-4" />
-                <span>5 {t('travelerDashboard.completedTours')}</span>
+                <span>{stats.completedTours} {t('travelerDashboard.completedTours')}</span>
               </div>
             </div>
           </CardContent>

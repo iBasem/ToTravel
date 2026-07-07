@@ -57,12 +57,23 @@ export function useAdminFinancials() {
       setLoading(true);
       setError(null);
 
-      // Fetch all bookings for revenue calculation
+      // Fetch all bookings for revenue calculation, joined to the owning
+      // agency's commission rate so commission uses real per-agency rates.
       const { data: bookingsData, error: bookingsError } = await supabase
         .from('package_bookings')
-        .select('total_price, created_at, status');
+        .select('total_price, created_at, status, packages ( travel_agencies ( commission_rate ) )');
 
       if (bookingsError) throw bookingsError;
+
+      // Platform default commission (admin-configured), used when an agency
+      // has no rate of its own.
+      const { data: settingsRow } = await supabase
+        .from('platform_settings')
+        .select('commission_rate')
+        .maybeSingle();
+      const defaultCommissionRate = Number(settingsRow?.commission_rate ?? 0.12);
+      const bookingCommissionRate = (b: { packages?: { travel_agencies?: { commission_rate: number | null } | null } | null }) =>
+        Number(b.packages?.travel_agencies?.commission_rate ?? defaultCommissionRate);
 
       // Fetch payouts
       const { data: payoutsData, error: payoutsError } = await supabase
@@ -105,8 +116,10 @@ export function useAdminFinancials() {
       // Calculate financial stats
       const confirmedBookings = (bookingsData || []).filter(b => b.status === 'confirmed');
       const totalRevenue = confirmedBookings.reduce((sum, b) => sum + Number(b.total_price || 0), 0);
-      const defaultCommissionRate = 0.12;
-      const platformCommission = totalRevenue * defaultCommissionRate;
+      const platformCommission = confirmedBookings.reduce(
+        (sum, b) => sum + Number(b.total_price || 0) * bookingCommissionRate(b),
+        0
+      );
 
       const pendingPayoutsAmount = mappedPayouts
         .filter(p => p.status === 'pending')
@@ -146,7 +159,7 @@ export function useAdminFinancials() {
         if (existing) {
           const revenue = Number(b.total_price || 0);
           existing.revenue += revenue;
-          existing.commission += revenue * defaultCommissionRate;
+          existing.commission += revenue * bookingCommissionRate(b);
         }
       });
 
