@@ -836,6 +836,7 @@
   "calendar": {
     "title": "تقويم الحجوزات",
     "subtitle": "عرض حجوزاتك وتوافرك في لمحة سريعة",
+    "loadError": "فشل تحميل الحجوزات",
     "bookingDetails": "تفاصيل الحجز",
     "today": "اليوم",
     "bookingsCount": "حجوزات",

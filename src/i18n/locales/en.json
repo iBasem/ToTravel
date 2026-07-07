@@ -836,6 +836,7 @@
   "calendar": {
     "title": "Bookings Calendar",
     "subtitle": "View your bookings and availability at a glance",
+    "loadError": "Failed to load bookings",
     "bookingDetails": "Booking Details",
     "today": "Today",
     "bookingsCount": "bookings",
