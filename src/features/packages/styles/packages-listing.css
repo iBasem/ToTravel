@@ -9,32 +9,30 @@
     --pkg-page-max-width: 1200px;
     --pkg-page-padding: 16px;
 
-    /* Colors */
-    --pkg-bg: #f5f5f5;
-    --pkg-card-bg: #ffffff;
-    --pkg-primary: #1a7b7b;
-    --pkg-primary-hover: #156565;
-    --pkg-secondary-btn: #ffffff;
-    --pkg-secondary-btn-border: #1a7b7b;
-    --pkg-discount-bg: #d4380d;
-    --pkg-discount-text: #ffffff;
-    --pkg-star: #e67e22;
-    --pkg-text-primary: #1a1a1a;
-    --pkg-text-secondary: #555555;
-    --pkg-text-muted: #888888;
-    --pkg-text-link: #1a7b7b;
-    --pkg-border: #e8e8e8;
-    --pkg-badge-bg: #f0f7f7;
-    --pkg-badge-text: #1a7b7b;
-    --pkg-filter-bg: #ffffff;
-    --pkg-slider-track: #e0e0e0;
-    --pkg-slider-active: #1a7b7b;
-    --pkg-slider-thumb: #1a7b7b;
-    --pkg-quote-accent: #1a7b7b;
-    --pkg-gold: #f5a623;
+    /* Colors — mapped onto the app design tokens (src/index.css) so this
+       surface stays on-brand and adapts to the light/dark themes.
+       The rating star is the one deliberately semantic (amber) hue. */
+    --pkg-bg: hsl(var(--muted));
+    --pkg-card-bg: hsl(var(--card));
+    --pkg-primary: hsl(var(--primary));
+    --pkg-primary-hover: hsl(var(--primary) / 0.9);
+    --pkg-secondary-btn: hsl(var(--card));
+    --pkg-secondary-btn-border: hsl(var(--primary));
+    --pkg-star: hsl(38 92% 50%);
+    --pkg-text-primary: hsl(var(--foreground));
+    --pkg-text-secondary: hsl(var(--muted-foreground));
+    --pkg-text-muted: hsl(var(--muted-foreground));
+    --pkg-text-link: hsl(var(--primary));
+    --pkg-border: hsl(var(--border));
+    --pkg-badge-bg: hsl(var(--primary) / 0.1);
+    --pkg-badge-text: hsl(var(--primary));
+    --pkg-filter-bg: hsl(var(--card));
+    --pkg-slider-track: hsl(var(--muted));
+    --pkg-slider-active: hsl(var(--primary));
+    --pkg-slider-thumb: hsl(var(--primary));
 
-    /* Typography */
-    --pkg-font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    /* Typography — the page inherits the app font stack from <body>
+       (Inter in LTR, IBM Plex Sans Arabic in RTL); no local override. */
     --pkg-heading-size: 24px;
     --pkg-card-title-size: 17px;
     --pkg-card-body-size: 13px;
@@ -70,7 +68,6 @@
 .pkg-page {
     background: var(--pkg-bg);
     min-height: 100vh;
-    font-family: var(--pkg-font-family);
 }
 
 .pkg-page-inner {
@@ -131,7 +128,7 @@
 }
 
 .pkg-sidebar::-webkit-scrollbar-thumb {
-    background: #ccc;
+    background: var(--pkg-border);
     border-radius: 4px;
 }
 
@@ -208,7 +205,7 @@
     border-radius: 6px;
     font-size: var(--pkg-filter-label-size);
     color: var(--pkg-text-primary);
-    background: white;
+    background-color: var(--pkg-card-bg);
     cursor: pointer;
     appearance: none;
     background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%23666' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
@@ -267,7 +264,7 @@
     height: 18px;
     border-radius: 50%;
     background: var(--pkg-slider-thumb);
-    border: 2px solid white;
+    border: 2px solid var(--pkg-card-bg);
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
     cursor: pointer;
     pointer-events: auto;
@@ -278,7 +275,7 @@
     height: 18px;
     border-radius: 50%;
     background: var(--pkg-slider-thumb);
-    border: 2px solid white;
+    border: 2px solid var(--pkg-card-bg);
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
     cursor: pointer;
     pointer-events: auto;
@@ -381,8 +378,7 @@
 .pkg-card-map-inner {
     position: absolute;
     inset: 0;
-    background:
-        linear-gradient(135deg, #e8f4f8 0%, #d1ecf1 50%, #e8f4f8 100%);
+    background: hsl(var(--muted));
     opacity: 0.6;
 }
 
@@ -401,7 +397,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(135deg, #e8f4f8 0%, #d1ecf1 50%, #e8f4f8 100%);
+    background: hsl(var(--muted));
     color: var(--pkg-text-muted);
 }
 
@@ -446,11 +442,17 @@
     cursor: pointer;
     transition: background 0.15s ease, transform 0.15s ease;
     z-index: 2;
+    /* Overlay control over the tour photo — fixed light chip in both themes */
+    color: #475569;
 }
 
 .pkg-card-wishlist:hover {
     background: white;
     transform: scale(1.1);
+}
+
+.pkg-card-wishlist.is-active {
+    color: hsl(var(--destructive));
 }
 
 /* ---- Details Column ---- */
@@ -460,6 +462,7 @@
     min-width: 0;
     display: flex;
     flex-direction: column;
+    justify-content: center;
     gap: 6px;
 }
 
@@ -479,13 +482,13 @@
     border-radius: 3px;
     font-size: 12px;
     font-weight: 600;
-    color: #333;
+    color: var(--pkg-text-primary);
     background: transparent;
-    border: 1.5px solid #ccc;
+    border: 1.5px solid var(--pkg-border);
 }
 
 .pkg-badge-bestseller svg {
-    color: #e67e22;
+    color: var(--pkg-star);
 }
 
 .pkg-badge-category {
@@ -495,8 +498,8 @@
     border-radius: 3px;
     font-size: 12px;
     font-weight: 600;
-    color: #fff;
-    background: #333;
+    color: hsl(var(--secondary-foreground));
+    background: hsl(var(--secondary));
     border: none;
 }
 
@@ -547,34 +550,6 @@
     color: var(--pkg-text-link);
 }
 
-/* Quote — TourRadar accent left-border style */
-.pkg-card-quote {
-    border-inline-start: 3px solid var(--pkg-quote-accent);
-    padding-inline-start: 10px;
-    margin: 2px 0;
-}
-
-.pkg-card-quote-text {
-    margin: 0;
-    font-size: var(--pkg-card-body-size);
-    color: #c75000; /* Tweaked: burnt-orange color matching TourRadar's testimonial style */
-    font-style: italic;
-    line-height: 1.5;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-}
-
-.pkg-card-quote-author {
-    font-style: normal;
-    font-size: 12px;
-    color: var(--pkg-text-muted);
-    margin-top: 2px;
-    display: block;
-}
-
 /* Details Grid */
 .pkg-card-meta-grid {
     display: grid;
@@ -606,30 +581,6 @@
     text-decoration: underline;
 }
 
-/* Operator Gold badge */
-.pkg-operator-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    margin-inline-start: 8px;
-    font-size: 12px;
-    font-weight: 600;
-    color: #8b6914;
-}
-
-.pkg-operator-dot {
-    display: inline-block;
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: var(--pkg-gold);
-}
-
-/* Tweaked: Platinum operator badge variant to match TourRadar target */
-.pkg-operator-badge-platinum .pkg-operator-dot {
-    background: var(--pkg-primary);
-}
-
 /* ---- Price Column ---- */
 .pkg-card-price-col {
     width: var(--pkg-price-col-width);
@@ -642,35 +593,9 @@
     border-inline-start: 1px solid var(--pkg-border);
 }
 
-.pkg-card-price-top {
-    display: flex;
-    justify-content: flex-end;
-    width: 100%;
-}
-
-/* Discount — Pill shape like TourRadar */
-.pkg-card-discount {
-    display: inline-flex;
-    padding: 4px 14px;
-    border-radius: 20px;
-    background: var(--pkg-discount-bg);
-    color: var(--pkg-discount-text);
-    font-size: 12px;
-    font-weight: 700;
-}
-
 .pkg-card-price-block {
     text-align: end;
     width: 100%;
-}
-
-.pkg-card-price-from {
-    font-size: 12px;
-    color: var(--pkg-text-muted);
-}
-
-.pkg-card-price-from s {
-    text-decoration: line-through;
 }
 
 .pkg-card-price-amount {
@@ -683,25 +608,6 @@
 .pkg-card-price-per {
     font-size: 12px;
     font-weight: 400;
-    color: var(--pkg-text-muted);
-}
-
-/* Price info note */
-.pkg-card-price-note {
-    display: flex;
-    align-items: flex-start;
-    gap: 4px;
-    font-size: 11px;
-    color: var(--pkg-text-muted);
-    text-align: end;
-    margin-top: 6px;
-    justify-content: flex-end;
-    line-height: 1.4;
-}
-
-.pkg-card-price-note-icon {
-    flex-shrink: 0;
-    margin-top: 1px;
     color: var(--pkg-text-muted);
 }
 
@@ -718,7 +624,7 @@
     width: 100%;
     padding: 10px 16px;
     background: var(--pkg-primary);
-    color: white;
+    color: hsl(var(--primary-foreground));
     border: none;
     border-radius: var(--pkg-btn-radius);
     font-size: 14px;
@@ -731,26 +637,7 @@
 
 .pkg-btn-view:hover {
     background: var(--pkg-primary-hover);
-    color: white;
-}
-
-.pkg-btn-brochure {
-    display: block;
-    width: 100%;
-    padding: 8px 16px;
-    background: var(--pkg-secondary-btn);
-    color: var(--pkg-primary);
-    border: 1.5px solid var(--pkg-secondary-btn-border);
-    border-radius: var(--pkg-btn-radius);
-    font-size: 13px;
-    font-weight: 600;
-    text-align: center;
-    cursor: pointer;
-    transition: background 0.15s ease;
-}
-
-.pkg-btn-brochure:hover {
-    background: #f0f7f7;
+    color: hsl(var(--primary-foreground));
 }
 
 /* ===== PAGINATION ===== */
@@ -772,7 +659,7 @@
     justify-content: center;
     border: 1px solid var(--pkg-border);
     border-radius: 6px;
-    background: white;
+    background: var(--pkg-card-bg);
     color: var(--pkg-text-primary);
     font-size: 14px;
     font-weight: 500;
@@ -789,7 +676,7 @@
 .pkg-pagination-btn.active {
     background: var(--pkg-primary);
     border-color: var(--pkg-primary);
-    color: white;
+    color: hsl(var(--primary-foreground));
 }
 
 .pkg-pagination-btn:disabled {

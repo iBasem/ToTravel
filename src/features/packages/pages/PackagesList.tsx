@@ -10,13 +10,16 @@ import { FiltersSidebar, type FilterState } from '../components/filters/FiltersS
 import { Pagination } from '../components/Pagination';
 import { Seo } from '@/lib/seo';
 import { pickLocalized } from '@/lib/localized';
+import { LoadingSpinner } from '@/ui/loading-spinner';
+import { EmptyState } from '@/ui/empty-state';
+import { Button } from '@/ui/button';
 import '../styles/packages-listing.css';
 
 const ITEMS_PER_PAGE = 15;
 
 export default function PackagesList() {
   const { t } = useTranslation();
-  const { packages, loading, error } = usePublishedPackages();
+  const { packages, loading, error, refetch } = usePublishedPackages();
 
   // Wishlist state
   const [wishlistIds, setWishlistIds] = useState<Set<string>>(new Set());
@@ -157,18 +160,7 @@ export default function PackagesList() {
         <HeaderSection />
         <div className="pkg-page">
           <div className="pkg-page-inner">
-            <div style={{ display: 'flex', justifyContent: 'center', padding: '80px 0' }}>
-              <div
-                style={{
-                  width: 40,
-                  height: 40,
-                  border: '3px solid #e0e0e0',
-                  borderTopColor: 'var(--pkg-primary)',
-                  borderRadius: '50%',
-                  animation: 'spin 0.8s linear infinite',
-                }}
-              />
-            </div>
+            <LoadingSpinner size="lg" className="py-20" />
           </div>
         </div>
         <FooterSection />
@@ -183,9 +175,12 @@ export default function PackagesList() {
         <HeaderSection />
         <div className="pkg-page">
           <div className="pkg-page-inner">
-            <div style={{ textAlign: 'center', padding: '80px 20px', color: '#666' }}>
-              <p style={{ fontSize: 18, marginBottom: 8 }}>{t('tours.loadError')}</p>
-              <p style={{ fontSize: 14 }}>{error}</p>
+            <div className="text-center py-20 px-5">
+              <p className="text-lg font-medium text-foreground mb-2">{t('tours.loadError')}</p>
+              <p className="text-sm text-muted-foreground mb-6">{error}</p>
+              <Button variant="outline" onClick={() => refetch()}>
+                {t('common.retry')}
+              </Button>
             </div>
           </div>
         </div>
@@ -251,10 +246,11 @@ export default function PackagesList() {
                   ))}
                 </div>
               ) : (
-                <div style={{ textAlign: 'center', padding: '60px 20px', color: '#888' }}>
-                  <p style={{ fontSize: 18, marginBottom: 8 }}>{t('tours.noMatchTitle')}</p>
-                  <p style={{ fontSize: 14 }}>{t('tours.noMatchHint')}</p>
-                </div>
+                <EmptyState
+                  icon="search"
+                  title={t('tours.noMatchTitle')}
+                  description={t('tours.noMatchHint')}
+                />
               )}
 
               {/* Pagination */}
