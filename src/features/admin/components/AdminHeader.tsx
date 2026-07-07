@@ -6,6 +6,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/ui/sheet";
 import { useAuth } from "@/features/auth/context/AuthContext";
 import { useTranslation } from "react-i18next";
 import { LanguageSwitcher } from "@/ui/LanguageSwitcher";
+import { ThemeToggle } from "@/ui/ThemeToggle";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -106,6 +107,8 @@ export function AdminHeader() {
         {/* Right side controls */}
         <div className="flex items-center gap-1 sm:gap-2 lg:gap-4">
           <LanguageSwitcher />
+
+          <ThemeToggle />
 
           <Button variant="ghost" size="sm" className="relative p-1 sm:p-2" aria-label={t('common.notifications', 'Notifications')}>
             <Bell className="w-3 h-3 sm:w-4 sm:h-4 lg:w-5 lg:h-5" />

@@ -8,6 +8,7 @@ import { Link } from "react-router-dom";
 import { useAuth } from "@/features/auth/context/AuthContext";
 import { useTranslation } from "react-i18next";
 import { LanguageSwitcher } from "@/ui/LanguageSwitcher";
+import { ThemeToggle } from "@/ui/ThemeToggle";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -66,6 +67,9 @@ export function TravelerHeader() {
         <div className="flex items-center gap-1 sm:gap-2 lg:gap-4">
           {/* Language Switcher */}
           <LanguageSwitcher />
+
+          {/* Theme Toggle */}
+          <ThemeToggle />
 
           {/* Browse Tours link */}
           <Link

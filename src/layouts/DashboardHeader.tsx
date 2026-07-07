@@ -6,6 +6,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/ui/sheet";
 import { useAuth } from "@/features/auth/context/AuthContext";
 import { useTranslation } from "react-i18next";
 import { LanguageSwitcher } from "@/ui/LanguageSwitcher";
+import { ThemeToggle } from "@/ui/ThemeToggle";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -148,6 +149,9 @@ export function DashboardHeader() {
         <div className="flex items-center gap-1 sm:gap-2 lg:gap-4">
           {/* Language Switcher */}
           <LanguageSwitcher />
+
+          {/* Theme Toggle */}
+          <ThemeToggle />
 
           {/* Notifications */}
           <Button variant="ghost" size="sm" className="relative p-1 sm:p-2" aria-label={t('agencyDashboard.notifications', 'Notifications')}>
