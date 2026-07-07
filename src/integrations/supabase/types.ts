@@ -1050,6 +1050,15 @@ export type Database = {
           years_experience: number
         }[]
       }
+      review_authors: {
+        Args: { review_ids: string[] }
+        Returns: {
+          review_id: string
+          first_name: string | null
+          last_name: string | null
+          avatar_url: string | null
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]

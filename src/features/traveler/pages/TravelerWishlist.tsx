@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/ui/button";
 import { useTranslation } from "react-i18next";
@@ -10,7 +11,11 @@ export default function TravelerWishlist() {
   const { t } = useTranslation();
 
   // Real data hook
-  const { wishlist, loading, toggleWishlist } = useWishlist();
+  const { wishlist, loading, fetchWishlist, toggleWishlist } = useWishlist();
+
+  useEffect(() => {
+    fetchWishlist();
+  }, [fetchWishlist]);
 
   if (loading) {
     return (

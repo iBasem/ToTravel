@@ -65,14 +65,18 @@ export function useAvailability({
                 const booked = bookedByDate.get(d.departure_date) || 0;
                 const seatsRemaining = Math.max(0, d.total_seats - booked);
                 const end = d.return_date || format(addDays(parseISO(d.departure_date), durationDays), 'yyyy-MM-dd');
+                // A price_override below the base price is a promotional fare;
+                // above (peak pricing) it simply replaces the base price.
+                const override = d.price_override != null ? Number(d.price_override) : null;
+                const isDiscount = override != null && override < basePrice;
                 return {
                     id: d.id,
                     tour_id: packageId,
                     start_date: d.departure_date,
                     end_date: end,
                     seats_remaining: seatsRemaining,
-                    price: d.price_override != null ? Number(d.price_override) : basePrice,
-                    discount_price: null,
+                    price: isDiscount ? basePrice : (override ?? basePrice),
+                    discount_price: isDiscount ? override : null,
                     status: seatsRemaining === 0 ? 'sold_out' : seatsRemaining <= 3 ? 'limited' : 'available',
                 };
             });

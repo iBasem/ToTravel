@@ -88,16 +88,16 @@ export function ReviewsSection({ packageId }: ReviewsSectionProps) {
                         <div key={review.id} className="border-b last:border-0 pb-6 last:pb-0">
                             <div className="flex items-start gap-4">
                                 <Avatar>
-                                    <AvatarImage src={review.traveler.avatar_url || undefined} />
+                                    <AvatarImage src={review.traveler?.avatar_url || undefined} />
                                     <AvatarFallback>
-                                        {review.traveler.first_name?.[0]}
-                                        {review.traveler.last_name?.[0]}
+                                        {review.traveler?.first_name?.[0]}
+                                        {review.traveler?.last_name?.[0]}
                                     </AvatarFallback>
                                 </Avatar>
                                 <div className="space-y-1 flex-1">
                                     <div className="flex items-center justify-between">
                                         <h4 className="font-semibold">
-                                            {review.traveler.first_name} {review.traveler.last_name}
+                                            {review.traveler?.first_name} {review.traveler?.last_name}
                                         </h4>
                                         <span className="text-sm text-muted-foreground">
                                             {formatDate(review.created_at, 'MMM d, yyyy')}

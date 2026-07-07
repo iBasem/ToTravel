@@ -49,8 +49,7 @@ export function useAgencyFeedback() {
             rating,
             comment,
             created_at,
-            status,
-            traveler:travelers!inner ( full_name ),
+            traveler:travelers ( first_name, last_name ),
             package:packages!inner ( title, agency_id )
           `)
                     .eq('packages.agency_id', user.id)
@@ -60,12 +59,14 @@ export function useAgencyFeedback() {
 
                 const mapped: FeedbackItem[] = (data || []).map((r: any) => ({
                     id: r.id,
-                    travelerName: r.traveler?.full_name || t('common.unknown', 'Unknown'),
+                    travelerName: r.traveler
+                        ? `${r.traveler.first_name ?? ''} ${r.traveler.last_name ?? ''}`.trim() || t('common.unknown', 'Unknown')
+                        : t('common.unknown', 'Unknown'),
                     packageTitle: r.package?.title || t('common.unknownPackage'),
                     rating: r.rating,
                     comment: r.comment || '',
                     date: r.created_at,
-                    status: r.status || 'published',
+                    status: 'published',
                 }));
 
                 setFeedbacks(mapped);

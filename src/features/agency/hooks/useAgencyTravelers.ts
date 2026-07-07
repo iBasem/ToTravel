@@ -35,8 +35,9 @@ export function useAgencyTravelers() {
             booking_date,
             traveler:travelers!inner (
               id,
-              full_name,
-              phone_number,
+              first_name,
+              last_name,
+              phone,
               avatar_url
             ),
             packages!inner (
@@ -57,9 +58,9 @@ export function useAgencyTravelers() {
                     if (!travelerMap.has(travelerId)) {
                         travelerMap.set(travelerId, {
                             id: travelerId,
-                            name: booking.traveler.full_name || t('common.unknown', 'Unknown'),
+                            name: `${booking.traveler.first_name ?? ''} ${booking.traveler.last_name ?? ''}`.trim() || t('common.unknown', 'Unknown'),
                             email: t('agencyDashboard.privateEmail', 'Private'), // Email is often not directly exposed in public profile unless verified
-                            phone: booking.traveler.phone_number,
+                            phone: booking.traveler.phone,
                             totalBookings: 0,
                             lastTrip: null
                         });

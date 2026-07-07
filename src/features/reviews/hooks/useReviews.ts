@@ -29,24 +29,40 @@ export function useReviews() {
         try {
             const { data, error } = await supabase
                 .from('reviews')
-                .select(`
-          id,
-          rating,
-          comment,
-          created_at,
-          traveler:travelers (
-            first_name,
-            last_name,
-            avatar_url
-          )
-        `)
+                .select('id, rating, comment, created_at')
                 .eq('package_id', packageId)
                 .order('created_at', { ascending: false });
 
             if (error) throw error;
 
-            const typedData = data as unknown as Review[];
-            setReviews(typedData || []);
+            // Reviewer display identity comes from the review_authors RPC,
+            // which is callable by everyone (traveler rows themselves are not
+            // publicly readable).
+            const rows = data || [];
+            const authorsById = new Map<string, Review['traveler']>();
+            if (rows.length > 0) {
+                const { data: authors } = await supabase.rpc('review_authors', {
+                    review_ids: rows.map(r => r.id),
+                });
+                authors?.forEach(a => {
+                    if (a.review_id) {
+                        authorsById.set(a.review_id, {
+                            first_name: a.first_name,
+                            last_name: a.last_name,
+                            avatar_url: a.avatar_url,
+                        });
+                    }
+                });
+            }
+
+            setReviews(rows.map(r => ({
+                ...r,
+                traveler: authorsById.get(r.id) ?? {
+                    first_name: null,
+                    last_name: null,
+                    avatar_url: null,
+                },
+            })));
         } catch (error) {
             console.error('Error fetching reviews:', error);
             toast.error(t('toasts.reviewsLoadFailed'));
