@@ -85,9 +85,9 @@ export function CalendarView() {
                     <LoadingSpinner size="lg" />
                 </div>
             ) : error ? (
-                <div className="flex flex-col items-center justify-center gap-3 h-[500px] border rounded-lg bg-gray-50">
-                    <p className="font-medium text-gray-700">{t('calendar.loadError')}</p>
-                    <p className="text-sm text-gray-500">{error}</p>
+                <div className="flex flex-col items-center justify-center gap-3 h-[500px] border rounded-lg bg-muted/50">
+                    <p className="font-medium text-foreground">{t('calendar.loadError')}</p>
+                    <p className="text-sm text-muted-foreground">{error}</p>
                     <Button variant="outline" onClick={() => fetchMonthBookings(currentDate)}>
                         {t('common.retry')}
                     </Button>

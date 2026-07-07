@@ -66,13 +66,13 @@ export function HeroGallery({ images, title, isBestSeller = false }: HeroGallery
                         {/* Navigation Arrows */}
                         <button
                             onClick={(e) => { e.stopPropagation(); handlePrevImage(); }}
-                            className="absolute start-3 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white rounded-full p-2 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity"
+                            className="absolute start-3 top-1/2 -translate-y-1/2 bg-background/90 hover:bg-background text-foreground rounded-full p-2 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity"
                         >
                             <ChevronLeft className="w-5 h-5 rtl:rotate-180" />
                         </button>
                         <button
                             onClick={(e) => { e.stopPropagation(); handleNextImage(); }}
-                            className="absolute end-3 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white rounded-full p-2 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity"
+                            className="absolute end-3 top-1/2 -translate-y-1/2 bg-background/90 hover:bg-background text-foreground rounded-full p-2 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity"
                         >
                             <ChevronRight className="w-5 h-5 rtl:rotate-180" />
                         </button>
