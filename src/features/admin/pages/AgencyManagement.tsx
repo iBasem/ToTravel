@@ -40,7 +40,7 @@ export default function AgencyManagement() {
       case "rejected":
         return <Badge className="bg-red-100 text-red-800">{t('common.rejected')}</Badge>;
       case "suspended":
-        return <Badge className="bg-gray-100 text-gray-800">{t('common.suspended')}</Badge>;
+        return <Badge className="bg-muted text-foreground">{t('common.suspended')}</Badge>;
       default:
         return <Badge variant="outline">{status}</Badge>;
     }
@@ -104,8 +104,8 @@ export default function AgencyManagement() {
     <div className="space-y-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center justify-between">
         <div className="text-start">
-          <h1 className="text-3xl font-bold text-gray-900">{t('agencyManagement.title')}</h1>
-          <p className="text-gray-600">{t('agencyManagement.subtitle')}</p>
+          <h1 className="text-3xl font-bold text-foreground">{t('agencyManagement.title')}</h1>
+          <p className="text-muted-foreground">{t('agencyManagement.subtitle')}</p>
         </div>
         <div className="flex items-center gap-2">
           <Button variant="outline" onClick={refetch} className="flex items-center">
@@ -119,7 +119,7 @@ export default function AgencyManagement() {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <Card>
           <CardHeader className="pb-2 text-start">
-            <CardTitle className="text-sm font-medium text-gray-500">{t('agencyManagement.totalAgencies')}</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">{t('agencyManagement.totalAgencies')}</CardTitle>
           </CardHeader>
           <CardContent className="text-start">
             <div className="text-2xl font-bold tabular-nums">{stats.total}</div>
@@ -127,7 +127,7 @@ export default function AgencyManagement() {
         </Card>
         <Card>
           <CardHeader className="pb-2 text-start">
-            <CardTitle className="text-sm font-medium text-gray-500">{t('common.approved')}</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">{t('common.approved')}</CardTitle>
           </CardHeader>
           <CardContent className="text-start">
             <div className="text-2xl font-bold tabular-nums">{stats.approved}</div>
@@ -135,7 +135,7 @@ export default function AgencyManagement() {
         </Card>
         <Card>
           <CardHeader className="pb-2 text-start">
-            <CardTitle className="text-sm font-medium text-gray-500">{t('agencyManagement.pendingApproval')}</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">{t('agencyManagement.pendingApproval')}</CardTitle>
           </CardHeader>
           <CardContent className="text-start">
             <div className="text-2xl font-bold tabular-nums">{stats.pending}</div>
@@ -143,7 +143,7 @@ export default function AgencyManagement() {
         </Card>
         <Card>
           <CardHeader className="pb-2 text-start">
-            <CardTitle className="text-sm font-medium text-gray-500">{t('agencyManagement.totalToursListed')}</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">{t('agencyManagement.totalToursListed')}</CardTitle>
           </CardHeader>
           <CardContent className="text-start">
             <div className="text-2xl font-bold tabular-nums">{stats.totalPackages.toLocaleString(isRTL ? 'ar-SA' : 'en-US')}</div>
@@ -158,7 +158,7 @@ export default function AgencyManagement() {
             <CardTitle>{t('agencyManagement.allAgencies')}</CardTitle>
             <div className="flex items-center gap-4">
               <div className="relative">
-                <Search className="absolute top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 start-3" />
+                <Search className="absolute top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4 start-3" />
                 <Input
                   placeholder={t('agencyManagement.searchPlaceholder')}
                   value={searchTerm}
@@ -193,7 +193,7 @@ export default function AgencyManagement() {
         </CardHeader>
         <CardContent>
           {filteredAgencies.length === 0 ? (
-            <div className="text-center py-12 text-gray-500">
+            <div className="text-center py-12 text-muted-foreground">
               <p>{t('agencyManagement.noAgenciesFound')}</p>
             </div>
           ) : (
@@ -220,8 +220,8 @@ export default function AgencyManagement() {
                           <Building2 className="w-4 h-4 text-blue-600" />
                         </div>
                         <div className="text-start">
-                          <div className="font-medium text-gray-900">{agency.company_name}</div>
-                          <div className="text-sm text-gray-500">{agency.email}</div>
+                          <div className="font-medium text-foreground">{agency.company_name}</div>
+                          <div className="text-sm text-muted-foreground">{agency.email}</div>
                         </div>
                       </div>
                     </TableCell>
@@ -230,7 +230,7 @@ export default function AgencyManagement() {
                       {agency.contact_person_first_name} {agency.contact_person_last_name}
                     </TableCell>
                     <TableCell className="text-start">{new Date(agency.created_at).toLocaleDateString(isRTL ? 'ar-SA' : 'en-US')}</TableCell>
-                    <TableCell className="text-start text-gray-900 font-medium">{agency.packages_count}</TableCell>
+                    <TableCell className="text-start text-foreground font-medium">{agency.packages_count}</TableCell>
                     <TableCell className="tabular-nums text-start">{(agency.commission_rate * 100).toFixed(0)}%</TableCell>
                     <TableCell className="text-start">{getStatusBadge(agency.status, agency.is_verified)}</TableCell>
                     <TableCell className="text-end">

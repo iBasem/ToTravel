@@ -186,7 +186,7 @@ export function BookingWizard({ isOpen, onClose, packageData, selectedDate }: Bo
           <DialogTitle className="text-2xl font-bold text-center">
             {t('booking.requestBooking')} - {packageData.title}
             {packageData.tourType && (
-              <div className="text-sm font-normal text-gray-600 mt-1">
+              <div className="text-sm font-normal text-muted-foreground mt-1">
                 {getTourTypeLabel()}
               </div>
             )}

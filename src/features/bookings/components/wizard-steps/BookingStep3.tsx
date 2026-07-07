@@ -122,7 +122,7 @@ export function BookingStep3({ formData, updateFormData }: BookingStep3Props) {
                 <Label htmlFor="travel-insurance" className="cursor-pointer">
                   {t('booking.addTravelInsurance')}
                 </Label>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-muted-foreground">
                   {t('booking.travelInsuranceDesc')}
                 </p>
               </div>
@@ -151,7 +151,7 @@ export function BookingStep3({ formData, updateFormData }: BookingStep3Props) {
                 <Label htmlFor="airport-transfer" className="cursor-pointer">
                   {t('booking.addAirportTransfer')}
                 </Label>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-muted-foreground">
                   {t('booking.airportTransferDesc')}
                 </p>
               </div>

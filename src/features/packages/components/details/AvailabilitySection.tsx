@@ -44,10 +44,10 @@ export function AvailabilitySection({
     return (
         <div id="availability-section" className="scroll-mt-6">
             {/* Section Header */}
-            <h2 className="text-2xl font-bold text-gray-900 mb-2 text-start">
+            <h2 className="text-2xl font-bold text-foreground mb-2 text-start">
                 {t('packageDetails.datesAndAvailability', 'Dates & Availability')}
             </h2>
-            <p className="text-gray-600 mb-6 text-start">
+            <p className="text-muted-foreground mb-6 text-start">
                 {t('packageDetails.selectDepartureMonthAndTravellers', 'Select departure month and travellers')}
             </p>
 
@@ -61,9 +61,9 @@ export function AvailabilitySection({
                                 value={selectedMonth || 'all'}
                                 onValueChange={(val) => onMonthChange(val === 'all' ? null : val)}
                             >
-                                <SelectTrigger className="h-12 bg-white">
+                                <SelectTrigger className="h-12 bg-background">
                                     <div className="flex items-center gap-2">
-                                        <Calendar className="w-4 h-4 text-gray-500" />
+                                        <Calendar className="w-4 h-4 text-muted-foreground" />
                                         <SelectValue placeholder={t('packageDetails.anyMonth', 'Any Month')} />
                                     </div>
                                 </SelectTrigger>
@@ -83,9 +83,9 @@ export function AvailabilitySection({
                         {/* Travellers Selector */}
                         <div className="flex-1 md:max-w-[200px]">
                             <Select value={travellers} onValueChange={setTravellers}>
-                                <SelectTrigger className="h-12 bg-white">
+                                <SelectTrigger className="h-12 bg-background">
                                     <div className="flex items-center gap-2">
-                                        <Users className="w-4 h-4 text-gray-500" />
+                                        <Users className="w-4 h-4 text-muted-foreground" />
                                         <SelectValue />
                                     </div>
                                 </SelectTrigger>
@@ -117,7 +117,7 @@ export function AvailabilitySection({
 
             {/* Upcoming Departures Section */}
             <div id="upcoming-departures">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4 text-start">
+                <h3 className="text-lg font-semibold text-foreground mb-4 text-start">
                     {t('packageDetails.upcomingDepartures', 'Upcoming Departures')}
                 </h3>
 
@@ -126,7 +126,7 @@ export function AvailabilitySection({
                     <div className="flex items-center justify-between p-4 mb-4 bg-orange-50 border border-orange-200 rounded-lg">
                         <div className="flex items-center gap-2">
                             <Clock className="w-5 h-5 text-orange-500" />
-                            <span className="text-gray-700">
+                            <span className="text-foreground">
                                 {t('packageDetails.hurryDealsLimited', 'Hurry, deals only available for a limited time!')}
                             </span>
                         </div>
@@ -140,7 +140,7 @@ export function AvailabilitySection({
                 {loading && (
                     <div className="flex items-center justify-center py-12">
                         <Loader2 className="w-8 h-8 animate-spin text-teal-600" />
-                        <span className="ms-3 text-gray-500">{t('common.loading', 'Loading...')}</span>
+                        <span className="ms-3 text-muted-foreground">{t('common.loading', 'Loading...')}</span>
                     </div>
                 )}
 
@@ -148,11 +148,11 @@ export function AvailabilitySection({
                 {!loading && departures.length === 0 && (
                     <Card>
                         <CardContent className="py-12 text-center">
-                            <Calendar className="w-12 h-12 mx-auto mb-3 text-gray-300" />
-                            <h4 className="font-medium text-gray-700 mb-1">
+                            <Calendar className="w-12 h-12 mx-auto mb-3 text-muted-foreground/40" />
+                            <h4 className="font-medium text-foreground mb-1">
                                 {t('packageDetails.noDeparturesFound', 'No departures found')}
                             </h4>
-                            <p className="text-sm text-gray-500">
+                            <p className="text-sm text-muted-foreground">
                                 {selectedMonth
                                     ? t('packageDetails.tryDifferentMonth', 'Try selecting a different month')
                                     : t('packageDetails.checkBackLater', 'Please check back later for available dates')

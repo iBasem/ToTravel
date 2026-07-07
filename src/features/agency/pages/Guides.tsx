@@ -154,7 +154,7 @@ export default function Guides() {
                   {guide.languages.length > 0 && (
                     <div>
                       <p className="text-sm font-medium mb-1">{t('agencyDashboard.languages')}:</p>
-                      <p className="text-sm text-gray-600">{guide.languages.join(", ")}</p>
+                      <p className="text-sm text-muted-foreground">{guide.languages.join(", ")}</p>
                     </div>
                   )}
 

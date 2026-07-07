@@ -353,11 +353,11 @@ export default function EditPackage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">
+          <h1 className="text-2xl font-bold text-foreground">
             {t('packageWizard.editPackage', 'Edit Package')} - {getStepTitle(currentStep)}
           </h1>
           <div className="mt-4">
-            <div className="flex justify-between text-sm text-gray-600 mb-2">
+            <div className="flex justify-between text-sm text-muted-foreground mb-2">
               <span>{t('packageWizard.stepOf', { current: currentStep, total: totalSteps })}</span>
               <span>{Math.round(progress)}% {t('packageWizard.complete')}</span>
             </div>
@@ -366,7 +366,7 @@ export default function EditPackage() {
         </div>
       </div>
 
-      <div className="bg-white rounded-lg shadow p-6">
+      <div className="bg-card rounded-lg shadow p-6">
         <WizardStepContent
           currentStep={currentStep}
           formData={formData}

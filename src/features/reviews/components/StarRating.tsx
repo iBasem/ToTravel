@@ -46,7 +46,7 @@ export function StarRating({
                         <Star
                             className={cn(
                                 sizeClasses[size],
-                                isFilled ? "fill-yellow-400 text-yellow-400" : "fill-gray-100 text-gray-300",
+                                isFilled ? "fill-yellow-400 text-yellow-400" : "fill-muted text-muted-foreground/40",
                                 "transition-all duration-200"
                             )}
                         />

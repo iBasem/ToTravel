@@ -2,6 +2,7 @@
 import { Toaster as Sonner } from "@/ui/sonner";
 import { TooltipProvider } from "@/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ThemeProvider } from "next-themes";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "@/features/auth/context/AuthContext";
 import AuthPage from "@/features/auth/pages/AuthPage";
@@ -37,40 +38,42 @@ const App = () => {
 
   return (
     <ErrorBoundary>
-      <QueryClientProvider client={queryClient}>
-        <AuthProvider>
-          <TooltipProvider>
-            <Sonner />
-            <BrowserRouter>
-              <Routes>
-                {/* Public Routes */}
-                <Route path="/" element={<Home />} />
-                <Route path="/auth" element={<AuthPage />} />
-                <Route path="/packages/*" element={<PackagesRoutes />} />
-                <Route path="/destinations" element={<Destinations />} />
+      <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+        <QueryClientProvider client={queryClient}>
+          <AuthProvider>
+            <TooltipProvider>
+              <Sonner />
+              <BrowserRouter>
+                <Routes>
+                  {/* Public Routes */}
+                  <Route path="/" element={<Home />} />
+                  <Route path="/auth" element={<AuthPage />} />
+                  <Route path="/packages/*" element={<PackagesRoutes />} />
+                  <Route path="/destinations" element={<Destinations />} />
 
-                {/* Protected Traveler Routes */}
-                <Route path="/traveler/dashboard/*" element={<TravelerRoutes />} />
+                  {/* Protected Traveler Routes */}
+                  <Route path="/traveler/dashboard/*" element={<TravelerRoutes />} />
 
-                {/* Protected Travel Agency Routes */}
-                <Route path="/travel_agency/*" element={<AgencyRoutes />} />
+                  {/* Protected Travel Agency Routes */}
+                  <Route path="/travel_agency/*" element={<AgencyRoutes />} />
 
-                {/* Admin Auth Route - No signup, sign-in only */}
-                <Route path="/admin/login" element={<AdminAuth />} />
+                  {/* Admin Auth Route - No signup, sign-in only */}
+                  <Route path="/admin/login" element={<AdminAuth />} />
 
-                {/* Protected Admin Routes */}
-                <Route path="/admin/*" element={<AdminRoutes />} />
+                  {/* Protected Admin Routes */}
+                  <Route path="/admin/*" element={<AdminRoutes />} />
 
-                {/* Redirect legacy routes */}
-                <Route path="/dashboard" element={<Navigate to="/travel_agency" replace />} />
-                <Route path="/dashboard/*" element={<Navigate to="/travel_agency" replace />} />
+                  {/* Redirect legacy routes */}
+                  <Route path="/dashboard" element={<Navigate to="/travel_agency" replace />} />
+                  <Route path="/dashboard/*" element={<Navigate to="/travel_agency" replace />} />
 
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </BrowserRouter>
-          </TooltipProvider>
-        </AuthProvider>
-      </QueryClientProvider>
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </BrowserRouter>
+            </TooltipProvider>
+          </AuthProvider>
+        </QueryClientProvider>
+      </ThemeProvider>
     </ErrorBoundary>
   );
 };

@@ -12,8 +12,8 @@ export function HeroGallery({ images, title, isBestSeller = false }: HeroGallery
 
     if (!images || images.length === 0) {
         return (
-            <div className="w-full h-[400px] bg-gradient-to-br from-gray-200 to-gray-300 rounded-xl flex items-center justify-center">
-                <div className="text-center text-gray-500">
+            <div className="w-full h-[400px] bg-gradient-to-br from-muted/50 to-muted rounded-xl flex items-center justify-center">
+                <div className="text-center text-muted-foreground">
                     <Images className="w-16 h-16 mx-auto mb-2 opacity-50" />
                     <p>{t('packageDetails.noImages', 'No images available')}</p>
                 </div>
@@ -66,13 +66,13 @@ export function HeroGallery({ images, title, isBestSeller = false }: HeroGallery
                         {/* Navigation Arrows */}
                         <button
                             onClick={(e) => { e.stopPropagation(); handlePrevImage(); }}
-                            className="absolute start-3 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white rounded-full p-2 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity"
+                            className="absolute start-3 top-1/2 -translate-y-1/2 bg-background/90 hover:bg-background text-foreground rounded-full p-2 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity"
                         >
                             <ChevronLeft className="w-5 h-5 rtl:rotate-180" />
                         </button>
                         <button
                             onClick={(e) => { e.stopPropagation(); handleNextImage(); }}
-                            className="absolute end-3 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white rounded-full p-2 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity"
+                            className="absolute end-3 top-1/2 -translate-y-1/2 bg-background/90 hover:bg-background text-foreground rounded-full p-2 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity"
                         >
                             <ChevronRight className="w-5 h-5 rtl:rotate-180" />
                         </button>
@@ -119,7 +119,7 @@ export function HeroGallery({ images, title, isBestSeller = false }: HeroGallery
 
                     {/* Fill empty slots if less than 4 thumbnails */}
                     {thumbnails.length < 5 && Array.from({ length: 5 - thumbnails.length }).map((_, index) => (
-                        <div key={`empty-${index}`} className="bg-gray-100" />
+                        <div key={`empty-${index}`} className="bg-muted" />
                     ))}
                 </div>
             </div>

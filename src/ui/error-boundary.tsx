@@ -29,15 +29,15 @@ export class ErrorBoundary extends Component<Props, State> {
     public render() {
         if (this.state.hasError) {
             return (
-                <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
+                <div className="min-h-screen flex items-center justify-center bg-muted/50 p-4">
                     <div className="max-w-md w-full text-center space-y-4">
                         <div className="flex justify-center">
                             <div className="p-3 bg-red-100 rounded-full">
                                 <AlertTriangle className="w-8 h-8 text-red-600" />
                             </div>
                         </div>
-                        <h1 className="text-2xl font-bold text-gray-900">{i18next.t('errors.somethingWentWrong')}</h1>
-                        <p className="text-gray-600">
+                        <h1 className="text-2xl font-bold text-foreground">{i18next.t('errors.somethingWentWrong')}</h1>
+                        <p className="text-muted-foreground">
                             {this.state.error?.message || i18next.t('errors.unexpectedError')}
                         </p>
                         <Button

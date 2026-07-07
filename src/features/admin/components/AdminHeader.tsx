@@ -6,6 +6,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/ui/sheet";
 import { useAuth } from "@/features/auth/context/AuthContext";
 import { useTranslation } from "react-i18next";
 import { LanguageSwitcher } from "@/ui/LanguageSwitcher";
+import { ThemeToggle } from "@/ui/ThemeToggle";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -46,7 +47,7 @@ export function AdminHeader() {
   ];
 
   return (
-    <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
+    <header className="bg-background border-b border-border sticky top-0 z-40">
       <div className="flex items-center justify-between px-3 sm:px-4 lg:px-8 py-2 sm:py-3 lg:py-4">
         {/* Mobile menu and search */}
         <div className="flex items-center gap-2 sm:gap-3 flex-1">
@@ -58,14 +59,14 @@ export function AdminHeader() {
               </Button>
             </SheetTrigger>
             <SheetContent side={isRTL ? "right" : "left"} className="p-0 w-64">
-              <div className="flex flex-col h-full bg-white">
+              <div className="flex flex-col h-full bg-background">
                 {/* Brand Header */}
                 <div className="p-4 border-b border-border">
                   <div className="flex items-center gap-3">
                     <div className="w-8 h-8 bg-purple-600 rounded-xl flex items-center justify-center flex-shrink-0">
                       <Shield className="w-4 h-4 text-white" />
                     </div>
-                    <span className="text-xl font-bold text-gray-900">Admin</span>
+                    <span className="text-xl font-bold text-foreground">Admin</span>
                   </div>
                 </div>
 
@@ -80,7 +81,7 @@ export function AdminHeader() {
                         className={({ isActive }) =>
                           `flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 text-sm w-full text-start ${isActive
                             ? `bg-purple-50 text-purple-700 font-semibold shadow-sm border-s-4 border-purple-600`
-                            : "text-gray-700 hover:bg-gray-50 hover:text-gray-900"
+                            : "text-muted-foreground hover:bg-muted hover:text-foreground"
                           }`
                         }
                       >
@@ -97,8 +98,8 @@ export function AdminHeader() {
           {/* Search Bar - hidden on mobile for admin? or keep it? */}
           <div className="relative flex-1 max-w-xs sm:max-w-md hidden sm:block">
             {/* Admin global search placeholder */}
-            <div className="flex items-center gap-2 text-sm text-gray-500">
-              <span className="font-semibold text-gray-900">Admin Portal</span>
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <span className="font-semibold text-foreground">Admin Portal</span>
             </div>
           </div>
         </div>
@@ -106,6 +107,8 @@ export function AdminHeader() {
         {/* Right side controls */}
         <div className="flex items-center gap-1 sm:gap-2 lg:gap-4">
           <LanguageSwitcher />
+
+          <ThemeToggle />
 
           <Button variant="ghost" size="sm" className="relative p-1 sm:p-2">
             <Bell className="w-3 h-3 sm:w-4 sm:h-4 lg:w-5 lg:h-5" />

@@ -12,7 +12,7 @@ export function StatsCard({ title, value, description, className }: StatsCardPro
     return (
         <Card className={className}>
             <CardHeader className="pb-2 text-start">
-                <CardTitle className="text-sm font-medium text-gray-500">{title}</CardTitle>
+                <CardTitle className="text-sm font-medium text-muted-foreground">{title}</CardTitle>
             </CardHeader>
             <CardContent className="text-start">
                 <div className="text-2xl font-bold tabular-nums">{value}</div>

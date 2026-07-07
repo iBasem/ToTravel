@@ -96,8 +96,8 @@ export default function FinancialManagement() {
     <div className="space-y-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center justify-between">
         <div className="text-start">
-          <h1 className="text-3xl font-bold text-gray-900">{t('financials.title')}</h1>
-          <p className="text-gray-600">{t('financials.subtitle')}</p>
+          <h1 className="text-3xl font-bold text-foreground">{t('financials.title')}</h1>
+          <p className="text-muted-foreground">{t('financials.subtitle')}</p>
         </div>
         <div className="flex items-center gap-2">
           <Button variant="outline" onClick={refetch} className="flex items-center">
@@ -111,8 +111,8 @@ export default function FinancialManagement() {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-gray-500">{t('financials.totalRevenue')}</CardTitle>
-            <DollarSign className="h-4 w-4 text-gray-400" />
+            <CardTitle className="text-sm font-medium text-muted-foreground">{t('financials.totalRevenue')}</CardTitle>
+            <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent className="text-start">
             <div className="text-2xl font-bold tabular-nums">{formatCurrency(stats.totalRevenue)}</div>
@@ -125,12 +125,12 @@ export default function FinancialManagement() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-gray-500">{t('financials.platformCommission')}</CardTitle>
-            <CreditCard className="h-4 w-4 text-gray-400" />
+            <CardTitle className="text-sm font-medium text-muted-foreground">{t('financials.platformCommission')}</CardTitle>
+            <CreditCard className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent className="text-start">
             <div className="text-2xl font-bold tabular-nums">{formatCurrency(stats.platformCommission)}</div>
-            <div className="text-sm text-gray-500">
+            <div className="text-sm text-muted-foreground">
               {t('financials.commissionRateDesc')}
             </div>
           </CardContent>
@@ -138,12 +138,12 @@ export default function FinancialManagement() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-gray-500">{t('financials.pendingPayouts')}</CardTitle>
-            <Building2 className="h-4 w-4 text-gray-400" />
+            <CardTitle className="text-sm font-medium text-muted-foreground">{t('financials.pendingPayouts')}</CardTitle>
+            <Building2 className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent className="text-start">
             <div className="text-2xl font-bold tabular-nums">{formatCurrency(stats.pendingPayouts)}</div>
-            <div className="text-sm text-gray-500">
+            <div className="text-sm text-muted-foreground">
               {stats.pendingPayoutsCount} {t('financials.agenciesPending')}
             </div>
           </CardContent>
@@ -151,12 +151,12 @@ export default function FinancialManagement() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-gray-500">{t('financials.processedPayouts')}</CardTitle>
-            <Building2 className="h-4 w-4 text-gray-400" />
+            <CardTitle className="text-sm font-medium text-muted-foreground">{t('financials.processedPayouts')}</CardTitle>
+            <Building2 className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent className="text-start">
             <div className="text-2xl font-bold tabular-nums">{formatCurrency(stats.processedPayouts)}</div>
-            <div className="text-sm text-gray-500">
+            <div className="text-sm text-muted-foreground">
               {t('financials.totalProcessed')}
             </div>
           </CardContent>
@@ -192,7 +192,7 @@ export default function FinancialManagement() {
                 </LineChart>
               </ResponsiveContainer>
             ) : (
-              <div className="flex items-center justify-center h-full text-gray-500">
+              <div className="flex items-center justify-center h-full text-muted-foreground">
                 {t('financials.noRevenueData')}
               </div>
             )}
@@ -209,7 +209,7 @@ export default function FinancialManagement() {
         </CardHeader>
         <CardContent>
           {payouts.length === 0 ? (
-            <div className="text-center py-12 text-gray-500">
+            <div className="text-center py-12 text-muted-foreground">
               <p>{t('financials.noPayoutsFound')}</p>
             </div>
           ) : (

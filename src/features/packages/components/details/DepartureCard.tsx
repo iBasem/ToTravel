@@ -25,7 +25,7 @@ export function DepartureCard({ departure, durationDays, onConfirm }: DepartureC
         : 0;
 
     return (
-        <Card className={`relative transition-all hover:shadow-md border ${departure.seats_remaining === 0 ? 'opacity-60 bg-gray-50' : 'bg-white'
+        <Card className={`relative transition-all hover:shadow-md border ${departure.seats_remaining === 0 ? 'opacity-60 bg-muted/50' : 'bg-card'
             }`}>
             {/* Discount Badge - Top End Corner */}
             {hasDiscount && (
@@ -50,30 +50,30 @@ export function DepartureCard({ departure, durationDays, onConfirm }: DepartureC
                         <div className="flex items-center gap-3 mb-3">
                             {/* From Date */}
                             <div>
-                                <p className="text-xs text-gray-500 mb-0.5">
+                                <p className="text-xs text-muted-foreground mb-0.5">
                                     {t('packageDetails.from', 'From')} {format(startDate, 'EEEE')}
                                 </p>
-                                <p className="text-lg font-bold text-gray-900">
+                                <p className="text-lg font-bold text-foreground">
                                     {format(startDate, 'd MMM, yyyy')}
                                 </p>
                             </div>
 
                             {/* Arrow */}
-                            <ArrowRight className="w-5 h-5 text-gray-400 flex-shrink-0 rtl:rotate-180" />
+                            <ArrowRight className="w-5 h-5 text-muted-foreground flex-shrink-0 rtl:rotate-180" />
 
                             {/* To Date */}
                             <div>
-                                <p className="text-xs text-gray-500 mb-0.5">
+                                <p className="text-xs text-muted-foreground mb-0.5">
                                     {t('packageDetails.to', 'To')} {format(endDate, 'EEEE')}
                                 </p>
-                                <p className="text-lg font-bold text-gray-900">
+                                <p className="text-lg font-bold text-foreground">
                                     {format(endDate, 'd MMM, yyyy')}
                                 </p>
                             </div>
                         </div>
 
                         {/* Language Badge */}
-                        <div className="flex items-center gap-2 text-sm text-gray-600">
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
                             <Globe className="w-4 h-4" />
                             <span>{i18n.language === 'ar' ? 'العربية' : 'English'}</span>
                         </div>
@@ -82,27 +82,27 @@ export function DepartureCard({ departure, durationDays, onConfirm }: DepartureC
                     {/* Right: Pricing Section */}
                     <div className="lg:min-w-[200px] text-end">
                         {/* Price Label */}
-                        <p className="text-sm text-gray-500 mb-1">
+                        <p className="text-sm text-muted-foreground mb-1">
                             {t('packageDetails.from', 'From')}:
                         </p>
 
                         {/* Price */}
                         <div className="flex items-baseline gap-2 justify-end">
                             {hasDiscount && (
-                                <span className="text-sm text-gray-400 line-through">
+                                <span className="text-sm text-muted-foreground line-through">
                                     ${departure.price.toLocaleString()}
                                 </span>
                             )}
-                            <span className={`text-2xl font-bold ${hasDiscount ? 'text-green-600' : 'text-gray-900'}`}>
+                            <span className={`text-2xl font-bold ${hasDiscount ? 'text-green-600' : 'text-foreground'}`}>
                                 US ${displayPrice.toLocaleString()}
                             </span>
-                            <span className="text-sm text-gray-500">
+                            <span className="text-sm text-muted-foreground">
                                 {t('packageDetails.perPerson', 'per person')}
                             </span>
                         </div>
 
                         {/* Price Note */}
-                        <div className="flex items-center gap-1.5 text-xs text-gray-500 mt-2 justify-end">
+                        <div className="flex items-center gap-1.5 text-xs text-muted-foreground mt-2 justify-end">
                             <Bed className="w-3.5 h-3.5" />
                             <span>{t('packageDetails.priceBasedOnSharedRoom', 'Price based on Shared Room')}</span>
                         </div>
@@ -110,7 +110,7 @@ export function DepartureCard({ departure, durationDays, onConfirm }: DepartureC
                 </div>
 
                 {/* Bottom Actions Row */}
-                <div className="flex items-center justify-between mt-5 pt-4 border-t border-gray-100">
+                <div className="flex items-center justify-between mt-5 pt-4 border-t border-border">
                     {/* Seats Status */}
                     {departure.seats_remaining > 0 && departure.seats_remaining <= 6 && (
                         <div className="flex items-center gap-1.5 text-sm">
@@ -135,7 +135,7 @@ export function DepartureCard({ departure, durationDays, onConfirm }: DepartureC
                             onClick={onConfirm}
                             disabled={departure.seats_remaining === 0}
                             className={`min-w-[130px] ${departure.seats_remaining === 0
-                                ? 'bg-gray-300 cursor-not-allowed'
+                                ? 'bg-muted cursor-not-allowed'
                                 : 'bg-teal-600 hover:bg-teal-700'
                                 }`}
                         >

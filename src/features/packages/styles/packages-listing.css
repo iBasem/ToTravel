@@ -65,6 +65,22 @@
     --pkg-price-col-width: 200px;
 }
 
+/* Dark theme: remap the pkg color tokens onto the app design system */
+.dark {
+    --pkg-bg: hsl(var(--background));
+    --pkg-card-bg: hsl(var(--card));
+    --pkg-secondary-btn: hsl(var(--card));
+    --pkg-text-primary: hsl(var(--foreground));
+    --pkg-text-secondary: hsl(var(--muted-foreground));
+    --pkg-text-muted: hsl(var(--muted-foreground));
+    --pkg-border: hsl(var(--border));
+    --pkg-filter-bg: hsl(var(--card));
+    --pkg-slider-track: hsl(var(--muted));
+    --pkg-badge-bg: rgba(26, 123, 123, 0.2);
+    --pkg-badge-text: #4db6b6;
+    --pkg-text-link: #4db6b6;
+}
+
 /* ===== PAGE LAYOUT ===== */
 
 .pkg-page {
@@ -208,7 +224,7 @@
     border-radius: 6px;
     font-size: var(--pkg-filter-label-size);
     color: var(--pkg-text-primary);
-    background: white;
+    background: var(--pkg-filter-bg);
     cursor: pointer;
     appearance: none;
     background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%23666' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
@@ -479,9 +495,9 @@
     border-radius: 3px;
     font-size: 12px;
     font-weight: 600;
-    color: #333;
+    color: var(--pkg-text-primary);
     background: transparent;
-    border: 1.5px solid #ccc;
+    border: 1.5px solid var(--pkg-border);
 }
 
 .pkg-badge-bestseller svg {
@@ -617,6 +633,10 @@
     color: #8b6914;
 }
 
+.dark .pkg-operator-badge {
+    color: #d4a72c;
+}
+
 .pkg-operator-dot {
     display: inline-block;
     width: 8px;
@@ -750,7 +770,7 @@
 }
 
 .pkg-btn-brochure:hover {
-    background: #f0f7f7;
+    background: var(--pkg-badge-bg);
 }
 
 /* ===== PAGINATION ===== */
@@ -772,7 +792,7 @@
     justify-content: center;
     border: 1px solid var(--pkg-border);
     border-radius: 6px;
-    background: white;
+    background: var(--pkg-card-bg);
     color: var(--pkg-text-primary);
     font-size: 14px;
     font-weight: 500;

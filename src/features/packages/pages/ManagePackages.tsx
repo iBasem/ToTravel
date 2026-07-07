@@ -110,15 +110,15 @@ export default function Packages() {
       {/* Search and Filter Section */}
       <div className="flex flex-col gap-3 sm:flex-row sm:gap-4">
         <div className="relative flex-1">
-          <Search className="absolute top-1/2 transform -translate-y-1/2 h-3 w-3 sm:h-4 sm:w-4 text-gray-400 start-2 sm:start-3" />
+          <Search className="absolute top-1/2 transform -translate-y-1/2 h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground start-2 sm:start-3" />
           <Input
             placeholder={t('agencyDashboard.searchPackages')}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="h-8 sm:h-10 lg:h-11 bg-white border-gray-200 focus:border-blue-500 focus:ring-blue-500 text-xs sm:text-sm lg:text-base ps-8 sm:ps-10"
+            className="h-8 sm:h-10 lg:h-11 bg-background border-border focus:border-blue-500 focus:ring-blue-500 text-xs sm:text-sm lg:text-base ps-8 sm:ps-10"
           />
         </div>
-        <Button variant="outline" className="w-full sm:w-auto border-gray-200 hover:bg-gray-50 text-xs sm:text-sm lg:text-base px-3 sm:px-4 lg:px-6 flex items-center gap-1 sm:gap-2">
+        <Button variant="outline" className="w-full sm:w-auto border-border hover:bg-muted text-xs sm:text-sm lg:text-base px-3 sm:px-4 lg:px-6 flex items-center gap-1 sm:gap-2">
           <Filter className="w-3 h-3 sm:w-4 sm:h-4" />
           {t('agencyDashboard.filter')}
         </Button>
@@ -130,7 +130,7 @@ export default function Packages() {
           {filteredPackages.map((pkg) => {
             const thumbnail = getPrimaryImage(pkg);
             return (
-              <Card key={pkg.id} className="cursor-pointer hover:shadow-lg transition-all duration-200 border-gray-200 hover:-translate-y-1 bg-white overflow-hidden">
+              <Card key={pkg.id} className="cursor-pointer hover:shadow-lg transition-all duration-200 border-border hover:-translate-y-1 bg-card overflow-hidden">
                 {/* Thumbnail */}
                 {thumbnail ? (
                   <div className="relative h-40 w-full overflow-hidden" onClick={() => handleViewPackage(pkg.id)}>
@@ -170,7 +170,7 @@ export default function Packages() {
 
                 <CardHeader className="pb-2 sm:pb-3 px-3 sm:px-4 lg:px-6 pt-3 sm:pt-4 text-start">
                   <div className="flex items-start justify-between gap-2">
-                    <CardTitle className="text-sm sm:text-base lg:text-lg font-semibold text-gray-900 line-clamp-2 flex-1 leading-tight">
+                    <CardTitle className="text-sm sm:text-base lg:text-lg font-semibold text-foreground line-clamp-2 flex-1 leading-tight">
                       {pkg.title}
                     </CardTitle>
                     <DropdownMenu>
@@ -203,15 +203,15 @@ export default function Packages() {
                   </div>
                 </CardHeader>
                 <CardContent className="space-y-2 sm:space-y-3 px-3 sm:px-4 lg:px-6 pb-3 sm:pb-4 lg:pb-6 text-start">
-                  <p className="text-xs sm:text-sm text-gray-600">{pkg.destination}</p>
-                  <p className="text-xs sm:text-sm text-gray-600">{pkg.duration_days} {t('common.days')}, {pkg.duration_nights} {t('agencyDashboard.nights')}</p>
+                  <p className="text-xs sm:text-sm text-muted-foreground">{pkg.destination}</p>
+                  <p className="text-xs sm:text-sm text-muted-foreground">{pkg.duration_days} {t('common.days')}, {pkg.duration_nights} {t('agencyDashboard.nights')}</p>
                   <div className="flex items-center justify-between">
                     <p className="text-base sm:text-lg lg:text-xl font-bold text-blue-600">
                       ${pkg.base_price}
                     </p>
                   </div>
-                  <div className="flex items-center justify-between pt-1 sm:pt-2 border-t border-gray-100">
-                    <span className="text-xs sm:text-sm text-gray-600">
+                  <div className="flex items-center justify-between pt-1 sm:pt-2 border-t border-border">
+                    <span className="text-xs sm:text-sm text-muted-foreground">
                       {pkg.itineraries?.length || 0} {(pkg.itineraries?.length || 0) !== 1 ? t('agencyDashboard.daysPlannedPlural') : t('agencyDashboard.daysPlanned')}
                     </span>
                     <Button

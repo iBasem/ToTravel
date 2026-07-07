@@ -36,8 +36,8 @@ export default function TravelerReviews() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">{t('travelerDashboard.myReviews')}</h1>
-        <p className="text-gray-600">{t('travelerDashboard.shareExperiences')}</p>
+        <h1 className="text-2xl font-bold text-foreground">{t('travelerDashboard.myReviews')}</h1>
+        <p className="text-muted-foreground">{t('travelerDashboard.shareExperiences')}</p>
       </div>
 
       <div className="grid gap-6">
@@ -60,12 +60,12 @@ export default function TravelerReviews() {
                         <h3 className="font-semibold text-lg hover:underline">
                           <Link to={`/packages/${review.package.id}`}>{review.package.title}</Link>
                         </h3>
-                        <span className="text-sm text-gray-500 whitespace-nowrap">
+                        <span className="text-sm text-muted-foreground whitespace-nowrap">
                           {format(new Date(review.created_at), 'MMM d, yyyy')}
                         </span>
                       </div>
                       <StarRating rating={review.rating} readonly size="sm" />
-                      <p className="text-gray-600 text-sm sm:text-base">{review.comment}</p>
+                      <p className="text-muted-foreground text-sm sm:text-base">{review.comment}</p>
                     </div>
                   </div>
                 </CardContent>

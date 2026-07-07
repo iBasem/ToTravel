@@ -145,7 +145,7 @@ export default function PackagesList() {
   // Loading state
   if (loading) {
     return (
-      <div className="min-h-screen bg-white">
+      <div className="min-h-screen bg-background">
         <HeaderSection />
         <div className="pkg-page">
           <div className="pkg-page-inner">
@@ -154,7 +154,7 @@ export default function PackagesList() {
                 style={{
                   width: 40,
                   height: 40,
-                  border: '3px solid #e0e0e0',
+                  border: '3px solid var(--pkg-slider-track)',
                   borderTopColor: 'var(--pkg-primary)',
                   borderRadius: '50%',
                   animation: 'spin 0.8s linear infinite',
@@ -171,11 +171,11 @@ export default function PackagesList() {
   // Error state
   if (error) {
     return (
-      <div className="min-h-screen bg-white">
+      <div className="min-h-screen bg-background">
         <HeaderSection />
         <div className="pkg-page">
           <div className="pkg-page-inner">
-            <div style={{ textAlign: 'center', padding: '80px 20px', color: '#666' }}>
+            <div style={{ textAlign: 'center', padding: '80px 20px', color: 'var(--pkg-text-secondary)' }}>
               <p style={{ fontSize: 18, marginBottom: 8 }}>Unable to load packages</p>
               <p style={{ fontSize: 14 }}>{error}</p>
             </div>
@@ -187,7 +187,7 @@ export default function PackagesList() {
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-background">
       <HeaderSection />
 
       <div className="pkg-page">
@@ -242,7 +242,7 @@ export default function PackagesList() {
                   ))}
                 </div>
               ) : (
-                <div style={{ textAlign: 'center', padding: '60px 20px', color: '#888' }}>
+                <div style={{ textAlign: 'center', padding: '60px 20px', color: 'var(--pkg-text-muted)' }}>
                   <p style={{ fontSize: 18, marginBottom: 8 }}>No tours match your filters</p>
                   <p style={{ fontSize: 14 }}>Try adjusting your filter criteria</p>
                 </div>

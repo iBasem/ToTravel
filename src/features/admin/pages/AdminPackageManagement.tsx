@@ -49,7 +49,7 @@ export default function AdminPackageManagement() {
       case "rejected":
         return <Badge className="bg-red-100 text-red-800">{t('common.rejected')}</Badge>;
       case "draft":
-        return <Badge className="bg-gray-100 text-gray-800">{t('common.draft')}</Badge>;
+        return <Badge className="bg-muted text-foreground">{t('common.draft')}</Badge>;
       default:
         return <Badge variant="outline">{status}</Badge>;
     }
@@ -128,7 +128,7 @@ export default function AdminPackageManagement() {
           <div className="flex items-center justify-between">
             <CardTitle>{t('adminPackages.allPackages')}</CardTitle>
             <div className="relative">
-              <Search className="absolute top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 start-3" />
+              <Search className="absolute top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4 start-3" />
               <Input
                 placeholder={t('adminPackages.searchPlaceholder')}
                 value={searchTerm}
@@ -140,7 +140,7 @@ export default function AdminPackageManagement() {
         </CardHeader>
         <CardContent>
           {filteredPackages.length === 0 ? (
-            <div className="text-center py-12 text-gray-500">
+            <div className="text-center py-12 text-muted-foreground">
               <p>{t('adminPackages.noPackagesFound')}</p>
             </div>
           ) : (
@@ -161,8 +161,8 @@ export default function AdminPackageManagement() {
                 {filteredPackages.map((pkg) => (
                   <TableRow key={pkg.id}>
                     <TableCell className="text-start">
-                      <div className="font-medium text-gray-900">{pkg.title}</div>
-                      <div className="text-sm text-gray-500 tabular-nums">{pkg.id.slice(0, 8)}</div>
+                      <div className="font-medium text-foreground">{pkg.title}</div>
+                      <div className="text-sm text-muted-foreground tabular-nums">{pkg.id.slice(0, 8)}</div>
                     </TableCell>
                     <TableCell className="text-start">{pkg.agency_name}</TableCell>
                     <TableCell className="text-start">{pkg.destination}</TableCell>
@@ -174,7 +174,7 @@ export default function AdminPackageManagement() {
                         {pkg.featured ? (
                           <Star className="w-4 h-4 text-yellow-500 fill-current" />
                         ) : (
-                          <Star className="w-4 h-4 text-gray-300" />
+                          <Star className="w-4 h-4 text-muted-foreground/40" />
                         )}
                       </button>
                     </TableCell>

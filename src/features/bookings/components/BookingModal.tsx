@@ -139,7 +139,7 @@ export function BookingModal({
                     </div>
 
                     {/* Price Summary */}
-                    <div className="bg-gray-50 p-4 rounded-lg">
+                    <div className="bg-muted/50 p-4 rounded-lg">
                         <div className="flex justify-between mb-2">
                             <span>{t('booking.pricePerPerson')}</span>
                             <span>${basePrice.toLocaleString()}</span>

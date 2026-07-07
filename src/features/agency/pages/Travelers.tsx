@@ -45,7 +45,7 @@ export default function Travelers() {
 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
         <div className="relative flex-1">
-          <Search className="absolute top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 start-3" />
+          <Search className="absolute top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground start-3" />
           <Input
             placeholder={t('agencyDashboard.searchTravelers')}
             value={searchTerm}
@@ -83,9 +83,9 @@ export default function Travelers() {
                       </div>
                       <div>
                         <p className="font-medium">{traveler.name}</p>
-                        <p className="text-sm text-gray-600">{traveler.email}</p>
+                        <p className="text-sm text-muted-foreground">{traveler.email}</p>
                         {traveler.phone && (
-                          <p className="text-sm text-gray-600" dir="ltr">{traveler.phone}</p>
+                          <p className="text-sm text-muted-foreground" dir="ltr">{traveler.phone}</p>
                         )}
                       </div>
                     </div>
@@ -93,7 +93,7 @@ export default function Travelers() {
                   <div className="text-end">
                     <p className="font-medium">{traveler.totalBookings} {t('agencyDashboard.bookings')}</p>
                     {traveler.lastTrip && (
-                      <p className="text-sm text-gray-600">{traveler.lastTrip}</p>
+                      <p className="text-sm text-muted-foreground">{traveler.lastTrip}</p>
                     )}
                   </div>
                 </div>

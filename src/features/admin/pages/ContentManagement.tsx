@@ -81,8 +81,8 @@ export default function ContentManagement() {
     <div className="space-y-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">{t('content.title', 'Content Management')}</h1>
-          <p className="text-gray-600">{t('content.subtitle', 'Manage website content, pages, and blog posts')}</p>
+          <h1 className="text-3xl font-bold text-foreground">{t('content.title', 'Content Management')}</h1>
+          <p className="text-muted-foreground">{t('content.subtitle', 'Manage website content, pages, and blog posts')}</p>
         </div>
         <div className="flex items-center gap-2">
           <Button variant="outline" onClick={refetch} className="flex items-center gap-2">
@@ -99,7 +99,7 @@ export default function ContentManagement() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card>
           <CardHeader className="pb-2 text-start">
-            <CardTitle className="text-sm font-medium text-gray-500">{t('content.totalPages', 'Total Pages')}</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">{t('content.totalPages', 'Total Pages')}</CardTitle>
           </CardHeader>
           <CardContent className="text-start">
             <div className="text-2xl font-bold tabular-nums">{stats.totalPages.toLocaleString(i18n.language === 'ar' ? 'ar-SA' : 'en-US')}</div>
@@ -107,7 +107,7 @@ export default function ContentManagement() {
         </Card>
         <Card>
           <CardHeader className="pb-2 text-start">
-            <CardTitle className="text-sm font-medium text-gray-500">{t('content.blogPosts', 'Blog Posts')}</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">{t('content.blogPosts', 'Blog Posts')}</CardTitle>
           </CardHeader>
           <CardContent className="text-start">
             <div className="text-2xl font-bold tabular-nums">{stats.blogPosts.toLocaleString(i18n.language === 'ar' ? 'ar-SA' : 'en-US')}</div>
@@ -115,7 +115,7 @@ export default function ContentManagement() {
         </Card>
         <Card>
           <CardHeader className="pb-2 text-start">
-            <CardTitle className="text-sm font-medium text-gray-500">{t('content.draftContent', 'Draft Content')}</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">{t('content.draftContent', 'Draft Content')}</CardTitle>
           </CardHeader>
           <CardContent className="text-start">
             <div className="text-2xl font-bold tabular-nums">{stats.draftContent.toLocaleString(i18n.language === 'ar' ? 'ar-SA' : 'en-US')}</div>
@@ -129,7 +129,7 @@ export default function ContentManagement() {
         </CardHeader>
         <CardContent>
           {content.length === 0 ? (
-            <div className="text-center py-12 text-gray-500">
+            <div className="text-center py-12 text-muted-foreground">
               <p>{t('content.noContentFound', 'No content found')}</p>
             </div>
           ) : (
@@ -148,8 +148,8 @@ export default function ContentManagement() {
                   <TableRow key={item.id}>
                     <TableCell className="text-start">
                       <div className="flex items-center gap-2">
-                        <FileText className="w-4 h-4 text-gray-400" />
-                        <span className="font-medium text-gray-900">{item.title}</span>
+                        <FileText className="w-4 h-4 text-muted-foreground" />
+                        <span className="font-medium text-foreground">{item.title}</span>
                       </div>
                     </TableCell>
                     <TableCell className="text-start">{getTypeBadge(item.content_type)}</TableCell>

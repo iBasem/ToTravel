@@ -101,14 +101,14 @@ export default function Messages() {
                       ? 'bg-blue-50 border-blue-500 border-s-4'
                       : conversation.unread
                         ? 'bg-yellow-50 border-s-4 border-yellow-500'
-                        : 'hover:bg-gray-50'
+                        : 'hover:bg-muted'
                       }`}
                   >
                     <div className="flex justify-between items-start mb-1">
                       <p className="font-medium">{conversation.travelerName}</p>
-                      <span className="text-xs text-gray-500">{formatTime(conversation.lastMessageTime)}</span>
+                      <span className="text-xs text-muted-foreground">{formatTime(conversation.lastMessageTime)}</span>
                     </div>
-                    <p className="text-sm text-gray-600 truncate">
+                    <p className="text-sm text-muted-foreground truncate">
                       {conversation.lastMessage}
                     </p>
                   </div>
@@ -127,9 +127,9 @@ export default function Messages() {
             </CardHeader>
             <CardContent>
               {!selectedConversation ? (
-                <div className="flex items-center justify-center h-64 text-gray-500">
+                <div className="flex items-center justify-center h-64 text-muted-foreground">
                   <div className="text-center">
-                    <MessageSquare className="w-16 h-16 mx-auto mb-4 text-gray-300" />
+                    <MessageSquare className="w-16 h-16 mx-auto mb-4 text-muted-foreground/40" />
                     <p>{t('agencyDashboard.selectConversation')}</p>
                   </div>
                 </div>
@@ -142,7 +142,7 @@ export default function Messages() {
                     >
                       <div
                         className={`max-w-[70%] px-4 py-2 rounded-lg text-sm ${msg.sender_id === selectedConversation
-                          ? 'bg-gray-100 text-gray-800'
+                          ? 'bg-muted text-foreground'
                           : 'bg-blue-600 text-white'
                           }`}
                       >

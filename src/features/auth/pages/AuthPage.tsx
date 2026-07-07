@@ -117,7 +117,7 @@ export default function AuthPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-muted/50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <Link to="/" className="flex items-center justify-center gap-2 mb-8">
           <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
@@ -133,7 +133,7 @@ export default function AuthPage() {
               to={`/auth?type=traveler`}
               className={`flex items-center gap-2 px-4 py-2 rounded-lg border transition-colors ${userType === 'traveler'
                 ? 'bg-blue-50 border-blue-200 text-blue-700'
-                : 'bg-white border-gray-200 text-gray-600 hover:bg-gray-50'
+                : 'bg-card border-border text-muted-foreground hover:bg-muted'
                 }`}
             >
               <Users className="w-4 h-4" />
@@ -143,7 +143,7 @@ export default function AuthPage() {
               to={`/auth?type=agency`}
               className={`flex items-center gap-2 px-4 py-2 rounded-lg border transition-colors ${userType === 'agency'
                 ? 'bg-blue-50 border-blue-200 text-blue-700'
-                : 'bg-white border-gray-200 text-gray-600 hover:bg-gray-50'
+                : 'bg-card border-border text-muted-foreground hover:bg-muted'
                 }`}
             >
               <Building className="w-4 h-4" />
@@ -270,7 +270,7 @@ export default function AuthPage() {
             </form>
 
             <div className="mt-6 text-center">
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-muted-foreground">
                 {mode === 'signin' ? t('auth.noAccount') : t('auth.haveAccount')}
                 <button
                   type="button"
@@ -283,7 +283,7 @@ export default function AuthPage() {
             </div>
 
             <div className="mt-6 text-center">
-              <div className="text-sm text-gray-600">
+              <div className="text-sm text-muted-foreground">
                 {t('auth.termsAgree')}{' '}
                 <a href="#" className="text-blue-600 hover:underline">{t('auth.termsOfService')}</a>{' '}
                 {t('auth.and')}{' '}

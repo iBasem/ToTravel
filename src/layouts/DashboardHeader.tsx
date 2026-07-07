@@ -6,6 +6,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/ui/sheet";
 import { useAuth } from "@/features/auth/context/AuthContext";
 import { useTranslation } from "react-i18next";
 import { LanguageSwitcher } from "@/ui/LanguageSwitcher";
+import { ThemeToggle } from "@/ui/ThemeToggle";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -74,7 +75,7 @@ export function DashboardHeader() {
   };
 
   return (
-    <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
+    <header className="bg-background border-b border-border sticky top-0 z-40">
       <div className="flex items-center justify-between px-3 sm:px-4 lg:px-8 py-2 sm:py-3 lg:py-4">
         {/* Mobile menu and search */}
         <div className="flex items-center gap-2 sm:gap-3 flex-1">
@@ -86,14 +87,14 @@ export function DashboardHeader() {
               </Button>
             </SheetTrigger>
             <SheetContent side={isRTL ? "right" : "left"} className="p-0 w-64">
-              <div className="flex flex-col h-full bg-white">
+              <div className="flex flex-col h-full bg-background">
                 {/* Brand Header */}
                 <div className="p-4 border-b border-border">
                   <div className="flex items-center gap-3">
                     <div className="w-8 h-8 bg-blue-600 rounded-xl flex items-center justify-center flex-shrink-0">
                       <MapPin className="w-4 h-4 text-white" />
                     </div>
-                    <span className="text-xl font-bold text-gray-900">ToTravel</span>
+                    <span className="text-xl font-bold text-foreground">ToTravel</span>
                   </div>
                 </div>
 
@@ -108,7 +109,7 @@ export function DashboardHeader() {
                         className={({ isActive }) =>
                           `flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 text-sm w-full text-start ${isActive
                             ? `bg-blue-50 text-blue-700 font-semibold shadow-sm border-s-4 border-blue-600`
-                            : "text-gray-700 hover:bg-gray-50 hover:text-gray-900"
+                            : "text-muted-foreground hover:bg-muted hover:text-foreground"
                           }`
                         }
                       >
@@ -138,10 +139,10 @@ export function DashboardHeader() {
           </Sheet>
 
           <div className="relative flex-1 max-w-xs sm:max-w-md">
-            <Search className="absolute top-1/2 transform -translate-y-1/2 text-gray-400 w-3 h-3 sm:w-4 sm:h-4 start-2 sm:start-3" />
+            <Search className="absolute top-1/2 transform -translate-y-1/2 text-muted-foreground w-3 h-3 sm:w-4 sm:h-4 start-2 sm:start-3" />
             <Input
               placeholder={t('agencyDashboard.searchAnything')}
-              className="bg-gray-50 border-0 h-8 sm:h-9 lg:h-10 text-xs sm:text-sm ps-7 sm:ps-10"
+              className="bg-muted/50 border-0 h-8 sm:h-9 lg:h-10 text-xs sm:text-sm ps-7 sm:ps-10"
             />
           </div>
         </div>
@@ -150,6 +151,9 @@ export function DashboardHeader() {
         <div className="flex items-center gap-1 sm:gap-2 lg:gap-4">
           {/* Language Switcher */}
           <LanguageSwitcher />
+
+          {/* Theme Toggle */}
+          <ThemeToggle />
 
           {/* Notifications */}
           <Button variant="ghost" size="sm" className="relative p-1 sm:p-2">
@@ -169,7 +173,7 @@ export function DashboardHeader() {
                 </Avatar>
                 <div className="hidden md:block text-start">
                   <div className="text-xs sm:text-sm font-medium">{getUserDisplayName()}</div>
-                  <div className="text-[10px] sm:text-xs text-gray-500">{getUserRole()}</div>
+                  <div className="text-[10px] sm:text-xs text-muted-foreground">{getUserRole()}</div>
                 </div>
                 <ChevronDown className="w-3 h-3 sm:w-4 sm:h-4 hidden md:block rtl-flip" />
               </Button>

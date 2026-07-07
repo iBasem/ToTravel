@@ -43,8 +43,8 @@ export function DetailedItinerary({ itinerary }: DetailedItineraryProps) {
                   </span>
                 </div>
                 <div>
-                  <h4 className="font-medium text-gray-900">{item.title}</h4>
-                  <p className="text-sm text-gray-600">{item.description}</p>
+                  <h4 className="font-medium text-foreground">{item.title}</h4>
+                  <p className="text-sm text-muted-foreground">{item.description}</p>
                 </div>
               </div>
             </AccordionTrigger>
@@ -53,13 +53,13 @@ export function DetailedItinerary({ itinerary }: DetailedItineraryProps) {
                 {/* Activities */}
                 {item.activities && item.activities.length > 0 && (
                   <div>
-                    <h5 className="font-medium text-gray-900 mb-2 flex items-center gap-2">
+                    <h5 className="font-medium text-foreground mb-2 flex items-center gap-2">
                       <Activity className="w-4 h-4 text-green-600" />
                       {t('packageDetails.activities', 'Activities')}
                     </h5>
                     <ul className="space-y-1">
                       {item.activities.map((activity, actIndex) => (
-                        <li key={actIndex} className="flex items-start gap-2 text-sm text-gray-700 text-start">
+                        <li key={actIndex} className="flex items-start gap-2 text-sm text-foreground text-start">
                           <ChevronRight className="w-3 h-3 mt-0.5 text-green-600 flex-shrink-0 rtl:rotate-180" />
                           {activity}
                         </li>
@@ -72,7 +72,7 @@ export function DetailedItinerary({ itinerary }: DetailedItineraryProps) {
                   {/* Meals */}
                   {item.meals_included && item.meals_included.length > 0 && (
                     <div>
-                      <h5 className="font-medium text-gray-900 mb-2 flex items-center gap-2">
+                      <h5 className="font-medium text-foreground mb-2 flex items-center gap-2">
                         <Utensils className="w-4 h-4 text-orange-600" />
                         {t('packageDetails.mealsIncluded', 'Meals Included')}
                       </h5>
@@ -89,11 +89,11 @@ export function DetailedItinerary({ itinerary }: DetailedItineraryProps) {
                   {/* Accommodation */}
                   {item.accommodation && (
                     <div>
-                      <h5 className="font-medium text-gray-900 mb-2 flex items-center gap-2">
+                      <h5 className="font-medium text-foreground mb-2 flex items-center gap-2">
                         <Bed className="w-4 h-4 text-purple-600" />
                         {t('packageDetails.accommodation', 'Accommodation')}
                       </h5>
-                      <p className="text-sm text-gray-700 text-start">{item.accommodation}</p>
+                      <p className="text-sm text-foreground text-start">{item.accommodation}</p>
                     </div>
                   )}
                 </div>

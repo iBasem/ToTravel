@@ -104,8 +104,8 @@ export default function AdminDashboard() {
     <div className="space-y-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center justify-between">
         <div className="text-start">
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">{t('admin.dashboard')}</h1>
-          <p className="text-gray-600">{t('admin.overview')}</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-foreground">{t('admin.dashboard')}</h1>
+          <p className="text-muted-foreground">{t('admin.overview')}</p>
         </div>
         <div className="flex items-center gap-3">
           <Button variant="outline" onClick={refetch} className="flex items-center">
@@ -120,8 +120,8 @@ export default function AdminDashboard() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-gray-500">{t('admin.totalUsers')}</CardTitle>
-            <Users className="h-4 w-4 text-gray-400" />
+            <CardTitle className="text-sm font-medium text-muted-foreground">{t('admin.totalUsers')}</CardTitle>
+            <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent className="text-start">
             <div className="text-2xl font-bold tabular-nums">{stats.totalUsers.toLocaleString()}</div>
@@ -135,8 +135,8 @@ export default function AdminDashboard() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-gray-500">{t('admin.travelAgencies')}</CardTitle>
-            <Building2 className="h-4 w-4 text-gray-400" />
+            <CardTitle className="text-sm font-medium text-muted-foreground">{t('admin.travelAgencies')}</CardTitle>
+            <Building2 className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent className="text-start">
             <div className="text-2xl font-bold tabular-nums">{stats.totalAgencies}</div>
@@ -149,8 +149,8 @@ export default function AdminDashboard() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-gray-500">{t('admin.totalBookings')}</CardTitle>
-            <BookOpen className="h-4 w-4 text-gray-400" />
+            <CardTitle className="text-sm font-medium text-muted-foreground">{t('admin.totalBookings')}</CardTitle>
+            <BookOpen className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent className="text-start">
             <div className="text-2xl font-bold tabular-nums">{stats.totalBookings.toLocaleString()}</div>
@@ -163,8 +163,8 @@ export default function AdminDashboard() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-gray-500">{t('admin.platformRevenue')}</CardTitle>
-            <DollarSign className="h-4 w-4 text-gray-400" />
+            <CardTitle className="text-sm font-medium text-muted-foreground">{t('admin.platformRevenue')}</CardTitle>
+            <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent className="text-start">
             <div className="text-2xl font-bold tabular-nums">{formatCurrency(stats.platformRevenue)}</div>
@@ -225,13 +225,13 @@ export default function AdminDashboard() {
           </CardHeader>
           <CardContent className="space-y-4">
             {pendingActions.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-8 text-gray-500">
+              <div className="flex flex-col items-center justify-center py-8 text-muted-foreground">
                 <CheckCircle className="w-12 h-12 mb-2 text-green-500" />
                 <p className="text-sm">{t('admin.allCaughtUp')}</p>
               </div>
             ) : (
               pendingActions.slice(0, 3).map((action) => (
-                <div key={action.id} className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
+                <div key={action.id} className="flex items-start gap-3 p-3 bg-muted/50 rounded-lg">
                   <AlertCircle className="w-5 h-5 text-orange-500 mt-0.5" />
                   <div className="flex-1 min-w-0 text-start">
                     <div className="flex items-center gap-2">
@@ -243,9 +243,9 @@ export default function AdminDashboard() {
                       </Badge>
                     </div>
                     <h4 className="font-medium text-sm mt-1">{action.title}</h4>
-                    <p className="text-xs text-gray-600">{action.description}</p>
+                    <p className="text-xs text-muted-foreground">{action.description}</p>
                     <div className="flex items-center justify-between mt-2">
-                      <span className="text-xs text-gray-500">
+                      <span className="text-xs text-muted-foreground">
                         {formatDistanceToNow(new Date(action.created_at), { addSuffix: true })}
                       </span>
                       <Button
@@ -281,7 +281,7 @@ export default function AdminDashboard() {
         </CardHeader>
         <CardContent>
           {activityLogs.length === 0 ? (
-            <div className="text-center py-8 text-gray-500">
+            <div className="text-center py-8 text-muted-foreground">
               <p>{t('admin.noRecentActivity')}</p>
             </div>
           ) : (
@@ -296,7 +296,7 @@ export default function AdminDashboard() {
                     <p className="text-sm">
                       <span className="font-medium">{activity.user_name}</span> {activity.action_description}
                     </p>
-                    <span className="text-xs text-gray-500">
+                    <span className="text-xs text-muted-foreground">
                       {formatDistanceToNow(new Date(activity.created_at), { addSuffix: true })}
                     </span>
                   </div>

@@ -120,7 +120,7 @@ export default function TravelerManagement() {
             <CardTitle>{t('travelers.allTravelers')}</CardTitle>
             <div className="flex items-center gap-4">
               <div className="relative">
-                <Search className="absolute top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 start-3" />
+                <Search className="absolute top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4 start-3" />
                 <Input
                   placeholder={t('travelers.searchPlaceholder')}
                   value={searchTerm}
@@ -152,7 +152,7 @@ export default function TravelerManagement() {
         </CardHeader>
         <CardContent>
           {filteredTravelers.length === 0 ? (
-            <div className="text-center py-12 text-gray-500">
+            <div className="text-center py-12 text-muted-foreground">
               <p>{t('travelers.noTravelersFound')}</p>
             </div>
           ) : (
@@ -180,7 +180,7 @@ export default function TravelerManagement() {
                         </Avatar>
                         <div className="text-start">
                           <div className="font-medium">{traveler.first_name} {traveler.last_name}</div>
-                          <div className="text-sm text-gray-500">{traveler.email}</div>
+                          <div className="text-sm text-muted-foreground">{traveler.email}</div>
                         </div>
                       </div>
                     </TableCell>

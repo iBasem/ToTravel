@@ -4,6 +4,7 @@ import { Button } from "@/ui/button";
 import { MapPin, Menu, X, Users, Building, LogOut, LayoutDashboard } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { LanguageSwitcher } from "@/ui/LanguageSwitcher";
+import { ThemeToggle } from "@/ui/ThemeToggle";
 import { useAuth } from "@/features/auth/context/AuthContext";
 import { Avatar, AvatarFallback, AvatarImage } from "@/ui/avatar";
 import {
@@ -109,6 +110,7 @@ export function HeaderSection() {
           {/* Desktop Auth & Language */}
           <div className="hidden md:flex items-center gap-2">
             <LanguageSwitcher />
+            <ThemeToggle />
             {!loading && user && profile ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -164,6 +166,7 @@ export function HeaderSection() {
           {/* Mobile Menu Button */}
           <div className="md:hidden flex items-center gap-2">
             <LanguageSwitcher />
+            <ThemeToggle />
             <button
               onClick={toggleMenu}
               className="p-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"

@@ -94,7 +94,7 @@ export default function TravelerDashboard() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">{t('travelerDashboard.activeBookings')}</p>
+                <p className="text-sm text-muted-foreground">{t('travelerDashboard.activeBookings')}</p>
                 <p className="text-2xl font-bold">{upcomingBookingsCount}</p>
               </div>
               <BookOpen className="w-8 h-8 text-blue-600" />
@@ -105,7 +105,7 @@ export default function TravelerDashboard() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">{t('travelerDashboard.wishlistItems')}</p>
+                <p className="text-sm text-muted-foreground">{t('travelerDashboard.wishlistItems')}</p>
                 <p className="text-2xl font-bold">0</p>
               </div>
               <Heart className="w-8 h-8 text-red-500" />
@@ -116,7 +116,7 @@ export default function TravelerDashboard() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">{t('travelerDashboard.reviewsGiven')}</p>
+                <p className="text-sm text-muted-foreground">{t('travelerDashboard.reviewsGiven')}</p>
                 <p className="text-2xl font-bold">0</p>
               </div>
               <Star className="w-8 h-8 text-yellow-500" />
@@ -127,7 +127,7 @@ export default function TravelerDashboard() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">{t('travelerDashboard.countriesVisited')}</p>
+                <p className="text-sm text-muted-foreground">{t('travelerDashboard.countriesVisited')}</p>
                 <p className="text-2xl font-bold">{new Set(bookings.map(b => b.packages?.destination)).size}</p>
               </div>
               <MapPin className="w-8 h-8 text-green-600" />
@@ -151,13 +151,13 @@ export default function TravelerDashboard() {
           <CardContent className="space-y-4">
             {bookings.length > 0 ? (
               bookings.slice(0, 3).map((booking) => (
-                <div key={booking.id} className="flex items-center gap-4 p-3 bg-gray-50 rounded-lg">
+                <div key={booking.id} className="flex items-center gap-4 p-3 bg-muted/50 rounded-lg">
                   <div className="w-16 h-16 rounded-lg bg-blue-100 flex items-center justify-center">
                     <MapPin className="w-6 h-6 text-blue-600" />
                   </div>
                   <div className="flex-1">
                     <h4 className="font-medium">{booking.packages?.title || t('common.package')}</h4>
-                    <p className="text-sm text-gray-600 flex items-center gap-1">
+                    <p className="text-sm text-muted-foreground flex items-center gap-1">
                       <Clock className="w-4 h-4" />
                       {new Date(booking.booking_date).toLocaleDateString(i18n.language === 'ar' ? 'ar-SA' : 'en-US')}
                     </p>
@@ -168,7 +168,7 @@ export default function TravelerDashboard() {
                 </div>
               ))
             ) : (
-              <div className="text-center py-8 text-gray-500">
+              <div className="text-center py-8 text-muted-foreground">
                 <p>{t('travelerDashboard.noBookingsYet')}</p>
                 <Link to="/">
                   <Button variant="link" className="mt-2">{t('travelerDashboard.browseTours')}</Button>
@@ -190,7 +190,7 @@ export default function TravelerDashboard() {
             </Link>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="text-center py-8 text-gray-500">
+            <div className="text-center py-8 text-muted-foreground">
               <p>{t('travelerDashboard.noRecentlyViewed')}</p>
               <Link to="/">
                 <Button variant="link" className="mt-2">{t('travelerDashboard.browseTours')}</Button>

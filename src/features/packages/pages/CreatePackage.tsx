@@ -48,15 +48,15 @@ export default function CreatePackage() {
   return (
     <div className="container mx-auto py-6 space-y-8">
       <div className="text-center">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">{t('agencyDashboard.createNewPackage')}</h1>
-        <p className="text-gray-600 max-w-2xl mx-auto">
+        <h1 className="text-3xl font-bold text-foreground mb-2">{t('agencyDashboard.createNewPackage')}</h1>
+        <p className="text-muted-foreground max-w-2xl mx-auto">
           {t('agencyDashboard.packageBuilderDesc')}
         </p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {features.map((feature, index) => (
-          <Card key={index} className="border-gray-200">
+          <Card key={index} className="border-border">
             <CardHeader>
               <CardTitle className="flex items-center gap-3">
                 <feature.icon className="w-6 h-6 text-blue-600" />
@@ -64,19 +64,19 @@ export default function CreatePackage() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-gray-600">{feature.description}</p>
+              <p className="text-muted-foreground">{feature.description}</p>
             </CardContent>
           </Card>
         ))}
       </div>
 
-      <div className="flex flex-col items-center justify-center py-12 border-2 border-dashed border-gray-300 rounded-lg bg-gray-50">
+      <div className="flex flex-col items-center justify-center py-12 border-2 border-dashed border-border rounded-lg bg-muted/50">
         <div className="text-center">
           <div className="w-16 h-16 mx-auto mb-4 bg-blue-100 rounded-full flex items-center justify-center">
             <Plus className="w-8 h-8 text-blue-600" />
           </div>
           <h2 className="text-xl font-semibold mb-2">{t('agencyDashboard.readyToCreate')}</h2>
-          <p className="text-gray-600 mb-6 max-w-md">
+          <p className="text-muted-foreground mb-6 max-w-md">
             {t('agencyDashboard.wizardGuideDesc')}
           </p>
           <Button

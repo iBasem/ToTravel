@@ -46,7 +46,7 @@ export default function TravelerBookings() {
   if (!bookings || bookings.length === 0) {
     return (
       <div className="space-y-6">
-        <h1 className="text-2xl font-bold text-gray-900">{t('travelerDashboard.myBookings')}</h1>
+        <h1 className="text-2xl font-bold text-foreground">{t('travelerDashboard.myBookings')}</h1>
         <EmptyState
           icon="calendar"
           title={t('travelerDashboard.noBookingsFound', 'No bookings found')}
@@ -73,7 +73,7 @@ export default function TravelerBookings() {
       case "pending": return "bg-yellow-100 text-yellow-800";
       case "completed": return "bg-blue-100 text-blue-800";
       case "cancelled": return "bg-red-100 text-red-800";
-      default: return "bg-gray-100 text-gray-800";
+      default: return "bg-muted text-foreground";
     }
   };
 
@@ -89,8 +89,8 @@ export default function TravelerBookings() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">{t('travelerDashboard.myBookings')}</h1>
-        <p className="text-gray-600">{t('travelerDashboard.manageBookings')}</p>
+        <h1 className="text-2xl font-bold text-foreground">{t('travelerDashboard.myBookings')}</h1>
+        <p className="text-muted-foreground">{t('travelerDashboard.manageBookings')}</p>
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
@@ -102,7 +102,7 @@ export default function TravelerBookings() {
 
         <TabsContent value={activeTab} className="space-y-4 mt-6">
           {filteredBookings.length === 0 ? (
-            <div className="text-center py-12 text-gray-500">
+            <div className="text-center py-12 text-muted-foreground">
               {t('common.noItemsFound', { item: activeTab })}
             </div>
           ) : (
@@ -124,8 +124,8 @@ export default function TravelerBookings() {
                       <div className="flex-1 p-6">
                         <div className="flex flex-col sm:flex-row sm:items-start justify-between mb-4 gap-3">
                           <div>
-                            <h3 className="text-xl font-semibold text-gray-900 mb-2">{packageData?.title || t('common.unknownPackage')}</h3>
-                            <div className="flex items-center gap-4 text-sm text-gray-600 mb-3 flex-wrap">
+                            <h3 className="text-xl font-semibold text-foreground mb-2">{packageData?.title || t('common.unknownPackage')}</h3>
+                            <div className="flex items-center gap-4 text-sm text-muted-foreground mb-3 flex-wrap">
                               <div className="flex items-center gap-1">
                                 <MapPin className="w-4 h-4" />
                                 {packageData?.destination}
@@ -143,13 +143,13 @@ export default function TravelerBookings() {
                                 {booking.participants} {booking.participants === 1 ? t('booking.travelerSingular') : t('booking.travelerPlural')}
                               </div>
                             </div>
-                            <p className="text-sm text-gray-600">{t('travelerDashboard.bookingRef')}: {booking.id.slice(0, 8).toUpperCase()}</p>
+                            <p className="text-sm text-muted-foreground">{t('travelerDashboard.bookingRef')}: {booking.id.slice(0, 8).toUpperCase()}</p>
                           </div>
                           <div className="text-end">
                             <Badge className={getStatusColor(booking.status)}>
                               {getStatusTranslation(booking.status)}
                             </Badge>
-                            <p className="text-xl font-bold text-gray-900 mt-2 tabular-nums">${booking.total_price.toLocaleString()}</p>
+                            <p className="text-xl font-bold text-foreground mt-2 tabular-nums">${booking.total_price.toLocaleString()}</p>
                           </div>
                         </div>
 

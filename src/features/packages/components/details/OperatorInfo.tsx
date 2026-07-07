@@ -49,7 +49,7 @@ export function OperatorInfo({ agency, rating = 4.5, reviewCount = 0 }: Operator
 
                         {/* Info */}
                         <div className="flex-1 text-start">
-                            <h3 className="text-lg font-bold text-gray-900">
+                            <h3 className="text-lg font-bold text-foreground">
                                 {agency.company_name}
                             </h3>
 
@@ -57,10 +57,10 @@ export function OperatorInfo({ agency, rating = 4.5, reviewCount = 0 }: Operator
                             <div className="flex items-center gap-2 mt-1">
                                 <div className="flex items-center gap-1">
                                     <Star className="w-4 h-4 text-yellow-500 fill-current" />
-                                    <span className="font-semibold text-gray-900">{rating.toFixed(1)}</span>
+                                    <span className="font-semibold text-foreground">{rating.toFixed(1)}</span>
                                 </div>
                                 {reviewCount > 0 && (
-                                    <span className="text-sm text-gray-500">
+                                    <span className="text-sm text-muted-foreground">
                                         ({reviewCount} {t('common.reviews', 'reviews')})
                                     </span>
                                 )}
@@ -81,23 +81,23 @@ export function OperatorInfo({ agency, rating = 4.5, reviewCount = 0 }: Operator
                     </div>
 
                     {/* Stats */}
-                    <div className="grid grid-cols-3 gap-4 mt-6 pt-4 border-t border-gray-100">
+                    <div className="grid grid-cols-3 gap-4 mt-6 pt-4 border-t border-border">
                         <div className="text-center">
-                            <p className="text-2xl font-bold text-gray-900">50+</p>
-                            <p className="text-xs text-gray-500">{t('packageDetails.tours', 'Tours')}</p>
+                            <p className="text-2xl font-bold text-foreground">50+</p>
+                            <p className="text-xs text-muted-foreground">{t('packageDetails.tours', 'Tours')}</p>
                         </div>
                         <div className="text-center">
-                            <p className="text-2xl font-bold text-gray-900">5+</p>
-                            <p className="text-xs text-gray-500">{t('packageDetails.yearsExp', 'Years Exp.')}</p>
+                            <p className="text-2xl font-bold text-foreground">5+</p>
+                            <p className="text-xs text-muted-foreground">{t('packageDetails.yearsExp', 'Years Exp.')}</p>
                         </div>
                         <div className="text-center">
-                            <p className="text-2xl font-bold text-gray-900">1K+</p>
-                            <p className="text-xs text-gray-500">{t('packageDetails.travelers', 'Travelers')}</p>
+                            <p className="text-2xl font-bold text-foreground">1K+</p>
+                            <p className="text-xs text-muted-foreground">{t('packageDetails.travelers', 'Travelers')}</p>
                         </div>
                     </div>
 
                     {/* Trust Badge */}
-                    <div className="flex items-center gap-2 mt-4 p-3 bg-gray-50 rounded-lg text-sm text-gray-600">
+                    <div className="flex items-center gap-2 mt-4 p-3 bg-muted/50 rounded-lg text-sm text-muted-foreground">
                         <Shield className="w-4 h-4 text-green-600 flex-shrink-0" />
                         <span>{t('packageDetails.moneyBackGuarantee', 'Money-back guarantee if tour is cancelled')}</span>
                     </div>

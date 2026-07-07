@@ -57,11 +57,11 @@ export default function Deals() {
       case "active":
         return "bg-green-100 text-green-800";
       case "draft":
-        return "bg-gray-100 text-gray-800";
+        return "bg-muted text-foreground";
       case "expired":
         return "bg-red-100 text-red-800";
       default:
-        return "bg-gray-100 text-gray-800";
+        return "bg-muted text-foreground";
     }
   };
 
@@ -195,10 +195,10 @@ export default function Deals() {
                   <div className="flex items-center gap-2">
                     <Percent className="w-4 h-4 text-green-600" />
                     <span className="text-2xl font-bold text-green-600 tabular-nums">{deal.discount_percentage}%</span>
-                    <span className="text-sm text-gray-600">{t('common.off', { defaultValue: 'off' })}</span>
+                    <span className="text-sm text-muted-foreground">{t('common.off', { defaultValue: 'off' })}</span>
                   </div>
 
-                  <div className="flex items-center gap-2 text-sm text-gray-600">
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
                     <Calendar className="w-4 h-4" />
                     <span>{deal.start_date} → {deal.end_date}</span>
                   </div>
