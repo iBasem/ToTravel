@@ -59,7 +59,7 @@ export default function PaymentCallback() {
       desc: t('payments.pendingDesc', "We're confirming your payment — your booking will update shortly."),
     },
     failed: {
-      icon: <XCircle className="w-12 h-12 text-red-600" />,
+      icon: <XCircle className="w-12 h-12 text-destructive" />,
       title: t('payments.failedTitle', 'Payment not completed'),
       desc: t('payments.failedDesc', 'No charge was made. You can try again from your bookings.'),
     },

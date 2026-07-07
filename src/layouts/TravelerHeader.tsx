@@ -70,7 +70,7 @@ export function TravelerHeader() {
           {/* Browse Tours link */}
           <Link
             to="/"
-            className="text-xs sm:text-sm text-blue-600 hover:text-blue-700 font-medium hidden sm:block"
+            className="text-xs sm:text-sm text-primary hover:text-primary/80 font-medium hidden sm:block"
           >
             {t('travelerDashboard.browseTours')}
           </Link>
@@ -95,7 +95,7 @@ export function TravelerHeader() {
                   <div className="text-xs sm:text-sm font-medium">
                     {profile?.first_name} {profile?.last_name}
                   </div>
-                  <div className="text-[10px] sm:text-xs text-gray-500">{t('common.traveler')}</div>
+                  <div className="text-[10px] sm:text-xs text-muted-foreground">{t('common.traveler')}</div>
                 </div>
                 <ChevronDown className="w-3 h-3 sm:w-4 sm:h-4 hidden md:block" />
               </Button>

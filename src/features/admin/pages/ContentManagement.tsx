@@ -22,9 +22,9 @@ export default function ContentManagement() {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "published":
-        return <Badge className="bg-green-100 text-green-800">{t('common.published', 'Published')}</Badge>;
+        return <Badge className="bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300">{t('common.published', 'Published')}</Badge>;
       case "draft":
-        return <Badge className="bg-yellow-100 text-yellow-800">{t('common.draft')}</Badge>;
+        return <Badge className="bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300">{t('common.draft')}</Badge>;
       default:
         return <Badge variant="outline">{status}</Badge>;
     }
@@ -35,9 +35,9 @@ export default function ContentManagement() {
       case "page":
         return <Badge variant="outline">{t('content.page', 'Page')}</Badge>;
       case "legal":
-        return <Badge className="bg-blue-100 text-blue-800">{t('content.legal', 'Legal')}</Badge>;
+        return <Badge className="bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300">{t('content.legal', 'Legal')}</Badge>;
       case "blog":
-        return <Badge className="bg-purple-100 text-purple-800">{t('content.blog', 'Blog')}</Badge>;
+        return <Badge className="bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300">{t('content.blog', 'Blog')}</Badge>;
       default:
         return <Badge variant="outline">{type}</Badge>;
     }
@@ -81,8 +81,8 @@ export default function ContentManagement() {
     <div className="space-y-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">{t('content.title', 'Content Management')}</h1>
-          <p className="text-gray-600">{t('content.subtitle', 'Manage website content, pages, and blog posts')}</p>
+          <h1 className="text-3xl font-bold text-foreground">{t('content.title', 'Content Management')}</h1>
+          <p className="text-muted-foreground">{t('content.subtitle', 'Manage website content, pages, and blog posts')}</p>
         </div>
         <div className="flex items-center gap-2">
           <Button variant="outline" onClick={refetch} className="flex items-center gap-2">
@@ -99,7 +99,7 @@ export default function ContentManagement() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card>
           <CardHeader className="pb-2 text-start">
-            <CardTitle className="text-sm font-medium text-gray-500">{t('content.totalPages', 'Total Pages')}</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">{t('content.totalPages', 'Total Pages')}</CardTitle>
           </CardHeader>
           <CardContent className="text-start">
             <div className="text-2xl font-bold tabular-nums">{stats.totalPages.toLocaleString(i18n.language === 'ar' ? 'ar-SA' : 'en-US')}</div>
@@ -107,7 +107,7 @@ export default function ContentManagement() {
         </Card>
         <Card>
           <CardHeader className="pb-2 text-start">
-            <CardTitle className="text-sm font-medium text-gray-500">{t('content.blogPosts', 'Blog Posts')}</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">{t('content.blogPosts', 'Blog Posts')}</CardTitle>
           </CardHeader>
           <CardContent className="text-start">
             <div className="text-2xl font-bold tabular-nums">{stats.blogPosts.toLocaleString(i18n.language === 'ar' ? 'ar-SA' : 'en-US')}</div>
@@ -115,7 +115,7 @@ export default function ContentManagement() {
         </Card>
         <Card>
           <CardHeader className="pb-2 text-start">
-            <CardTitle className="text-sm font-medium text-gray-500">{t('content.draftContent', 'Draft Content')}</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">{t('content.draftContent', 'Draft Content')}</CardTitle>
           </CardHeader>
           <CardContent className="text-start">
             <div className="text-2xl font-bold tabular-nums">{stats.draftContent.toLocaleString(i18n.language === 'ar' ? 'ar-SA' : 'en-US')}</div>
@@ -129,7 +129,7 @@ export default function ContentManagement() {
         </CardHeader>
         <CardContent>
           {content.length === 0 ? (
-            <div className="text-center py-12 text-gray-500">
+            <div className="text-center py-12 text-muted-foreground">
               <p>{t('content.noContentFound', 'No content found')}</p>
             </div>
           ) : (
@@ -148,8 +148,8 @@ export default function ContentManagement() {
                   <TableRow key={item.id}>
                     <TableCell className="text-start">
                       <div className="flex items-center gap-2">
-                        <FileText className="w-4 h-4 text-gray-400" />
-                        <span className="font-medium text-gray-900">{item.title}</span>
+                        <FileText className="w-4 h-4 text-muted-foreground" />
+                        <span className="font-medium text-foreground">{item.title}</span>
                       </div>
                     </TableCell>
                     <TableCell className="text-start">{getTypeBadge(item.content_type)}</TableCell>
@@ -163,7 +163,7 @@ export default function ContentManagement() {
                         <Button
                           variant="ghost"
                           size="icon"
-                          className="text-red-600"
+                          className="text-destructive"
                           onClick={() => handleDelete(item.id)}
                         >
                           <Trash2 className="w-4 h-4" />

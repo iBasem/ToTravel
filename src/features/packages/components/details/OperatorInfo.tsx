@@ -33,8 +33,8 @@ export function OperatorInfo({ agency, rating = 4.5, reviewCount = 0 }: Operator
         <Card className="overflow-hidden">
             <CardContent className="p-0">
                 {/* Header with gradient */}
-                <div className="bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-4">
-                    <p className="text-blue-100 text-sm">
+                <div className="bg-primary px-6 py-4">
+                    <p className="text-primary-foreground/80 text-sm">
                         {t('packageDetails.operatedBy', 'Operated by')}
                     </p>
                 </div>
@@ -49,7 +49,7 @@ export function OperatorInfo({ agency, rating = 4.5, reviewCount = 0 }: Operator
 
                         {/* Info */}
                         <div className="flex-1 text-start">
-                            <h3 className="text-lg font-bold text-gray-900">
+                            <h3 className="text-lg font-bold text-foreground">
                                 {agency.company_name}
                             </h3>
 
@@ -57,10 +57,10 @@ export function OperatorInfo({ agency, rating = 4.5, reviewCount = 0 }: Operator
                             <div className="flex items-center gap-2 mt-1">
                                 <div className="flex items-center gap-1">
                                     <Star className="w-4 h-4 text-yellow-500 fill-current" />
-                                    <span className="font-semibold text-gray-900">{rating.toFixed(1)}</span>
+                                    <span className="font-semibold text-foreground">{rating.toFixed(1)}</span>
                                 </div>
                                 {reviewCount > 0 && (
-                                    <span className="text-sm text-gray-500">
+                                    <span className="text-sm text-muted-foreground">
                                         ({reviewCount} {t('common.reviews', 'reviews')})
                                     </span>
                                 )}
@@ -68,11 +68,11 @@ export function OperatorInfo({ agency, rating = 4.5, reviewCount = 0 }: Operator
 
                             {/* Badges */}
                             <div className="flex flex-wrap gap-2 mt-3">
-                                <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200 flex items-center gap-1">
+                                <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200 dark:bg-green-900/30 dark:text-green-300 dark:border-green-800 flex items-center gap-1">
                                     <CheckCircle className="w-3 h-3" />
                                     {t('packageDetails.verified', 'Verified')}
                                 </Badge>
-                                <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200 flex items-center gap-1">
+                                <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20 flex items-center gap-1">
                                     <Clock className="w-3 h-3" />
                                     {t('packageDetails.responds24h', 'Responds in 24h')}
                                 </Badge>
@@ -81,24 +81,24 @@ export function OperatorInfo({ agency, rating = 4.5, reviewCount = 0 }: Operator
                     </div>
 
                     {/* Stats */}
-                    <div className="grid grid-cols-3 gap-4 mt-6 pt-4 border-t border-gray-100">
+                    <div className="grid grid-cols-3 gap-4 mt-6 pt-4 border-t border-border">
                         <div className="text-center">
-                            <p className="text-2xl font-bold text-gray-900">50+</p>
-                            <p className="text-xs text-gray-500">{t('packageDetails.tours', 'Tours')}</p>
+                            <p className="text-2xl font-bold text-foreground">50+</p>
+                            <p className="text-xs text-muted-foreground">{t('packageDetails.tours', 'Tours')}</p>
                         </div>
                         <div className="text-center">
-                            <p className="text-2xl font-bold text-gray-900">5+</p>
-                            <p className="text-xs text-gray-500">{t('packageDetails.yearsExp', 'Years Exp.')}</p>
+                            <p className="text-2xl font-bold text-foreground">5+</p>
+                            <p className="text-xs text-muted-foreground">{t('packageDetails.yearsExp', 'Years Exp.')}</p>
                         </div>
                         <div className="text-center">
-                            <p className="text-2xl font-bold text-gray-900">1K+</p>
-                            <p className="text-xs text-gray-500">{t('packageDetails.travelers', 'Travelers')}</p>
+                            <p className="text-2xl font-bold text-foreground">1K+</p>
+                            <p className="text-xs text-muted-foreground">{t('packageDetails.travelers', 'Travelers')}</p>
                         </div>
                     </div>
 
                     {/* Trust Badge */}
-                    <div className="flex items-center gap-2 mt-4 p-3 bg-gray-50 rounded-lg text-sm text-gray-600">
-                        <Shield className="w-4 h-4 text-green-600 flex-shrink-0" />
+                    <div className="flex items-center gap-2 mt-4 p-3 bg-muted/50 rounded-lg text-sm text-muted-foreground">
+                        <Shield className="w-4 h-4 text-green-600 dark:text-green-400 flex-shrink-0" />
                         <span>{t('packageDetails.moneyBackGuarantee', 'Money-back guarantee if tour is cancelled')}</span>
                     </div>
 

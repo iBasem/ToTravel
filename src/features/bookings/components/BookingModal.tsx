@@ -161,7 +161,7 @@ export function BookingModal({
                     </div>
 
                     {/* Price Summary */}
-                    <div className="bg-gray-50 p-4 rounded-lg">
+                    <div className="bg-muted/50 p-4 rounded-lg">
                         <div className="flex justify-between mb-2">
                             <span>{t('booking.pricePerPerson')}</span>
                             <span>{formatCurrency(basePrice)}</span>
@@ -184,7 +184,7 @@ export function BookingModal({
                     <Button
                         onClick={handleSubmit}
                         disabled={loading || (!departure && !date)}
-                        className="bg-blue-600 hover:bg-blue-700"
+                        className="bg-primary hover:bg-primary/90"
                     >
                         {loading ? (
                             <>

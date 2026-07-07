@@ -38,7 +38,7 @@ export function StarRating({
                         disabled={readonly}
                         onClick={() => !readonly && onRatingChange?.(starValue)}
                         className={cn(
-                            "transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-500 rounded-sm",
+                            "transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary rounded-sm",
                             readonly ? "cursor-default" : "cursor-pointer hover:scale-110 active:scale-95"
                         )}
                         aria-label={`Rate ${starValue} stars`}
@@ -46,7 +46,7 @@ export function StarRating({
                         <Star
                             className={cn(
                                 sizeClasses[size],
-                                isFilled ? "fill-yellow-400 text-yellow-400" : "fill-gray-100 text-gray-300",
+                                isFilled ? "fill-yellow-400 text-yellow-400" : "fill-muted text-muted-foreground/40",
                                 "transition-all duration-200"
                             )}
                         />

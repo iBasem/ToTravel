@@ -40,13 +40,13 @@ export default function AdminBookingManagement() {
   const getPaymentBadge = (status: string) => {
     switch (status) {
       case "confirmed":
-        return <Badge className="bg-green-100 text-green-800">{t('common.confirmed')}</Badge>;
+        return <Badge className="bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300">{t('common.confirmed')}</Badge>;
       case "pending":
-        return <Badge className="bg-yellow-100 text-yellow-800">{t('common.pending')}</Badge>;
+        return <Badge className="bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300">{t('common.pending')}</Badge>;
       case "refunded":
-        return <Badge className="bg-blue-100 text-blue-800">{t('common.refunded')}</Badge>;
+        return <Badge className="bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300">{t('common.refunded')}</Badge>;
       case "failed":
-        return <Badge className="bg-red-100 text-red-800">{t('common.failed')}</Badge>;
+        return <Badge className="bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300">{t('common.failed')}</Badge>;
       default:
         return <Badge variant="outline">{status}</Badge>;
     }
@@ -55,13 +55,13 @@ export default function AdminBookingManagement() {
   const getBookingBadge = (status: string) => {
     switch (status) {
       case "confirmed":
-        return <Badge className="bg-green-100 text-green-800">{t('common.confirmed')}</Badge>;
+        return <Badge className="bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300">{t('common.confirmed')}</Badge>;
       case "pending":
-        return <Badge className="bg-yellow-100 text-yellow-800">{t('common.pending')}</Badge>;
+        return <Badge className="bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300">{t('common.pending')}</Badge>;
       case "cancelled":
-        return <Badge className="bg-red-100 text-red-800">{t('common.cancelled')}</Badge>;
+        return <Badge className="bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300">{t('common.cancelled')}</Badge>;
       case "completed":
-        return <Badge className="bg-blue-100 text-blue-800">{t('common.completed')}</Badge>;
+        return <Badge className="bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300">{t('common.completed')}</Badge>;
       default:
         return <Badge variant="outline">{status}</Badge>;
     }
@@ -121,8 +121,8 @@ export default function AdminBookingManagement() {
     <div className="space-y-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center justify-between">
         <div className="text-start">
-          <h1 className="text-3xl font-bold text-gray-900">{t('adminBookings.title')}</h1>
-          <p className="text-gray-600">{t('adminBookings.subtitle')}</p>
+          <h1 className="text-3xl font-bold text-foreground">{t('adminBookings.title')}</h1>
+          <p className="text-muted-foreground">{t('adminBookings.subtitle')}</p>
         </div>
         <div className="flex items-center gap-2">
           <Button variant="outline" onClick={refetch} className="flex items-center">
@@ -136,7 +136,7 @@ export default function AdminBookingManagement() {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <Card>
           <CardHeader className="pb-2 text-start">
-            <CardTitle className="text-sm font-medium text-gray-500">{t('adminBookings.totalBookings')}</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">{t('adminBookings.totalBookings')}</CardTitle>
           </CardHeader>
           <CardContent className="text-start">
             <div className="text-2xl font-bold tabular-nums">{stats.total.toLocaleString(i18n.language === 'ar' ? 'ar-SA' : 'en-US')}</div>
@@ -144,7 +144,7 @@ export default function AdminBookingManagement() {
         </Card>
         <Card>
           <CardHeader className="pb-2 text-start">
-            <CardTitle className="text-sm font-medium text-gray-500">{t('common.confirmed')}</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">{t('common.confirmed')}</CardTitle>
           </CardHeader>
           <CardContent className="text-start">
             <div className="text-2xl font-bold tabular-nums">{stats.confirmed.toLocaleString(i18n.language === 'ar' ? 'ar-SA' : 'en-US')}</div>
@@ -152,7 +152,7 @@ export default function AdminBookingManagement() {
         </Card>
         <Card>
           <CardHeader className="pb-2 text-start">
-            <CardTitle className="text-sm font-medium text-gray-500">{t('common.pending')}</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">{t('common.pending')}</CardTitle>
           </CardHeader>
           <CardContent className="text-start">
             <div className="text-2xl font-bold tabular-nums">{stats.pending.toLocaleString(i18n.language === 'ar' ? 'ar-SA' : 'en-US')}</div>
@@ -160,7 +160,7 @@ export default function AdminBookingManagement() {
         </Card>
         <Card>
           <CardHeader className="pb-2 text-start">
-            <CardTitle className="text-sm font-medium text-gray-500">{t('adminBookings.thisMonth')}</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">{t('adminBookings.thisMonth')}</CardTitle>
           </CardHeader>
           <CardContent className="text-start">
             <div className="text-2xl font-bold tabular-nums">{stats.thisMonth.toLocaleString(i18n.language === 'ar' ? 'ar-SA' : 'en-US')}</div>
@@ -173,7 +173,7 @@ export default function AdminBookingManagement() {
           <div className="flex items-center justify-between">
             <CardTitle>{t('adminBookings.allBookings')}</CardTitle>
             <div className="relative">
-              <Search className="absolute top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 start-3" />
+              <Search className="absolute top-1/2 transform -translate-y-1/2 text-muted-foreground/40 w-4 h-4 start-3" />
               <Input
                 placeholder={t('adminBookings.searchPlaceholder')}
                 value={searchTerm}
@@ -185,7 +185,7 @@ export default function AdminBookingManagement() {
         </CardHeader>
         <CardContent>
           {filteredBookings.length === 0 ? (
-            <div className="text-center py-12 text-gray-500">
+            <div className="text-center py-12 text-muted-foreground">
               <p>{t('adminBookings.noBookingsFound')}</p>
             </div>
           ) : (
@@ -231,7 +231,7 @@ export default function AdminBookingManagement() {
                             {t('adminBookings.processRefund')}
                           </DropdownMenuItem>
                           <DropdownMenuItem
-                            className="text-red-600"
+                            className="text-destructive"
                             onClick={() => handleCancelBooking(booking.id)}
                           >
                             <XCircle className="w-4 h-4 me-2" />

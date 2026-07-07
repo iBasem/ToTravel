@@ -11,35 +11,35 @@ export function DestinationsSection() {
       title: t('destinations.europe'),
       subtitle: t('destinations.culturalJourneys'),
       image: "https://images.unsplash.com/photo-1467269204594-9661b134dd2b?w=400&h=300&fit=crop",
-      color: "bg-green-50"
+      color: "bg-green-50 dark:bg-green-900/30"
     },
     {
       id: 2,
       title: t('destinations.asia'),
       subtitle: t('destinations.adventureTours'),
       image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=300&fit=crop",
-      color: "bg-orange-50"
+      color: "bg-orange-50 dark:bg-orange-900/30"
     },
     {
       id: 3,
       title: t('destinations.americas'),
       subtitle: t('destinations.wildExpeditions'),
       image: "https://images.unsplash.com/photo-1482938289607-e9573fc25ebb?w=400&h=300&fit=crop",
-      color: "bg-red-50"
+      color: "bg-red-50 dark:bg-red-900/30"
     },
     {
       id: 4,
       title: t('destinations.africa'),
       subtitle: t('destinations.safariAdventures'),
       image: "https://images.unsplash.com/photo-1516026672322-bc52d61a55d5?w=400&h=300&fit=crop",
-      color: "bg-yellow-50"
+      color: "bg-yellow-50 dark:bg-yellow-900/30"
     },
     {
       id: 5,
       title: t('destinations.oceania'),
       subtitle: t('destinations.islandEscapes'),
       image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=300&fit=crop",
-      color: "bg-blue-50"
+      color: "bg-blue-50 dark:bg-blue-900/30"
     }
   ];
 

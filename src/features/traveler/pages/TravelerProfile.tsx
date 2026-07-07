@@ -103,7 +103,7 @@ export default function TravelerProfile() {
               </Button>
             </div>
             <CardTitle>{profileData.firstName} {profileData.lastName}</CardTitle>
-            <p className="text-gray-600">{profileData.email}</p>
+            <p className="text-muted-foreground">{profileData.email}</p>
             <div className="flex justify-center gap-2 mt-4">
               <Badge variant="secondary">{t('travelerDashboard.verifiedTraveler')}</Badge>
               <Badge variant="outline">12 {t('travelerDashboard.countriesVisited')}</Badge>
@@ -111,15 +111,15 @@ export default function TravelerProfile() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              <div className="flex items-center gap-3 text-sm text-gray-600">
+              <div className="flex items-center gap-3 text-sm text-muted-foreground">
                 <MapPin className="w-4 h-4" />
                 <span>{profileData.nationality}</span>
               </div>
-              <div className="flex items-center gap-3 text-sm text-gray-600">
+              <div className="flex items-center gap-3 text-sm text-muted-foreground">
                 <Calendar className="w-4 h-4" />
                 <span>{t('travelerDashboard.memberSince')} 2023</span>
               </div>
-              <div className="flex items-center gap-3 text-sm text-gray-600">
+              <div className="flex items-center gap-3 text-sm text-muted-foreground">
                 <User className="w-4 h-4" />
                 <span>5 {t('travelerDashboard.completedTours')}</span>
               </div>
@@ -277,7 +277,7 @@ export default function TravelerProfile() {
               <div className="flex items-center justify-between">
                 <div>
                   <Label htmlFor="emailBookings">{t('travelerDashboard.emailForBookings')}</Label>
-                  <p className="text-sm text-gray-600">{t('travelerDashboard.emailForBookingsDesc')}</p>
+                  <p className="text-sm text-muted-foreground">{t('travelerDashboard.emailForBookingsDesc')}</p>
                 </div>
                 <Switch
                   id="emailBookings"
@@ -289,7 +289,7 @@ export default function TravelerProfile() {
               <div className="flex items-center justify-between">
                 <div>
                   <Label htmlFor="emailPromotions">{t('travelerDashboard.emailPromotions')}</Label>
-                  <p className="text-sm text-gray-600">{t('travelerDashboard.emailPromotionsDesc')}</p>
+                  <p className="text-sm text-muted-foreground">{t('travelerDashboard.emailPromotionsDesc')}</p>
                 </div>
                 <Switch
                   id="emailPromotions"
@@ -301,7 +301,7 @@ export default function TravelerProfile() {
               <div className="flex items-center justify-between">
                 <div>
                   <Label htmlFor="smsReminders">{t('travelerDashboard.smsReminders')}</Label>
-                  <p className="text-sm text-gray-600">{t('travelerDashboard.smsRemindersDesc')}</p>
+                  <p className="text-sm text-muted-foreground">{t('travelerDashboard.smsRemindersDesc')}</p>
                 </div>
                 <Switch
                   id="smsReminders"
@@ -313,7 +313,7 @@ export default function TravelerProfile() {
               <div className="flex items-center justify-between">
                 <div>
                   <Label htmlFor="pushNotifications">{t('travelerDashboard.pushNotifications')}</Label>
-                  <p className="text-sm text-gray-600">{t('travelerDashboard.pushNotificationsDesc')}</p>
+                  <p className="text-sm text-muted-foreground">{t('travelerDashboard.pushNotificationsDesc')}</p>
                 </div>
                 <Switch
                   id="pushNotifications"
@@ -336,7 +336,7 @@ export default function TravelerProfile() {
               <div className="flex items-center justify-between">
                 <div>
                   <Label htmlFor="profileVisible">{t('travelerDashboard.publicProfile')}</Label>
-                  <p className="text-sm text-gray-600">{t('travelerDashboard.publicProfileDesc')}</p>
+                  <p className="text-sm text-muted-foreground">{t('travelerDashboard.publicProfileDesc')}</p>
                 </div>
                 <Switch
                   id="profileVisible"
@@ -348,7 +348,7 @@ export default function TravelerProfile() {
               <div className="flex items-center justify-between">
                 <div>
                   <Label htmlFor="showTravelHistory">{t('travelerDashboard.showTravelHistory')}</Label>
-                  <p className="text-sm text-gray-600">{t('travelerDashboard.showTravelHistoryDesc')}</p>
+                  <p className="text-sm text-muted-foreground">{t('travelerDashboard.showTravelHistoryDesc')}</p>
                 </div>
                 <Switch
                   id="showTravelHistory"
@@ -360,7 +360,7 @@ export default function TravelerProfile() {
               <div className="flex items-center justify-between">
                 <div>
                   <Label htmlFor="allowMessages">{t('travelerDashboard.allowMessages')}</Label>
-                  <p className="text-sm text-gray-600">{t('travelerDashboard.allowMessagesDesc')}</p>
+                  <p className="text-sm text-muted-foreground">{t('travelerDashboard.allowMessagesDesc')}</p>
                 </div>
                 <Switch
                   id="allowMessages"

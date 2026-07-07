@@ -33,7 +33,7 @@ export function DetailedItinerary({ itinerary }: DetailedItineraryProps) {
   return (
     <div>
       <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
-        <Calendar className="w-5 h-5 text-blue-600" />
+        <Calendar className="w-5 h-5 text-primary" />
         {t('packageDetails.detailedItinerary', 'Detailed Itinerary')}
       </h3>
       <Accordion type="single" collapsible className="w-full">
@@ -45,14 +45,14 @@ export function DetailedItinerary({ itinerary }: DetailedItineraryProps) {
           <AccordionItem key={item.id} value={`day-${item.day_number}`} className="border rounded-lg mb-3">
             <AccordionTrigger className="px-4 hover:no-underline">
               <div className="flex items-center gap-4 text-start">
-                <div className="flex-shrink-0 w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                  <span className="font-semibold text-blue-600">
+                <div className="flex-shrink-0 w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+                  <span className="font-semibold text-primary">
                     {i18n.language === 'ar' ? 'ي' : 'D'}{item.day_number}
                   </span>
                 </div>
                 <div>
-                  <h4 className="font-medium text-gray-900">{title}</h4>
-                  <p className="text-sm text-gray-600">{description}</p>
+                  <h4 className="font-medium text-foreground">{title}</h4>
+                  <p className="text-sm text-muted-foreground">{description}</p>
                 </div>
               </div>
             </AccordionTrigger>
@@ -61,14 +61,14 @@ export function DetailedItinerary({ itinerary }: DetailedItineraryProps) {
                 {/* Activities */}
                 {activities && activities.length > 0 && (
                   <div>
-                    <h5 className="font-medium text-gray-900 mb-2 flex items-center gap-2">
-                      <Activity className="w-4 h-4 text-green-600" />
+                    <h5 className="font-medium text-foreground mb-2 flex items-center gap-2">
+                      <Activity className="w-4 h-4 text-green-600 dark:text-green-400" />
                       {t('packageDetails.activities', 'Activities')}
                     </h5>
                     <ul className="space-y-1">
                       {activities.map((activity, actIndex) => (
-                        <li key={actIndex} className="flex items-start gap-2 text-sm text-gray-700 text-start">
-                          <ChevronRight className="w-3 h-3 mt-0.5 text-green-600 flex-shrink-0 rtl:rotate-180" />
+                        <li key={actIndex} className="flex items-start gap-2 text-sm text-muted-foreground text-start">
+                          <ChevronRight className="w-3 h-3 mt-0.5 text-green-600 dark:text-green-400 flex-shrink-0 rtl:rotate-180" />
                           {activity}
                         </li>
                       ))}
@@ -80,13 +80,13 @@ export function DetailedItinerary({ itinerary }: DetailedItineraryProps) {
                   {/* Meals */}
                   {item.meals_included && item.meals_included.length > 0 && (
                     <div>
-                      <h5 className="font-medium text-gray-900 mb-2 flex items-center gap-2">
-                        <Utensils className="w-4 h-4 text-orange-600" />
+                      <h5 className="font-medium text-foreground mb-2 flex items-center gap-2">
+                        <Utensils className="w-4 h-4 text-orange-600 dark:text-orange-400" />
                         {t('packageDetails.mealsIncluded', 'Meals Included')}
                       </h5>
                       <div className="flex flex-wrap gap-1">
                         {item.meals_included.map((meal, mealIndex) => (
-                          <Badge key={mealIndex} variant="secondary" className="text-xs bg-orange-50 text-orange-700">
+                          <Badge key={mealIndex} variant="secondary" className="text-xs bg-orange-50 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300">
                             {meal}
                           </Badge>
                         ))}
@@ -97,11 +97,11 @@ export function DetailedItinerary({ itinerary }: DetailedItineraryProps) {
                   {/* Accommodation */}
                   {item.accommodation && (
                     <div>
-                      <h5 className="font-medium text-gray-900 mb-2 flex items-center gap-2">
-                        <Bed className="w-4 h-4 text-purple-600" />
+                      <h5 className="font-medium text-foreground mb-2 flex items-center gap-2">
+                        <Bed className="w-4 h-4 text-primary" />
                         {t('packageDetails.accommodation', 'Accommodation')}
                       </h5>
-                      <p className="text-sm text-gray-700 text-start">{item.accommodation}</p>
+                      <p className="text-sm text-muted-foreground text-start">{item.accommodation}</p>
                     </div>
                   )}
                 </div>

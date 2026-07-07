@@ -26,7 +26,7 @@ export default function Home() {
 
   if (featuredLoading || allLoading) {
     return (
-      <div className="min-h-screen bg-white">
+      <div className="min-h-screen bg-background">
         <HeaderSection />
         <div className="flex items-center justify-center min-h-[50vh] px-4">
           <LoadingSpinner size="lg" />
@@ -37,7 +37,7 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-background">
       <Seo
         title={t('hero.title')}
         description={t('hero.subtitle')}
@@ -61,7 +61,7 @@ export default function Home() {
         descriptionKey="tours.featuredDescription"
         packages={featuredPackages}
         showViewAll={true}
-        backgroundClass="bg-gray-50"
+        backgroundClass="bg-muted/50"
       />
 
       <TourListingSection
@@ -76,7 +76,7 @@ export default function Home() {
         descriptionKey="tours.recentDescription"
         packages={recentPackages}
         showViewAll={false}
-        backgroundClass="bg-gray-50"
+        backgroundClass="bg-muted/50"
       />
       </main>
 

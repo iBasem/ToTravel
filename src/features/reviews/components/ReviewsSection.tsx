@@ -78,9 +78,9 @@ export function ReviewsSection({ packageId }: ReviewsSectionProps) {
             </CardHeader>
             <CardContent className="space-y-6">
                 {loading ? (
-                    <div className="text-center py-4 text-gray-500">{t('common.loading')}</div>
+                    <div className="text-center py-4 text-muted-foreground">{t('common.loading')}</div>
                 ) : reviews.length === 0 ? (
-                    <div className="text-center py-8 text-gray-500">
+                    <div className="text-center py-8 text-muted-foreground">
                         {t('common.noReviewsYet', 'No reviews yet. Be the first to share your experience!')}
                     </div>
                 ) : (
@@ -99,7 +99,7 @@ export function ReviewsSection({ packageId }: ReviewsSectionProps) {
                                         <h4 className="font-semibold">
                                             {review.traveler.first_name} {review.traveler.last_name}
                                         </h4>
-                                        <span className="text-sm text-gray-500">
+                                        <span className="text-sm text-muted-foreground">
                                             {formatDate(review.created_at, 'MMM d, yyyy')}
                                         </span>
                                     </div>
@@ -107,7 +107,7 @@ export function ReviewsSection({ packageId }: ReviewsSectionProps) {
                                         <StarRating rating={review.rating} readonly size="sm" />
                                     </div>
                                     {review.comment && (
-                                        <p className="text-gray-600 mt-2">{review.comment}</p>
+                                        <p className="text-muted-foreground mt-2">{review.comment}</p>
                                     )}
                                 </div>
                             </div>

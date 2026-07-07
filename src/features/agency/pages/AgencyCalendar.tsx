@@ -8,7 +8,7 @@ export default function AgencyCalendar() {
     const { t } = useTranslation();
     return (
         <SidebarProvider>
-            <div className="min-h-screen flex w-full bg-gray-50">
+            <div className="min-h-screen flex w-full bg-muted/30">
                 <AppSidebar />
                 <main className="flex-1 overflow-y-auto">
                     <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto space-y-6">
@@ -16,8 +16,8 @@ export default function AgencyCalendar() {
                             <div className="flex items-center gap-3">
                                 <SidebarTrigger />
                                 <div>
-                                    <h1 className="text-2xl font-bold text-gray-900">{t("calendar.title")}</h1>
-                                    <p className="text-gray-600">{t("calendar.subtitle")}</p>
+                                    <h1 className="text-2xl font-bold text-foreground">{t("calendar.title")}</h1>
+                                    <p className="text-muted-foreground">{t("calendar.subtitle")}</p>
                                 </div>
                             </div>
                         </div>

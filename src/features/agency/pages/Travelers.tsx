@@ -30,7 +30,7 @@ export default function Travelers() {
   if (error) {
     return (
       <div className="text-center py-8">
-        <p className="text-red-600">{t('common.error')}: {error}</p>
+        <p className="text-destructive">{t('common.error')}: {error}</p>
       </div>
     );
   }
@@ -45,7 +45,7 @@ export default function Travelers() {
 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
         <div className="relative flex-1">
-          <Search className="absolute top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 start-3" />
+          <Search className="absolute top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground start-3" />
           <Input
             placeholder={t('agencyDashboard.searchTravelers')}
             value={searchTerm}
@@ -76,16 +76,16 @@ export default function Travelers() {
                 <div key={traveler.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 border rounded-lg gap-4">
                   <div className="flex-1">
                     <div className="flex items-center gap-4">
-                      <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
-                        <span className="text-blue-600 font-medium">
+                      <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
+                        <span className="text-primary font-medium">
                           {traveler.name.split(' ').map(n => n[0]).join('')}
                         </span>
                       </div>
                       <div>
                         <p className="font-medium">{traveler.name}</p>
-                        <p className="text-sm text-gray-600">{traveler.email}</p>
+                        <p className="text-sm text-muted-foreground">{traveler.email}</p>
                         {traveler.phone && (
-                          <p className="text-sm text-gray-600" dir="ltr">{traveler.phone}</p>
+                          <p className="text-sm text-muted-foreground" dir="ltr">{traveler.phone}</p>
                         )}
                       </div>
                     </div>
@@ -93,7 +93,7 @@ export default function Travelers() {
                   <div className="text-end">
                     <p className="font-medium">{traveler.totalBookings} {t('agencyDashboard.bookings')}</p>
                     {traveler.lastTrip && (
-                      <p className="text-sm text-gray-600">{traveler.lastTrip}</p>
+                      <p className="text-sm text-muted-foreground">{traveler.lastTrip}</p>
                     )}
                   </div>
                 </div>

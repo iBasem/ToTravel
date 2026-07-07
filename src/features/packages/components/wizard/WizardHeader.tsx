@@ -13,8 +13,8 @@ export function WizardHeader({ onCancel, saving }: WizardHeaderProps) {
   return (
     <div className="flex items-center justify-between">
       <div className="text-start">
-        <h1 className="text-2xl font-bold text-gray-900">{t('packageWizard.createNewPackage')}</h1>
-        <p className="text-gray-600">{t('packageWizard.followSteps', 'Follow the steps below to create your travel package')}</p>
+        <h1 className="text-2xl font-bold text-foreground">{t('packageWizard.createNewPackage')}</h1>
+        <p className="text-muted-foreground">{t('packageWizard.followSteps', 'Follow the steps below to create your travel package')}</p>
       </div>
       <Button variant="outline" onClick={onCancel} disabled={saving}>
         {t('common.cancel')}

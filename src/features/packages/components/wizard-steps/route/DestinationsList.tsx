@@ -47,9 +47,9 @@ function SortableDestination({ destination, index, onUpdate, onRemove }: Sortabl
   };
 
   const typeColors = {
-    origin: 'bg-green-100 text-green-800 border-green-300',
-    stop: 'bg-blue-100 text-blue-800 border-blue-300',
-    destination: 'bg-red-100 text-red-800 border-red-300'
+    origin: 'bg-green-100 text-green-800 border-green-300 dark:bg-green-900/30 dark:text-green-300 dark:border-green-800',
+    stop: 'bg-blue-100 text-blue-800 border-blue-300 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-800',
+    destination: 'bg-red-100 text-red-800 border-red-300 dark:bg-red-900/30 dark:text-red-300 dark:border-red-800'
   };
 
   return (

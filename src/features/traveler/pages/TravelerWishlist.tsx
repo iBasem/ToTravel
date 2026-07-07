@@ -24,8 +24,8 @@ export default function TravelerWishlist() {
     <div className="space-y-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">{t('travelerDashboard.myWishlist')}</h1>
-          <p className="text-gray-600">{t('travelerDashboard.toursSavedForLater')}</p>
+          <h1 className="text-2xl font-bold text-foreground">{t('travelerDashboard.myWishlist')}</h1>
+          <p className="text-muted-foreground">{t('travelerDashboard.toursSavedForLater')}</p>
         </div>
         <Button asChild variant="outline">
           <Link to="/packages">{t('travelerDashboard.browseMoreTours')}</Link>

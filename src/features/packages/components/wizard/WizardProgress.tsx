@@ -21,10 +21,10 @@ export function WizardProgress({ steps, currentStep, onStepClick }: WizardProgre
     <div className="p-6">
       <div className="mb-4">
         <div className="flex justify-between items-center mb-2">
-          <span className="text-sm font-medium text-gray-700">
+          <span className="text-sm font-medium text-muted-foreground">
             Step {currentStep} of {steps.length}
           </span>
-          <span className="text-sm text-gray-500">{Math.round(progress)}% Complete</span>
+          <span className="text-sm text-muted-foreground">{Math.round(progress)}% Complete</span>
         </div>
         <Progress value={progress} className="w-full" />
       </div>
@@ -35,20 +35,20 @@ export function WizardProgress({ steps, currentStep, onStepClick }: WizardProgre
             key={step.id}
             className={`flex flex-col items-center cursor-pointer transition-colors ${
               currentStep === step.id
-                ? "text-blue-600"
+                ? "text-primary"
                 : currentStep > step.id
                 ? "text-green-600"
-                : "text-gray-400"
+                : "text-muted-foreground"
             }`}
             onClick={() => onStepClick(step.id)}
           >
             <div
               className={`w-8 h-8 rounded-full flex items-center justify-center mb-2 transition-colors ${
                 currentStep === step.id
-                  ? "bg-blue-600 text-white"
+                  ? "bg-primary text-primary-foreground"
                   : currentStep > step.id
                   ? "bg-green-600 text-white"
-                  : "bg-gray-200 text-gray-500"
+                  : "bg-muted text-muted-foreground"
               }`}
             >
               {currentStep > step.id ? (

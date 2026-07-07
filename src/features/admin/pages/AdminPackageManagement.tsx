@@ -203,7 +203,7 @@ export default function AdminPackageManagement() {
                                 {t('adminPackages.approve', 'Approve & publish')}
                               </DropdownMenuItem>
                               <DropdownMenuItem onClick={() => handleReview(pkg.id, false)}>
-                                <XCircle className="w-4 h-4 me-2 text-red-600" />
+                                <XCircle className="w-4 h-4 me-2 text-destructive" />
                                 {t('adminPackages.reject', 'Reject (send to draft)')}
                               </DropdownMenuItem>
                             </>

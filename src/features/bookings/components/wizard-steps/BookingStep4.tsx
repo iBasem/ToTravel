@@ -47,26 +47,26 @@ export function BookingStep4({ formData, updateFormData, packageData, onSubmit }
         <CardContent>
           <div className="space-y-4">
             <div className="flex items-center gap-3">
-              <MapPin className="w-5 h-5 text-gray-500" />
+              <MapPin className="w-5 h-5 text-muted-foreground" />
               <div>
                 <div className="font-medium">{packageData.title}</div>
-                <div className="text-sm text-gray-600">{t('booking.tourPackage')}</div>
+                <div className="text-sm text-muted-foreground">{t('booking.tourPackage')}</div>
               </div>
             </div>
 
             <div className="flex items-center gap-3">
-              <Calendar className="w-5 h-5 text-gray-500" />
+              <Calendar className="w-5 h-5 text-muted-foreground" />
               <div>
                 <div className="font-medium">{formData.selectedDate}</div>
-                <div className="text-sm text-gray-600">{t('booking.departureDate')}</div>
+                <div className="text-sm text-muted-foreground">{t('booking.departureDate')}</div>
               </div>
             </div>
 
             <div className="flex items-center gap-3">
-              <Users className="w-5 h-5 text-gray-500" />
+              <Users className="w-5 h-5 text-muted-foreground" />
               <div>
                 <div className="font-medium">{formData.travelers} {formData.travelers === 1 ? t('booking.travelerSingular') : t('booking.travelerPlural')}</div>
-                <div className="text-sm text-gray-600">
+                <div className="text-sm text-muted-foreground">
                   {t('booking.lead')}: {formData.leadTraveler.firstName} {formData.leadTraveler.lastName}
                 </div>
               </div>
@@ -82,19 +82,19 @@ export function BookingStep4({ formData, updateFormData, packageData, onSubmit }
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
-            <div className="p-3 bg-gray-50 rounded-lg">
+            <div className="p-3 bg-muted/50 rounded-lg">
               <div className="font-medium">
                 {formData.leadTraveler.firstName} {formData.leadTraveler.lastName} ({t('booking.lead')})
               </div>
-              <div className="text-sm text-gray-600">{formData.leadTraveler.email}</div>
+              <div className="text-sm text-muted-foreground">{formData.leadTraveler.email}</div>
             </div>
 
             {formData.additionalTravelers.map((traveler, index) => (
-              <div key={index} className="p-3 bg-gray-50 rounded-lg">
+              <div key={index} className="p-3 bg-muted/50 rounded-lg">
                 <div className="font-medium">
                   {traveler.firstName} {traveler.lastName}
                 </div>
-                <div className="text-sm text-gray-600">{t('booking.additionalTraveler')}</div>
+                <div className="text-sm text-muted-foreground">{t('booking.additionalTraveler')}</div>
               </div>
             ))}
           </div>
@@ -166,11 +166,11 @@ export function BookingStep4({ formData, updateFormData, packageData, onSubmit }
               </Select>
             </div>
 
-            <div className="p-4 bg-blue-50 rounded-lg">
-              <div className="text-sm text-blue-800 mb-2">
+            <div className="p-4 bg-primary/10 rounded-lg">
+              <div className="text-sm text-primary mb-2">
                 <strong>{t('booking.paymentNotice')}</strong>
               </div>
-              <div className="text-sm text-blue-700">
+              <div className="text-sm text-foreground">
                 {t('booking.paymentNoticeDesc')}
               </div>
             </div>
@@ -208,10 +208,10 @@ export function BookingStep4({ formData, updateFormData, packageData, onSubmit }
 
             <div className="flex justify-between font-bold text-lg">
               <span>{t('booking.totalAmount')}</span>
-              <span className="text-blue-600">{formatCurrency(totalCost)}</span>
+              <span className="text-primary">{formatCurrency(totalCost)}</span>
             </div>
 
-            <div className="flex justify-between text-sm text-gray-600">
+            <div className="flex justify-between text-sm text-muted-foreground">
               <span>{t('booking.depositRequired')}</span>
               <span>{formatCurrency(Math.round(totalCost * 0.25))}</span>
             </div>
@@ -233,7 +233,7 @@ export function BookingStep4({ formData, updateFormData, packageData, onSubmit }
                 <Label htmlFor="terms" className="cursor-pointer text-sm">
                   {t('booking.agreeToTerms')}
                 </Label>
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-muted-foreground">
                   {t('booking.agreeToTermsDesc')}
                 </p>
               </div>
@@ -242,13 +242,13 @@ export function BookingStep4({ formData, updateFormData, packageData, onSubmit }
             <Button
               onClick={onSubmit}
               disabled={!isFormValid}
-              className="w-full bg-blue-600 hover:bg-blue-700"
+              className="w-full bg-primary hover:bg-primary/90"
               size="lg"
             >
               {t('booking.submitBookingRequest')}
             </Button>
 
-            <p className="text-xs text-gray-500 text-center">
+            <p className="text-xs text-muted-foreground text-center">
               {t('booking.bookingRequestNote')}
             </p>
           </div>

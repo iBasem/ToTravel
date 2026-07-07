@@ -85,33 +85,33 @@ function InclusionItem({ item, isExclusion = false, isOpen, onToggle }: Inclusio
         <Collapsible open={isOpen} onOpenChange={onToggle}>
             <CollapsibleTrigger asChild>
                 <button
-                    className="w-full flex items-center justify-between py-4 px-1 border-b border-gray-100 hover:bg-gray-50 transition-colors"
+                    className="w-full flex items-center justify-between py-4 px-1 border-b border-border hover:bg-muted/50 transition-colors"
                 >
                     <div className="flex items-center gap-3">
                         <IconComponent className={`w-5 h-5 ${iconColor} flex-shrink-0`} />
-                        <span className="font-medium text-gray-900">{item}</span>
+                        <span className="font-medium text-foreground">{item}</span>
                     </div>
 
                     <div className="flex items-center gap-2">
                         {/* Dietary badges for meals */}
                         {showDietary && (
                             <>
-                                <div className="flex items-center gap-1 text-xs text-gray-500">
+                                <div className="flex items-center gap-1 text-xs text-muted-foreground">
                                     <Leaf className="w-4 h-4" />
                                     <span>{t('packageDetails.veg', 'Veg')}</span>
                                 </div>
-                                <div className="flex items-center gap-1 text-xs text-gray-500">
+                                <div className="flex items-center gap-1 text-xs text-muted-foreground">
                                     <Salad className="w-4 h-4" />
                                     <span>{t('packageDetails.vegan', 'Vegan')}</span>
                                 </div>
                             </>
                         )}
-                        <ChevronDown className={`w-5 h-5 text-gray-400 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+                        <ChevronDown className={`w-5 h-5 text-muted-foreground transition-transform ${isOpen ? 'rotate-180' : ''}`} />
                     </div>
                 </button>
             </CollapsibleTrigger>
             <CollapsibleContent>
-                <div className="py-3 px-8 bg-gray-50 text-sm text-gray-600 text-start">
+                <div className="py-3 px-8 bg-muted/50 text-sm text-muted-foreground text-start">
                     {isExclusion
                         ? t('packageDetails.exclusionDetail', { item, defaultValue: '{{item}} is not included in this package. You may need to arrange this separately.' })
                         : t('packageDetails.inclusionDetail', { item, defaultValue: '{{item}} is included in your package. Details will be provided upon booking confirmation.' })
@@ -190,7 +190,7 @@ export function WhatsIncluded({ inclusions, exclusions }: WhatsIncludedProps) {
                 {/* Exclusions Section */}
                 {exclusions && exclusions.length > 0 && (
                     <div>
-                        <h4 className="text-lg font-bold text-gray-900 mb-2 mt-6 text-start">
+                        <h4 className="text-lg font-bold text-foreground mb-2 mt-6 text-start">
                             {t('packageDetails.whatsNotIncluded', "What's Not Included")}
                         </h4>
                         {exclusions.map((item, index) => (

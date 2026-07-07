@@ -123,7 +123,7 @@ export function BookingStep3({ formData, updateFormData }: BookingStep3Props) {
                 <Label htmlFor="travel-insurance" className="cursor-pointer">
                   {t('booking.insuranceAddon', { price: formatCurrency(49), defaultValue: 'Add comprehensive travel insurance (+{{price}} per person)' })}
                 </Label>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-muted-foreground">
                   {t('booking.travelInsuranceDesc')}
                 </p>
               </div>
@@ -152,7 +152,7 @@ export function BookingStep3({ formData, updateFormData }: BookingStep3Props) {
                 <Label htmlFor="airport-transfer" className="cursor-pointer">
                   {t('booking.transferAddon', { price: formatCurrency(35), defaultValue: 'Add round-trip airport transfer (+{{price}} per person)' })}
                 </Label>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-muted-foreground">
                   {t('booking.airportTransferDesc')}
                 </p>
               </div>
@@ -187,7 +187,7 @@ export function BookingStep3({ formData, updateFormData }: BookingStep3Props) {
             <hr className="my-2" />
             <div className="flex justify-between font-medium text-lg">
               <span>{t('booking.totalEstimatedCost')}</span>
-              <span className="text-blue-600">
+              <span className="text-primary">
                 {formatCurrency(formData.totalAmount +
                   (formData.travelInsurance ? 49 * formData.travelers : 0) +
                   (formData.airportTransfer ? 35 * formData.travelers : 0))}

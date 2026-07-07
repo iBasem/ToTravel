@@ -31,8 +31,8 @@ export function TourListingSection({
     <section className={`max-w-7xl mx-auto px-4 sm:px-6 py-12 sm:py-16 ${backgroundClass}`}>
       <div className="flex items-center justify-between mb-6 sm:mb-8">
         <div>
-          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2 sm:mb-4">{displayTitle}</h2>
-          <p className="text-sm sm:text-base text-gray-600">{displayDescription}</p>
+          <h2 className="text-2xl sm:text-3xl font-bold text-foreground mb-2 sm:mb-4">{displayTitle}</h2>
+          <p className="text-sm sm:text-base text-muted-foreground">{displayDescription}</p>
         </div>
       </div>
 

@@ -124,13 +124,13 @@ export default function AuthPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-muted/30 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <Link to="/" className="flex items-center justify-center gap-2 mb-8">
-          <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-            <MapPin className="w-5 h-5 text-white" />
+          <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+            <MapPin className="w-5 h-5 text-primary-foreground" />
           </div>
-          <span className="text-2xl font-bold text-blue-600">ToTravel</span>
+          <span className="text-2xl font-bold text-primary">ToTravel</span>
         </Link>
 
         {/* User Type Selection */}
@@ -139,8 +139,8 @@ export default function AuthPage() {
             <Link
               to={`/auth?type=traveler`}
               className={`flex items-center gap-2 px-4 py-2 rounded-lg border transition-colors ${userType === 'traveler'
-                ? 'bg-blue-50 border-blue-200 text-blue-700'
-                : 'bg-white border-gray-200 text-gray-600 hover:bg-gray-50'
+                ? 'bg-primary/10 border-primary text-primary'
+                : 'bg-card border-border text-muted-foreground hover:bg-muted/50'
                 }`}
             >
               <Users className="w-4 h-4" />
@@ -149,8 +149,8 @@ export default function AuthPage() {
             <Link
               to={`/auth?type=agency`}
               className={`flex items-center gap-2 px-4 py-2 rounded-lg border transition-colors ${userType === 'agency'
-                ? 'bg-blue-50 border-blue-200 text-blue-700'
-                : 'bg-white border-gray-200 text-gray-600 hover:bg-gray-50'
+                ? 'bg-primary/10 border-primary text-primary'
+                : 'bg-card border-border text-muted-foreground hover:bg-muted/50'
                 }`}
             >
               <Building className="w-4 h-4" />
@@ -171,14 +171,14 @@ export default function AuthPage() {
 
           <CardContent>
             {error && (
-              <Alert className="mb-4 border-red-200 bg-red-50">
-                <AlertDescription className="text-red-800">{error}</AlertDescription>
+              <Alert className="mb-4 border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-900/30">
+                <AlertDescription className="text-red-800 dark:text-red-300">{error}</AlertDescription>
               </Alert>
             )}
 
             {success && (
-              <Alert className="mb-4 border-green-200 bg-green-50">
-                <AlertDescription className="text-green-800">{success}</AlertDescription>
+              <Alert className="mb-4 border-green-200 bg-green-50 dark:border-green-800 dark:bg-green-900/30">
+                <AlertDescription className="text-green-800 dark:text-green-300">{success}</AlertDescription>
               </Alert>
             )}
 
@@ -277,12 +277,12 @@ export default function AuthPage() {
             </form>
 
             <div className="mt-6 text-center">
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-muted-foreground">
                 {mode === 'signin' ? t('auth.noAccount') : t('auth.haveAccount')}
                 <button
                   type="button"
                   onClick={() => setMode(mode === 'signin' ? 'signup' : 'signin')}
-                  className="text-blue-600 hover:underline px-1"
+                  className="text-primary hover:underline px-1"
                 >
                   {mode === 'signin' ? t('auth.signupTab') : t('auth.signinTab')}
                 </button>
@@ -290,11 +290,11 @@ export default function AuthPage() {
             </div>
 
             <div className="mt-6 text-center">
-              <div className="text-sm text-gray-600">
+              <div className="text-sm text-muted-foreground">
                 {t('auth.termsAgree')}{' '}
-                <a href="#" className="text-blue-600 hover:underline">{t('auth.termsOfService')}</a>{' '}
+                <a href="#" className="text-primary hover:underline">{t('auth.termsOfService')}</a>{' '}
                 {t('auth.and')}{' '}
-                <a href="#" className="text-blue-600 hover:underline">{t('auth.privacyPolicy')}</a>
+                <a href="#" className="text-primary hover:underline">{t('auth.privacyPolicy')}</a>
               </div>
             </div>
           </CardContent>

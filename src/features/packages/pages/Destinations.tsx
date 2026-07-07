@@ -106,12 +106,12 @@ export default function Destinations() {
   });
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       <Seo title={t('destinations.exploreWorld')} description={t('destinations.exploreDescription')} />
       <HeaderSection />
 
       {/* Hero Section */}
-      <div id="main-content" className="bg-gradient-to-r from-blue-600 to-purple-700 text-white">
+      <div id="main-content" className="bg-gradient-to-r from-primary to-primary/85 text-primary-foreground">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
           <div className="text-center">
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6">
@@ -124,12 +124,12 @@ export default function Destinations() {
             {/* Search Bar */}
             <div className="max-w-2xl mx-auto">
               <div className="relative">
-                <Search className="absolute start-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                <Search className="absolute start-4 top-1/2 transform -translate-y-1/2 text-muted-foreground w-5 h-5" />
                 <Input
                   placeholder={t('destinations.searchPlaceholder')}
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="ps-12 h-14 text-lg bg-white text-gray-900"
+                  className="ps-12 h-14 text-lg bg-background text-foreground"
                 />
               </div>
             </div>
@@ -156,22 +156,22 @@ export default function Destinations() {
         <div className="text-center mb-12">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             <div>
-              <div className="text-3xl font-bold text-blue-600">{filteredDestinations.length}</div>
-              <div className="text-gray-600">{t('common.destinations')}</div>
+              <div className="text-3xl font-bold text-foreground">{filteredDestinations.length}</div>
+              <div className="text-muted-foreground">{t('common.destinations')}</div>
             </div>
             <div>
-              <div className="text-3xl font-bold text-green-600">
+              <div className="text-3xl font-bold text-foreground">
                 {filteredDestinations.reduce((sum, dest) => sum + dest.tourCount, 0)}
               </div>
-              <div className="text-gray-600">{t('destinations.toursAvailable')}</div>
+              <div className="text-muted-foreground">{t('destinations.toursAvailable')}</div>
             </div>
             <div>
-              <div className="text-3xl font-bold text-purple-600">4.8</div>
-              <div className="text-gray-600">{t('destinations.averageRating')}</div>
+              <div className="text-3xl font-bold text-foreground">4.8</div>
+              <div className="text-muted-foreground">{t('destinations.averageRating')}</div>
             </div>
             <div>
-              <div className="text-3xl font-bold text-orange-600">50+</div>
-              <div className="text-gray-600">{t('destinations.countries')}</div>
+              <div className="text-3xl font-bold text-foreground">50+</div>
+              <div className="text-muted-foreground">{t('destinations.countries')}</div>
             </div>
           </div>
         </div>
@@ -179,7 +179,7 @@ export default function Destinations() {
         {/* Destinations Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {filteredDestinations.map((destination) => (
-            <Card key={destination.id} className="overflow-hidden hover:shadow-xl transition-shadow bg-white">
+            <Card key={destination.id} className="overflow-hidden hover:shadow-xl transition-shadow bg-card">
               <div className="relative">
                 <img
                   src={destination.image}
@@ -187,12 +187,12 @@ export default function Destinations() {
                   className="w-full h-64 object-cover"
                 />
                 <div className="absolute top-4 start-4">
-                  <Badge className="bg-blue-600 text-white">
+                  <Badge className="bg-primary text-primary-foreground">
                     {t('destinations.tourCount', { count: destination.tourCount })}
                   </Badge>
                 </div>
                 <div className="absolute top-4 end-4">
-                  <div className="bg-white/90 rounded-full px-2 py-1 flex items-center gap-1">
+                  <div className="bg-background/90 rounded-full px-2 py-1 flex items-center gap-1">
                     <Star className="w-4 h-4 text-yellow-500 fill-current" />
                     <span className="text-sm font-medium">{destination.rating}</span>
                   </div>
@@ -202,18 +202,18 @@ export default function Destinations() {
               <CardContent className="p-6">
                 <div className="space-y-4">
                   <div>
-                    <h3 className="text-2xl font-bold text-gray-900 mb-1">{destination.name}</h3>
-                    <div className="flex items-center gap-1 text-gray-600">
+                    <h3 className="text-2xl font-bold text-foreground mb-1">{destination.name}</h3>
+                    <div className="flex items-center gap-1 text-muted-foreground">
                       <MapPin className="w-4 h-4" />
                       <span>{destination.region}</span>
                     </div>
                   </div>
 
-                  <p className="text-gray-700">{destination.description}</p>
+                  <p className="text-muted-foreground">{destination.description}</p>
 
                   {/* Highlights */}
                   <div>
-                    <h4 className="font-semibold text-gray-900 mb-2">{t('destinations.popularPlaces')}</h4>
+                    <h4 className="font-semibold text-foreground mb-2">{t('destinations.popularPlaces')}</h4>
                     <div className="flex flex-wrap gap-1">
                       {destination.highlights.slice(0, 3).map((highlight, index) => (
                         <Badge key={index} variant="secondary" className="text-xs">
@@ -230,12 +230,12 @@ export default function Destinations() {
 
                   <div className="flex items-center justify-between pt-4 border-t">
                     <div>
-                      <div className="text-sm text-gray-600">{t('destinations.toursFrom')}</div>
-                      <div className="text-2xl font-bold text-blue-600">
+                      <div className="text-sm text-muted-foreground">{t('destinations.toursFrom')}</div>
+                      <div className="text-2xl font-bold text-primary">
                         {formatCurrency(destination.averagePrice)}
                       </div>
                     </div>
-                    <Button asChild className="bg-blue-600 hover:bg-blue-700">
+                    <Button asChild className="bg-primary hover:bg-primary/90">
                       <Link to={`/packages?destination=${destination.slug}`}>
                         <Plane className="w-4 h-4 me-2" />
                         {t('destinations.exploreTours')}
@@ -251,11 +251,11 @@ export default function Destinations() {
         {/* Empty State */}
         {filteredDestinations.length === 0 && (
           <div className="text-center py-12">
-            <div className="w-24 h-24 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
-              <Search className="w-12 h-12 text-gray-400" />
+            <div className="w-24 h-24 mx-auto mb-4 bg-muted rounded-full flex items-center justify-center">
+              <Search className="w-12 h-12 text-muted-foreground" />
             </div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">{t('destinations.noDestinations')}</h3>
-            <p className="text-gray-600 mb-6">{t('destinations.tryAdjusting')}</p>
+            <h3 className="text-xl font-semibold text-foreground mb-2">{t('destinations.noDestinations')}</h3>
+            <p className="text-muted-foreground mb-6">{t('destinations.tryAdjusting')}</p>
             <Button onClick={() => {
               setSearchTerm("");
               setSelectedRegion("all");

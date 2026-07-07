@@ -81,11 +81,11 @@ export default function TravelerDashboard() {
   return (
     <div className="space-y-6">
       {/* Welcome Section */}
-      <div className="bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl p-6 text-white">
+      <div className="bg-gradient-to-r from-primary to-primary/85 rounded-xl p-6 text-primary-foreground">
         <h1 className="text-2xl font-bold mb-2">{t('travelerDashboard.welcomeBack')}, {userName}!</h1>
-        <p className="text-blue-100 mb-4">{t('travelerDashboard.readyForAdventure')}</p>
+        <p className="text-primary-foreground/80 mb-4">{t('travelerDashboard.readyForAdventure')}</p>
         <Link to="/">
-          <Button className="bg-white text-blue-600 hover:bg-gray-100">
+          <Button className="bg-primary-foreground text-primary hover:bg-primary-foreground/90">
             {t('travelerDashboard.exploreNewTours')}
           </Button>
         </Link>
@@ -97,10 +97,10 @@ export default function TravelerDashboard() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">{t('travelerDashboard.activeBookings')}</p>
+                <p className="text-sm text-muted-foreground">{t('travelerDashboard.activeBookings')}</p>
                 <p className="text-2xl font-bold">{upcomingBookingsCount}</p>
               </div>
-              <BookOpen className="w-8 h-8 text-blue-600" />
+              <BookOpen className="w-8 h-8 text-primary" />
             </div>
           </CardContent>
         </Card>
@@ -108,7 +108,7 @@ export default function TravelerDashboard() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">{t('travelerDashboard.wishlistItems')}</p>
+                <p className="text-sm text-muted-foreground">{t('travelerDashboard.wishlistItems')}</p>
                 <p className="text-2xl font-bold">0</p>
               </div>
               <Heart className="w-8 h-8 text-red-500" />
@@ -119,7 +119,7 @@ export default function TravelerDashboard() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">{t('travelerDashboard.reviewsGiven')}</p>
+                <p className="text-sm text-muted-foreground">{t('travelerDashboard.reviewsGiven')}</p>
                 <p className="text-2xl font-bold">0</p>
               </div>
               <Star className="w-8 h-8 text-yellow-500" />
@@ -130,7 +130,7 @@ export default function TravelerDashboard() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">{t('travelerDashboard.countriesVisited')}</p>
+                <p className="text-sm text-muted-foreground">{t('travelerDashboard.countriesVisited')}</p>
                 <p className="text-2xl font-bold">{new Set(bookings.map(b => b.packages?.destination)).size}</p>
               </div>
               <MapPin className="w-8 h-8 text-green-600" />
@@ -154,13 +154,13 @@ export default function TravelerDashboard() {
           <CardContent className="space-y-4">
             {bookings.length > 0 ? (
               bookings.slice(0, 3).map((booking) => (
-                <div key={booking.id} className="flex items-center gap-4 p-3 bg-gray-50 rounded-lg">
-                  <div className="w-16 h-16 rounded-lg bg-blue-100 flex items-center justify-center">
-                    <MapPin className="w-6 h-6 text-blue-600" />
+                <div key={booking.id} className="flex items-center gap-4 p-3 bg-muted/50 rounded-lg">
+                  <div className="w-16 h-16 rounded-lg bg-primary/10 flex items-center justify-center">
+                    <MapPin className="w-6 h-6 text-primary" />
                   </div>
                   <div className="flex-1">
                     <h4 className="font-medium">{localizedText(booking.packages, 'title') || t('common.package')}</h4>
-                    <p className="text-sm text-gray-600 flex items-center gap-1">
+                    <p className="text-sm text-muted-foreground flex items-center gap-1">
                       <Clock className="w-4 h-4" />
                       {new Date(booking.booking_date).toLocaleDateString(i18n.language === 'ar' ? 'ar-SA' : 'en-US')}
                     </p>
@@ -171,7 +171,7 @@ export default function TravelerDashboard() {
                 </div>
               ))
             ) : (
-              <div className="text-center py-8 text-gray-500">
+              <div className="text-center py-8 text-muted-foreground">
                 <p>{t('travelerDashboard.noBookingsYet')}</p>
                 <Link to="/">
                   <Button variant="link" className="mt-2">{t('travelerDashboard.browseTours')}</Button>
@@ -193,7 +193,7 @@ export default function TravelerDashboard() {
             </Link>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="text-center py-8 text-gray-500">
+            <div className="text-center py-8 text-muted-foreground">
               <p>{t('travelerDashboard.noRecentlyViewed')}</p>
               <Link to="/">
                 <Button variant="link" className="mt-2">{t('travelerDashboard.browseTours')}</Button>

@@ -17,10 +17,10 @@ export function TourHeader({ packageData }: TourHeaderProps) {
 
     const getTourTypeBadgeColor = (type: string) => {
         switch (type) {
-            case "group": return "bg-blue-100 text-blue-800 border-blue-200";
-            case "private": return "bg-purple-100 text-purple-800 border-purple-200";
-            case "customizable": return "bg-green-100 text-green-800 border-green-200";
-            default: return "bg-gray-100 text-gray-800 border-gray-200";
+            case "group": return "bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-800";
+            case "private": return "bg-purple-100 text-purple-800 border-purple-200 dark:bg-purple-900/30 dark:text-purple-300 dark:border-purple-800";
+            case "customizable": return "bg-green-100 text-green-800 border-green-200 dark:bg-green-900/30 dark:text-green-300 dark:border-green-800";
+            default: return "bg-muted text-muted-foreground border-border";
         }
     };
 
@@ -38,13 +38,13 @@ export function TourHeader({ packageData }: TourHeaderProps) {
                 <Badge className={`capitalize ${getTourTypeBadgeColor(packageData.category)}`}>
                     {t(`categories.${packageData.category}`, { defaultValue: packageData.category })} {t('tours.tour', 'Tour')}
                 </Badge>
-                <Badge variant="outline" className="bg-gray-50">
+                <Badge variant="outline" className="bg-muted/50">
                     {t(`difficulty.${(packageData.difficulty_level || 'moderate').toLowerCase()}`, { defaultValue: packageData.difficulty_level || 'Moderate' })}
                 </Badge>
             </div>
 
             {/* Title */}
-            <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 mb-3">
+            <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-foreground mb-3">
                 {title}
             </h1>
 
@@ -52,39 +52,39 @@ export function TourHeader({ packageData }: TourHeaderProps) {
             <div className="flex flex-wrap items-center gap-4 md:gap-6 text-sm">
                 {/* Rating */}
                 <div className="flex items-center gap-1.5">
-                    <div className={`flex items-center gap-0.5 px-2 py-1 rounded-md ${hasRating ? 'bg-green-100' : 'bg-gray-100'}`}>
-                        <Star className={`w-4 h-4 ${hasRating ? 'text-green-600 fill-current' : 'text-gray-400'}`} />
-                        <span className={`font-semibold ${hasRating ? 'text-green-700' : 'text-gray-600'}`}>
+                    <div className={`flex items-center gap-0.5 px-2 py-1 rounded-md ${hasRating ? 'bg-green-100 dark:bg-green-900/30' : 'bg-muted'}`}>
+                        <Star className={`w-4 h-4 ${hasRating ? 'text-green-600 dark:text-green-400 fill-current' : 'text-muted-foreground'}`} />
+                        <span className={`font-semibold ${hasRating ? 'text-green-700 dark:text-green-300' : 'text-muted-foreground'}`}>
                             {hasRating ? packageData.average_rating?.toFixed(1) : t('packageDetails.new', 'New')}
                         </span>
                     </div>
-                    <span className="text-gray-500">
+                    <span className="text-muted-foreground">
                         ({packageData.total_reviews || 0} {t('common.reviews', 'reviews')})
                     </span>
                 </div>
 
                 {/* Duration */}
-                <div className="flex items-center gap-1.5 text-gray-600">
-                    <Clock className="w-4 h-4 text-blue-600" />
+                <div className="flex items-center gap-1.5 text-muted-foreground">
+                    <Clock className="w-4 h-4 text-primary" />
                     <span>{packageData.duration_days} {t('common.days', 'days')}</span>
                 </div>
 
                 {/* Group Size */}
-                <div className="flex items-center gap-1.5 text-gray-600">
-                    <Users className="w-4 h-4 text-blue-600" />
+                <div className="flex items-center gap-1.5 text-muted-foreground">
+                    <Users className="w-4 h-4 text-primary" />
                     <span>{t('packageDetails.max', 'Max')} {packageData.max_participants}</span>
                 </div>
 
                 {/* Destination */}
-                <div className="flex items-center gap-1.5 text-gray-600">
-                    <MapPin className="w-4 h-4 text-blue-600" />
+                <div className="flex items-center gap-1.5 text-muted-foreground">
+                    <MapPin className="w-4 h-4 text-primary" />
                     <span>{destination}</span>
                 </div>
             </div>
 
             {/* Description (truncated) */}
             {description && (
-                <p className="mt-4 text-gray-600 leading-relaxed line-clamp-2 md:line-clamp-3">
+                <p className="mt-4 text-muted-foreground leading-relaxed line-clamp-2 md:line-clamp-3">
                     {description}
                 </p>
             )}

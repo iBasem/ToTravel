@@ -127,13 +127,13 @@ export function ReviewStep({ data, onUpdate }: ReviewStepProps) {
         </Card>
         <Card>
           <CardContent className="p-4 text-center">
-            <div className="text-2xl font-bold text-green-600">{media.length}</div>
+            <div className="text-2xl font-bold text-foreground">{media.length}</div>
             <div className="text-sm text-muted-foreground">{t('packageWizard.mediaFiles')}</div>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4 text-center">
-            <div className="text-2xl font-bold text-purple-600">
+            <div className="text-2xl font-bold text-foreground">
               {Object.values(pricing.inclusions || {}).filter(Boolean).length}
             </div>
             <div className="text-sm text-muted-foreground">{t('packageWizard.inclusions')}</div>
@@ -141,7 +141,7 @@ export function ReviewStep({ data, onUpdate }: ReviewStepProps) {
         </Card>
         <Card>
           <CardContent className="p-4 text-center">
-            <div className="text-2xl font-bold text-orange-600">
+            <div className="text-2xl font-bold text-foreground">
               {new Intl.NumberFormat(i18n.language === 'ar' ? 'ar-SA' : 'en-US', { style: 'currency', currency: pricing.currency || 'USD' }).format(Number(pricing.basePrice) || 0)}
             </div>
             <div className="text-sm text-muted-foreground">{t('packageWizard.basePrice')}</div>

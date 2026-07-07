@@ -41,7 +41,7 @@ export function AuthForm({ mode, onSubmit }: AuthFormProps) {
               value={firstName}
               onChange={(e) => setFirstName(e.target.value)}
               required
-              className="bg-gray-800 border-gray-600 text-white placeholder:text-gray-400"
+              className="bg-primary-foreground/10 border-primary-foreground/20 text-white placeholder:text-white/60"
             />
           </div>
           <div>
@@ -52,7 +52,7 @@ export function AuthForm({ mode, onSubmit }: AuthFormProps) {
               value={lastName}
               onChange={(e) => setLastName(e.target.value)}
               required
-              className="bg-gray-800 border-gray-600 text-white placeholder:text-gray-400"
+              className="bg-primary-foreground/10 border-primary-foreground/20 text-white placeholder:text-white/60"
             />
           </div>
         </div>
@@ -67,7 +67,7 @@ export function AuthForm({ mode, onSubmit }: AuthFormProps) {
           onChange={(e) => setEmail(e.target.value)}
           placeholder={t('booking.enterEmail')}
           required
-          className="bg-gray-800 border-gray-600 text-white placeholder:text-gray-400"
+          className="bg-primary-foreground/10 border-primary-foreground/20 text-white placeholder:text-white/60"
         />
       </div>
 
@@ -77,7 +77,7 @@ export function AuthForm({ mode, onSubmit }: AuthFormProps) {
           {mode === "signin" && (
             <button
               type="button"
-              className="text-sm text-blue-400 hover:underline"
+              className="text-sm text-white/80 hover:underline"
             >
               {t('auth.forgotPassword')}
             </button>
@@ -90,7 +90,7 @@ export function AuthForm({ mode, onSubmit }: AuthFormProps) {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
-          className="bg-gray-800 border-gray-600 text-white placeholder:text-gray-400"
+          className="bg-primary-foreground/10 border-primary-foreground/20 text-white placeholder:text-white/60"
         />
       </div>
 
@@ -104,12 +104,12 @@ export function AuthForm({ mode, onSubmit }: AuthFormProps) {
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             required
-            className="bg-gray-800 border-gray-600 text-white placeholder:text-gray-400"
+            className="bg-primary-foreground/10 border-primary-foreground/20 text-white placeholder:text-white/60"
           />
         </div>
       )}
 
-      <Button type="submit" className="w-full bg-gray-200 hover:bg-gray-300 text-gray-900">
+      <Button type="submit" className="w-full bg-primary-foreground hover:bg-primary-foreground/90 text-primary">
         {mode === "signin" ? t('auth.signInBtn') : t('auth.createAccountBtn')}
       </Button>
     </form>

@@ -93,7 +93,7 @@ export default function Packages() {
   if (error) {
     return (
       <div className="text-center py-8">
-        <p className="text-red-600 text-sm sm:text-base">{t('agencyDashboard.errorLoadingPackages')}: {error}</p>
+        <p className="text-destructive text-sm sm:text-base">{t('agencyDashboard.errorLoadingPackages')}: {error}</p>
         <Button onClick={() => window.location.reload()} className="mt-4 text-sm sm:text-base">
           {t('common.retry')}
         </Button>
@@ -110,7 +110,7 @@ export default function Packages() {
         actions={
           <Button
             onClick={handleCreatePackage}
-            className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white shadow-sm text-xs sm:text-sm lg:text-base px-3 sm:px-4 lg:px-6 py-2 sm:py-2.5 lg:py-3 flex items-center gap-1 sm:gap-2"
+            className="w-full sm:w-auto bg-primary hover:bg-primary/90 text-primary-foreground shadow-sm text-xs sm:text-sm lg:text-base px-3 sm:px-4 lg:px-6 py-2 sm:py-2.5 lg:py-3 flex items-center gap-1 sm:gap-2"
           >
             <Plus className="w-3 h-3 sm:w-4 sm:h-4" />
             {t('agencyDashboard.createPackage')}
@@ -121,15 +121,15 @@ export default function Packages() {
       {/* Search and Filter Section */}
       <div className="flex flex-col gap-3 sm:flex-row sm:gap-4">
         <div className="relative flex-1">
-          <Search className="absolute top-1/2 transform -translate-y-1/2 h-3 w-3 sm:h-4 sm:w-4 text-gray-400 start-2 sm:start-3" />
+          <Search className="absolute top-1/2 transform -translate-y-1/2 h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground start-2 sm:start-3" />
           <Input
             placeholder={t('agencyDashboard.searchPackages')}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="h-8 sm:h-10 lg:h-11 bg-white border-gray-200 focus:border-blue-500 focus:ring-blue-500 text-xs sm:text-sm lg:text-base ps-8 sm:ps-10"
+            className="h-8 sm:h-10 lg:h-11 bg-background border-border focus:border-primary focus:ring-primary text-xs sm:text-sm lg:text-base ps-8 sm:ps-10"
           />
         </div>
-        <Button variant="outline" className="w-full sm:w-auto border-gray-200 hover:bg-gray-50 text-xs sm:text-sm lg:text-base px-3 sm:px-4 lg:px-6 flex items-center gap-1 sm:gap-2">
+        <Button variant="outline" className="w-full sm:w-auto border-border hover:bg-muted/50 text-xs sm:text-sm lg:text-base px-3 sm:px-4 lg:px-6 flex items-center gap-1 sm:gap-2">
           <Filter className="w-3 h-3 sm:w-4 sm:h-4" />
           {t('agencyDashboard.filter')}
         </Button>
@@ -141,7 +141,7 @@ export default function Packages() {
           {filteredPackages.map((pkg) => {
             const thumbnail = getPrimaryImage(pkg);
             return (
-              <Card key={pkg.id} className="cursor-pointer hover:shadow-lg transition-all duration-200 border-gray-200 hover:-translate-y-1 bg-white overflow-hidden">
+              <Card key={pkg.id} className="cursor-pointer hover:shadow-lg transition-all duration-200 border-border hover:-translate-y-1 bg-card overflow-hidden">
                 {/* Thumbnail */}
                 {thumbnail ? (
                   <div className="relative h-40 w-full overflow-hidden" onClick={() => handleViewPackage(pkg.id)}>
@@ -156,7 +156,7 @@ export default function Packages() {
                     <div className="absolute top-2 end-2">
                       <Badge
                         variant={pkg.status === 'published' ? 'default' : 'secondary'}
-                        className={`text-xs ${pkg.status === 'published' ? 'bg-green-100 text-green-800 border-green-200' : ''}`}
+                        className={`text-xs ${pkg.status === 'published' ? 'bg-green-100 text-green-800 border-green-200 dark:bg-green-900/30 dark:text-green-300 dark:border-green-800' : ''}`}
                       >
                         {pkg.status === 'published' ? t('agencyDashboard.published') : t('agencyDashboard.draft')}
                       </Badge>
@@ -164,14 +164,14 @@ export default function Packages() {
                   </div>
                 ) : (
                   <div
-                    className="relative h-40 w-full bg-gradient-to-br from-blue-100 to-blue-50 flex items-center justify-center"
+                    className="relative h-40 w-full bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center"
                     onClick={() => handleViewPackage(pkg.id)}
                   >
-                    <Package className="w-12 h-12 text-blue-300" />
+                    <Package className="w-12 h-12 text-primary/40" />
                     <div className="absolute top-2 end-2">
                       <Badge
                         variant={pkg.status === 'published' ? 'default' : 'secondary'}
-                        className={`text-xs ${pkg.status === 'published' ? 'bg-green-100 text-green-800 border-green-200' : ''}`}
+                        className={`text-xs ${pkg.status === 'published' ? 'bg-green-100 text-green-800 border-green-200 dark:bg-green-900/30 dark:text-green-300 dark:border-green-800' : ''}`}
                       >
                         {pkg.status === 'published' ? t('agencyDashboard.published') : t('agencyDashboard.draft')}
                       </Badge>
@@ -181,7 +181,7 @@ export default function Packages() {
 
                 <CardHeader className="pb-2 sm:pb-3 px-3 sm:px-4 lg:px-6 pt-3 sm:pt-4 text-start">
                   <div className="flex items-start justify-between gap-2">
-                    <CardTitle className="text-sm sm:text-base lg:text-lg font-semibold text-gray-900 line-clamp-2 flex-1 leading-tight">
+                    <CardTitle className="text-sm sm:text-base lg:text-lg font-semibold text-foreground line-clamp-2 flex-1 leading-tight">
                       {pkg.title}
                     </CardTitle>
                     <DropdownMenu>
@@ -208,7 +208,7 @@ export default function Packages() {
                         </DropdownMenuItem>
                         <DropdownMenuItem
                           onClick={() => handleDeletePackage(pkg.id, pkg.title)}
-                          className="text-red-600 text-xs sm:text-sm"
+                          className="text-destructive text-xs sm:text-sm"
                         >
                           <Trash2 className="w-3 h-3 sm:w-4 sm:h-4 me-1 sm:me-2" />
                           {t('common.delete')}
@@ -218,21 +218,21 @@ export default function Packages() {
                   </div>
                 </CardHeader>
                 <CardContent className="space-y-2 sm:space-y-3 px-3 sm:px-4 lg:px-6 pb-3 sm:pb-4 lg:pb-6 text-start">
-                  <p className="text-xs sm:text-sm text-gray-600">{pkg.destination}</p>
-                  <p className="text-xs sm:text-sm text-gray-600">{pkg.duration_days} {t('common.days')}, {pkg.duration_nights} {t('agencyDashboard.nights')}</p>
+                  <p className="text-xs sm:text-sm text-muted-foreground">{pkg.destination}</p>
+                  <p className="text-xs sm:text-sm text-muted-foreground">{pkg.duration_days} {t('common.days')}, {pkg.duration_nights} {t('agencyDashboard.nights')}</p>
                   <div className="flex items-center justify-between">
-                    <p className="text-base sm:text-lg lg:text-xl font-bold text-blue-600">
+                    <p className="text-base sm:text-lg lg:text-xl font-bold text-primary">
                       {formatCurrency(pkg.base_price)}
                     </p>
                   </div>
-                  <div className="flex items-center justify-between pt-1 sm:pt-2 border-t border-gray-100">
-                    <span className="text-xs sm:text-sm text-gray-600">
+                  <div className="flex items-center justify-between pt-1 sm:pt-2 border-t border-border">
+                    <span className="text-xs sm:text-sm text-muted-foreground">
                       {t('agencyDashboard.daysPlanned', { count: pkg.itineraries?.length || 0 })}
                     </span>
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="text-blue-600 hover:text-blue-700 hover:bg-blue-50 text-xs sm:text-sm h-6 sm:h-8 px-2 sm:px-3"
+                      className="text-primary hover:text-primary hover:bg-primary/10 text-xs sm:text-sm h-6 sm:h-8 px-2 sm:px-3"
                       onClick={() => handleViewPackage(pkg.id)}
                     >
                       {t('common.viewDetails')}

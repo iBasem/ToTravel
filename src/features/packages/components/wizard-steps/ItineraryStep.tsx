@@ -201,7 +201,7 @@ export function ItineraryStep({ data, onUpdate }: ItineraryStepProps) {
 
       <div className="space-y-6">
         {itinerary.map((day, dayIndex) => (
-          <Card key={dayIndex} className="border-s-4 border-s-primary">
+          <Card key={dayIndex}>
             <CardHeader className="flex flex-row items-center justify-between">
               <div className="flex items-center gap-4">
                 <div className="flex-shrink-0 w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
@@ -287,7 +287,7 @@ export function ItineraryStep({ data, onUpdate }: ItineraryStepProps) {
                 {/* Accommodation */}
                 <div className="space-y-3">
                   <div className="flex items-center gap-2">
-                    <Bed className="w-4 h-4 text-purple-600" />
+                    <Bed className="w-4 h-4 text-primary" />
                     <Label className="font-medium">{t('packageWizard.accommodation')}</Label>
                   </div>
                   <Input
@@ -321,7 +321,7 @@ export function ItineraryStep({ data, onUpdate }: ItineraryStepProps) {
                 {day.meals.length > 0 && (
                   <div className="flex flex-wrap gap-1">
                     {day.meals.map((meal, index) => (
-                      <Badge key={index} variant="secondary" className="text-xs bg-orange-50 text-orange-700">
+                      <Badge key={index} variant="secondary" className="text-xs bg-orange-50 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300">
                         {mealOptions.find(m => m.key === meal)?.label || meal}
                       </Badge>
                     ))}
@@ -338,7 +338,7 @@ export function ItineraryStep({ data, onUpdate }: ItineraryStepProps) {
 
                 <div className="flex flex-wrap gap-1">
                   {day.highlights.map((highlight, index) => (
-                    <Badge key={index} variant="outline" className="text-xs border-yellow-200 text-yellow-700 flex items-center gap-1">
+                    <Badge key={index} variant="outline" className="text-xs border-yellow-200 text-yellow-700 dark:border-yellow-800 dark:text-yellow-300 flex items-center gap-1">
                       {highlight}
                       <X
                         className="w-3 h-3 cursor-pointer"

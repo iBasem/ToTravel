@@ -22,7 +22,7 @@ export function ToursSection({ packages, showViewAll = true }: ToursSectionProps
 
       {showViewAll && packages.length > 0 && (
         <div className="text-center">
-          <Button asChild className="bg-blue-600 hover:bg-blue-700 w-full sm:w-auto">
+          <Button asChild className="bg-primary hover:bg-primary/90 w-full sm:w-auto">
             <Link to="/packages">{t('tours.viewAllTours')}</Link>
           </Button>
         </div>

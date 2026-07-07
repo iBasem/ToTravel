@@ -208,7 +208,7 @@ export default function TravelerManagement() {
                           </DropdownMenuItem>
                           {traveler.status === "active" ? (
                             <DropdownMenuItem
-                              className="text-red-600"
+                              className="text-destructive"
                               onClick={() => handleStatusChange(traveler.id, 'suspended')}
                             >
                               <UserX className="w-4 h-4 me-2" />
@@ -216,7 +216,7 @@ export default function TravelerManagement() {
                             </DropdownMenuItem>
                           ) : (
                             <DropdownMenuItem
-                              className="text-green-600"
+                              className="text-green-600 dark:text-green-400"
                               onClick={() => handleStatusChange(traveler.id, 'active')}
                             >
                               <UserCheck className="w-4 h-4 me-2" />

@@ -260,7 +260,7 @@ export default function AgencyManagement() {
                                 {t('agencyManagement.approveBtn')}
                               </DropdownMenuItem>
                               <DropdownMenuItem
-                                className="text-red-600"
+                                className="text-destructive"
                                 onClick={() => handleReject(agency.id)}
                               >
                                 <XCircle className="w-4 h-4 me-2" />

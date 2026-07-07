@@ -25,14 +25,14 @@ export function BookingProgressBar({ currentStep }: BookingProgressBarProps) {
           <div
             key={step.id}
             className={`flex flex-col items-center ${
-              currentStep >= step.id ? 'text-blue-600' : 'text-gray-400'
+              currentStep >= step.id ? 'text-primary' : 'text-muted-foreground'
             }`}
           >
             <div
               className={`w-6 h-6 sm:w-8 sm:h-8 rounded-full flex items-center justify-center mb-1 text-xs sm:text-sm ${
                 currentStep >= step.id
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-gray-200 text-gray-400'
+                  ? 'bg-primary text-primary-foreground'
+                  : 'bg-muted text-muted-foreground'
               }`}
             >
               {step.id}
@@ -40,7 +40,7 @@ export function BookingProgressBar({ currentStep }: BookingProgressBarProps) {
             <div className="text-[10px] sm:text-xs font-medium text-center">
               <div className="hidden sm:block">{step.title}</div>
               <div className="sm:hidden">{step.title.split(' ')[0]}</div>
-              <div className="text-gray-500 hidden lg:block">{step.description}</div>
+              <div className="text-muted-foreground hidden lg:block">{step.description}</div>
             </div>
           </div>
         ))}
