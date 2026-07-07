@@ -1,4 +1,5 @@
 
+import { ThemeProvider } from "next-themes";
 import { Toaster as Sonner } from "@/ui/sonner";
 import { TooltipProvider } from "@/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -57,6 +58,13 @@ const App = () => {
 
   return (
     <ErrorBoundary>
+      {/* next-themes drives the .dark class on <html>; consumed by ThemeToggle + sonner */}
+      <ThemeProvider
+        attribute="class"
+        defaultTheme="system"
+        enableSystem
+        disableTransitionOnChange
+      >
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
           <TooltipProvider>
@@ -100,6 +108,7 @@ const App = () => {
           </TooltipProvider>
         </AuthProvider>
       </QueryClientProvider>
+      </ThemeProvider>
     </ErrorBoundary>
   );
 };

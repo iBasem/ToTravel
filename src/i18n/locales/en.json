@@ -1269,6 +1269,12 @@
     "viewTour": "View tour",
     "downloadBrochure": "Download Brochure"
   },
+  "theme": {
+    "toggle": "Toggle theme",
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
+  },
   "adminAuth": {
     "accessGranted": "Admin access granted",
     "footer1": "This portal is for authorized administrators only.",
