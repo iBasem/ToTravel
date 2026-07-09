@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Star } from 'lucide-react';
 import { HeaderSection } from '@/features/home/components/HeaderSection';
@@ -96,9 +96,18 @@ export default function PackagesList() {
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
 
+  // Free-text query from the home hero search (/packages?search=...)
+  const [searchParams] = useSearchParams();
+  const searchQuery = (searchParams.get('search') ?? '').trim().toLowerCase();
+
   // Filtered + sorted packages
   const processedPackages = useMemo(() => {
     const result = packages.filter((pkg) => {
+      const matchesSearch =
+        searchQuery === '' ||
+        [pkg.title, pkg.title_ar, pkg.destination, pkg.destination_ar]
+          .some(field => (field ?? '').toLowerCase().includes(searchQuery));
+      if (!matchesSearch) return false;
       const matchesLength =
         pkg.duration_days >= filters.lengthRange[0] &&
         pkg.duration_days <= filters.lengthRange[1];
@@ -140,12 +149,12 @@ export default function PackagesList() {
     }
 
     return result;
-  }, [packages, filters]);
+  }, [packages, filters, searchQuery]);
 
   // Reset page when filters change
   React.useEffect(() => {
     setCurrentPage(1);
-  }, [filters]);
+  }, [filters, searchQuery]);
 
   const totalPages = Math.ceil(processedPackages.length / ITEMS_PER_PAGE);
   const paginatedPackages = processedPackages.slice(

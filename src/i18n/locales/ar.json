@@ -121,7 +121,13 @@
     "title": "احجز أفضل الرحلات والمغامرات",
     "subtitle": "اختر من بين آلاف المغامرات المنظمة",
     "whereTo": "إلى أين؟",
-    "when": "متى؟"
+    "when": "متى؟",
+    "travelers": "المسافرون",
+    "adults1": "بالغ واحد",
+    "adults2": "بالغان",
+    "adults3": "3 بالغين",
+    "adults4": "4+ بالغين",
+    "trustedReviews": "تقييم {{rating}} من {{count}} تقييم موثوق"
   },
   "destinations": {
     "title": "الوجهات الشائعة",
@@ -222,7 +228,9 @@
     "toursFound_two": "تم العثور على رحلتين",
     "toursFound_few": "تم العثور على {{count}} رحلات",
     "toursFound_many": "تم العثور على {{count}} رحلة",
-    "toursFound_other": "تم العثور على {{count}} رحلة"
+    "toursFound_other": "تم العثور على {{count}} رحلة",
+    "dealAdventures": "عروض وخصومات",
+    "dealDescription": "عروض لفترة محدودة معتمدة من فريقنا"
   },
   "categories": {
     "adventure": "مغامرة",
@@ -1238,7 +1246,7 @@
     "languages": "الإنجليزية والعربية",
     "operator": "منظّم الرحلة",
     "goldTier": "ذهبي",
-    "percentOff": "خصم {{percent}}%",
+    "percentOff": "خصم {{percent}}٪",
     "from": "ابتداءً من",
     "perPerson": "للشخص الواحد",
     "priceNote": "السعر على أساس غرفة مزدوجة خاصة",
@@ -1330,5 +1338,51 @@
     "TRIP_NOT_COMPLETED": "يمكنك تقييم الرحلة بعد إتمامها.",
     "ALREADY_REVIEWED": "سبق أن قيّمت هذا الحجز.",
     "REVIEW_FAILED": "تعذّر إرسال تقييمك. يرجى المحاولة مجدداً."
+  },
+  "carousel": {
+    "previous": "السابق",
+    "next": "التالي"
+  },
+  "agencyCta": {
+    "eyebrow": "لوكالات ومنظمي الرحلات",
+    "title": "اعرض رحلاتك أمام آلاف المسافرين",
+    "lead": "أدرج باقاتك السياحية في سوق ToTravel وصِل إلى مسافرين يبحثون عن مغامرات متعددة الأيام. بدون رسوم مسبقة وبدون اشتراك شهري، وتدفع عمولة فقط عند تأكيد الحجز.",
+    "benefit1": "إدراج مجاني لباقات غير محدودة",
+    "benefit2": "وصول إلى مسافرين حول العالم",
+    "benefit3": "مدفوعات آمنة وإدارة كاملة للحجوزات",
+    "benefit4": "عمولة فقط على الحجوزات المؤكدة",
+    "ctaPrimary": "أدرج رحلاتك مجاناً",
+    "ctaSecondary": "كيف تعمل المنصة",
+    "statTravelers": "المسافرون",
+    "statAgencies": "وكالات شريكة",
+    "statFee": "رسوم الإدراج"
+  },
+  "adminDeals": {
+    "nav": "العروض",
+    "title": "إدارة العروض",
+    "description": "راجع واعتمد العروض الترويجية للوكالات",
+    "total": "إجمالي العروض",
+    "pending": "بانتظار المراجعة",
+    "approved": "معتمدة",
+    "liveNow": "نشطة الآن",
+    "searchPlaceholder": "ابحث في العروض والوكالات والباقات...",
+    "deal": "العرض",
+    "agency": "الوكالة",
+    "package": "الباقة",
+    "discount": "الخصم",
+    "period": "الفترة",
+    "approval": "الاعتماد",
+    "approve": "اعتماد",
+    "reject": "رفض",
+    "approveSuccess": "تم اعتماد العرض",
+    "rejectSuccess": "تم رفض العرض",
+    "updateError": "تعذر تحديث العرض",
+    "noDeals": "لا توجد عروض",
+    "confirmRejectTitle": "رفض هذا العرض؟",
+    "confirmRejectDesc": "لن يظهر العرض للمسافرين، ويمكن للوكالة تعديله وإعادة إرساله.",
+    "status_active": "نشط",
+    "status_scheduled": "مجدول",
+    "status_expired": "منتهي",
+    "status_paused": "متوقف"
   }
 }

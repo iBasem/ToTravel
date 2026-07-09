@@ -3,26 +3,35 @@ import { HeaderSection } from "@/features/home/components/HeaderSection";
 import { HeroSection } from "@/features/home/components/HeroSection";
 import { DestinationsSection } from "@/features/home/components/DestinationsSection";
 import { TourListingSection } from "@/features/home/components/TourListingSection";
+import { AgencyCtaSection } from "@/features/home/components/AgencyCtaSection";
 import { FooterSection } from "@/features/home/components/FooterSection";
 import { useFeaturedPackages } from "@/features/packages/hooks/useFeaturedPackages";
 import { usePublishedPackages } from "@/features/packages/hooks/usePublishedPackages";
+import { useActiveDeals, dealsByPackageId } from "@/features/packages/hooks/useActiveDeals";
 import { LoadingSpinner } from "@/ui/loading-spinner";
 import { Seo } from "@/lib/seo";
 
+const SECTION_LIMIT = 8;
+
 export default function Home() {
   const { t } = useTranslation();
-  const { packages: featuredPackages, loading: featuredLoading } = useFeaturedPackages(4);
+  const { packages: featuredPackages, loading: featuredLoading } = useFeaturedPackages(SECTION_LIMIT);
   const { packages: allPackages, loading: allLoading } = usePublishedPackages();
+  const { data: activeDeals = [] } = useActiveDeals();
 
-  // Get latest packages (non-featured)
-  const latestPackages = allPackages
-    .filter(pkg => !pkg.featured)
-    .slice(0, 4);
+  const dealsByPackage = dealsByPackageId(activeDeals);
 
-  // Get recently added packages
-  const recentPackages = allPackages
+  // Packages with an approved, currently-running deal (highest discount first)
+  const dealPackages = activeDeals
+    .map(deal => allPackages.find(pkg => pkg.id === deal.package_id))
+    .filter((pkg): pkg is NonNullable<typeof pkg> => Boolean(pkg))
+    .filter((pkg, index, arr) => arr.findIndex(p => p.id === pkg.id) === index)
+    .slice(0, SECTION_LIMIT);
+
+  // Newest published packages
+  const recentPackages = [...allPackages]
     .sort((a, b) => new Date(b.created_at || '').getTime() - new Date(a.created_at || '').getTime())
-    .slice(0, 4);
+    .slice(0, SECTION_LIMIT);
 
   if (featuredLoading || allLoading) {
     return (
@@ -52,32 +61,39 @@ export default function Home() {
       <HeaderSection />
 
       <main id="main-content">
-      <HeroSection />
+        <HeroSection />
 
-      <DestinationsSection />
+        <DestinationsSection />
 
-      <TourListingSection
-        titleKey="tours.featuredAdventures"
-        descriptionKey="tours.featuredDescription"
-        packages={featuredPackages}
-        showViewAll={true}
-        backgroundClass="bg-muted/50"
-      />
+        {dealPackages.length > 0 && (
+          <TourListingSection
+            titleKey="tours.dealAdventures"
+            descriptionKey="tours.dealDescription"
+            packages={dealPackages}
+            showViewAll={true}
+            backgroundClass="bg-muted/50"
+            dealsByPackage={dealsByPackage}
+          />
+        )}
 
-      <TourListingSection
-        titleKey="tours.latestAdventures"
-        descriptionKey="tours.latestDescription"
-        packages={latestPackages}
-        showViewAll={true}
-      />
+        <TourListingSection
+          titleKey="tours.featuredAdventures"
+          descriptionKey="tours.featuredDescription"
+          packages={featuredPackages}
+          showViewAll={true}
+          dealsByPackage={dealsByPackage}
+        />
 
-      <TourListingSection
-        titleKey="tours.recentlyAdded"
-        descriptionKey="tours.recentDescription"
-        packages={recentPackages}
-        showViewAll={false}
-        backgroundClass="bg-muted/50"
-      />
+        <TourListingSection
+          titleKey="tours.recentlyAdded"
+          descriptionKey="tours.recentDescription"
+          packages={recentPackages}
+          showViewAll={false}
+          backgroundClass="bg-muted/50"
+          dealsByPackage={dealsByPackage}
+        />
+
+        <AgencyCtaSection />
       </main>
 
       <FooterSection />

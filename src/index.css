@@ -42,6 +42,10 @@
     --input: 214.3 31.8% 91.4%;
     --ring: 217 91% 60%;
 
+    /* Deal / promotion accent (discount badges, struck prices) */
+    --deal: 349 100% 42%;
+    --deal-foreground: 0 0% 100%;
+
     --radius: 0.5rem;
 
     --sidebar-background: 0 0% 98%;
@@ -86,6 +90,9 @@
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
     --ring: 212.7 26.8% 83.9%;
+
+    --deal: 349 86% 52%;
+    --deal-foreground: 0 0% 100%;
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
     --sidebar-primary: 224.3 76.3% 48%;
@@ -119,6 +126,17 @@
   /* RTL Chevron rotation and icon flipping */
   [dir="rtl"] .rtl-flip {
     transform: scaleX(-1);
+  }
+}
+
+@layer utilities {
+  /* Hide scrollbars on carousel rails while keeping them scrollable */
+  .scrollbar-none {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
   }
 }
 

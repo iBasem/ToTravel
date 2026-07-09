@@ -121,7 +121,13 @@
     "title": "Book the Best Tours & Adventures",
     "subtitle": "Choose from thousands of Organized Adventures",
     "whereTo": "Where to?",
-    "when": "When?"
+    "when": "When?",
+    "travelers": "Travelers",
+    "adults1": "1 Adult",
+    "adults2": "2 Adults",
+    "adults3": "3 Adults",
+    "adults4": "4+ Adults",
+    "trustedReviews": "Rated {{rating}} from {{count}} verified reviews"
   },
   "destinations": {
     "title": "Popular Destinations",
@@ -202,7 +208,9 @@
       "maxDays_other": "{{count}}{{plus}} days"
     },
     "toursFound_one": "{{count}} tour found",
-    "toursFound_other": "{{count}} tours found"
+    "toursFound_other": "{{count}} tours found",
+    "dealAdventures": "Deal Adventures",
+    "dealDescription": "Limited-time offers approved by our team"
   },
   "categories": {
     "adventure": "Adventure",
@@ -1190,7 +1198,7 @@
     "languages": "English, Arabic",
     "operator": "Operator",
     "goldTier": "Gold",
-    "percentOff": "{{percent}}% Off",
+    "percentOff": "-{{percent}}% OFF",
     "from": "From",
     "perPerson": "per person",
     "priceNote": "Price based on Private Double Room",
@@ -1282,5 +1290,51 @@
     "TRIP_NOT_COMPLETED": "You can review a trip after completing it.",
     "ALREADY_REVIEWED": "You have already reviewed this booking.",
     "REVIEW_FAILED": "We couldn't submit your review. Please try again."
+  },
+  "carousel": {
+    "previous": "Previous",
+    "next": "Next"
+  },
+  "agencyCta": {
+    "eyebrow": "For tour agencies & operators",
+    "title": "Sell your multiday tours to thousands of travelers",
+    "lead": "List your tour packages on the ToTravel marketplace and get discovered by travelers searching for multiday adventures. No upfront cost and no monthly fees. You only pay a commission when a booking is confirmed.",
+    "benefit1": "Free listings, unlimited packages",
+    "benefit2": "Reach travelers worldwide",
+    "benefit3": "Secure payments & booking management",
+    "benefit4": "Commission only on confirmed bookings",
+    "ctaPrimary": "List your tours free",
+    "ctaSecondary": "See how it works",
+    "statTravelers": "travelers",
+    "statAgencies": "partner agencies",
+    "statFee": "listing fee"
+  },
+  "adminDeals": {
+    "nav": "Deals",
+    "title": "Deal Management",
+    "description": "Review and approve agency promotional deals",
+    "total": "Total Deals",
+    "pending": "Pending Review",
+    "approved": "Approved",
+    "liveNow": "Live Now",
+    "searchPlaceholder": "Search deals, agencies, packages...",
+    "deal": "Deal",
+    "agency": "Agency",
+    "package": "Package",
+    "discount": "Discount",
+    "period": "Period",
+    "approval": "Approval",
+    "approve": "Approve",
+    "reject": "Reject",
+    "approveSuccess": "Deal approved",
+    "rejectSuccess": "Deal rejected",
+    "updateError": "Failed to update deal",
+    "noDeals": "No deals found",
+    "confirmRejectTitle": "Reject this deal?",
+    "confirmRejectDesc": "The deal will not be shown to travelers. The agency can edit and resubmit it.",
+    "status_active": "Active",
+    "status_scheduled": "Scheduled",
+    "status_expired": "Expired",
+    "status_paused": "Paused"
   }
 }
