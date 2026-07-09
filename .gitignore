@@ -28,6 +28,9 @@ dist-ssr
 .env.local
 .env.*.local
 
+# Playwright CLI runtime artifacts (snapshots, screenshots, sessions)
+.playwright-cli/
+
 # graphify (knowledge graph) - local-only artifacts
 graphify-out/cost.json
 graphify-out/cache/
