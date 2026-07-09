@@ -193,6 +193,7 @@ export type Database = {
       deals: {
         Row: {
           agency_id: string
+          approval_status: string
           created_at: string
           discount_percentage: number
           end_date: string
@@ -205,6 +206,7 @@ export type Database = {
         }
         Insert: {
           agency_id: string
+          approval_status?: string
           created_at?: string
           discount_percentage: number
           end_date: string
@@ -217,6 +219,7 @@ export type Database = {
         }
         Update: {
           agency_id?: string
+          approval_status?: string
           created_at?: string
           discount_percentage?: number
           end_date?: string
@@ -444,6 +447,13 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "package_bookings_departure_id_fkey"
+            columns: ["departure_id"]
+            isOneToOne: false
+            referencedRelation: "package_departures"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "package_bookings_package_id_fkey"
             columns: ["package_id"]
             isOneToOne: false
@@ -455,6 +465,50 @@ export type Database = {
             columns: ["traveler_id"]
             isOneToOne: false
             referencedRelation: "travelers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      package_departures: {
+        Row: {
+          created_at: string
+          departure_date: string
+          id: string
+          package_id: string
+          price_override: number | null
+          return_date: string | null
+          status: string
+          total_seats: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          departure_date: string
+          id?: string
+          package_id: string
+          price_override?: number | null
+          return_date?: string | null
+          status?: string
+          total_seats?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          departure_date?: string
+          id?: string
+          package_id?: string
+          price_override?: number | null
+          return_date?: string | null
+          status?: string
+          total_seats?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "package_departures_package_id_fkey"
+            columns: ["package_id"]
+            isOneToOne: false
+            referencedRelation: "packages"
             referencedColumns: ["id"]
           },
         ]
@@ -662,6 +716,56 @@ export type Database = {
             columns: ["agency_id"]
             isOneToOne: false
             referencedRelation: "travel_agencies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      payments: {
+        Row: {
+          amount: number
+          booking_id: string
+          created_at: string
+          currency: string
+          id: string
+          provider: string
+          provider_invoice_id: string | null
+          provider_payment_id: string | null
+          raw: Json | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          amount: number
+          booking_id: string
+          created_at?: string
+          currency?: string
+          id?: string
+          provider?: string
+          provider_invoice_id?: string | null
+          provider_payment_id?: string | null
+          raw?: Json | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          booking_id?: string
+          created_at?: string
+          currency?: string
+          id?: string
+          provider?: string
+          provider_invoice_id?: string | null
+          provider_payment_id?: string | null
+          raw?: Json | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payments_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "package_bookings"
             referencedColumns: ["id"]
           },
         ]
@@ -925,50 +1029,6 @@ export type Database = {
         }
         Relationships: []
       }
-      package_departures: {
-        Row: {
-          created_at: string
-          departure_date: string
-          id: string
-          package_id: string
-          price_override: number | null
-          return_date: string | null
-          status: string
-          total_seats: number
-          updated_at: string
-        }
-        Insert: {
-          created_at?: string
-          departure_date: string
-          id?: string
-          package_id: string
-          price_override?: number | null
-          return_date?: string | null
-          status?: string
-          total_seats?: number
-          updated_at?: string
-        }
-        Update: {
-          created_at?: string
-          departure_date?: string
-          id?: string
-          package_id?: string
-          price_override?: number | null
-          return_date?: string | null
-          status?: string
-          total_seats?: number
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "package_departures_package_id_fkey"
-            columns: ["package_id"]
-            isOneToOne: false
-            referencedRelation: "packages"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       wishlist: {
         Row: {
           created_at: string
@@ -1007,6 +1067,35 @@ export type Database = {
       }
     }
     Views: {
+      active_deals: {
+        Row: {
+          agency_id: string | null
+          discount_percentage: number | null
+          end_date: string | null
+          id: string | null
+          original_price: number | null
+          package_id: string | null
+          sale_price: number | null
+          start_date: string | null
+          title: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "deals_agency_id_fkey"
+            columns: ["agency_id"]
+            isOneToOne: false
+            referencedRelation: "travel_agencies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "deals_package_id_fkey"
+            columns: ["package_id"]
+            isOneToOne: false
+            referencedRelation: "packages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       destination_stats: {
         Row: {
           average_price: number | null
@@ -1050,15 +1139,6 @@ export type Database = {
           years_experience: number
         }[]
       }
-      review_authors: {
-        Args: { review_ids: string[] }
-        Returns: {
-          review_id: string
-          first_name: string | null
-          last_name: string | null
-          avatar_url: string | null
-        }[]
-      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -1066,10 +1146,19 @@ export type Database = {
         }
         Returns: boolean
       }
+      review_authors: {
+        Args: { review_ids: string[] }
+        Returns: {
+          avatar_url: string
+          first_name: string
+          last_name: string
+          review_id: string
+        }[]
+      }
       save_package: {
         Args: {
-          p_package_id: string | null
           p_data: Json
+          p_package_id: string
           p_submit_for_review?: boolean
         }
         Returns: string
