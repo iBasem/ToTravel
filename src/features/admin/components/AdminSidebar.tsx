@@ -10,7 +10,8 @@ import {
   Settings,
   Shield,
   BookOpen,
-  Star
+  Star,
+  BadgePercent
 } from "lucide-react";
 import {
   Sidebar,
@@ -36,6 +37,7 @@ export function AdminSidebar() {
     { title: t('adminDashboard.travelers', "Travelers"), url: "/admin/travelers", icon: Users },
     { title: t('adminDashboard.bookings', "Bookings"), url: "/admin/bookings", icon: BookOpen },
     { title: t('adminDashboard.reviews', "Reviews"), url: "/admin/reviews", icon: Star },
+    { title: t('adminDeals.nav', "Deals"), url: "/admin/deals", icon: BadgePercent },
     { title: t('adminDashboard.content', "Content"), url: "/admin/content", icon: FileText },
     { title: t('adminDashboard.financials', "Financials"), url: "/admin/financials", icon: DollarSign },
     { title: t('adminDashboard.reports', "Reports"), url: "/admin/reports", icon: BarChart3 },

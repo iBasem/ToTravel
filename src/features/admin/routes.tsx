@@ -9,6 +9,7 @@ import AgencyManagement from "./pages/AgencyManagement";
 import AdminPackageManagement from "./pages/AdminPackageManagement";
 import AdminBookingManagement from "@/features/bookings/pages/AdminBookings";
 import ReviewManagement from "./pages/ReviewManagement";
+import DealManagement from "./pages/DealManagement";
 import FinancialManagement from "./pages/FinancialManagement";
 import ReportsPage from "./pages/ReportsPage";
 import ContentManagement from "./pages/ContentManagement";
@@ -32,6 +33,7 @@ export const AdminRoutes = () => {
                 <Route path="packages" element={<AdminPackageManagement />} />
                 <Route path="bookings" element={<AdminBookingManagement />} />
                 <Route path="reviews" element={<ReviewManagement />} />
+                <Route path="deals" element={<DealManagement />} />
                 <Route path="financials" element={<FinancialManagement />} />
                 <Route path="reports" element={<ReportsPage />} />
                 <Route path="content" element={<ContentManagement />} />

@@ -2,7 +2,7 @@ import { Search, Bell, ChevronDown, Menu, Shield } from "lucide-react";
 import { Input } from "@/ui/input";
 import { Button } from "@/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/ui/avatar";
-import { Sheet, SheetContent, SheetTrigger } from "@/ui/sheet";
+import { Sheet, SheetClose, SheetContent, SheetTitle, SheetTrigger } from "@/ui/sheet";
 import { useAuth } from "@/features/auth/context/AuthContext";
 import { useTranslation } from "react-i18next";
 import { LanguageSwitcher } from "@/ui/LanguageSwitcher";
@@ -26,6 +26,7 @@ import {
   Settings,
   BookOpen,
   Star,
+  BadgePercent,
 } from "lucide-react";
 
 export function AdminHeader() {
@@ -40,6 +41,7 @@ export function AdminHeader() {
     { title: t('adminDashboard.travelers', "Travelers"), url: "/admin/travelers", icon: Users },
     { title: t('adminDashboard.bookings', "Bookings"), url: "/admin/bookings", icon: BookOpen },
     { title: t('adminDashboard.reviews', "Reviews"), url: "/admin/reviews", icon: Star },
+    { title: t('adminDeals.nav', "Deals"), url: "/admin/deals", icon: BadgePercent },
     { title: t('adminDashboard.content', "Content"), url: "/admin/content", icon: FileText },
     { title: t('adminDashboard.financials', "Financials"), url: "/admin/financials", icon: DollarSign },
     { title: t('adminDashboard.reports', "Reports"), url: "/admin/reports", icon: BarChart3 },
@@ -59,6 +61,7 @@ export function AdminHeader() {
               </Button>
             </SheetTrigger>
             <SheetContent side={isRTL ? "right" : "left"} className="p-0 w-64">
+              <SheetTitle className="sr-only">{t('common.admin')}</SheetTitle>
               <div className="flex flex-col h-full bg-background">
                 {/* Brand Header */}
                 <div className="p-4 border-b border-border">
@@ -74,8 +77,8 @@ export function AdminHeader() {
                 <div className="px-3 py-4 flex-1">
                   <div className="space-y-1">
                     {menuItems.map((item) => (
+                      <SheetClose asChild key={item.url}>
                       <NavLink
-                        key={item.url}
                         to={item.url}
                         end={item.url === "/admin"}
                         className={({ isActive }) =>
@@ -88,6 +91,7 @@ export function AdminHeader() {
                         <item.icon className="w-5 h-5 flex-shrink-0" />
                         <span className="truncate">{item.title}</span>
                       </NavLink>
+                      </SheetClose>
                     ))}
                   </div>
                 </div>
