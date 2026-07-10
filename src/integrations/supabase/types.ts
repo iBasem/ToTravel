@@ -903,7 +903,7 @@ export type Database = {
           license_number: string | null
           phone: string | null
           rating: number | null
-          status: string | null
+          status: string
           total_reviews: number | null
           updated_at: string
           website: string | null
@@ -925,7 +925,7 @@ export type Database = {
           license_number?: string | null
           phone?: string | null
           rating?: number | null
-          status?: string | null
+          status?: string
           total_reviews?: number | null
           updated_at?: string
           website?: string | null
@@ -947,7 +947,7 @@ export type Database = {
           license_number?: string | null
           phone?: string | null
           rating?: number | null
-          status?: string | null
+          status?: string
           total_reviews?: number | null
           updated_at?: string
           website?: string | null
@@ -1138,6 +1138,25 @@ export type Database = {
           travelers_count: number
           years_experience: number
         }[]
+      }
+      compute_platform_stats: {
+        Args: { p_date?: string }
+        Returns: {
+          active_packages: number
+          created_at: string
+          id: string
+          new_agencies: number
+          new_travelers: number
+          stat_date: string
+          total_bookings: number
+          total_revenue: number
+        }
+        SetofOptions: {
+          from: "*"
+          to: "platform_stats"
+          isOneToOne: true
+          isSetofReturn: false
+        }
       }
       has_role: {
         Args: {

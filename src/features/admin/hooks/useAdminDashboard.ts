@@ -1,20 +1,22 @@
-import { useState, useEffect } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/features/auth/context/AuthContext';
 import { formatDate } from '@/lib/formatters';
+import { useAdminAudit } from '../lib/audit';
 
-interface AdminStats {
+export interface AdminStats {
   totalUsers: number;
   totalAgencies: number;
   totalBookings: number;
   platformRevenue: number;
+  activePackages: number;
   usersGrowth: number;
   agenciesGrowth: number;
   bookingsGrowth: number;
   revenueGrowth: number;
 }
 
-interface ActivityLog {
+export interface ActivityLogRow {
   id: string;
   user_name: string;
   action_type: string;
@@ -24,7 +26,7 @@ interface ActivityLog {
   avatar_url?: string | null;
 }
 
-interface PendingAction {
+export interface PendingAction {
   id: string;
   action_type: string;
   title: string;
@@ -34,193 +36,192 @@ interface PendingAction {
   created_at: string;
 }
 
-interface RevenueData {
+export interface RevenueData {
   name: string;
   bookings: number;
   revenue: number;
 }
 
-export function useAdminDashboard() {
-  const { user, profile } = useAuth();
-  const [stats, setStats] = useState<AdminStats>({
-    totalUsers: 0,
-    totalAgencies: 0,
-    totalBookings: 0,
-    platformRevenue: 0,
-    usersGrowth: 0,
-    agenciesGrowth: 0,
-    bookingsGrowth: 0,
-    revenueGrowth: 0,
-  });
-  const [activityLogs, setActivityLogs] = useState<ActivityLog[]>([]);
-  const [pendingActions, setPendingActions] = useState<PendingAction[]>([]);
-  const [revenueData, setRevenueData] = useState<RevenueData[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+export interface PlatformStatRow {
+  stat_date: string;
+  total_bookings: number;
+  total_revenue: number;
+  new_travelers: number;
+  new_agencies: number;
+  active_packages: number;
+}
 
-  const isAdmin = profile?.role === 'admin';
+interface DashboardBundle {
+  stats: AdminStats;
+  activityLogs: ActivityLogRow[];
+  pendingActions: PendingAction[];
+  revenueData: RevenueData[];
+  platformStats: PlatformStatRow[];
+}
 
-  useEffect(() => {
-    if (user && isAdmin) {
-      fetchDashboardData();
-    }
-  }, [user, isAdmin]);
+export const adminDashboardKey = ['admin', 'dashboard'] as const;
 
-  const fetchDashboardData = async () => {
-    try {
-      setLoading(true);
-      setError(null);
+export function useAdminDashboard(monthsBack: number = 6) {
+  return useQuery({
+    queryKey: [...adminDashboardKey, monthsBack],
+    queryFn: async (): Promise<DashboardBundle> => {
+      const [travelersResult, agenciesResult, bookingsResult, packagesResult, activityResult, pendingResult, statsResult] =
+        await Promise.all([
+          supabase.from('travelers').select('id, created_at', { count: 'exact' }),
+          supabase.from('travel_agencies').select('id, created_at', { count: 'exact' }),
+          supabase.from('package_bookings').select('id, total_price, created_at', { count: 'exact' }),
+          supabase.from('packages').select('id', { count: 'exact', head: true }).eq('status', 'published'),
+          supabase.from('admin_activity_logs').select('*').order('created_at', { ascending: false }).limit(10),
+          supabase.from('admin_pending_actions').select('*').eq('status', 'pending').order('created_at', { ascending: false }),
+          supabase.from('platform_stats').select('*').order('stat_date', { ascending: true }),
+        ]);
+      for (const res of [travelersResult, agenciesResult, bookingsResult, activityResult, pendingResult, statsResult]) {
+        if (res.error) throw res.error;
+      }
 
-      // Fetch all counts in parallel
-      const [
-        travelersResult,
-        agenciesResult,
-        bookingsResult,
-        activityResult,
-        pendingResult
-      ] = await Promise.all([
-        supabase.from('travelers').select('id, created_at', { count: 'exact' }),
-        supabase.from('travel_agencies').select('id, created_at', { count: 'exact' }),
-        supabase.from('package_bookings').select('id, total_price, created_at', { count: 'exact' }),
-        supabase.from('admin_activity_logs').select('*').order('created_at', { ascending: false }).limit(10),
-        supabase.from('admin_pending_actions').select('*').eq('status', 'pending').order('created_at', { ascending: false })
-      ]);
+      const allBookings = bookingsResult.data ?? [];
+      const totalRevenue = allBookings.reduce((sum, b) => sum + Number(b.total_price ?? 0), 0);
 
-      // Calculate total revenue from bookings
-      const allBookings = bookingsResult.data || [];
-      const totalRevenue = allBookings.reduce((sum, booking) => sum + Number(booking.total_price || 0), 0);
-
-      // Calculate real month-over-month growth
       const now = new Date();
       const startOfCurrentMonth = new Date(now.getFullYear(), now.getMonth(), 1);
       const startOfLastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
 
-      const allTravelers = travelersResult.data || [];
-      const allAgencies = agenciesResult.data || [];
+      const allTravelers = travelersResult.data ?? [];
+      const allAgencies = agenciesResult.data ?? [];
 
-      const currentMonthTravelers = allTravelers.filter(t => new Date(t.created_at) >= startOfCurrentMonth).length;
-      const lastMonthTravelers = allTravelers.filter(t => new Date(t.created_at) >= startOfLastMonth && new Date(t.created_at) < startOfCurrentMonth).length;
-      const currentMonthAgencies = allAgencies.filter(a => new Date(a.created_at) >= startOfCurrentMonth).length;
-      const lastMonthAgencies = allAgencies.filter(a => new Date(a.created_at) >= startOfLastMonth && new Date(a.created_at) < startOfCurrentMonth).length;
-      const currentMonthBookings = allBookings.filter(b => new Date(b.created_at) >= startOfCurrentMonth).length;
-      const lastMonthBookings = allBookings.filter(b => new Date(b.created_at) >= startOfLastMonth && new Date(b.created_at) < startOfCurrentMonth).length;
-      const currentMonthRevenue = allBookings.filter(b => new Date(b.created_at) >= startOfCurrentMonth).reduce((sum, b) => sum + Number(b.total_price || 0), 0);
-      const lastMonthRevenue = allBookings.filter(b => new Date(b.created_at) >= startOfLastMonth && new Date(b.created_at) < startOfCurrentMonth).reduce((sum, b) => sum + Number(b.total_price || 0), 0);
+      const inCurrent = (d: string) => new Date(d) >= startOfCurrentMonth;
+      const inLast = (d: string) => new Date(d) >= startOfLastMonth && new Date(d) < startOfCurrentMonth;
 
       const calcGrowth = (current: number, previous: number) =>
         previous > 0 ? Math.round(((current - previous) / previous) * 1000) / 10 : current > 0 ? 100 : 0;
 
-      setStats({
-        totalUsers: (travelersResult.count || 0) + (agenciesResult.count || 0),
-        totalAgencies: agenciesResult.count || 0,
-        totalBookings: bookingsResult.count || 0,
+      const currentMonthRevenue = allBookings.filter((b) => inCurrent(b.created_at)).reduce((s, b) => s + Number(b.total_price ?? 0), 0);
+      const lastMonthRevenue = allBookings.filter((b) => inLast(b.created_at)).reduce((s, b) => s + Number(b.total_price ?? 0), 0);
+
+      const stats: AdminStats = {
+        totalUsers: (travelersResult.count ?? 0) + (agenciesResult.count ?? 0),
+        totalAgencies: agenciesResult.count ?? 0,
+        totalBookings: bookingsResult.count ?? 0,
         platformRevenue: totalRevenue,
-        usersGrowth: calcGrowth(currentMonthTravelers + currentMonthAgencies, lastMonthTravelers + lastMonthAgencies),
-        agenciesGrowth: calcGrowth(currentMonthAgencies, lastMonthAgencies),
-        bookingsGrowth: calcGrowth(currentMonthBookings, lastMonthBookings),
+        activePackages: packagesResult.count ?? 0,
+        usersGrowth: calcGrowth(
+          allTravelers.filter((t) => inCurrent(t.created_at)).length + allAgencies.filter((a) => inCurrent(a.created_at)).length,
+          allTravelers.filter((t) => inLast(t.created_at)).length + allAgencies.filter((a) => inLast(a.created_at)).length,
+        ),
+        agenciesGrowth: calcGrowth(
+          allAgencies.filter((a) => inCurrent(a.created_at)).length,
+          allAgencies.filter((a) => inLast(a.created_at)).length,
+        ),
+        bookingsGrowth: calcGrowth(
+          allBookings.filter((b) => inCurrent(b.created_at)).length,
+          allBookings.filter((b) => inLast(b.created_at)).length,
+        ),
         revenueGrowth: calcGrowth(currentMonthRevenue, lastMonthRevenue),
-      });
+      };
 
-      if (activityResult.data) {
-        // Attach the acting user's avatar where a traveler profile exists
-        const actorIds = Array.from(
-          new Set(activityResult.data.map((a: { user_id?: string | null }) => a.user_id).filter(Boolean))
-        ) as string[];
+      // Attach acting user's avatar where a traveler profile exists.
+      let activityLogs: ActivityLogRow[] = (activityResult.data ?? []) as ActivityLogRow[];
+      const actorIds = Array.from(
+        new Set((activityResult.data ?? []).map((a: { user_id?: string | null }) => a.user_id).filter(Boolean)),
+      ) as string[];
+      if (actorIds.length > 0) {
+        const { data: actorRows } = await supabase.from('travelers').select('id, avatar_url').in('id', actorIds);
         const avatarMap = new Map<string, string | null>();
-        if (actorIds.length > 0) {
-          const { data: actorRows } = await supabase
-            .from('travelers')
-            .select('id, avatar_url')
-            .in('id', actorIds);
-          actorRows?.forEach(r => avatarMap.set(r.id, r.avatar_url));
-        }
-        setActivityLogs(
-          activityResult.data.map((a: ActivityLog & { user_id?: string | null }) => ({
-            ...a,
-            avatar_url: a.user_id ? avatarMap.get(a.user_id) ?? null : null,
-          }))
-        );
+        actorRows?.forEach((r) => avatarMap.set(r.id, r.avatar_url));
+        activityLogs = (activityResult.data ?? []).map((a: ActivityLogRow & { user_id?: string | null }) => ({
+          ...a,
+          avatar_url: a.user_id ? avatarMap.get(a.user_id) ?? null : null,
+        }));
       }
 
-      if (pendingResult.data) {
-        setPendingActions(pendingResult.data as PendingAction[]);
-      }
-
-      // Build revenue chart from real booking data (last 6 months)
-      const months = Array.from({ length: 12 }, (_, m) =>
-        formatDate(new Date(2026, m, 1), 'MMM')
-      );
+      // Revenue chart over the selected range from real bookings.
+      const months = Array.from({ length: 12 }, (_, m) => formatDate(new Date(2026, m, 1), 'MMM'));
       const monthlyMap = new Map<string, { bookings: number; revenue: number }>();
-      for (let i = 5; i >= 0; i--) {
+      for (let i = monthsBack - 1; i >= 0; i--) {
         const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
         monthlyMap.set(months[date.getMonth()], { bookings: 0, revenue: 0 });
       }
-
-      allBookings.forEach(b => {
+      const rangeStart = new Date(now.getFullYear(), now.getMonth() - (monthsBack - 1), 1);
+      for (const b of allBookings) {
         const date = new Date(b.created_at);
-        const monthKey = months[date.getMonth()];
-        const existing = monthlyMap.get(monthKey);
+        if (date < rangeStart) continue;
+        const existing = monthlyMap.get(months[date.getMonth()]);
         if (existing) {
           existing.bookings++;
-          existing.revenue += Number(b.total_price || 0);
+          existing.revenue += Number(b.total_price ?? 0);
         }
-      });
-
-      const chartData: RevenueData[] = Array.from(monthlyMap.entries()).map(([name, data]) => ({
-        name,
-        bookings: data.bookings,
-        revenue: Math.round(data.revenue),
-      }));
-      setRevenueData(chartData);
-
-    } catch (err) {
-      console.error('Error fetching admin dashboard data:', err);
-      setError('Failed to load dashboard data');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const updatePendingAction = async (actionId: string, status: string) => {
-    try {
-      const { error } = await supabase
-        .from('admin_pending_actions')
-        .update({
-          status,
-          resolved_by: user?.id,
-          resolved_at: status === 'resolved' ? new Date().toISOString() : null
-        })
-        .eq('id', actionId);
-
-      if (error) throw error;
-
-      // Refresh pending actions
-      const { data } = await supabase
-        .from('admin_pending_actions')
-        .select('*')
-        .eq('status', 'pending')
-        .order('created_at', { ascending: false });
-
-      if (data) {
-        setPendingActions(data as PendingAction[]);
       }
 
-      return { success: true };
-    } catch (err) {
-      console.error('Error updating pending action:', err);
-      return { success: false, error: err };
-    }
-  };
+      return {
+        stats,
+        activityLogs,
+        pendingActions: (pendingResult.data ?? []) as PendingAction[],
+        revenueData: Array.from(monthlyMap.entries()).map(([name, d]) => ({
+          name,
+          bookings: d.bookings,
+          revenue: Math.round(d.revenue),
+        })),
+        platformStats: ((statsResult.data ?? []) as PlatformStatRow[]).map((s) => ({
+          ...s,
+          total_revenue: Number(s.total_revenue),
+        })),
+      };
+    },
+  });
+}
 
-  return {
-    stats,
-    activityLogs,
-    pendingActions,
-    revenueData,
-    loading,
-    error,
-    isAdmin,
-    refetch: fetchDashboardData,
-    updatePendingAction,
-  };
+interface ResolvePendingInput {
+  actionId: string;
+  actionTitle: string;
+  status: 'resolved' | 'dismissed';
+}
+
+export function useResolvePendingAction() {
+  const queryClient = useQueryClient();
+  const { user } = useAuth();
+  const audit = useAdminAudit();
+
+  return useMutation({
+    mutationFn: async ({ actionId, status }: ResolvePendingInput) => {
+      const { error } = await supabase
+        .from('admin_pending_actions')
+        .update({ status, resolved_by: user?.id, resolved_at: new Date().toISOString() })
+        .eq('id', actionId);
+      if (error) throw error;
+    },
+    onSuccess: (_data, { actionId, actionTitle, status }) => {
+      queryClient.invalidateQueries({ queryKey: adminDashboardKey });
+      queryClient.invalidateQueries({ queryKey: ['admin', 'pending-actions'] });
+      void audit({
+        actionType: status === 'resolved' ? 'pending_action_resolve' : 'pending_action_dismiss',
+        description: `${status === 'resolved' ? 'Resolved' : 'Dismissed'} pending action "${actionTitle}"`,
+        entityType: 'admin_pending_action',
+        entityId: actionId,
+        metadata: { status },
+      });
+    },
+  });
+}
+
+/** Refreshes today's platform_stats snapshot via the admin-gated RPC. */
+export function useRefreshPlatformStats() {
+  const queryClient = useQueryClient();
+  const audit = useAdminAudit();
+
+  return useMutation({
+    mutationFn: async () => {
+      const { error } = await supabase.rpc('compute_platform_stats');
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: adminDashboardKey });
+      void audit({
+        actionType: 'stats_refresh',
+        description: `Recomputed today's platform statistics snapshot`,
+        entityType: 'platform_stats',
+        entityId: null,
+        metadata: {},
+      });
+    },
+  });
 }

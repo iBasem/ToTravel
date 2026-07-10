@@ -123,7 +123,9 @@ export function AdminHeader() {
               <Button variant="ghost" className="flex items-center gap-1 sm:gap-2 p-0.5 sm:p-1 lg:p-2">
                 <Avatar className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8">
                   <AvatarImage src={profile?.avatar_url || ''} />
-                  <AvatarFallback>AD</AvatarFallback>
+                  <AvatarFallback>
+                    {[profile?.first_name?.[0], profile?.last_name?.[0]].filter(Boolean).join('') || 'AD'}
+                  </AvatarFallback>
                 </Avatar>
                 <div className="hidden md:block text-start">
                   <div className="text-xs sm:text-sm font-medium">{t('admin.administrator', 'Administrator')}</div>

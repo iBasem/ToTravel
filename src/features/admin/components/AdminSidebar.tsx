@@ -11,7 +11,11 @@ import {
   Shield,
   BookOpen,
   Star,
-  BadgePercent
+  BadgePercent,
+  MapPin,
+  MessageSquare,
+  ListTodo,
+  History
 } from "lucide-react";
 import {
   Sidebar,
@@ -38,9 +42,13 @@ export function AdminSidebar() {
     { title: t('adminDashboard.bookings', "Bookings"), url: "/admin/bookings", icon: BookOpen },
     { title: t('adminDashboard.reviews', "Reviews"), url: "/admin/reviews", icon: Star },
     { title: t('adminDeals.nav', "Deals"), url: "/admin/deals", icon: BadgePercent },
+    { title: t('adminDashboard.messages', "Messages"), url: "/admin/messages", icon: MessageSquare },
+    { title: t('adminDashboard.destinations', "Destinations"), url: "/admin/destinations", icon: MapPin },
     { title: t('adminDashboard.content', "Content"), url: "/admin/content", icon: FileText },
     { title: t('adminDashboard.financials', "Financials"), url: "/admin/financials", icon: DollarSign },
     { title: t('adminDashboard.reports', "Reports"), url: "/admin/reports", icon: BarChart3 },
+    { title: t('adminDashboard.pendingActions', "Pending Actions"), url: "/admin/actions", icon: ListTodo },
+    { title: t('adminDashboard.activityLog', "Activity Log"), url: "/admin/activity", icon: History },
     { title: t('adminDashboard.settings', "Settings"), url: "/admin/settings", icon: Settings },
   ];
 

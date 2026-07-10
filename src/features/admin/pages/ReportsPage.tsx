@@ -1,27 +1,45 @@
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/card";
 import { Button } from "@/ui/button";
 import { Skeleton } from "@/ui/skeleton";
+import { EmptyState } from "@/ui/empty-state";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/ui/select";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, PieChart, Pie, Cell, Tooltip } from "recharts";
 import { Download, TrendingUp, Users, Package, DollarSign, RefreshCw } from "lucide-react";
 import { useAdminReports } from "@/features/admin/hooks";
 import { useTranslation } from "react-i18next";
-import { formatNumber } from "@/lib/formatters";
+import { formatNumber, formatCurrency } from "@/lib/formatters";
+import { toast } from "sonner";
+import { exportCsv } from "@/features/admin/lib/csv";
 
 export default function ReportsPage() {
   const { t, i18n } = useTranslation();
   const isRTL = i18n.language === 'ar';
-  const { stats, monthlyData, destinationData, loading, refetch } = useAdminReports();
+  const [monthsBack, setMonthsBack] = useState(6);
+  const { data, isLoading, isError, refetch } = useAdminReports(monthsBack);
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat(isRTL ? 'ar-SA' : 'en-US', {
-      style: 'currency',
-      currency: 'USD',
-      minimumFractionDigits: 0,
-    }).format(amount);
+  const stats = data?.stats ?? { growthRate: 0, avgBookingValue: 0, conversionRate: 0, activePackages: 0 };
+  const monthlyData = data?.monthlyData ?? [];
+  const destinationData = data?.destinationData ?? [];
+
+  const handleExport = () => {
+    if (monthlyData.length === 0) {
+      toast.info(t('reports.nothingToExport', 'There is no report data to export'));
+      return;
+    }
+    exportCsv(
+      `platform-report-${new Date().toISOString().slice(0, 10)}`,
+      monthlyData.map((m) => ({
+        month: m.name,
+        bookings: m.bookings,
+        revenue_sar: m.revenue,
+        new_travelers: m.users,
+      })),
+    );
+    toast.success(t('reports.exportSuccess', 'Report exported'));
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="space-y-6">
         <div className="flex items-center justify-between">
@@ -54,27 +72,36 @@ export default function ReportsPage() {
           <p className="text-muted-foreground">{t('reports.subtitle')}</p>
         </div>
         <div className="flex items-center gap-3">
-          <Button variant="outline" onClick={refetch} className="flex items-center">
+          <Button variant="outline" onClick={() => refetch()} className="flex items-center">
             <RefreshCw className="w-4 h-4 me-2" />
             {t('common.refresh')}
           </Button>
-          <Select defaultValue="6months">
+          <Select value={String(monthsBack)} onValueChange={(v) => setMonthsBack(Number(v))}>
             <SelectTrigger className="w-40">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="1month">{t('reports.lastMonth')}</SelectItem>
-              <SelectItem value="3months">{t('reports.last3Months')}</SelectItem>
-              <SelectItem value="6months">{t('reports.last6Months')}</SelectItem>
-              <SelectItem value="1year">{t('reports.lastYear')}</SelectItem>
+              <SelectItem value="1">{t('reports.lastMonth')}</SelectItem>
+              <SelectItem value="3">{t('reports.last3Months')}</SelectItem>
+              <SelectItem value="6">{t('reports.last6Months')}</SelectItem>
+              <SelectItem value="12">{t('reports.lastYear')}</SelectItem>
             </SelectContent>
           </Select>
-          <Button className="flex items-center">
+          <Button className="flex items-center" onClick={handleExport}>
             <Download className="w-4 h-4 me-2" />
             {t('reports.exportReport')}
           </Button>
         </div>
       </div>
+
+      {isError && (
+        <EmptyState
+          icon="AlertTriangle"
+          title={t('reports.loadErrorTitle', 'Could not load reports')}
+          description={t('reports.loadErrorDescription', 'Something went wrong while loading report data. Please try again.')}
+          action={{ label: t('common.retry', 'Retry'), onClick: () => refetch() }}
+        />
+      )}
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <Card>
@@ -137,6 +164,7 @@ export default function ReportsPage() {
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="name" />
                     <YAxis orientation={isRTL ? 'right' : 'left'} />
+                    <Tooltip />
                     <Bar dataKey="bookings" fill="#3B82F6" name={t('common.bookings')} />
                     <Bar dataKey="users" fill="#10B981" name={t('common.newUsers')} />
                   </BarChart>

@@ -1,7 +1,11 @@
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/card";
 import { Button } from "@/ui/button";
 import { Badge } from "@/ui/badge";
 import { Skeleton } from "@/ui/skeleton";
+import { EmptyState } from "@/ui/empty-state";
+import { Input } from "@/ui/input";
+import { Label } from "@/ui/label";
 import {
   Table,
   TableBody,
@@ -10,55 +14,116 @@ import {
   TableHeader,
   TableRow,
 } from "@/ui/table";
-import { DollarSign, TrendingUp, CreditCard, Building2, RefreshCw } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/ui/dialog";
+import { DollarSign, TrendingUp, CreditCard, Building2, RefreshCw, Download } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from "recharts";
-import { useAdminFinancials } from "@/features/admin/hooks";
+import { useAdminFinancials, useProcessPayouts, type AdminPayout } from "@/features/admin/hooks/useAdminFinancials";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 import { formatCurrency, formatDate } from "@/lib/formatters";
+import { exportCsv } from "@/features/admin/lib/csv";
+
+interface ProcessTarget {
+  payouts: AdminPayout[];
+}
 
 export default function FinancialManagement() {
   const { t, i18n } = useTranslation();
-  const isRTL = i18n.language === 'ar';
-  const { payouts, stats, revenueData, loading, refetch, processPayouts } = useAdminFinancials();
+  const isRTL = i18n.language === "ar";
+  const { data, isLoading, isError, refetch } = useAdminFinancials();
+  const processPayouts = useProcessPayouts();
+  const [processTarget, setProcessTarget] = useState<ProcessTarget | null>(null);
+  const [paymentReference, setPaymentReference] = useState("");
+
+  const payouts = data?.payouts ?? [];
+  const stats = data?.stats ?? {
+    totalRevenue: 0,
+    platformCommission: 0,
+    pendingPayouts: 0,
+    processedPayouts: 0,
+    pendingPayoutsCount: 0,
+  };
+  const revenueData = data?.revenueData ?? [];
 
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "processed":
-        return <Badge className="bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300">{t('common.processed')}</Badge>;
+        return <Badge className="bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300">{t("common.processed")}</Badge>;
+      case "processing":
+        return <Badge className="bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300">{t("financials.processing", "Processing")}</Badge>;
       case "pending":
-        return <Badge className="bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300">{t('common.pending')}</Badge>;
+        return <Badge className="bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300">{t("common.pending")}</Badge>;
       case "failed":
-        return <Badge className="bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300">{t('common.failed')}</Badge>;
+        return <Badge className="bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300">{t("common.failed")}</Badge>;
       default:
         return <Badge variant="outline">{status}</Badge>;
     }
   };
 
-  const handleProcessPayout = async (payoutId: string) => {
-    const result = await processPayouts([payoutId]);
-    if (result.success) {
-      toast.success(t('financials.payoutSuccess'));
-    } else {
-      toast.error(t('financials.payoutError'));
-    }
-  };
-
-  const handleProcessAllPending = async () => {
-    const pendingIds = payouts.filter(p => p.status === 'pending').map(p => p.id);
-    if (pendingIds.length === 0) {
-      toast.info(t('financials.noPendingPayouts'));
+  const openProcessDialog = (target: AdminPayout[]) => {
+    if (target.length === 0) {
+      toast.info(t("financials.noPendingPayouts"));
       return;
     }
-    const result = await processPayouts(pendingIds);
-    if (result.success) {
-      toast.success(t('financials.batchPayoutSuccess', { count: pendingIds.length }));
-    } else {
-      toast.error(t('financials.batchPayoutError'));
-    }
+    setPaymentReference("");
+    setProcessTarget({ payouts: target });
   };
 
-  if (loading) {
+  const handleConfirmProcess = () => {
+    if (!processTarget) return;
+    const ids = processTarget.payouts.map((p) => p.id);
+    const total = processTarget.payouts.reduce((s, p) => s + p.amount, 0);
+    processPayouts.mutate(
+      {
+        payoutIds: ids,
+        paymentReference: paymentReference.trim(),
+        agencyNames: [...new Set(processTarget.payouts.map((p) => p.agency_name))],
+        totalAmount: total,
+      },
+      {
+        onSuccess: () =>
+          toast.success(
+            ids.length === 1
+              ? t("financials.payoutSuccess")
+              : t("financials.batchPayoutSuccess", { count: ids.length }),
+          ),
+        onError: () =>
+          toast.error(ids.length === 1 ? t("financials.payoutError") : t("financials.batchPayoutError")),
+      },
+    );
+    setProcessTarget(null);
+  };
+
+  const handleExportReport = () => {
+    if (payouts.length === 0 && revenueData.length === 0) {
+      toast.info(t("financials.nothingToExport", "There is no financial data to export"));
+      return;
+    }
+    exportCsv(
+      `financial-report-${new Date().toISOString().slice(0, 10)}`,
+      payouts.map((p) => ({
+        payout_id: p.id,
+        agency: p.agency_name,
+        period_start: p.period_start,
+        period_end: p.period_end,
+        amount_sar: p.amount,
+        commission_rate: p.commission_rate,
+        status: p.status,
+        processed_at: p.processed_at ?? "",
+        payment_reference: p.payment_reference ?? "",
+      })),
+    );
+    toast.success(t("financials.reportExported", "Financial report exported"));
+  };
+
+  if (isLoading) {
     return (
       <div className="space-y-6">
         <div className="flex items-center justify-between">
@@ -84,80 +149,92 @@ export default function FinancialManagement() {
     );
   }
 
+  if (isError) {
+    return (
+      <EmptyState
+        icon="AlertTriangle"
+        title={t("financials.loadErrorTitle", "Could not load financial data")}
+        description={t("financials.loadErrorDescription", "Something went wrong while loading financial data. Please try again.")}
+        action={{ label: t("common.retry", "Retry"), onClick: () => refetch() }}
+      />
+    );
+  }
+
+  const pendingPayouts = payouts.filter((p) => p.status === "pending");
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center justify-between">
         <div className="text-start">
-          <h1 className="text-3xl font-bold">{t('financials.title')}</h1>
-          <p className="text-muted-foreground">{t('financials.subtitle')}</p>
+          <h1 className="text-3xl font-bold">{t("financials.title")}</h1>
+          <p className="text-muted-foreground">{t("financials.subtitle")}</p>
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="outline" onClick={refetch} className="flex items-center">
+          <Button variant="outline" onClick={() => refetch()} className="flex items-center">
             <RefreshCw className="w-4 h-4 me-2" />
-            {t('common.refresh')}
+            {t("common.refresh")}
           </Button>
-          <Button>{t('financials.generateReport')}</Button>
+          <Button onClick={handleExportReport}>
+            <Download className="w-4 h-4 me-2" />
+            {t("financials.generateReport")}
+          </Button>
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">{t('financials.totalRevenue')}</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">{t("financials.totalRevenue")}</CardTitle>
             <DollarSign className="h-4 w-4 text-muted-foreground/40" />
           </CardHeader>
           <CardContent className="text-start">
             <div className="text-2xl font-bold tabular-nums">{formatCurrency(stats.totalRevenue)}</div>
             <div className="flex items-center text-sm text-green-600">
               <TrendingUp className="w-4 h-4 me-1" />
-              {t('financials.fromConfirmedBookings')}
+              {t("financials.fromConfirmedBookings")}
             </div>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">{t('financials.platformCommission')}</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">{t("financials.platformCommission")}</CardTitle>
             <CreditCard className="h-4 w-4 text-muted-foreground/40" />
           </CardHeader>
           <CardContent className="text-start">
             <div className="text-2xl font-bold tabular-nums">{formatCurrency(stats.platformCommission)}</div>
-            <div className="text-sm text-muted-foreground">
-              {t('financials.commissionRateDesc')}
-            </div>
+            <div className="text-sm text-muted-foreground">{t("financials.commissionRateDesc")}</div>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">{t('financials.pendingPayouts')}</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">{t("financials.pendingPayouts")}</CardTitle>
             <Building2 className="h-4 w-4 text-muted-foreground/40" />
           </CardHeader>
           <CardContent className="text-start">
             <div className="text-2xl font-bold tabular-nums">{formatCurrency(stats.pendingPayouts)}</div>
             <div className="text-sm text-muted-foreground">
-              {stats.pendingPayoutsCount} {t('financials.agenciesPending')}
+              {stats.pendingPayoutsCount} {t("financials.agenciesPending")}
             </div>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">{t('financials.processedPayouts')}</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">{t("financials.processedPayouts")}</CardTitle>
             <Building2 className="h-4 w-4 text-muted-foreground/40" />
           </CardHeader>
           <CardContent className="text-start">
             <div className="text-2xl font-bold tabular-nums">{formatCurrency(stats.processedPayouts)}</div>
-            <div className="text-sm text-muted-foreground">
-              {t('financials.totalProcessed')}
-            </div>
+            <div className="text-sm text-muted-foreground">{t("financials.totalProcessed")}</div>
           </CardContent>
         </Card>
       </div>
 
       <Card>
         <CardHeader className="text-start">
-          <CardTitle>{t('financials.revenueOverview')}</CardTitle>
+          <CardTitle>{t("financials.revenueOverview")}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="h-80" dir="ltr">
@@ -166,26 +243,14 @@ export default function FinancialManagement() {
                 <LineChart data={revenueData}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="name" />
-                  <YAxis orientation={isRTL ? 'right' : 'left'} />
-                  <Line
-                    type="monotone"
-                    dataKey="revenue"
-                    stroke="#3B82F6"
-                    strokeWidth={2}
-                    name={t('financials.totalRevenue')}
-                  />
-                  <Line
-                    type="monotone"
-                    dataKey="commission"
-                    stroke="#10B981"
-                    strokeWidth={2}
-                    name={t('financials.platformCommission')}
-                  />
+                  <YAxis orientation={isRTL ? "right" : "left"} />
+                  <Line type="monotone" dataKey="revenue" stroke="#3B82F6" strokeWidth={2} name={t("financials.totalRevenue")} />
+                  <Line type="monotone" dataKey="commission" stroke="#10B981" strokeWidth={2} name={t("financials.platformCommission")} />
                 </LineChart>
               </ResponsiveContainer>
             ) : (
               <div className="flex items-center justify-center h-full text-muted-foreground">
-                {t('financials.noRevenueData')}
+                {t("financials.noRevenueData")}
               </div>
             )}
           </div>
@@ -195,41 +260,45 @@ export default function FinancialManagement() {
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle>{t('financials.agencyPayouts')}</CardTitle>
-            <Button onClick={handleProcessAllPending}>{t('financials.processAllPending')}</Button>
+            <CardTitle>{t("financials.agencyPayouts")}</CardTitle>
+            <Button onClick={() => openProcessDialog(pendingPayouts)}>{t("financials.processAllPending")}</Button>
           </div>
         </CardHeader>
         <CardContent>
           {payouts.length === 0 ? (
             <div className="text-center py-12 text-muted-foreground">
-              <p>{t('financials.noPayoutsFound')}</p>
+              <p>{t("financials.noPayoutsFound")}</p>
             </div>
           ) : (
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="text-start">{t('financials.payoutId')}</TableHead>
-                  <TableHead className="text-start">{t('common.agency')}</TableHead>
-                  <TableHead className="text-start">{t('common.period')}</TableHead>
-                  <TableHead className="text-start">{t('common.amount')}</TableHead>
-                  <TableHead className="text-start">{t('common.status')}</TableHead>
-                  <TableHead className="text-end">{t('common.actions')}</TableHead>
+                  <TableHead className="text-start">{t("financials.payoutId")}</TableHead>
+                  <TableHead className="text-start">{t("common.agency")}</TableHead>
+                  <TableHead className="text-start">{t("common.period")}</TableHead>
+                  <TableHead className="text-start">{t("common.amount")}</TableHead>
+                  <TableHead className="text-start">{t("financials.paymentReference", "Reference")}</TableHead>
+                  <TableHead className="text-start">{t("common.status")}</TableHead>
+                  <TableHead className="text-end">{t("common.actions")}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {payouts.map((payout) => (
                   <TableRow key={payout.id}>
                     <TableCell className="font-mono text-sm text-start">{payout.id.slice(0, 8)}</TableCell>
-                    <TableCell className="font-medium text-start">{payout.agency_name}</TableCell>
+                    <TableCell className="font-medium text-start">{payout.agency_name || "—"}</TableCell>
                     <TableCell className="text-start">
                       {formatDate(payout.period_start, "P")} - {formatDate(payout.period_end, "P")}
                     </TableCell>
                     <TableCell className="font-medium tabular-nums text-start">{formatCurrency(payout.amount)}</TableCell>
+                    <TableCell className="font-mono text-xs text-start" dir="ltr">
+                      {payout.payment_reference ?? "—"}
+                    </TableCell>
                     <TableCell className="text-start">{getStatusBadge(payout.status)}</TableCell>
                     <TableCell className="text-end">
                       {payout.status === "pending" && (
-                        <Button size="sm" onClick={() => handleProcessPayout(payout.id)}>
-                          {t('financials.processPayout')}
+                        <Button size="sm" onClick={() => openProcessDialog([payout])}>
+                          {t("financials.processPayout")}
                         </Button>
                       )}
                     </TableCell>
@@ -241,6 +310,49 @@ export default function FinancialManagement() {
         </CardContent>
       </Card>
 
+      {/* Process payout dialog — records the bank transfer reference */}
+      <Dialog open={!!processTarget} onOpenChange={(open) => !open && setProcessTarget(null)}>
+        <DialogContent className="max-w-md">
+          {processTarget && (
+            <>
+              <DialogHeader>
+                <DialogTitle className="text-start">
+                  {processTarget.payouts.length === 1
+                    ? t("financials.confirmProcessTitle", "Mark payout as processed?")
+                    : t("financials.confirmProcessAllTitle", "Mark {{count}} payouts as processed?", {
+                        count: processTarget.payouts.length,
+                      })}
+                </DialogTitle>
+                <DialogDescription className="text-start">
+                  {t("financials.confirmProcessDesc", "Total {{amount}}. Record this only after the bank transfer has been made — this does not move money.", {
+                    amount: formatCurrency(processTarget.payouts.reduce((s, p) => s + p.amount, 0)),
+                  })}
+                </DialogDescription>
+              </DialogHeader>
+              <div className="space-y-2">
+                <Label htmlFor="payment-reference" className="text-start block">
+                  {t("financials.paymentReferenceLabel", "Payment reference (bank transfer ID)")}
+                </Label>
+                <Input
+                  id="payment-reference"
+                  dir="ltr"
+                  value={paymentReference}
+                  onChange={(e) => setPaymentReference(e.target.value)}
+                  placeholder={t("financials.paymentReferencePlaceholder", "e.g. TRF-2026-00123")}
+                />
+              </div>
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setProcessTarget(null)}>
+                  {t("common.cancel")}
+                </Button>
+                <Button onClick={handleConfirmProcess} disabled={processPayouts.isPending}>
+                  {processPayouts.isPending ? t("common.saving", "Saving…") : t("financials.processPayout")}
+                </Button>
+              </DialogFooter>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

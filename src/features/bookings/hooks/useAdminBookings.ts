@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { useAuth } from '@/features/auth/context/AuthContext';
+import { useAdminAudit } from '@/features/admin/lib/audit';
 
-interface Booking {
+export interface AdminBooking {
   id: string;
   booking_date: string;
   total_price: number;
@@ -11,152 +11,200 @@ interface Booking {
   payment_status: string;
   special_requests: string | null;
   package_title: string;
+  package_title_ar: string | null;
   package_destination: string;
   traveler_name: string;
   traveler_email: string;
   agency_name: string;
   created_at: string;
+  /** Latest paid payment for this booking, if any — the refund target. */
+  paid_payment_id: string | null;
 }
 
-interface BookingStats {
+export interface BookingStats {
   total: number;
   confirmed: number;
   pending: number;
   thisMonth: number;
 }
 
+export interface AdminPayment {
+  id: string;
+  booking_id: string;
+  provider: string;
+  provider_invoice_id: string | null;
+  provider_payment_id: string | null;
+  amount: number;
+  currency: string;
+  status: string;
+  created_at: string;
+  traveler_name: string;
+  package_title: string;
+  package_title_ar: string | null;
+}
+
+export const adminBookingsKey = ['admin', 'bookings'] as const;
+export const adminPaymentsKey = ['admin', 'payments'] as const;
+
+interface BookingsBundle {
+  bookings: AdminBooking[];
+  payments: AdminPayment[];
+  stats: BookingStats;
+}
+
 export function useAdminBookings() {
-  const { profile } = useAuth();
-  const [bookings, setBookings] = useState<Booking[]>([]);
-  const [stats, setStats] = useState<BookingStats>({
-    total: 0,
-    confirmed: 0,
-    pending: 0,
-    thisMonth: 0,
-  });
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  return useQuery({
+    queryKey: adminBookingsKey,
+    queryFn: async (): Promise<BookingsBundle> => {
+      const [bookingsRes, packagesRes, travelersRes, agenciesRes, paymentsRes] = await Promise.all([
+        supabase.from('package_bookings').select('*').order('created_at', { ascending: false }),
+        supabase.from('packages').select('id, title, title_ar, destination, agency_id'),
+        supabase.from('travelers').select('id, first_name, last_name, email'),
+        supabase.from('travel_agencies').select('id, company_name'),
+        supabase.from('payments').select('*').order('created_at', { ascending: false }),
+      ]);
+      for (const res of [bookingsRes, packagesRes, travelersRes, agenciesRes, paymentsRes]) {
+        if (res.error) throw res.error;
+      }
 
-  const isAdmin = profile?.role === 'admin';
+      const packageMap = new Map(packagesRes.data?.map((p) => [p.id, p]));
+      const travelerMap = new Map(travelersRes.data?.map((t) => [t.id, t]));
+      const agencyMap = new Map(agenciesRes.data?.map((a) => [a.id, a.company_name]));
 
-  useEffect(() => {
-    if (isAdmin) {
-      fetchBookings();
-    }
-  }, [isAdmin]);
+      const paidPaymentByBooking = new Map<string, string>();
+      for (const p of paymentsRes.data ?? []) {
+        if (p.status === 'paid' && !paidPaymentByBooking.has(p.booking_id)) {
+          paidPaymentByBooking.set(p.booking_id, p.id);
+        }
+      }
 
-  const fetchBookings = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-
-      // Fetch bookings
-      const { data: bookingsData, error: bookingsError } = await supabase
-        .from('package_bookings')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      if (bookingsError) throw bookingsError;
-
-      // Fetch packages for titles
-      const { data: packagesData, error: packagesError } = await supabase
-        .from('packages')
-        .select('id, title, destination, agency_id');
-
-      if (packagesError) throw packagesError;
-
-      // Fetch travelers
-      const { data: travelersData, error: travelersError } = await supabase
-        .from('travelers')
-        .select('id, first_name, last_name, email');
-
-      if (travelersError) throw travelersError;
-
-      // Fetch agencies
-      const { data: agenciesData, error: agenciesError } = await supabase
-        .from('travel_agencies')
-        .select('id, company_name');
-
-      if (agenciesError) throw agenciesError;
-
-      // Create maps
-      const packageMap = new Map(packagesData?.map(p => [p.id, p]));
-      const travelerMap = new Map(travelersData?.map(t => [t.id, t]));
-      const agencyMap = new Map(agenciesData?.map(a => [a.id, a.company_name]));
-
-      // Map bookings with related data
-      const mappedBookings: Booking[] = (bookingsData || []).map(b => {
+      const bookings: AdminBooking[] = (bookingsRes.data ?? []).map((b) => {
         const pkg = packageMap.get(b.package_id);
         const traveler = travelerMap.get(b.traveler_id);
-        const agencyName = pkg ? agencyMap.get(pkg.agency_id) || 'Unknown' : 'Unknown';
-
         return {
           id: b.id,
           booking_date: b.booking_date,
           total_price: Number(b.total_price),
           participants: b.participants,
-          status: b.status || 'pending',
-          payment_status: b.payment_status || 'pending',
+          status: b.status ?? 'pending',
+          payment_status: b.payment_status ?? 'pending',
           special_requests: b.special_requests,
-          package_title: pkg?.title || 'Unknown Package',
-          package_destination: pkg?.destination || 'Unknown',
-          traveler_name: traveler ? `${traveler.first_name} ${traveler.last_name}` : 'Unknown',
-          traveler_email: traveler?.email || '',
-          agency_name: agencyName,
+          package_title: pkg?.title ?? '',
+          package_title_ar: pkg?.title_ar ?? null,
+          package_destination: pkg?.destination ?? '',
+          traveler_name: traveler ? `${traveler.first_name} ${traveler.last_name}` : '',
+          traveler_email: traveler?.email ?? '',
+          agency_name: (pkg && agencyMap.get(pkg.agency_id)) || '',
           created_at: b.created_at,
+          paid_payment_id: paidPaymentByBooking.get(b.id) ?? null,
         };
       });
 
-      setBookings(mappedBookings);
+      const bookingMap = new Map(bookings.map((b) => [b.id, b]));
+      const payments: AdminPayment[] = (paymentsRes.data ?? []).map((p) => {
+        const booking = bookingMap.get(p.booking_id);
+        return {
+          id: p.id,
+          booking_id: p.booking_id,
+          provider: p.provider,
+          provider_invoice_id: p.provider_invoice_id,
+          provider_payment_id: p.provider_payment_id,
+          amount: Number(p.amount),
+          currency: p.currency,
+          status: p.status,
+          created_at: p.created_at,
+          traveler_name: booking?.traveler_name ?? '',
+          package_title: booking?.package_title ?? '',
+          package_title_ar: booking?.package_title_ar ?? null,
+        };
+      });
 
-      // Calculate stats
-      const now = new Date();
-      const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-      
-      const total = mappedBookings.length;
-      const confirmed = mappedBookings.filter(b => b.status === 'confirmed').length;
-      const pending = mappedBookings.filter(b => b.status === 'pending').length;
-      const thisMonth = mappedBookings.filter(b => 
-        new Date(b.created_at) >= startOfMonth
-      ).length;
+      const startOfMonth = new Date();
+      startOfMonth.setDate(1);
+      startOfMonth.setHours(0, 0, 0, 0);
 
-      setStats({ total, confirmed, pending, thisMonth });
-    } catch (err) {
-      console.error('Error fetching bookings:', err);
-      setError('Failed to load bookings');
-    } finally {
-      setLoading(false);
-    }
-  };
+      return {
+        bookings,
+        payments,
+        stats: {
+          total: bookings.length,
+          confirmed: bookings.filter((b) => b.status === 'confirmed').length,
+          pending: bookings.filter((b) => b.status === 'pending').length,
+          thisMonth: bookings.filter((b) => new Date(b.created_at) >= startOfMonth).length,
+        },
+      };
+    },
+  });
+}
 
-  const updateBookingStatus = async (bookingId: string, status: string, paymentStatus?: string) => {
-    try {
-      const updateData: { status: string; payment_status?: string } = { status };
-      if (paymentStatus) {
-        updateData.payment_status = paymentStatus;
-      }
+interface CancelBookingInput {
+  bookingId: string;
+  packageTitle: string;
+  travelerName: string;
+}
 
+/**
+ * Cancels a booking. Only touches `status` — payment_status is owned by the
+ * payment provider flow (admin-refund / moyasar-webhook) and must never be
+ * flipped from the client.
+ */
+export function useCancelBooking() {
+  const queryClient = useQueryClient();
+  const audit = useAdminAudit();
+
+  return useMutation({
+    mutationFn: async ({ bookingId }: CancelBookingInput) => {
       const { error } = await supabase
         .from('package_bookings')
-        .update(updateData)
+        .update({ status: 'cancelled' })
         .eq('id', bookingId);
-
       if (error) throw error;
+    },
+    onSuccess: (_data, { bookingId, packageTitle, travelerName }) => {
+      queryClient.invalidateQueries({ queryKey: adminBookingsKey });
+      void audit({
+        actionType: 'booking_cancellation',
+        description: `Cancelled booking of "${packageTitle}" for ${travelerName}`,
+        entityType: 'booking',
+        entityId: bookingId,
+        metadata: {},
+      });
+    },
+  });
+}
 
-      await fetchBookings();
-      return { success: true };
-    } catch (err) {
-      console.error('Error updating booking status:', err);
-      return { success: false, error: err };
-    }
-  };
+interface RefundInput {
+  paymentId: string;
+  reason?: string;
+}
 
-  return {
-    bookings,
-    stats,
-    loading,
-    error,
-    refetch: fetchBookings,
-    updateBookingStatus,
-  };
+/**
+ * Issues a refund through the admin-refund edge function, which verifies the
+ * admin role, refunds at Moyasar, reconciles payment + booking rows and
+ * writes the audit log server-side.
+ */
+export function useRefundPayment() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ paymentId, reason }: RefundInput) => {
+      const { data, error } = await supabase.functions.invoke('admin-refund', {
+        body: { payment_id: paymentId, reason: reason ?? '' },
+      });
+      if (error) {
+        // Surface the structured error body when the function returned 4xx/5xx.
+        const context = error as { context?: Response };
+        if (context.context) {
+          const body = await context.context.json().catch(() => null);
+          throw new Error(body?.code ?? error.message);
+        }
+        throw error;
+      }
+      return data as { ok: boolean; payment_id: string; status: string };
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: adminBookingsKey });
+      queryClient.invalidateQueries({ queryKey: adminPaymentsKey });
+    },
+  });
 }

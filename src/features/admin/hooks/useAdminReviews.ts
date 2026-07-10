@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { useAuth } from '@/features/auth/context/AuthContext';
+import { useAdminAudit } from '../lib/audit';
 
-interface Review {
+export interface AdminReview {
     id: string;
     rating: number;
     comment: string | null;
@@ -14,7 +14,7 @@ interface Review {
     agency_name: string;
 }
 
-interface ReviewStats {
+export interface ReviewStats {
     total: number;
     averageRating: number;
     fiveStars: number;
@@ -25,140 +25,90 @@ interface ReviewStats {
     thisMonth: number;
 }
 
+export const adminReviewsKey = ['admin', 'reviews'] as const;
+
 export function useAdminReviews() {
-    const { profile } = useAuth();
-    const [reviews, setReviews] = useState<Review[]>([]);
-    const [stats, setStats] = useState<ReviewStats>({
-        total: 0,
-        averageRating: 0,
-        fiveStars: 0,
-        fourStars: 0,
-        threeStars: 0,
-        twoStars: 0,
-        oneStar: 0,
-        thisMonth: 0,
-    });
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
+    return useQuery({
+        queryKey: adminReviewsKey,
+        queryFn: async (): Promise<{ reviews: AdminReview[]; stats: ReviewStats }> => {
+            const [reviewsRes, travelersRes, packagesRes, agenciesRes] = await Promise.all([
+                supabase.from('reviews').select('*').order('created_at', { ascending: false }),
+                supabase.from('travelers').select('id, first_name, last_name, email'),
+                supabase.from('packages').select('id, title, destination, agency_id'),
+                supabase.from('travel_agencies').select('id, company_name'),
+            ]);
+            for (const res of [reviewsRes, travelersRes, packagesRes, agenciesRes]) {
+                if (res.error) throw res.error;
+            }
 
-    const isAdmin = profile?.role === 'admin';
+            const travelerMap = new Map(travelersRes.data?.map(t => [t.id, t]));
+            const packageMap = new Map(packagesRes.data?.map(p => [p.id, p]));
+            const agencyMap = new Map(agenciesRes.data?.map(a => [a.id, a.company_name]));
 
-    useEffect(() => {
-        if (isAdmin) {
-            fetchReviews();
-        }
-    }, [isAdmin]);
-
-    const fetchReviews = async () => {
-        try {
-            setLoading(true);
-            setError(null);
-
-            // Fetch reviews
-            const { data: reviewsData, error: reviewsError } = await supabase
-                .from('reviews')
-                .select('*')
-                .order('created_at', { ascending: false });
-
-            if (reviewsError) throw reviewsError;
-
-            // Fetch travelers for names
-            const { data: travelersData, error: travelersError } = await supabase
-                .from('travelers')
-                .select('id, first_name, last_name, email');
-
-            if (travelersError) throw travelersError;
-
-            // Fetch packages for titles
-            const { data: packagesData, error: packagesError } = await supabase
-                .from('packages')
-                .select('id, title, destination, agency_id');
-
-            if (packagesError) throw packagesError;
-
-            // Fetch agencies for names
-            const { data: agenciesData, error: agenciesError } = await supabase
-                .from('travel_agencies')
-                .select('id, company_name');
-
-            if (agenciesError) throw agenciesError;
-
-            // Create maps
-            const travelerMap = new Map(travelersData?.map(t => [t.id, t]));
-            const packageMap = new Map(packagesData?.map(p => [p.id, p]));
-            const agencyMap = new Map(agenciesData?.map(a => [a.id, a.company_name]));
-
-            // Map reviews with related data
-            const mappedReviews: Review[] = (reviewsData || []).map(r => {
+            const reviews: AdminReview[] = (reviewsRes.data ?? []).map(r => {
                 const traveler = travelerMap.get(r.traveler_id);
                 const pkg = packageMap.get(r.package_id);
-                const agencyName = pkg ? agencyMap.get(pkg.agency_id) || 'Unknown' : 'Unknown';
-
                 return {
                     id: r.id,
                     rating: r.rating,
                     comment: r.comment,
                     created_at: r.created_at,
-                    traveler_name: traveler ? `${traveler.first_name} ${traveler.last_name}` : 'Unknown',
-                    traveler_email: traveler?.email || '',
-                    package_title: pkg?.title || 'Unknown Package',
-                    package_destination: pkg?.destination || 'Unknown',
-                    agency_name: agencyName,
+                    traveler_name: traveler ? `${traveler.first_name} ${traveler.last_name}` : '',
+                    traveler_email: traveler?.email ?? '',
+                    package_title: pkg?.title ?? '',
+                    package_destination: pkg?.destination ?? '',
+                    agency_name: (pkg && agencyMap.get(pkg.agency_id)) || '',
                 };
             });
 
-            setReviews(mappedReviews);
+            const startOfMonth = new Date();
+            startOfMonth.setDate(1);
+            startOfMonth.setHours(0, 0, 0, 0);
 
-            // Calculate stats
-            const now = new Date();
-            const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+            const total = reviews.length;
+            return {
+                reviews,
+                stats: {
+                    total,
+                    averageRating:
+                        total > 0 ? Math.round((reviews.reduce((sum, r) => sum + r.rating, 0) / total) * 10) / 10 : 0,
+                    fiveStars: reviews.filter(r => r.rating === 5).length,
+                    fourStars: reviews.filter(r => r.rating === 4).length,
+                    threeStars: reviews.filter(r => r.rating === 3).length,
+                    twoStars: reviews.filter(r => r.rating === 2).length,
+                    oneStar: reviews.filter(r => r.rating === 1).length,
+                    thisMonth: reviews.filter(r => new Date(r.created_at) >= startOfMonth).length,
+                },
+            };
+        },
+    });
+}
 
-            const total = mappedReviews.length;
-            const avgRating = total > 0
-                ? Math.round((mappedReviews.reduce((sum, r) => sum + r.rating, 0) / total) * 10) / 10
-                : 0;
+interface DeleteReviewInput {
+    reviewId: string;
+    packageTitle: string;
+    travelerName: string;
+    rating: number;
+}
 
-            setStats({
-                total,
-                averageRating: avgRating,
-                fiveStars: mappedReviews.filter(r => r.rating === 5).length,
-                fourStars: mappedReviews.filter(r => r.rating === 4).length,
-                threeStars: mappedReviews.filter(r => r.rating === 3).length,
-                twoStars: mappedReviews.filter(r => r.rating === 2).length,
-                oneStar: mappedReviews.filter(r => r.rating === 1).length,
-                thisMonth: mappedReviews.filter(r => new Date(r.created_at) >= startOfMonth).length,
-            });
-        } catch (err) {
-            console.error('Error fetching reviews:', err);
-            setError('Failed to load reviews');
-        } finally {
-            setLoading(false);
-        }
-    };
+export function useDeleteReview() {
+    const queryClient = useQueryClient();
+    const audit = useAdminAudit();
 
-    const deleteReview = async (reviewId: string) => {
-        try {
-            const { error } = await supabase
-                .from('reviews')
-                .delete()
-                .eq('id', reviewId);
-
+    return useMutation({
+        mutationFn: async ({ reviewId }: DeleteReviewInput) => {
+            const { error } = await supabase.from('reviews').delete().eq('id', reviewId);
             if (error) throw error;
-
-            await fetchReviews();
-            return { success: true };
-        } catch (err) {
-            console.error('Error deleting review:', err);
-            return { success: false, error: err };
-        }
-    };
-
-    return {
-        reviews,
-        stats,
-        loading,
-        error,
-        refetch: fetchReviews,
-        deleteReview,
-    };
+        },
+        onSuccess: (_data, { reviewId, packageTitle, travelerName, rating }) => {
+            queryClient.invalidateQueries({ queryKey: adminReviewsKey });
+            void audit({
+                actionType: 'review_deletion',
+                description: `Deleted ${rating}-star review by ${travelerName} on "${packageTitle}"`,
+                entityType: 'review',
+                entityId: reviewId,
+                metadata: { rating },
+            });
+        },
+    });
 }

@@ -29,18 +29,25 @@ import {
     AlertDialogTitle,
 } from "@/ui/alert-dialog";
 import { Search, MoreHorizontal, Trash2, Star, TrendingUp, MessageSquare, Calendar } from "lucide-react";
-import { useAdminReviews } from "@/features/admin/hooks/useAdminReviews";
+import { useAdminReviews, useDeleteReview, type AdminReview } from "@/features/admin/hooks/useAdminReviews";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { formatDate } from "@/lib/formatters";
+import { EmptyState } from "@/ui/empty-state";
 
 export default function ReviewManagement() {
-    const { reviews, stats, loading, error, deleteReview, refetch } = useAdminReviews();
+    const { data, isLoading, isError, refetch } = useAdminReviews();
+    const deleteReview = useDeleteReview();
     const [searchTerm, setSearchTerm] = useState("");
     const [ratingFilter, setRatingFilter] = useState<number | null>(null);
-    const [deleteId, setDeleteId] = useState<string | null>(null);
+    const [deleteTarget, setDeleteTarget] = useState<AdminReview | null>(null);
     const { t, i18n } = useTranslation();
     const isRTL = i18n.dir() === 'rtl';
+
+    const reviews = data?.reviews ?? [];
+    const stats = data?.stats ?? {
+        total: 0, averageRating: 0, fiveStars: 0, fourStars: 0, threeStars: 0, twoStars: 0, oneStar: 0, thisMonth: 0,
+    };
 
     const filteredReviews = reviews.filter(review => {
         const matchesSearch = !searchTerm ||
@@ -52,15 +59,21 @@ export default function ReviewManagement() {
         return matchesSearch && matchesRating;
     });
 
-    const handleDelete = async () => {
-        if (!deleteId) return;
-        const result = await deleteReview(deleteId);
-        if (result.success) {
-            toast.success(t('adminDashboard.reviewDeleted', 'Review deleted successfully'));
-        } else {
-            toast.error(t('adminDashboard.reviewDeleteError', 'Failed to delete review'));
-        }
-        setDeleteId(null);
+    const handleDelete = () => {
+        if (!deleteTarget) return;
+        deleteReview.mutate(
+            {
+                reviewId: deleteTarget.id,
+                packageTitle: deleteTarget.package_title,
+                travelerName: deleteTarget.traveler_name,
+                rating: deleteTarget.rating,
+            },
+            {
+                onSuccess: () => toast.success(t('adminDashboard.reviewDeleted', 'Review deleted successfully')),
+                onError: () => toast.error(t('adminDashboard.reviewDeleteError', 'Failed to delete review')),
+            },
+        );
+        setDeleteTarget(null);
     };
 
     const renderStars = (rating: number) => {
@@ -76,7 +89,7 @@ export default function ReviewManagement() {
         );
     };
 
-    if (loading) {
+    if (isLoading) {
         return (
             <div className="space-y-6">
                 <Skeleton className="h-8 w-64" />
@@ -88,6 +101,17 @@ export default function ReviewManagement() {
         );
     }
 
+    if (isError) {
+        return (
+            <EmptyState
+                icon="AlertTriangle"
+                title={t('adminDashboard.reviewsLoadError', 'Could not load reviews')}
+                description={t('adminDashboard.reviewsLoadErrorDesc', 'Something went wrong while loading reviews. Please try again.')}
+                action={{ label: t('common.retry', 'Retry'), onClick: () => refetch() }}
+            />
+        );
+    }
+
     return (
         <div className="space-y-6">
             {/* Header */}
@@ -96,7 +120,7 @@ export default function ReviewManagement() {
                     <h1 className="text-2xl font-bold">{t('adminDashboard.reviewManagement', 'Review Management')}</h1>
                     <p className="text-muted-foreground">{t('adminDashboard.reviewManagementDesc', 'Monitor and moderate customer reviews')}</p>
                 </div>
-                <Button onClick={refetch} variant="outline" size="sm">
+                <Button onClick={() => refetch()} variant="outline" size="sm">
                     {t('adminDashboard.refresh', 'Refresh')}
                 </Button>
             </div>
@@ -268,7 +292,7 @@ export default function ReviewManagement() {
                                                 <DropdownMenuContent align={isRTL ? "start" : "end"}>
                                                     <DropdownMenuItem
                                                         className="text-destructive"
-                                                        onClick={() => setDeleteId(review.id)}
+                                                        onClick={() => setDeleteTarget(review)}
                                                     >
                                                         <Trash2 className="me-2 h-4 w-4" />
                                                         {t('adminDashboard.delete', 'Delete')}
@@ -285,7 +309,7 @@ export default function ReviewManagement() {
             </Card>
 
             {/* Delete Confirmation Dialog */}
-            <AlertDialog open={!!deleteId} onOpenChange={(open) => !open && setDeleteId(null)}>
+            <AlertDialog open={!!deleteTarget} onOpenChange={(open) => !open && setDeleteTarget(null)}>
                 <AlertDialogContent>
                     <AlertDialogHeader>
                         <AlertDialogTitle>{t('adminDashboard.deleteReview', 'Delete Review')}</AlertDialogTitle>

@@ -1,134 +1,175 @@
-import { useState, useEffect } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { useAuth } from '@/features/auth/context/AuthContext';
+import { useAdminAudit } from '../lib/audit';
 
-interface Agency {
+export type AgencyStatus = 'pending' | 'active' | 'rejected' | 'suspended';
+
+export interface AdminAgency {
   id: string;
   company_name: string;
+  company_description: string | null;
   contact_person_first_name: string;
   contact_person_last_name: string;
   email: string;
   phone: string | null;
-  status: string;
+  website: string | null;
+  city: string | null;
+  country: string | null;
+  license_number: string | null;
+  status: AgencyStatus;
   is_verified: boolean;
   commission_rate: number;
+  rating: number;
+  total_reviews: number;
   created_at: string;
   packages_count: number;
 }
 
-interface AgencyStats {
+export interface AgencyStats {
   total: number;
-  approved: number;
+  active: number;
   pending: number;
   totalPackages: number;
 }
 
+export const adminAgenciesKey = ['admin', 'agencies'] as const;
+
 export function useAdminAgencies() {
-  const { profile } = useAuth();
-  const [agencies, setAgencies] = useState<Agency[]>([]);
-  const [stats, setStats] = useState<AgencyStats>({
-    total: 0,
-    approved: 0,
-    pending: 0,
-    totalPackages: 0,
-  });
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  return useQuery({
+    queryKey: adminAgenciesKey,
+    queryFn: async (): Promise<{ agencies: AdminAgency[]; stats: AgencyStats }> => {
+      const [agenciesRes, packagesRes] = await Promise.all([
+        supabase.from('travel_agencies').select('*').order('created_at', { ascending: false }),
+        supabase.from('packages').select('agency_id'),
+      ]);
+      if (agenciesRes.error) throw agenciesRes.error;
+      if (packagesRes.error) throw packagesRes.error;
 
-  const isAdmin = profile?.role === 'admin';
-
-  useEffect(() => {
-    if (isAdmin) {
-      fetchAgencies();
-    }
-  }, [isAdmin]);
-
-  const fetchAgencies = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-
-      // Fetch agencies
-      const { data: agenciesData, error: agenciesError } = await supabase
-        .from('travel_agencies')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      if (agenciesError) throw agenciesError;
-
-      // Fetch package counts
-      const { data: packageCounts, error: packageError } = await supabase
-        .from('packages')
-        .select('agency_id');
-
-      if (packageError) throw packageError;
-
-      // Count packages per agency
       const packagesMap = new Map<string, number>();
-      packageCounts?.forEach(p => {
-        packagesMap.set(p.agency_id, (packagesMap.get(p.agency_id) || 0) + 1);
-      });
+      for (const p of packagesRes.data ?? []) {
+        packagesMap.set(p.agency_id, (packagesMap.get(p.agency_id) ?? 0) + 1);
+      }
 
-      // Map agencies with package counts
-      const mappedAgencies: Agency[] = (agenciesData || []).map(a => ({
+      const agencies: AdminAgency[] = (agenciesRes.data ?? []).map((a) => ({
         id: a.id,
         company_name: a.company_name,
+        company_description: a.company_description,
         contact_person_first_name: a.contact_person_first_name,
         contact_person_last_name: a.contact_person_last_name,
         email: a.email,
         phone: a.phone,
-        status: a.status || 'pending',
-        is_verified: a.is_verified || false,
-        commission_rate: Number(a.commission_rate) || 0.12,
+        website: a.website,
+        city: a.city,
+        country: a.country,
+        license_number: a.license_number,
+        status: (a.status ?? 'pending') as AgencyStatus,
+        is_verified: a.is_verified ?? false,
+        commission_rate: Number(a.commission_rate ?? 0.12),
+        rating: Number(a.rating ?? 0),
+        total_reviews: a.total_reviews ?? 0,
         created_at: a.created_at,
-        packages_count: packagesMap.get(a.id) || 0,
+        packages_count: packagesMap.get(a.id) ?? 0,
       }));
 
-      setAgencies(mappedAgencies);
+      return {
+        agencies,
+        stats: {
+          total: agencies.length,
+          active: agencies.filter((a) => a.status === 'active').length,
+          pending: agencies.filter((a) => a.status === 'pending').length,
+          totalPackages: packagesRes.data?.length ?? 0,
+        },
+      };
+    },
+  });
+}
 
-      // Calculate stats
-      const total = mappedAgencies.length;
-      const approved = mappedAgencies.filter(a => a.status === 'approved' || a.is_verified).length;
-      const pending = mappedAgencies.filter(a => a.status === 'pending' && !a.is_verified).length;
-      const totalPackages = packageCounts?.length || 0;
+interface AgencyStatusInput {
+  agencyId: string;
+  companyName: string;
+  status: AgencyStatus;
+  isVerified?: boolean;
+}
 
-      setStats({ total, approved, pending, totalPackages });
-    } catch (err) {
-      console.error('Error fetching agencies:', err);
-      setError('Failed to load agencies');
-    } finally {
-      setLoading(false);
-    }
-  };
+export function useUpdateAgencyStatus() {
+  const queryClient = useQueryClient();
+  const audit = useAdminAudit();
 
-  const updateAgencyStatus = async (agencyId: string, status: string, isVerified?: boolean) => {
-    try {
-      const updateData: { status: string; is_verified?: boolean } = { status };
-      if (isVerified !== undefined) {
-        updateData.is_verified = isVerified;
-      }
+  return useMutation({
+    mutationFn: async ({ agencyId, status, isVerified }: AgencyStatusInput) => {
+      const update: { status: AgencyStatus; is_verified?: boolean } = { status };
+      if (isVerified !== undefined) update.is_verified = isVerified;
+      const { error } = await supabase.from('travel_agencies').update(update).eq('id', agencyId);
+      if (error) throw error;
+    },
+    onSuccess: (_data, { agencyId, companyName, status, isVerified }) => {
+      queryClient.invalidateQueries({ queryKey: adminAgenciesKey });
+      const action =
+        status === 'active' ? 'approval' : status === 'rejected' ? 'rejection' : status === 'suspended' ? 'suspension' : 'update';
+      void audit({
+        actionType: `agency_${action}`,
+        description: `Set agency "${companyName}" status to ${status}`,
+        entityType: 'agency',
+        entityId: agencyId,
+        metadata: { status, is_verified: isVerified },
+      });
+    },
+  });
+}
 
+interface AgencyDetailsInput {
+  agencyId: string;
+  companyName: string;
+  commission_rate: number;
+}
+
+export function useUpdateAgencyCommission() {
+  const queryClient = useQueryClient();
+  const audit = useAdminAudit();
+
+  return useMutation({
+    mutationFn: async ({ agencyId, commission_rate }: AgencyDetailsInput) => {
       const { error } = await supabase
         .from('travel_agencies')
-        .update(updateData)
+        .update({ commission_rate })
         .eq('id', agencyId);
-
       if (error) throw error;
+    },
+    onSuccess: (_data, { agencyId, companyName, commission_rate }) => {
+      queryClient.invalidateQueries({ queryKey: adminAgenciesKey });
+      void audit({
+        actionType: 'agency_commission_update',
+        description: `Set commission rate for "${companyName}" to ${(commission_rate * 100).toFixed(1)}%`,
+        entityType: 'agency',
+        entityId: agencyId,
+        metadata: { commission_rate },
+      });
+    },
+  });
+}
 
-      await fetchAgencies();
-      return { success: true };
-    } catch (err) {
-      console.error('Error updating agency status:', err);
-      return { success: false, error: err };
-    }
-  };
+export interface AgencyPackageRow {
+  id: string;
+  title: string;
+  title_ar: string | null;
+  status: string;
+  base_price: number;
+  created_at: string;
+}
 
-  return {
-    agencies,
-    stats,
-    loading,
-    error,
-    refetch: fetchAgencies,
-    updateAgencyStatus,
-  };
+/** Packages belonging to one agency, for the profile dialog. */
+export function useAgencyPackages(agencyId: string | null) {
+  return useQuery({
+    queryKey: ['admin', 'agency-packages', agencyId],
+    enabled: !!agencyId,
+    queryFn: async (): Promise<AgencyPackageRow[]> => {
+      const { data, error } = await supabase
+        .from('packages')
+        .select('id, title, title_ar, status, base_price, created_at')
+        .eq('agency_id', agencyId!)
+        .order('created_at', { ascending: false });
+      if (error) throw error;
+      return (data ?? []).map((p) => ({ ...p, base_price: Number(p.base_price) }));
+    },
+  });
 }

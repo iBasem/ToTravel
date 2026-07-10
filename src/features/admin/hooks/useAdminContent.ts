@@ -1,8 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/features/auth/context/AuthContext';
+import { useAdminAudit } from '../lib/audit';
 
-interface ContentPage {
+export interface ContentPage {
   id: string;
   title: string;
   slug: string | null;
@@ -13,135 +14,113 @@ interface ContentPage {
   updated_at: string;
 }
 
-interface ContentStats {
+export interface ContentStats {
   totalPages: number;
   blogPosts: number;
   draftContent: number;
 }
 
+export interface ContentPageInput {
+  title: string;
+  slug: string | null;
+  content_type: string;
+  content: string | null;
+  status: string;
+}
+
+export const adminContentKey = ['admin', 'content'] as const;
+
 export function useAdminContent() {
-  const { profile } = useAuth();
-  const [content, setContent] = useState<ContentPage[]>([]);
-  const [stats, setStats] = useState<ContentStats>({
-    totalPages: 0,
-    blogPosts: 0,
-    draftContent: 0,
-  });
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  const isAdmin = profile?.role === 'admin';
-
-  useEffect(() => {
-    if (isAdmin) {
-      fetchContent();
-    }
-  }, [isAdmin]);
-
-  const fetchContent = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-
-      const { data: contentData, error: contentError } = await supabase
+  return useQuery({
+    queryKey: adminContentKey,
+    queryFn: async (): Promise<{ content: ContentPage[]; stats: ContentStats }> => {
+      const { data, error } = await supabase
         .from('content_pages')
         .select('*')
         .order('updated_at', { ascending: false });
-
-      // Handle case where table might not exist
-      const contentArray = contentError ? [] : (contentData || []);
-
-      const mappedContent: ContentPage[] = contentArray.map((c: any) => ({
-        id: c.id,
-        title: c.title,
-        slug: c.slug,
-        content_type: c.content_type,
-        content: c.content,
-        status: c.status,
-        created_at: c.created_at,
-        updated_at: c.updated_at,
-      }));
-
-      setContent(mappedContent);
-
-      // Calculate stats
-      const totalPages = mappedContent.filter(c => c.content_type === 'page' || c.content_type === 'legal').length;
-      const blogPosts = mappedContent.filter(c => c.content_type === 'blog').length;
-      const draftContent = mappedContent.filter(c => c.status === 'draft').length;
-
-      setStats({ totalPages, blogPosts, draftContent });
-    } catch (err) {
-      console.error('Error fetching content:', err);
-      setError('Failed to load content');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const createContent = async (data: { title: string; content_type?: string; content?: string; status?: string; slug?: string }) => {
-    try {
-      const { error } = await supabase
-        .from('content_pages')
-        .insert([{
-          title: data.title,
-          content_type: data.content_type || 'page',
-          content: data.content,
-          status: data.status || 'draft',
-          slug: data.slug,
-        }]);
-
       if (error) throw error;
 
-      await fetchContent();
-      return { success: true };
-    } catch (err) {
-      console.error('Error creating content:', err);
-      return { success: false, error: err };
-    }
-  };
+      const content = (data ?? []) as ContentPage[];
+      return {
+        content,
+        stats: {
+          totalPages: content.filter((c) => c.content_type === 'page' || c.content_type === 'legal').length,
+          blogPosts: content.filter((c) => c.content_type === 'blog').length,
+          draftContent: content.filter((c) => c.status === 'draft').length,
+        },
+      };
+    },
+  });
+}
 
-  const updateContent = async (id: string, data: Partial<ContentPage>) => {
-    try {
-      const { error } = await supabase
+export function useCreateContent() {
+  const queryClient = useQueryClient();
+  const { user } = useAuth();
+  const audit = useAdminAudit();
+
+  return useMutation({
+    mutationFn: async (input: ContentPageInput) => {
+      const { data, error } = await supabase
         .from('content_pages')
-        .update(data)
-        .eq('id', id);
-
+        .insert([{ ...input, author_id: user?.id }])
+        .select('id')
+        .single();
       if (error) throw error;
+      return data;
+    },
+    onSuccess: (data, input) => {
+      queryClient.invalidateQueries({ queryKey: adminContentKey });
+      void audit({
+        actionType: 'content_create',
+        description: `Created ${input.content_type} "${input.title}" (${input.status})`,
+        entityType: 'content_page',
+        entityId: data.id,
+        metadata: { slug: input.slug, content_type: input.content_type, status: input.status },
+      });
+    },
+  });
+}
 
-      await fetchContent();
-      return { success: true };
-    } catch (err) {
-      console.error('Error updating content:', err);
-      return { success: false, error: err };
-    }
-  };
+export function useUpdateContent() {
+  const queryClient = useQueryClient();
+  const audit = useAdminAudit();
 
-  const deleteContent = async (id: string) => {
-    try {
-      const { error } = await supabase
-        .from('content_pages')
-        .delete()
-        .eq('id', id);
-
+  return useMutation({
+    mutationFn: async ({ id, ...input }: ContentPageInput & { id: string }) => {
+      const { error } = await supabase.from('content_pages').update(input).eq('id', id);
       if (error) throw error;
+    },
+    onSuccess: (_data, { id, ...input }) => {
+      queryClient.invalidateQueries({ queryKey: adminContentKey });
+      void audit({
+        actionType: 'content_update',
+        description: `Updated ${input.content_type} "${input.title}" (${input.status})`,
+        entityType: 'content_page',
+        entityId: id,
+        metadata: { slug: input.slug, content_type: input.content_type, status: input.status },
+      });
+    },
+  });
+}
 
-      await fetchContent();
-      return { success: true };
-    } catch (err) {
-      console.error('Error deleting content:', err);
-      return { success: false, error: err };
-    }
-  };
+export function useDeleteContent() {
+  const queryClient = useQueryClient();
+  const audit = useAdminAudit();
 
-  return {
-    content,
-    stats,
-    loading,
-    error,
-    refetch: fetchContent,
-    createContent,
-    updateContent,
-    deleteContent,
-  };
+  return useMutation({
+    mutationFn: async ({ id }: { id: string; title: string }) => {
+      const { error } = await supabase.from('content_pages').delete().eq('id', id);
+      if (error) throw error;
+    },
+    onSuccess: (_data, { id, title }) => {
+      queryClient.invalidateQueries({ queryKey: adminContentKey });
+      void audit({
+        actionType: 'content_delete',
+        description: `Deleted content page "${title}"`,
+        entityType: 'content_page',
+        entityId: id,
+        metadata: {},
+      });
+    },
+  });
 }

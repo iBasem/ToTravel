@@ -23,7 +23,7 @@ import {
     AlertDialogTitle,
 } from "@/ui/alert-dialog";
 import { Search, BadgePercent, Clock, CheckCircle2, Radio, Check, X } from "lucide-react";
-import { useAdminDeals, type AdminDeal } from "@/features/admin/hooks/useAdminDeals";
+import { useAdminDeals, useSetDealApproval, type AdminDeal } from "@/features/admin/hooks/useAdminDeals";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { formatDate } from "@/lib/formatters";
@@ -32,11 +32,15 @@ import { EmptyState } from "@/ui/empty-state";
 type ApprovalFilter = 'all' | 'pending' | 'approved' | 'rejected';
 
 export default function DealManagement() {
-    const { deals, stats, loading, error, approveDeal, rejectDeal, refetch } = useAdminDeals();
+    const { data, isLoading, isError, refetch } = useAdminDeals();
+    const setApproval = useSetDealApproval();
     const [searchTerm, setSearchTerm] = useState("");
     const [approvalFilter, setApprovalFilter] = useState<ApprovalFilter>('all');
-    const [rejectId, setRejectId] = useState<string | null>(null);
+    const [rejectDeal, setRejectDeal] = useState<AdminDeal | null>(null);
     const { t, i18n } = useTranslation();
+
+    const deals = data?.deals ?? [];
+    const stats = data?.stats ?? { total: 0, pending: 0, approved: 0, rejected: 0, liveNow: 0 };
 
     const packageTitle = (deal: AdminDeal) =>
         (i18n.language === 'ar' && deal.packages?.title_ar) || deal.packages?.title || '—';
@@ -51,24 +55,26 @@ export default function DealManagement() {
         return matchesSearch && matchesApproval;
     });
 
-    const handleApprove = async (id: string) => {
-        const result = await approveDeal(id);
-        if (result.success) {
-            toast.success(t('adminDeals.approveSuccess', 'Deal approved'));
-        } else {
-            toast.error(t('adminDeals.updateError', 'Failed to update deal'));
-        }
+    const handleApprove = (deal: AdminDeal) => {
+        setApproval.mutate(
+            { dealId: deal.id, dealTitle: deal.title, approval: 'approved' },
+            {
+                onSuccess: () => toast.success(t('adminDeals.approveSuccess', 'Deal approved')),
+                onError: () => toast.error(t('adminDeals.updateError', 'Failed to update deal')),
+            },
+        );
     };
 
-    const handleReject = async () => {
-        if (!rejectId) return;
-        const result = await rejectDeal(rejectId);
-        if (result.success) {
-            toast.success(t('adminDeals.rejectSuccess', 'Deal rejected'));
-        } else {
-            toast.error(t('adminDeals.updateError', 'Failed to update deal'));
-        }
-        setRejectId(null);
+    const handleReject = () => {
+        if (!rejectDeal) return;
+        setApproval.mutate(
+            { dealId: rejectDeal.id, dealTitle: rejectDeal.title, approval: 'rejected' },
+            {
+                onSuccess: () => toast.success(t('adminDeals.rejectSuccess', 'Deal rejected')),
+                onError: () => toast.error(t('adminDeals.updateError', 'Failed to update deal')),
+            },
+        );
+        setRejectDeal(null);
     };
 
     const approvalBadge = (approval: string) => {
@@ -85,7 +91,7 @@ export default function DealManagement() {
     const statusLabel = (status: string) =>
         t(`adminDeals.status_${status}`, status);
 
-    if (loading) {
+    if (isLoading) {
         return (
             <div className="space-y-6">
                 <Skeleton className="h-8 w-64" />
@@ -112,7 +118,7 @@ export default function DealManagement() {
                     <h1 className="text-2xl font-bold">{t('adminDeals.title', 'Deal Management')}</h1>
                     <p className="text-muted-foreground">{t('adminDeals.description', 'Review and approve agency promotional deals')}</p>
                 </div>
-                <Button onClick={refetch} variant="outline" size="sm">
+                <Button onClick={() => refetch()} variant="outline" size="sm">
                     {t('common.refresh', 'Refresh')}
                 </Button>
             </div>
@@ -161,8 +167,13 @@ export default function DealManagement() {
             </div>
 
             {/* Table */}
-            {error ? (
-                <EmptyState icon="package" title={t('common.error')} description={error} />
+            {isError ? (
+                <EmptyState
+                    icon="package"
+                    title={t('common.error')}
+                    description={t('adminDeals.loadError', 'Something went wrong while loading deals. Please try again.')}
+                    action={{ label: t('common.retry', 'Retry'), onClick: () => refetch() }}
+                />
             ) : filteredDeals.length === 0 ? (
                 <EmptyState icon="package" title={t('adminDeals.noDeals', 'No deals found')} description={t('tours.checkBack')} />
             ) : (
@@ -200,7 +211,7 @@ export default function DealManagement() {
                                         <TableCell>
                                             <div className="flex items-center justify-end gap-2">
                                                 {deal.approval_status !== 'approved' && (
-                                                    <Button size="sm" variant="outline" onClick={() => handleApprove(deal.id)}>
+                                                    <Button size="sm" variant="outline" onClick={() => handleApprove(deal)}>
                                                         <Check className="w-4 h-4 me-1" aria-hidden="true" />
                                                         {t('adminDeals.approve', 'Approve')}
                                                     </Button>
@@ -210,7 +221,7 @@ export default function DealManagement() {
                                                         size="sm"
                                                         variant="ghost"
                                                         className="text-destructive hover:text-destructive"
-                                                        onClick={() => setRejectId(deal.id)}
+                                                        onClick={() => setRejectDeal(deal)}
                                                     >
                                                         <X className="w-4 h-4 me-1" aria-hidden="true" />
                                                         {t('adminDeals.reject', 'Reject')}
@@ -227,7 +238,7 @@ export default function DealManagement() {
             )}
 
             {/* Reject confirmation */}
-            <AlertDialog open={!!rejectId} onOpenChange={(open) => !open && setRejectId(null)}>
+            <AlertDialog open={!!rejectDeal} onOpenChange={(open) => !open && setRejectDeal(null)}>
                 <AlertDialogContent>
                     <AlertDialogHeader>
                         <AlertDialogTitle>{t('adminDeals.confirmRejectTitle', 'Reject this deal?')}</AlertDialogTitle>

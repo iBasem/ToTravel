@@ -1,71 +1,122 @@
+import { useState } from "react";
+import { Link } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/card";
 import { Button } from "@/ui/button";
 import { Badge } from "@/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/ui/avatar";
 import { Skeleton } from "@/ui/skeleton";
+import { EmptyState } from "@/ui/empty-state";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/ui/select";
 import { useTranslation } from "react-i18next";
 import {
   Users,
   Building2,
   BookOpen,
   DollarSign,
+  Package,
   TrendingUp,
   AlertCircle,
   CheckCircle,
-  RefreshCw
+  RefreshCw,
+  BarChart3,
 } from "lucide-react";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from "recharts";
-import { useAdminDashboard } from "@/features/admin/hooks/useAdminDashboard";
-import { formatCurrency, formatNumber, formatRelativeTime } from "@/lib/formatters";
+import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tooltip } from "recharts";
+import {
+  useAdminDashboard,
+  useResolvePendingAction,
+  useRefreshPlatformStats,
+} from "@/features/admin/hooks/useAdminDashboard";
+import { formatCurrency, formatNumber, formatRelativeTime, formatDate } from "@/lib/formatters";
+import { toast } from "sonner";
 
 export default function AdminDashboard() {
   const { t, i18n } = useTranslation();
-  const isRTL = i18n.language === 'ar';
+  const isRTL = i18n.language === "ar";
+  const [monthsBack, setMonthsBack] = useState(6);
+
+  const { data, isLoading, isError, refetch } = useAdminDashboard(monthsBack);
+  const resolveAction = useResolvePendingAction();
+  const refreshStats = useRefreshPlatformStats();
+
+  const stats = data?.stats ?? {
+    totalUsers: 0,
+    totalAgencies: 0,
+    totalBookings: 0,
+    platformRevenue: 0,
+    activePackages: 0,
+    usersGrowth: 0,
+    agenciesGrowth: 0,
+    bookingsGrowth: 0,
+    revenueGrowth: 0,
+  };
+  const activityLogs = data?.activityLogs ?? [];
+  const pendingActions = data?.pendingActions ?? [];
+  const revenueData = data?.revenueData ?? [];
+  const platformStats = data?.platformStats ?? [];
 
   const formatActionType = (type: string) => {
     return t(`admin.actionTypes.${type}`, {
       defaultValue: type
-        .split('_')
-        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-        .join(' ')
+        .split("_")
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(" "),
     });
   };
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
-      case 'urgent': return t('admin.priorityUrgent');
-      case 'high': return t('admin.priorityHigh');
-      case 'medium': return t('admin.priorityMedium');
-      case 'low': return t('admin.priorityLow');
-      default: return priority;
+      case "urgent":
+        return t("admin.priorityUrgent");
+      case "high":
+        return t("admin.priorityHigh");
+      case "medium":
+        return t("admin.priorityMedium");
+      case "low":
+        return t("admin.priorityLow");
+      default:
+        return priority;
     }
   };
 
   const getActivityTypeColor = (type: string) => {
     switch (type) {
-      case 'booking': return t('admin.activityBooking');
-      case 'registration': return t('admin.activityRegistration');
-      case 'listing': return t('admin.activityListing');
-      case 'verification': return t('admin.activityVerification');
-      default: return type;
+      case "booking":
+        return t("admin.activityBooking");
+      case "registration":
+        return t("admin.activityRegistration");
+      case "listing":
+        return t("admin.activityListing");
+      case "verification":
+        return t("admin.activityVerification");
+      default:
+        return formatActionType(type);
     }
   };
 
-  const {
-    stats,
-    activityLogs,
-    pendingActions,
-    revenueData,
-    loading,
-    refetch,
-    updatePendingAction
-  } = useAdminDashboard();
-
-  const handleResolveAction = async (actionId: string) => {
-    await updatePendingAction(actionId, 'resolved');
+  const handleResolveAction = (actionId: string, actionTitle: string) => {
+    resolveAction.mutate(
+      { actionId, actionTitle, status: "resolved" },
+      {
+        onSuccess: () => toast.success(t("admin.actionResolved", "Action resolved")),
+        onError: () => toast.error(t("admin.actionResolveError", "Could not resolve action")),
+      },
+    );
   };
 
-  if (loading) {
+  const handleRefreshStats = () => {
+    refreshStats.mutate(undefined, {
+      onSuccess: () => toast.success(t("admin.statsRefreshed", "Today's platform stats recomputed")),
+      onError: () => toast.error(t("admin.statsRefreshError", "Could not refresh platform stats")),
+    });
+  };
+
+  if (isLoading) {
     return (
       <div className="space-y-6">
         <div className="flex items-center justify-between">
@@ -91,80 +142,86 @@ export default function AdminDashboard() {
     );
   }
 
+  if (isError) {
+    return (
+      <EmptyState
+        icon="AlertTriangle"
+        title={t("admin.loadErrorTitle", "Could not load dashboard")}
+        description={t("admin.loadErrorDescription", "Something went wrong while loading the dashboard. Please try again.")}
+        action={{ label: t("common.retry", "Retry"), onClick: () => refetch() }}
+      />
+    );
+  }
+
+  const metricCards = [
+    {
+      title: t("admin.totalUsers"),
+      icon: Users,
+      value: formatNumber(stats.totalUsers),
+      growth: `+${stats.usersGrowth}% ${t("admin.fromLastMonth")}`,
+    },
+    {
+      title: t("admin.travelAgencies"),
+      icon: Building2,
+      value: formatNumber(stats.totalAgencies),
+      growth: `+${stats.agenciesGrowth} ${t("admin.newAgenciesThisMonth")}`,
+    },
+    {
+      title: t("admin.totalBookings"),
+      icon: BookOpen,
+      value: formatNumber(stats.totalBookings),
+      growth: `+${stats.bookingsGrowth}% ${t("admin.fromLastMonth")}`,
+    },
+    {
+      title: t("admin.platformRevenue"),
+      icon: DollarSign,
+      value: formatCurrency(stats.platformRevenue),
+      growth: `+${stats.revenueGrowth}% ${t("admin.fromLastMonth")}`,
+    },
+    {
+      title: t("admin.activePackages", "Active packages"),
+      icon: Package,
+      value: formatNumber(stats.activePackages),
+      growth: t("admin.publishedNow", "published right now"),
+    },
+  ];
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center justify-between">
         <div className="text-start">
-          <h1 className="text-2xl sm:text-3xl font-bold">{t('admin.dashboard')}</h1>
-          <p className="text-muted-foreground">{t('admin.overview')}</p>
+          <h1 className="text-2xl sm:text-3xl font-bold">{t("admin.dashboard")}</h1>
+          <p className="text-muted-foreground">{t("admin.overview")}</p>
         </div>
         <div className="flex items-center gap-3">
-          <Button variant="outline" onClick={refetch} className="flex items-center">
+          <Button variant="outline" onClick={() => refetch()} className="flex items-center">
             <RefreshCw className="w-4 h-4 me-2" />
-            {t('common.refresh')}
+            {t("common.refresh")}
           </Button>
-          <Button>{t('admin.quickActions')}</Button>
+          <Button onClick={handleRefreshStats} disabled={refreshStats.isPending}>
+            <BarChart3 className="w-4 h-4 me-2" />
+            {refreshStats.isPending ? t("admin.refreshingStats", "Recomputing…") : t("admin.refreshStats", "Refresh stats")}
+          </Button>
         </div>
       </div>
 
       {/* Key Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">{t('admin.totalUsers')}</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground/40" />
-          </CardHeader>
-          <CardContent className="text-start">
-            <div className="text-2xl font-bold tabular-nums">{formatNumber(stats.totalUsers)}</div>
-            <div className="flex items-center text-sm text-green-600">
-              <TrendingUp className="w-4 h-4 me-1" />
-              +{stats.usersGrowth}% {t('admin.fromLastMonth')}
-            </div>
-          </CardContent>
-        </Card>
-
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">{t('admin.travelAgencies')}</CardTitle>
-            <Building2 className="h-4 w-4 text-muted-foreground/40" />
-          </CardHeader>
-          <CardContent className="text-start">
-            <div className="text-2xl font-bold tabular-nums">{stats.totalAgencies}</div>
-            <div className="flex items-center text-sm text-green-600">
-              <TrendingUp className="w-4 h-4 me-1" />
-              +{stats.agenciesGrowth} {t('admin.newAgenciesThisMonth')}
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">{t('admin.totalBookings')}</CardTitle>
-            <BookOpen className="h-4 w-4 text-muted-foreground/40" />
-          </CardHeader>
-          <CardContent className="text-start">
-            <div className="text-2xl font-bold tabular-nums">{formatNumber(stats.totalBookings)}</div>
-            <div className="flex items-center text-sm text-green-600">
-              <TrendingUp className="w-4 h-4 me-1" />
-              +{stats.bookingsGrowth}% {t('admin.fromLastMonth')}
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">{t('admin.platformRevenue')}</CardTitle>
-            <DollarSign className="h-4 w-4 text-muted-foreground/40" />
-          </CardHeader>
-          <CardContent className="text-start">
-            <div className="text-2xl font-bold tabular-nums">{formatCurrency(stats.platformRevenue)}</div>
-            <div className="flex items-center text-sm text-green-600">
-              <TrendingUp className="w-4 h-4 me-1" />
-              +{stats.revenueGrowth}% {t('admin.fromLastMonth')}
-            </div>
-          </CardContent>
-        </Card>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+        {metricCards.map(({ title, icon: Icon, value, growth }) => (
+          <Card key={title}>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">{title}</CardTitle>
+              <Icon className="h-4 w-4 text-muted-foreground/40" />
+            </CardHeader>
+            <CardContent className="text-start">
+              <div className="text-2xl font-bold tabular-nums">{value}</div>
+              <div className="flex items-center text-sm text-green-600">
+                <TrendingUp className="w-4 h-4 me-1" />
+                {growth}
+              </div>
+            </CardContent>
+          </Card>
+        ))}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -172,36 +229,38 @@ export default function AdminDashboard() {
         <Card className="lg:col-span-2">
           <CardHeader>
             <div className="flex items-center justify-between">
-              <CardTitle>{t('admin.revenueBookingsTrend')}</CardTitle>
-              <Button variant="outline" size="sm">{t('admin.last6Months')}</Button>
+              <CardTitle>{t("admin.revenueBookingsTrend")}</CardTitle>
+              <Select value={String(monthsBack)} onValueChange={(v) => setMonthsBack(Number(v))}>
+                <SelectTrigger className="w-40">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="3">{t("admin.last3Months", "Last 3 months")}</SelectItem>
+                  <SelectItem value="6">{t("admin.last6Months")}</SelectItem>
+                  <SelectItem value="12">{t("admin.last12Months", "Last 12 months")}</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </CardHeader>
           <CardContent>
-            <div className="h-80">
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={revenueData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="name" />
-                  <YAxis yAxisId="left" orientation={isRTL ? "right" : "left"} />
-                  <YAxis yAxisId="right" orientation={isRTL ? "left" : "right"} />
-                  <Line
-                    yAxisId="left"
-                    type="monotone"
-                    dataKey="revenue"
-                    stroke="#3B82F6"
-                    strokeWidth={2}
-                    name={t('admin.revenueLabel')}
-                  />
-                  <Line
-                    yAxisId="right"
-                    type="monotone"
-                    dataKey="bookings"
-                    stroke="#10B981"
-                    strokeWidth={2}
-                    name={t('common.bookings')}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
+            <div className="h-80" dir="ltr">
+              {revenueData.length > 0 ? (
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={revenueData}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="name" />
+                    <YAxis yAxisId="left" orientation={isRTL ? "right" : "left"} />
+                    <YAxis yAxisId="right" orientation={isRTL ? "left" : "right"} />
+                    <Tooltip />
+                    <Line yAxisId="left" type="monotone" dataKey="revenue" stroke="#3B82F6" strokeWidth={2} name={t("admin.revenueLabel")} />
+                    <Line yAxisId="right" type="monotone" dataKey="bookings" stroke="#10B981" strokeWidth={2} name={t("common.bookings")} />
+                  </LineChart>
+                </ResponsiveContainer>
+              ) : (
+                <div className="flex items-center justify-center h-full text-muted-foreground">
+                  {t("admin.noChartData", "No booking data for this range yet")}
+                </div>
+              )}
             </div>
           </CardContent>
         </Card>
@@ -210,7 +269,7 @@ export default function AdminDashboard() {
         <Card>
           <CardHeader>
             <div className="flex items-center justify-between">
-              <CardTitle>{t('admin.pendingActions')}</CardTitle>
+              <CardTitle>{t("admin.pendingActions")}</CardTitle>
               <Badge variant="destructive">{pendingActions.length}</Badge>
             </div>
           </CardHeader>
@@ -218,7 +277,7 @@ export default function AdminDashboard() {
             {pendingActions.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-8 text-muted-foreground">
                 <CheckCircle className="w-12 h-12 mb-2 text-green-500" />
-                <p className="text-sm">{t('admin.allCaughtUp')}</p>
+                <p className="text-sm">{t("admin.allCaughtUp")}</p>
               </div>
             ) : (
               pendingActions.slice(0, 3).map((action) => (
@@ -229,71 +288,93 @@ export default function AdminDashboard() {
                       <Badge variant="outline" className="text-xs">
                         {formatActionType(action.action_type)}
                       </Badge>
-                      <Badge className="text-xs ms-auto">
-                        {getPriorityColor(action.priority)}
-                      </Badge>
+                      <Badge className="text-xs ms-auto">{getPriorityColor(action.priority)}</Badge>
                     </div>
                     <h4 className="font-medium text-sm mt-1">{action.title}</h4>
                     <p className="text-xs text-muted-foreground">{action.description}</p>
                     <div className="flex items-center justify-between mt-2">
-                      <span className="text-xs text-muted-foreground">
-                        {formatRelativeTime(new Date(action.created_at))}
-                      </span>
+                      <span className="text-xs text-muted-foreground">{formatRelativeTime(new Date(action.created_at))}</span>
                       <Button
                         size="sm"
                         variant="ghost"
                         className="h-6 text-xs"
-                        onClick={() => handleResolveAction(action.id)}
+                        onClick={() => handleResolveAction(action.id, action.title)}
                       >
-                        {t('admin.resolve')}
+                        {t("admin.resolve")}
                       </Button>
                     </div>
                   </div>
                 </div>
               ))
             )}
-            {pendingActions.length > 3 && (
-              <Button className="w-full" size="sm" variant="outline">
-                {t('admin.viewAllActions')} ({pendingActions.length})
-              </Button>
-            )}
+            <Button className="w-full" size="sm" variant="outline" asChild>
+              <Link to="/admin/actions">
+                {t("admin.viewAllActions")} ({pendingActions.length})
+              </Link>
+            </Button>
           </CardContent>
         </Card>
       </div>
 
+      {/* Platform stats history (daily snapshots) */}
+      <Card>
+        <CardHeader>
+          <CardTitle>{t("admin.platformStatsHistory", "Daily platform snapshots")}</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="h-72" dir="ltr">
+            {platformStats.length > 0 ? (
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={platformStats.map((s) => ({ ...s, label: formatDate(s.stat_date, "MMM d") }))}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="label" />
+                  <YAxis yAxisId="left" orientation={isRTL ? "right" : "left"} />
+                  <YAxis yAxisId="right" orientation={isRTL ? "left" : "right"} />
+                  <Tooltip />
+                  <Bar yAxisId="left" dataKey="total_revenue" fill="#3B82F6" name={t("admin.revenueLabel")} radius={[4, 4, 0, 0]} />
+                  <Bar yAxisId="right" dataKey="total_bookings" fill="#10B981" name={t("common.bookings")} radius={[4, 4, 0, 0]} />
+                  <Bar yAxisId="right" dataKey="new_travelers" fill="#F59E0B" name={t("admin.newTravelers", "New travelers")} radius={[4, 4, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="flex items-center justify-center h-full text-muted-foreground">
+                {t("admin.noStatsHistory", "No snapshots yet — use Refresh stats to record today's numbers")}
+              </div>
+            )}
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Recent Activity */}
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle>{t('admin.recentActivity')}</CardTitle>
-            <Button variant="ghost" size="sm">{t('common.viewAll')}</Button>
+            <CardTitle>{t("admin.recentActivity")}</CardTitle>
+            <Button variant="ghost" size="sm" asChild>
+              <Link to="/admin/activity">{t("common.viewAll")}</Link>
+            </Button>
           </div>
         </CardHeader>
         <CardContent>
           {activityLogs.length === 0 ? (
             <div className="text-center py-8 text-muted-foreground">
-              <p>{t('admin.noRecentActivity')}</p>
+              <p>{t("admin.noRecentActivity")}</p>
             </div>
           ) : (
             <div className="space-y-4">
               {activityLogs.map((activity) => (
                 <div key={activity.id} className="flex items-start gap-3">
                   <Avatar className="w-8 h-8">
-                    <AvatarImage src={activity.avatar_url ?? "/placeholder.svg"} />
+                    <AvatarImage src={activity.avatar_url ?? undefined} />
                     <AvatarFallback>{activity.user_name[0]}</AvatarFallback>
                   </Avatar>
                   <div className="flex-1 text-start">
                     <p className="text-sm">
                       <span className="font-medium">{activity.user_name}</span> {activity.action_description}
                     </p>
-                    <span className="text-xs text-muted-foreground">
-                      {formatRelativeTime(new Date(activity.created_at))}
-                    </span>
+                    <span className="text-xs text-muted-foreground">{formatRelativeTime(new Date(activity.created_at))}</span>
                   </div>
-                  <Badge className="text-xs">
-                    {getActivityTypeColor(activity.action_type)}
-                  </Badge>
+                  <Badge className="text-xs">{getActivityTypeColor(activity.action_type)}</Badge>
                 </div>
               ))}
             </div>
