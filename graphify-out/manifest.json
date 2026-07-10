@@ -20,7 +20,7 @@
     "semantic_hash": "2e240281bad56fce6a86cb0e49590ae9"
   },
   "package.json": {
-    "mtime": 1783330419.760963,
+    "mtime": 1783704889.5754898,
     "ast_hash": "96faa732d512fd04e071b19b44e644cb",
     "semantic_hash": "96faa732d512fd04e071b19b44e644cb"
   },
@@ -680,13 +680,13 @@
     "semantic_hash": ""
   },
   "src/lib/formatters.test.ts": {
-    "mtime": 1783686394.0981672,
-    "ast_hash": "0ad34858518ab220aaa4587764b43c65",
+    "mtime": 1783706283.5709846,
+    "ast_hash": "d65e4a59a8e8e434bcdf470601e8f5c4",
     "semantic_hash": ""
   },
   "src/lib/formatters.ts": {
-    "mtime": 1783330419.8004775,
-    "ast_hash": "535f71f66f7caf957e97ff9610c73fae",
+    "mtime": 1783706245.9054215,
+    "ast_hash": "e8b1f7ffe924aadb84138d690f5463ca",
     "semantic_hash": ""
   },
   "src/lib/localized.ts": {
@@ -1670,8 +1670,8 @@
     "semantic_hash": ""
   },
   ".impeccable/hook.cache.json": {
-    "mtime": 1783690567.0162911,
-    "ast_hash": "2dc647234af97a17e8751cdcbecdbb17",
+    "mtime": 1783706283.7611697,
+    "ast_hash": "62206417022a54f8d942ce3656def37a",
     "semantic_hash": ""
   },
   "src/ui/ThemeToggle.tsx": {

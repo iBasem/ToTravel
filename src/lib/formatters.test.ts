@@ -6,6 +6,7 @@ import {
   formatNumber,
   formatPercent,
   getPlatformCurrency,
+  DEFAULT_CURRENCY,
 } from "./formatters";
 
 const sampleDate = new Date(2026, 2, 9); // Monday, March 9 2026
@@ -42,11 +43,13 @@ describe("formatNumber", () => {
 });
 
 describe("formatCurrency", () => {
-  it("defaults to the platform currency", async () => {
+  it("defaults to SAR when VITE_PLATFORM_CURRENCY is unset", async () => {
     await i18n.changeLanguage("en");
-    // The platform currency is SAR (VITE_PLATFORM_CURRENCY in .env); all
-    // payments run through Moyasar in SAR.
-    expect(getPlatformCurrency()).toBe("SAR");
+    // Env-independent: CI and a fresh Cloudflare build have no .env, so the
+    // default must be SAR (Moyasar), never USD. Asserting against
+    // DEFAULT_CURRENCY keeps this from drifting from the source of truth.
+    expect(DEFAULT_CURRENCY).toBe("SAR");
+    expect(getPlatformCurrency()).toBe(DEFAULT_CURRENCY);
     expect(formatCurrency(1500)).toMatch(/SAR|ر\.س/);
     expect(formatCurrency(1500)).toContain("1,500");
   });

@@ -14,20 +14,25 @@ import i18n from "@/i18n";
  * - Arabic uses Western digits (nu-latn) to match the digit convention
  *   already used across ar.json and regional fintech norms.
  * - Display currency is platform-wide, driven by VITE_PLATFORM_CURRENCY
- *   (USD | SAR | AED, defaults to USD). Amounts are stored and displayed
- *   in this single currency — no conversion happens client-side.
+ *   (USD | SAR | AED, defaults to SAR). Amounts are stored and displayed
+ *   in this single currency — no conversion happens client-side. SAR is the
+ *   default because all payments run through Moyasar in SAR; environments
+ *   without the env var set (CI, a fresh Cloudflare build) must still render
+ *   Saudi Riyal, not fall back to USD.
  */
 
 export const SUPPORTED_CURRENCIES = ["USD", "SAR", "AED"] as const;
 export type CurrencyCode = (typeof SUPPORTED_CURRENCIES)[number];
 
+export const DEFAULT_CURRENCY: CurrencyCode = "SAR";
+
 export function getPlatformCurrency(): CurrencyCode {
-  const configured = (import.meta.env.VITE_PLATFORM_CURRENCY ?? "USD")
+  const configured = (import.meta.env.VITE_PLATFORM_CURRENCY ?? DEFAULT_CURRENCY)
     .toString()
     .toUpperCase();
   return (SUPPORTED_CURRENCIES as readonly string[]).includes(configured)
     ? (configured as CurrencyCode)
-    : "USD";
+    : DEFAULT_CURRENCY;
 }
 
 function isArabic(): boolean {
