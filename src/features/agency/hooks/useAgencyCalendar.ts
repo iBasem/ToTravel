@@ -61,7 +61,7 @@ export function useAgencyCalendar() {
 
             if (fetchError) throw fetchError;
 
-            const formattedData = (data || []).map((b: any) => ({
+            const formattedData = (data || []).map((b) => ({
                 id: b.id,
                 booking_date: b.booking_date,
                 status: b.status,

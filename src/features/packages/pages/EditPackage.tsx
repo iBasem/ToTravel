@@ -5,12 +5,18 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/ui/dialog";
 import { Button } from "@/ui/button";
 import { Progress } from "@/ui/progress";
 import { WizardStepContent } from "@/features/packages/components/wizard/WizardStepContent";
-import type { PackageFormData } from "@/features/packages/types/wizard";
+import type { ItineraryDay, PackageFormData } from "@/features/packages/types/wizard";
 import { buildSavePackagePayload } from "@/features/packages/lib/savePackagePayload";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/features/auth/context/AuthContext";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
+
+// Edit-mode form state: the shared wizard shape, plus the legacy per-day
+// `transportation` field this page loads from itineraries (not in ItineraryDay).
+type EditPackageFormData = Omit<PackageFormData, "itinerary"> & {
+  itinerary: (ItineraryDay & { transportation?: string })[];
+};
 
 export default function EditPackage() {
   const { id } = useParams<{ id: string }>();
@@ -22,7 +28,7 @@ export default function EditPackage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<EditPackageFormData>({
     basicInfo: {
       title: '',
       description: '',
@@ -39,11 +45,11 @@ export default function EditPackage() {
       featured: false
     },
     route: {
-      destinations: [] as any[],
+      destinations: [],
       travelMode: 'driving' as 'driving' | 'walking' | 'cycling',
       showDistances: true
     },
-    itinerary: [] as any[],
+    itinerary: [],
     pricing: {
       currency: "USD",
       basePrice: "",
@@ -64,7 +70,7 @@ export default function EditPackage() {
       cancellation_policy: '',
       terms_conditions: ''
     },
-    media: [] as any[]
+    media: []
   });
 
   const totalSteps = 6;
@@ -179,7 +185,7 @@ export default function EditPackage() {
         },
         media: (mediaData || []).map(item => ({
           id: item.id,
-          type: item.media_type || 'image',
+          type: (item.media_type || 'image') as 'image' | 'video',
           url: item.file_path,
           caption: item.caption || item.file_name,
           isPrimary: item.is_primary || false,
@@ -196,14 +202,14 @@ export default function EditPackage() {
     }
   };
 
-  const updateFormData = (stepKey: string, data: any) => {
+  const updateFormData = (stepKey: string, data: unknown) => {
     setFormData(prev => ({
       ...prev,
       [stepKey]: data
     }));
   };
 
-  const handleFormDataUpdate = (data: any) => {
+  const handleFormDataUpdate = (data: PackageFormData) => {
     setFormData(data);
   };
 

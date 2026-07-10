@@ -56,7 +56,7 @@ export default function Gallery() {
         }));
 
       setImages(imageList);
-    } catch (err: any) {
+    } catch (err) {
       console.error('Error fetching gallery:', err);
     } finally {
       setLoading(false);
@@ -89,7 +89,7 @@ export default function Gallery() {
 
       toast.success(t('agencyDashboard.uploadSuccess', { defaultValue: 'Files uploaded successfully' }));
       fetchImages();
-    } catch (err: any) {
+    } catch (err) {
       console.error('Upload error:', err);
       toast.error(t('toasts.uploadFailed', 'Upload failed'));
     } finally {
@@ -112,7 +112,7 @@ export default function Gallery() {
 
       setImages(prev => prev.filter(img => img.name !== fileName));
       toast.success(t('agencyDashboard.fileDeleted', { defaultValue: 'File deleted' }));
-    } catch (err: any) {
+    } catch (err) {
       console.error('Delete error:', err);
       toast.error(t('toasts.deleteFailed', 'Delete failed'));
     }

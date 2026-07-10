@@ -42,9 +42,13 @@ describe("formatNumber", () => {
 });
 
 describe("formatCurrency", () => {
-  it("defaults to the platform currency", () => {
-    expect(getPlatformCurrency()).toBe("USD");
-    expect(formatCurrency(1500)).toBe("$1,500");
+  it("defaults to the platform currency", async () => {
+    await i18n.changeLanguage("en");
+    // The platform currency is SAR (VITE_PLATFORM_CURRENCY in .env); all
+    // payments run through Moyasar in SAR.
+    expect(getPlatformCurrency()).toBe("SAR");
+    expect(formatCurrency(1500)).toMatch(/SAR|ر\.س/);
+    expect(formatCurrency(1500)).toContain("1,500");
   });
 
   it("formats SAR and AED when configured per call", async () => {

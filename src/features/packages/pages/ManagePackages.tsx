@@ -7,7 +7,7 @@ import { Input } from "@/ui/input";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { Badge } from "@/ui/badge";
-import { usePackages } from "@/features/packages/hooks/usePackages";
+import { usePackages, type PackageWithDetails } from "@/features/packages/hooks/usePackages";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 import { formatCurrency } from "@/lib/formatters";
@@ -53,7 +53,7 @@ export default function Packages() {
     }
   };
 
-  const togglePublishStatus = async (pkg: any) => {
+  const togglePublishStatus = async (pkg: PackageWithDetails) => {
     try {
       // Publishing requires admin approval: submitting sends the package to
       // 'pending'; unpublishing a live package returns it to 'draft'.
@@ -69,11 +69,11 @@ export default function Packages() {
     }
   };
 
-  const getPrimaryImage = (pkg: any) => {
+  const getPrimaryImage = (pkg: PackageWithDetails) => {
     if (!pkg.package_media || pkg.package_media.length === 0) {
       return null;
     }
-    const primary = pkg.package_media.find((m: any) => m.is_primary);
+    const primary = pkg.package_media.find((m) => m.is_primary);
     return primary?.file_path || pkg.package_media[0]?.file_path || null;
   };
 

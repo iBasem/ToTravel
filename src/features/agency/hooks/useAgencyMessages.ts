@@ -79,9 +79,9 @@ export function useAgencyMessages() {
             }
 
             setConversations(Array.from(convMap.values()));
-        } catch (err: any) {
+        } catch (err) {
             console.error('Error fetching conversations:', err);
-            setError(err.message);
+            setError(err instanceof Error ? err.message : String(err));
         } finally {
             setLoading(false);
         }
@@ -113,7 +113,7 @@ export function useAgencyMessages() {
                 .eq('recipient_id', user.id)
                 .is('read_at', null);
 
-        } catch (err: any) {
+        } catch (err) {
             console.error('Error fetching messages:', err);
         }
     };
@@ -136,7 +136,7 @@ export function useAgencyMessages() {
             if (sendError) throw sendError;
             setMessages(prev => [...prev, data]);
             return data;
-        } catch (err: any) {
+        } catch (err) {
             console.error('Error sending message:', err);
             throw err;
         }

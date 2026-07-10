@@ -34,9 +34,9 @@ export function useAgencyDeals() {
 
             if (fetchError) throw fetchError;
             setDeals(data || []);
-        } catch (err: any) {
+        } catch (err) {
             console.error('Error fetching deals:', err);
-            setError(err.message);
+            setError(err instanceof Error ? err.message : String(err));
         } finally {
             setLoading(false);
         }
@@ -62,7 +62,7 @@ export function useAgencyDeals() {
             if (insertError) throw insertError;
             setDeals(prev => [data, ...prev]);
             return data;
-        } catch (err: any) {
+        } catch (err) {
             console.error('Error adding deal:', err);
             throw err;
         }
@@ -77,7 +77,7 @@ export function useAgencyDeals() {
 
             if (deleteError) throw deleteError;
             setDeals(prev => prev.filter(d => d.id !== dealId));
-        } catch (err: any) {
+        } catch (err) {
             console.error('Error deleting deal:', err);
             throw err;
         }

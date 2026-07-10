@@ -40,6 +40,7 @@ export function useDashboardStats() {
       const { data: bookingsData, error: bookingsError } = await supabase
         .from('package_bookings')
         .select(`
+          traveler_id,
           total_price,
           packages!inner(agency_id)
         `)
@@ -54,7 +55,7 @@ export function useDashboardStats() {
 
       // Get unique travelers count
       const uniqueTravelers = bookingsData 
-        ? [...new Set(bookingsData.map((booking: any) => booking.traveler_id))].length 
+        ? [...new Set(bookingsData.map((booking) => booking.traveler_id))].length
         : 0;
 
       setStats({

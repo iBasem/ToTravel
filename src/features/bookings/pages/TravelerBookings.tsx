@@ -15,7 +15,7 @@ import {
   CreditCard,
   Loader2
 } from "lucide-react";
-import { useBookings } from "@/features/bookings/hooks/useBookings";
+import { useBookings, type Booking } from "@/features/bookings/hooks/useBookings";
 import { usePayment } from "@/features/bookings/hooks/usePayment";
 import { LoadingSpinner } from "@/ui/loading-spinner";
 import { EmptyState } from "@/ui/empty-state";
@@ -23,6 +23,13 @@ import { formatCurrency, formatDate } from "@/lib/formatters";
 import { localizedText } from "@/lib/localized";
 
 import { useNavigate } from "react-router-dom";
+
+// The bookings query also embeds packages.package_media (see useBookings),
+// which the shared Booking interface does not declare.
+type BookingWithMedia = Booking & {
+  payment_status?: string | null;
+  packages?: Booking["packages"] & { package_media?: { file_path: string }[] };
+};
 
 export default function TravelerBookings() {
   const [activeTab, setActiveTab] = useState("all");
@@ -111,7 +118,7 @@ export default function TravelerBookings() {
               {t('common.noItemsFound', { item: activeTab })}
             </div>
           ) : (
-            filteredBookings.map((booking: any) => {
+            filteredBookings.map((booking: BookingWithMedia) => {
               const packageData = booking.packages;
               const packageTitle = localizedText(packageData, 'title');
               const packageDestination = localizedText(packageData, 'destination');

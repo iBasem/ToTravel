@@ -10,10 +10,24 @@ import { StarRating } from "@/features/reviews/components/StarRating";
 import { useReviews } from "@/features/reviews/hooks/useReviews";
 import { formatDate } from "@/lib/formatters";
 
+// Shape of the rows returned by useReviews().fetchTravelerReviews (reviews
+// with their embedded package and package_media).
+interface TravelerReview {
+  id: string;
+  rating: number;
+  comment: string | null;
+  created_at: string;
+  package: {
+    id: string;
+    title: string;
+    package_media: { file_path: string; is_primary: boolean | null }[] | null;
+  } | null;
+}
+
 export default function TravelerReviews() {
   const { t } = useTranslation();
   const { fetchTravelerReviews } = useReviews();
-  const [reviews, setReviews] = useState<any[]>([]);
+  const [reviews, setReviews] = useState<TravelerReview[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -43,7 +57,7 @@ export default function TravelerReviews() {
       <div className="grid gap-6">
         {reviews.length > 0 ? (
           reviews.map((review) => {
-            const primaryImage = review.package.package_media?.find((m: any) => m.is_primary) || review.package.package_media?.[0];
+            const primaryImage = review.package.package_media?.find((m) => m.is_primary) || review.package.package_media?.[0];
             const imageUrl = primaryImage?.file_path || "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=100&h=100&fit=crop";
 
             return (

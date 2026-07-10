@@ -52,7 +52,7 @@ export function useAgencyTravelers() {
                 // Aggregate data by traveler
                 const travelerMap = new Map<string, Traveler>();
 
-                data?.forEach((booking: any) => {
+                data?.forEach((booking) => {
                     const travelerId = booking.traveler.id;
 
                     if (!travelerMap.has(travelerId)) {
@@ -77,9 +77,9 @@ export function useAgencyTravelers() {
 
                 setTravelers(Array.from(travelerMap.values()));
 
-            } catch (err: any) {
+            } catch (err) {
                 console.error('Error fetching agency travelers:', err);
-                setError(err.message);
+                setError(err instanceof Error ? err.message : String(err));
             } finally {
                 setLoading(false);
             }

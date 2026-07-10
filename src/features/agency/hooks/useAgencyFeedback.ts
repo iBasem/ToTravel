@@ -57,7 +57,7 @@ export function useAgencyFeedback() {
 
                 if (fetchError) throw fetchError;
 
-                const mapped: FeedbackItem[] = (data || []).map((r: any) => ({
+                const mapped: FeedbackItem[] = (data || []).map((r) => ({
                     id: r.id,
                     travelerName: r.traveler
                         ? `${r.traveler.first_name ?? ''} ${r.traveler.last_name ?? ''}`.trim() || t('common.unknown', 'Unknown')
@@ -90,9 +90,9 @@ export function useAgencyFeedback() {
                     satisfactionRate,
                 });
 
-            } catch (err: any) {
+            } catch (err) {
                 console.error('Error fetching feedback:', err);
-                setError(err.message);
+                setError(err instanceof Error ? err.message : String(err));
             } finally {
                 setLoading(false);
             }
