@@ -65,12 +65,20 @@ Deno.serve(async (req: Request) => {
       return json(200, { ok: true, ignored: "unknown invoice" });
     }
 
-    // Idempotent: if already settled paid, do nothing further.
-    if (payment.status === "paid") {
+    const newStatus =
+      paymentStatus === "paid" ? "paid"
+      : paymentStatus === "refunded" ? "refunded"
+      : paymentStatus === "failed" ? "failed"
+      : "initiated";
+
+    // Idempotency + state machine: refunded is terminal; a paid payment may
+    // only move forward to refunded, never back to failed/initiated.
+    if (payment.status === newStatus || payment.status === "refunded") {
       return json(200, { ok: true, idempotent: true });
     }
-
-    const newStatus = paymentStatus === "paid" ? "paid" : paymentStatus === "failed" ? "failed" : "initiated";
+    if (payment.status === "paid" && newStatus !== "refunded") {
+      return json(200, { ok: true, idempotent: true });
+    }
 
     await admin
       .from("payments")
@@ -83,6 +91,15 @@ Deno.serve(async (req: Request) => {
       await admin
         .from("package_bookings")
         .update({ payment_status: "paid", status: "confirmed", payment_reference: paymentId ?? null, payment_method: "moyasar" })
+        .eq("id", payment.booking_id);
+    }
+
+    // Refunds initiated at the provider (or confirmed after admin-refund)
+    // release the booking as well.
+    if (newStatus === "refunded") {
+      await admin
+        .from("package_bookings")
+        .update({ payment_status: "refunded", status: "cancelled" })
         .eq("id", payment.booking_id);
     }
 
