@@ -1,6 +1,7 @@
 export { useAdminTravelers, useUpdateTravelerStatus, useTravelerBookings } from './useAdminTravelers';
 export { useAdminAgencies, useUpdateAgencyStatus, useUpdateAgencyCommission, useAgencyPackages } from './useAdminAgencies';
-export { useAdminPackages, useUpdatePackageStatus, useTogglePackageFeatured } from '@/features/packages/hooks/useAdminPackages';
+export { useAdminPackages } from '@/features/packages/hooks/useAdminPackages';
+export { useUpdateAdminPackageStatus, useToggleAdminPackageFeatured } from './useAdminPackageDetails';
 export { useAdminBookings, useCancelBooking, useRefundPayment } from '@/features/bookings/hooks/useAdminBookings';
 export { useAdminFinancials, useProcessPayouts } from './useAdminFinancials';
 export { useAdminReports } from './useAdminReports';

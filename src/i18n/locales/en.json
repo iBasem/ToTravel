@@ -108,6 +108,7 @@
     "updateError": "Failed to update",
     "unknown": "Unknown",
     "date": "Date",
+    "openMenu": "Open menu",
     "notifications": "Notifications"
   },
   "nav": {
@@ -716,6 +717,10 @@
     "reports": "Reports",
     "content": "Content Management",
     "adminPortal": "Admin Portal",
+    "navMarketplace": "Marketplace",
+    "navPlatform": "Platform",
+    "navAdministration": "Administration",
+    "pendingNotifications": "{{count}} pending actions",
     "administrator": "Administrator",
     "actionResolved": "Action resolved",
     "actionResolveError": "Could not resolve action",
@@ -1170,6 +1175,7 @@
     "monthlyPerformance": "Monthly Performance",
     "popularDestinations": "Popular Destinations",
     "exportReport": "Export Report",
+    "dateRange": "Date range",
     "vsPrevious": "vs previous period",
     "noMonthlyData": "No monthly data available",
     "noDestinationData": "No destination data available",

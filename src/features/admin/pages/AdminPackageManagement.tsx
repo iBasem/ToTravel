@@ -20,14 +20,17 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/ui/dropdown-menu";
-import { Search, Filter, MoreHorizontal, Eye, Star, RefreshCw, CheckCircle2, XCircle, Ban, Archive, RotateCcw } from "lucide-react";
+import { Search, Filter, MoreHorizontal, Eye, Star, RefreshCw, CheckCircle2, XCircle, Ban, Archive, RotateCcw, Clock, Package as PackageIcon } from "lucide-react";
 import {
   useAdminPackages,
-  useUpdatePackageStatus,
-  useTogglePackageFeatured,
   type AdminPackage,
   type PackageStatus,
 } from "@/features/packages/hooks/useAdminPackages";
+import {
+  useUpdateAdminPackageStatus,
+  useToggleAdminPackageFeatured,
+  type PackageModerationAction,
+} from "@/features/admin/hooks/useAdminPackageDetails";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { formatCurrency, formatNumber } from "@/lib/formatters";
@@ -42,8 +45,8 @@ export default function AdminPackageManagement() {
   const isRTL = i18n.language === "ar";
   const isAr = i18n.language === "ar";
   const { data, isLoading, isError, refetch } = useAdminPackages();
-  const updateStatus = useUpdatePackageStatus();
-  const toggleFeatured = useTogglePackageFeatured();
+  const updateStatus = useUpdateAdminPackageStatus();
+  const toggleFeatured = useToggleAdminPackageFeatured();
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
 
@@ -69,7 +72,7 @@ export default function AdminPackageManagement() {
 
   const handleToggleFeatured = (pkg: AdminPackage) => {
     toggleFeatured.mutate(
-      { packageId: pkg.id, packageTitle: pkg.title, featured: !pkg.featured },
+      { packageId: pkg.id, title: pkg.title, featured: !pkg.featured },
       {
         onSuccess: () =>
           toast.success(pkg.featured ? t("adminPackages.removedFeatured") : t("adminPackages.markedFeatured")),
@@ -78,9 +81,9 @@ export default function AdminPackageManagement() {
     );
   };
 
-  const handleStatusChange = (pkg: AdminPackage, status: PackageStatus, successMessage: string) => {
+  const handleModeration = (pkg: AdminPackage, action: PackageModerationAction, successMessage: string) => {
     updateStatus.mutate(
-      { packageId: pkg.id, packageTitle: pkg.title, status },
+      { packageId: pkg.id, title: pkg.title, action },
       {
         onSuccess: () => toast.success(successMessage),
         onError: () => toast.error(t("common.updateError")),
@@ -126,7 +129,7 @@ export default function AdminPackageManagement() {
   if (isError) {
     return (
       <EmptyState
-        icon="AlertTriangle"
+        icon="alert-triangle"
         title={t("adminPackages.loadErrorTitle", "Could not load packages")}
         description={t("adminPackages.loadErrorDescription", "Something went wrong while loading packages. Please try again.")}
         action={{ label: t("common.retry", "Retry"), onClick: () => refetch() }}
@@ -149,10 +152,10 @@ export default function AdminPackageManagement() {
 
       <StatsGrid
         stats={[
-          { title: t("adminPackages.totalPackages"), value: formatNumber(stats.total) },
-          { title: t("adminPackages.livePackages"), value: formatNumber(stats.live) },
-          { title: t("adminPackages.pendingReview"), value: formatNumber(stats.pending) },
-          { title: t("common.featured"), value: formatNumber(stats.featured) },
+          { title: t("adminPackages.totalPackages"), value: formatNumber(stats.total), icon: PackageIcon },
+          { title: t("adminPackages.livePackages"), value: formatNumber(stats.live), icon: CheckCircle2 },
+          { title: t("adminPackages.pendingReview"), value: formatNumber(stats.pending), icon: Clock },
+          { title: t("common.featured"), value: formatNumber(stats.featured), icon: Star },
         ]}
       />
 
@@ -254,13 +257,13 @@ export default function AdminPackageManagement() {
                           {pkg.status === "pending" && (
                             <>
                               <DropdownMenuItem
-                                onClick={() => handleStatusChange(pkg, "published", t("adminPackages.approved", "Package approved and published"))}
+                                onClick={() => handleModeration(pkg, "approve", t("adminPackages.approved", "Package approved and published"))}
                               >
                                 <CheckCircle2 className="w-4 h-4 me-2 text-green-600" />
                                 {t("adminPackages.approve", "Approve & publish")}
                               </DropdownMenuItem>
                               <DropdownMenuItem
-                                onClick={() => handleStatusChange(pkg, "draft", t("adminPackages.rejected", "Package sent back to draft"))}
+                                onClick={() => handleModeration(pkg, "reject", t("adminPackages.rejected", "Package sent back to draft"))}
                               >
                                 <XCircle className="w-4 h-4 me-2 text-destructive" />
                                 {t("adminPackages.reject", "Reject (send to draft)")}
@@ -270,19 +273,19 @@ export default function AdminPackageManagement() {
                           {pkg.status === "published" && (
                             <>
                               <DropdownMenuItem
-                                onClick={() => handleStatusChange(pkg, "suspended", t("adminPackages.suspended", "Package suspended"))}
+                                onClick={() => handleModeration(pkg, "suspend", t("adminPackages.suspended", "Package suspended"))}
                               >
                                 <Ban className="w-4 h-4 me-2 text-destructive" />
                                 {t("adminPackages.suspend", "Suspend")}
                               </DropdownMenuItem>
                               <DropdownMenuItem
-                                onClick={() => handleStatusChange(pkg, "draft", t("adminPackages.unpublished", "Package unpublished"))}
+                                onClick={() => handleModeration(pkg, "unpublish", t("adminPackages.unpublished", "Package unpublished"))}
                               >
                                 <XCircle className="w-4 h-4 me-2" />
                                 {t("adminPackages.unpublish", "Unpublish")}
                               </DropdownMenuItem>
                               <DropdownMenuItem
-                                onClick={() => handleStatusChange(pkg, "archived", t("adminPackages.archived", "Package archived"))}
+                                onClick={() => handleModeration(pkg, "archive", t("adminPackages.archived", "Package archived"))}
                               >
                                 <Archive className="w-4 h-4 me-2" />
                                 {t("adminPackages.archive", "Archive")}
@@ -292,13 +295,13 @@ export default function AdminPackageManagement() {
                           {pkg.status === "suspended" && (
                             <>
                               <DropdownMenuItem
-                                onClick={() => handleStatusChange(pkg, "published", t("adminPackages.republished", "Package republished"))}
+                                onClick={() => handleModeration(pkg, "republish", t("adminPackages.republished", "Package republished"))}
                               >
                                 <RotateCcw className="w-4 h-4 me-2 text-green-600" />
                                 {t("adminPackages.republish", "Republish")}
                               </DropdownMenuItem>
                               <DropdownMenuItem
-                                onClick={() => handleStatusChange(pkg, "archived", t("adminPackages.archived", "Package archived"))}
+                                onClick={() => handleModeration(pkg, "archive", t("adminPackages.archived", "Package archived"))}
                               >
                                 <Archive className="w-4 h-4 me-2" />
                                 {t("adminPackages.archive", "Archive")}

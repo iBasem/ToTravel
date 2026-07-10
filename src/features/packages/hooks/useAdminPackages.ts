@@ -1,6 +1,5 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { useAdminAudit } from '@/features/admin/lib/audit';
 
 export type PackageStatus = 'draft' | 'pending' | 'published' | 'archived' | 'suspended';
 
@@ -72,68 +71,6 @@ export function useAdminPackages() {
   });
 }
 
-const statusActionType: Record<PackageStatus, string> = {
-  published: 'package_approve',
-  draft: 'package_reject',
-  suspended: 'package_suspend',
-  archived: 'package_archive',
-  pending: 'package_update',
-};
-
-interface PackageStatusInput {
-  packageId: string;
-  packageTitle: string;
-  status: PackageStatus;
-}
-
-export function useUpdatePackageStatus() {
-  const queryClient = useQueryClient();
-  const audit = useAdminAudit();
-
-  return useMutation({
-    mutationFn: async ({ packageId, status }: PackageStatusInput) => {
-      const { error } = await supabase.from('packages').update({ status }).eq('id', packageId);
-      if (error) throw error;
-    },
-    onSuccess: (_data, { packageId, packageTitle, status }) => {
-      queryClient.invalidateQueries({ queryKey: adminPackagesKey });
-      queryClient.invalidateQueries({ queryKey: ['admin', 'package', packageId] });
-      void audit({
-        actionType: statusActionType[status],
-        description: `Set package "${packageTitle}" status to ${status}`,
-        entityType: 'package',
-        entityId: packageId,
-        metadata: { status },
-      });
-    },
-  });
-}
-
-interface ToggleFeaturedInput {
-  packageId: string;
-  packageTitle: string;
-  featured: boolean;
-}
-
-export function useTogglePackageFeatured() {
-  const queryClient = useQueryClient();
-  const audit = useAdminAudit();
-
-  return useMutation({
-    mutationFn: async ({ packageId, featured }: ToggleFeaturedInput) => {
-      const { error } = await supabase.from('packages').update({ featured }).eq('id', packageId);
-      if (error) throw error;
-    },
-    onSuccess: (_data, { packageId, packageTitle, featured }) => {
-      queryClient.invalidateQueries({ queryKey: adminPackagesKey });
-      queryClient.invalidateQueries({ queryKey: ['admin', 'package', packageId] });
-      void audit({
-        actionType: 'package_feature',
-        description: `${featured ? 'Featured' : 'Unfeatured'} package "${packageTitle}"`,
-        entityType: 'package',
-        entityId: packageId,
-        metadata: { featured },
-      });
-    },
-  });
-}
+// Status/featured moderation mutations live in
+// '@/features/admin/hooks/useAdminPackageDetails' (action-based, audited)
+// and are shared by the list page and the details page.

@@ -1,32 +1,18 @@
 import { NavLink, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import {
-  BarChart3,
-  Package,
-  Users,
-  Building2,
-  FileText,
-  DollarSign,
-  Settings,
-  Shield,
-  BookOpen,
-  Star,
-  BadgePercent,
-  MapPin,
-  MessageSquare,
-  ListTodo,
-  History
-} from "lucide-react";
+import { Shield } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
   SidebarGroup,
   SidebarGroupContent,
+  SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
 } from "@/ui/sidebar";
+import { getAdminNavGroups, isNavItemActive } from "./nav-items";
 
 export function AdminSidebar() {
   const { state } = useSidebar();
@@ -34,24 +20,7 @@ export function AdminSidebar() {
   const { t, i18n } = useTranslation();
   const isRTL = i18n.language === 'ar' || i18n.dir() === 'rtl';
 
-  const menuItems = [
-    { title: t('adminDashboard.overview', "Overview"), url: "/admin", icon: BarChart3 },
-    { title: t('adminDashboard.packages', "Packages"), url: "/admin/packages", icon: Package },
-    { title: t('adminDashboard.agencies', "Agencies"), url: "/admin/agencies", icon: Building2 },
-    { title: t('adminDashboard.travelers', "Travelers"), url: "/admin/travelers", icon: Users },
-    { title: t('adminDashboard.bookings', "Bookings"), url: "/admin/bookings", icon: BookOpen },
-    { title: t('adminDashboard.reviews', "Reviews"), url: "/admin/reviews", icon: Star },
-    { title: t('adminDeals.nav', "Deals"), url: "/admin/deals", icon: BadgePercent },
-    { title: t('adminDashboard.messages', "Messages"), url: "/admin/messages", icon: MessageSquare },
-    { title: t('adminDashboard.destinations', "Destinations"), url: "/admin/destinations", icon: MapPin },
-    { title: t('adminDashboard.content', "Content"), url: "/admin/content", icon: FileText },
-    { title: t('adminDashboard.financials', "Financials"), url: "/admin/financials", icon: DollarSign },
-    { title: t('adminDashboard.reports', "Reports"), url: "/admin/reports", icon: BarChart3 },
-    { title: t('adminDashboard.pendingActions', "Pending Actions"), url: "/admin/actions", icon: ListTodo },
-    { title: t('adminDashboard.activityLog', "Activity Log"), url: "/admin/activity", icon: History },
-    { title: t('adminDashboard.settings', "Settings"), url: "/admin/settings", icon: Settings },
-  ];
-
+  const navGroups = getAdminNavGroups(t);
   const isCollapsed = state === "collapsed";
 
   return (
@@ -74,34 +43,41 @@ export function AdminSidebar() {
         </div>
 
         {/* Navigation Menu */}
-        <SidebarGroup className="px-3 py-4 flex-1">
-          <SidebarGroupContent>
-            <SidebarMenu className="space-y-1">
-              {menuItems.map((item) => {
-                const isActive = item.url === "/admin"
-                  ? location.pathname === "/admin"
-                  : location.pathname.startsWith(item.url);
-                return (
-                <SidebarMenuItem key={item.url}>
-                  <SidebarMenuButton asChild>
-                    <NavLink
-                      to={item.url}
-                      end={item.url === "/admin"}
-                      className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors duration-200 text-sm w-full text-start ${isActive
-                        ? "bg-primary/10 text-primary font-semibold"
-                        : "text-muted-foreground hover:bg-muted hover:text-foreground"
-                        }`}
-                    >
-                      <item.icon className="w-5 h-5 flex-shrink-0" />
-                      {!isCollapsed && <span className="truncate">{item.title}</span>}
-                    </NavLink>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-                );
-              })}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+        <div className="px-3 py-2 flex-1 overflow-y-auto">
+          {navGroups.map((group, groupIndex) => (
+            <SidebarGroup key={group.label || groupIndex} className="p-0 py-2">
+              {group.label && !isCollapsed && (
+                <SidebarGroupLabel className="px-3 text-xs font-medium uppercase tracking-wide text-muted-foreground/70">
+                  {group.label}
+                </SidebarGroupLabel>
+              )}
+              <SidebarGroupContent>
+                <SidebarMenu className="space-y-1">
+                  {group.items.map((item) => {
+                    const isActive = isNavItemActive(item.url, location.pathname);
+                    return (
+                      <SidebarMenuItem key={item.url}>
+                        <SidebarMenuButton asChild>
+                          <NavLink
+                            to={item.url}
+                            end={item.url === "/admin"}
+                            className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors duration-200 text-sm w-full text-start ${isActive
+                              ? "bg-primary/10 text-primary font-semibold"
+                              : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                              }`}
+                          >
+                            <item.icon className="w-5 h-5 flex-shrink-0" />
+                            {!isCollapsed && <span className="truncate">{item.title}</span>}
+                          </NavLink>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                    );
+                  })}
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </SidebarGroup>
+          ))}
+        </div>
       </SidebarContent>
     </Sidebar>
   );

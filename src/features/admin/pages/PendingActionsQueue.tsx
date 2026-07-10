@@ -29,9 +29,10 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from "@/ui/alert-dialog";
+import { PageHeader } from "@/ui/page-header";
 import { StatsGrid } from "@/ui/stats-card";
 import { EmptyState } from "@/ui/empty-state";
-import { Search, Play, Check, X } from "lucide-react";
+import { Search, Play, Check, X, RefreshCw, ListTodo, AlertTriangle, Loader2, CheckCircle2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { formatDate } from "@/lib/formatters";
@@ -228,7 +229,10 @@ export default function PendingActionsQueue() {
     if (isLoading) {
         return (
             <div className="space-y-6">
-                <Skeleton className="h-8 w-64" />
+                <div className="text-start">
+                    <Skeleton className="h-8 w-56 mb-2" />
+                    <Skeleton className="h-4 w-72" />
+                </div>
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                     {[1, 2, 3, 4].map(i => <Skeleton key={i} className="h-28" />)}
                 </div>
@@ -239,26 +243,24 @@ export default function PendingActionsQueue() {
 
     return (
         <div className="space-y-6">
-            {/* Header */}
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                <div>
-                    <h1 className="text-2xl font-bold">{t('admin.pendingActions')}</h1>
-                    <p className="text-muted-foreground">
-                        {t('adminPendingActions.subtitle', 'Track, assign and resolve platform issues that need admin attention')}
-                    </p>
-                </div>
-                <Button onClick={() => refetch()} variant="outline" size="sm">
-                    {t('common.refresh', 'Refresh')}
-                </Button>
-            </div>
+            <PageHeader
+                title={t('admin.pendingActions')}
+                description={t('adminPendingActions.subtitle', 'Track, assign and resolve platform issues that need admin attention')}
+                actions={
+                    <Button variant="outline" onClick={() => refetch()} className="flex items-center">
+                        <RefreshCw className="w-4 h-4 me-2" />
+                        {t('common.refresh')}
+                    </Button>
+                }
+            />
 
             {/* Stats */}
             <StatsGrid
                 stats={[
-                    { title: t('adminPendingActions.statOpen', 'Open'), value: stats.open },
-                    { title: t('admin.priorityUrgent'), value: stats.urgent },
-                    { title: t('adminPendingActions.statusInProgress', 'In Progress'), value: stats.inProgress },
-                    { title: t('adminPendingActions.statResolvedToday', 'Resolved Today'), value: stats.resolvedToday },
+                    { title: t('adminPendingActions.statOpen', 'Open'), value: stats.open, icon: ListTodo },
+                    { title: t('admin.priorityUrgent'), value: stats.urgent, icon: AlertTriangle },
+                    { title: t('adminPendingActions.statusInProgress', 'In Progress'), value: stats.inProgress, icon: Loader2 },
+                    { title: t('adminPendingActions.statResolvedToday', 'Resolved Today'), value: stats.resolvedToday, icon: CheckCircle2 },
                 ]}
             />
 
@@ -310,14 +312,14 @@ export default function PendingActionsQueue() {
             {/* Table */}
             {error ? (
                 <EmptyState
-                    icon="chart-bar"
+                    icon="alert-triangle"
                     title={t('common.error')}
                     description={t('adminPendingActions.loadError', 'Failed to load pending actions')}
                     action={{ label: t('common.retry', 'Retry'), onClick: () => refetch() }}
                 />
             ) : filteredActions.length === 0 ? (
                 <EmptyState
-                    icon="chart-bar"
+                    icon="list-todo"
                     title={t('adminPendingActions.noActions', 'No pending actions')}
                     description={t('admin.allCaughtUp')}
                 />

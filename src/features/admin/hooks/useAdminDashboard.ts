@@ -8,10 +8,11 @@ export interface AdminStats {
   totalUsers: number;
   totalAgencies: number;
   totalBookings: number;
+  /** Sum of bookings with payment_status = 'paid' — matches platform_stats. */
   platformRevenue: number;
   activePackages: number;
   usersGrowth: number;
-  agenciesGrowth: number;
+  newAgenciesThisMonth: number;
   bookingsGrowth: number;
   revenueGrowth: number;
 }
@@ -69,7 +70,7 @@ export function useAdminDashboard(monthsBack: number = 6) {
         await Promise.all([
           supabase.from('travelers').select('id, created_at', { count: 'exact' }),
           supabase.from('travel_agencies').select('id, created_at', { count: 'exact' }),
-          supabase.from('package_bookings').select('id, total_price, created_at', { count: 'exact' }),
+          supabase.from('package_bookings').select('id, total_price, payment_status, created_at', { count: 'exact' }),
           supabase.from('packages').select('id', { count: 'exact', head: true }).eq('status', 'published'),
           supabase.from('admin_activity_logs').select('*').order('created_at', { ascending: false }).limit(10),
           supabase.from('admin_pending_actions').select('*').eq('status', 'pending').order('created_at', { ascending: false }),
@@ -80,7 +81,10 @@ export function useAdminDashboard(monthsBack: number = 6) {
       }
 
       const allBookings = bookingsResult.data ?? [];
-      const totalRevenue = allBookings.reduce((sum, b) => sum + Number(b.total_price ?? 0), 0);
+      // Revenue counts only money actually collected, consistent with
+      // platform_stats and the Financials page.
+      const paidBookings = allBookings.filter((b) => b.payment_status === 'paid');
+      const totalRevenue = paidBookings.reduce((sum, b) => sum + Number(b.total_price ?? 0), 0);
 
       const now = new Date();
       const startOfCurrentMonth = new Date(now.getFullYear(), now.getMonth(), 1);
@@ -95,8 +99,8 @@ export function useAdminDashboard(monthsBack: number = 6) {
       const calcGrowth = (current: number, previous: number) =>
         previous > 0 ? Math.round(((current - previous) / previous) * 1000) / 10 : current > 0 ? 100 : 0;
 
-      const currentMonthRevenue = allBookings.filter((b) => inCurrent(b.created_at)).reduce((s, b) => s + Number(b.total_price ?? 0), 0);
-      const lastMonthRevenue = allBookings.filter((b) => inLast(b.created_at)).reduce((s, b) => s + Number(b.total_price ?? 0), 0);
+      const currentMonthRevenue = paidBookings.filter((b) => inCurrent(b.created_at)).reduce((s, b) => s + Number(b.total_price ?? 0), 0);
+      const lastMonthRevenue = paidBookings.filter((b) => inLast(b.created_at)).reduce((s, b) => s + Number(b.total_price ?? 0), 0);
 
       const stats: AdminStats = {
         totalUsers: (travelersResult.count ?? 0) + (agenciesResult.count ?? 0),
@@ -108,10 +112,7 @@ export function useAdminDashboard(monthsBack: number = 6) {
           allTravelers.filter((t) => inCurrent(t.created_at)).length + allAgencies.filter((a) => inCurrent(a.created_at)).length,
           allTravelers.filter((t) => inLast(t.created_at)).length + allAgencies.filter((a) => inLast(a.created_at)).length,
         ),
-        agenciesGrowth: calcGrowth(
-          allAgencies.filter((a) => inCurrent(a.created_at)).length,
-          allAgencies.filter((a) => inLast(a.created_at)).length,
-        ),
+        newAgenciesThisMonth: allAgencies.filter((a) => inCurrent(a.created_at)).length,
         bookingsGrowth: calcGrowth(
           allBookings.filter((b) => inCurrent(b.created_at)).length,
           allBookings.filter((b) => inLast(b.created_at)).length,
@@ -148,7 +149,7 @@ export function useAdminDashboard(monthsBack: number = 6) {
         const existing = monthlyMap.get(months[date.getMonth()]);
         if (existing) {
           existing.bookings++;
-          existing.revenue += Number(b.total_price ?? 0);
+          if (b.payment_status === 'paid') existing.revenue += Number(b.total_price ?? 0);
         }
       }
 

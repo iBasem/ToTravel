@@ -108,6 +108,7 @@
     "updateError": "تعذّر التحديث",
     "unknown": "غير معروف",
     "date": "التاريخ",
+    "openMenu": "فتح القائمة",
     "notifications": "الإشعارات"
   },
   "nav": {
@@ -740,6 +741,10 @@
     "reports": "التقارير",
     "content": "إدارة المحتوى",
     "adminPortal": "بوابة الإدارة",
+    "navMarketplace": "السوق",
+    "navPlatform": "المنصة",
+    "navAdministration": "الإدارة",
+    "pendingNotifications": "{{count}} إجراءات معلقة",
     "administrator": "مدير النظام",
     "actionResolved": "تم حل الإجراء",
     "actionResolveError": "تعذر حل الإجراء",
@@ -1202,6 +1207,7 @@
     "monthlyPerformance": "الأداء الشهري",
     "popularDestinations": "الوجهات الشهيرة",
     "exportReport": "تصدير التقرير",
+    "dateRange": "النطاق الزمني",
     "vsPrevious": "مقارنة بالفترة السابقة",
     "noMonthlyData": "لا توجد بيانات شهرية متاحة",
     "noDestinationData": "لا توجد بيانات وجهات متاحة",

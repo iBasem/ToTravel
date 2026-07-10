@@ -22,7 +22,9 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/ui/alert-dialog";
-import { FileText, Edit, Trash2, Plus, RefreshCw } from "lucide-react";
+import { FileText, Edit, Trash2, Plus, RefreshCw, BookOpen, FileEdit } from "lucide-react";
+import { PageHeader } from "@/ui/page-header";
+import { StatsGrid } from "@/ui/stats-card";
 import {
   useAdminContent,
   useCreateContent,
@@ -148,7 +150,7 @@ export default function ContentManagement() {
   if (isError) {
     return (
       <EmptyState
-        icon="AlertTriangle"
+        icon="alert-triangle"
         title={t("content.loadErrorTitle", "Could not load content")}
         description={t("content.loadErrorDescription", "Something went wrong while loading content. Please try again.")}
         action={{ label: t("common.retry", "Retry"), onClick: () => refetch() }}
@@ -158,45 +160,37 @@ export default function ContentManagement() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center justify-between">
-        <div className="text-start">
-          <h1 className="text-3xl font-bold text-foreground">{t("content.title", "Content Management")}</h1>
-          <p className="text-muted-foreground">{t("content.subtitle", "Manage website content, pages, and blog posts")}</p>
-        </div>
-        <div className="flex items-center gap-2">
-          <Button variant="outline" onClick={() => refetch()} className="flex items-center gap-2">
-            <RefreshCw className="w-4 h-4" />
-            {t("common.refresh")}
-          </Button>
-          <Button
-            className="flex items-center gap-2"
-            onClick={() => {
-              setEditPage(null);
-              setFormOpen(true);
-            }}
-          >
-            <Plus className="w-4 h-4" />
-            {t("content.addContent", "Add Content")}
-          </Button>
-        </div>
-      </div>
+      <PageHeader
+        title={t("content.title", "Content Management")}
+        description={t("content.subtitle", "Manage website content, pages, and blog posts")}
+        actions={
+          <>
+            <Button variant="outline" onClick={() => refetch()} className="flex items-center gap-2">
+              <RefreshCw className="w-4 h-4" />
+              {t("common.refresh")}
+            </Button>
+            <Button
+              className="flex items-center gap-2"
+              onClick={() => {
+                setEditPage(null);
+                setFormOpen(true);
+              }}
+            >
+              <Plus className="w-4 h-4" />
+              {t("content.addContent", "Add Content")}
+            </Button>
+          </>
+        }
+      />
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {[
-          { label: t("content.totalPages", "Total Pages"), value: stats.totalPages },
-          { label: t("content.blogPosts", "Blog Posts"), value: stats.blogPosts },
-          { label: t("content.draftContent", "Draft Content"), value: stats.draftContent },
-        ].map((stat) => (
-          <Card key={stat.label}>
-            <CardHeader className="pb-2 text-start">
-              <CardTitle className="text-sm font-medium text-muted-foreground">{stat.label}</CardTitle>
-            </CardHeader>
-            <CardContent className="text-start">
-              <div className="text-2xl font-bold tabular-nums">{stat.value}</div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+      <StatsGrid
+        className="md:grid-cols-3"
+        stats={[
+          { title: t("content.totalPages", "Total Pages"), value: stats.totalPages, icon: FileText },
+          { title: t("content.blogPosts", "Blog Posts"), value: stats.blogPosts, icon: BookOpen },
+          { title: t("content.draftContent", "Draft Content"), value: stats.draftContent, icon: FileEdit },
+        ]}
+      />
 
       <Card>
         <CardHeader className="text-start">

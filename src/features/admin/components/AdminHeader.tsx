@@ -1,5 +1,4 @@
-import { Search, Bell, ChevronDown, Menu, Shield } from "lucide-react";
-import { Input } from "@/ui/input";
+import { Bell, ChevronDown, Menu, Shield } from "lucide-react";
 import { Button } from "@/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/ui/avatar";
 import { Sheet, SheetClose, SheetContent, SheetTitle, SheetTrigger } from "@/ui/sheet";
@@ -15,48 +14,47 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/ui/dropdown-menu";
-import { NavLink } from "react-router-dom";
-import {
-  BarChart3,
-  Package,
-  Users,
-  Building2,
-  FileText,
-  DollarSign,
-  Settings,
-  BookOpen,
-  Star,
-  BadgePercent,
-} from "lucide-react";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { getAdminNavGroups, isNavItemActive } from "./nav-items";
+
+/** Open pending-action count for the header bell. Shares the
+ * ['admin','pending-actions'] prefix so queue mutations refresh it. */
+function usePendingActionsCount() {
+  return useQuery({
+    queryKey: ['admin', 'pending-actions', 'count'],
+    queryFn: async (): Promise<number> => {
+      const { count, error } = await supabase
+        .from('admin_pending_actions')
+        .select('id', { count: 'exact', head: true })
+        .eq('status', 'pending');
+      if (error) throw error;
+      return count ?? 0;
+    },
+    refetchInterval: 60_000,
+  });
+}
 
 export function AdminHeader() {
   const { profile, signOut } = useAuth();
   const { t, i18n } = useTranslation();
+  const navigate = useNavigate();
+  const location = useLocation();
   const isRTL = i18n.language === 'ar' || i18n.dir() === 'rtl';
+  const { data: pendingCount = 0 } = usePendingActionsCount();
 
-  const menuItems = [
-    { title: t('adminDashboard.overview', "Overview"), url: "/admin", icon: BarChart3 },
-    { title: t('adminDashboard.packages', "Packages"), url: "/admin/packages", icon: Package },
-    { title: t('adminDashboard.agencies', "Agencies"), url: "/admin/agencies", icon: Building2 },
-    { title: t('adminDashboard.travelers', "Travelers"), url: "/admin/travelers", icon: Users },
-    { title: t('adminDashboard.bookings', "Bookings"), url: "/admin/bookings", icon: BookOpen },
-    { title: t('adminDashboard.reviews', "Reviews"), url: "/admin/reviews", icon: Star },
-    { title: t('adminDeals.nav', "Deals"), url: "/admin/deals", icon: BadgePercent },
-    { title: t('adminDashboard.content', "Content"), url: "/admin/content", icon: FileText },
-    { title: t('adminDashboard.financials', "Financials"), url: "/admin/financials", icon: DollarSign },
-    { title: t('adminDashboard.reports', "Reports"), url: "/admin/reports", icon: BarChart3 },
-    { title: t('adminDashboard.settings', "Settings"), url: "/admin/settings", icon: Settings },
-  ];
+  const navGroups = getAdminNavGroups(t);
 
   return (
     <header className="bg-background border-b border-border sticky top-0 z-40">
       <div className="flex items-center justify-between px-3 sm:px-4 lg:px-8 py-2 sm:py-3 lg:py-4">
-        {/* Mobile menu and search */}
+        {/* Mobile menu and title */}
         <div className="flex items-center gap-2 sm:gap-3 flex-1">
           {/* Mobile hamburger menu */}
           <Sheet>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="sm" className="lg:hidden p-1 sm:p-2">
+              <Button variant="ghost" size="sm" className="lg:hidden p-1 sm:p-2" aria-label={t('common.openMenu', 'Open menu')}>
                 <Menu className="w-4 h-4 sm:w-5 sm:h-5" />
               </Button>
             </SheetTrigger>
@@ -73,35 +71,46 @@ export function AdminHeader() {
                   </div>
                 </div>
 
-                {/* Navigation Menu */}
-                <div className="px-3 py-4 flex-1">
-                  <div className="space-y-1">
-                    {menuItems.map((item) => (
-                      <SheetClose asChild key={item.url}>
-                      <NavLink
-                        to={item.url}
-                        end={item.url === "/admin"}
-                        className={({ isActive }) =>
-                          `flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors duration-200 text-sm w-full text-start ${isActive
-                            ? "bg-primary/10 text-primary font-semibold"
-                            : "text-muted-foreground hover:bg-muted hover:text-foreground"
-                          }`
-                        }
-                      >
-                        <item.icon className="w-5 h-5 flex-shrink-0" />
-                        <span className="truncate">{item.title}</span>
-                      </NavLink>
-                      </SheetClose>
-                    ))}
-                  </div>
+                {/* Navigation Menu — same source as the desktop sidebar */}
+                <div className="px-3 py-2 flex-1 overflow-y-auto">
+                  {navGroups.map((group, groupIndex) => (
+                    <div key={group.label || groupIndex} className="py-2">
+                      {group.label && (
+                        <div className="px-3 pb-1 text-xs font-medium uppercase tracking-wide text-muted-foreground/70">
+                          {group.label}
+                        </div>
+                      )}
+                      <div className="space-y-1">
+                        {group.items.map((item) => {
+                          // Radix Slot (SheetClose asChild) stringifies a
+                          // function className, so resolve the active state
+                          // here and pass a plain string.
+                          const isActive = isNavItemActive(item.url, location.pathname);
+                          return (
+                            <SheetClose asChild key={item.url}>
+                              <NavLink
+                                to={item.url}
+                                end={item.url === "/admin"}
+                                className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors duration-200 text-sm w-full text-start ${isActive
+                                  ? "bg-primary/10 text-primary font-semibold"
+                                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                                }`}
+                              >
+                                <item.icon className="w-5 h-5 flex-shrink-0" />
+                                <span className="truncate">{item.title}</span>
+                              </NavLink>
+                            </SheetClose>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
             </SheetContent>
           </Sheet>
 
-          {/* Search Bar - hidden on mobile for admin? or keep it? */}
           <div className="relative flex-1 max-w-xs sm:max-w-md hidden sm:block">
-            {/* Admin global search placeholder */}
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <span className="font-semibold text-foreground">{t('admin.adminPortal', 'Admin Portal')}</span>
             </div>
@@ -114,8 +123,23 @@ export function AdminHeader() {
 
           <ThemeToggle />
 
-          <Button variant="ghost" size="sm" className="relative p-1 sm:p-2" aria-label={t('common.notifications', 'Notifications')}>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="relative p-1 sm:p-2"
+            aria-label={
+              pendingCount > 0
+                ? t('admin.pendingNotifications', '{{count}} pending actions', { count: pendingCount })
+                : t('common.notifications', 'Notifications')
+            }
+            onClick={() => navigate('/admin/actions')}
+          >
             <Bell className="w-3 h-3 sm:w-4 sm:h-4 lg:w-5 lg:h-5" />
+            {pendingCount > 0 && (
+              <span className="absolute -top-0.5 -end-0.5 min-w-4 h-4 px-1 rounded-full bg-destructive text-destructive-foreground text-[10px] leading-4 font-semibold text-center tabular-nums">
+                {pendingCount > 99 ? '99+' : pendingCount}
+              </span>
+            )}
           </Button>
 
           <DropdownMenu>

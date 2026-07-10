@@ -1,5 +1,5 @@
 
-import { Package, Calendar, Users, Star, Image, MessageSquare, Tag, ChartBar, MapPin, Search } from "lucide-react";
+import { Package, Calendar, Users, Star, Image, MessageSquare, Tag, ChartBar, MapPin, Search, AlertTriangle, History, ListTodo, Building2 } from "lucide-react";
 import { Button } from "./button";
 
 interface EmptyStateProps {
@@ -24,6 +24,10 @@ const iconMap = {
   "chart-bar": ChartBar,
   "map-pin": MapPin,
   search: Search,
+  "alert-triangle": AlertTriangle,
+  history: History,
+  "list-todo": ListTodo,
+  building: Building2,
 };
 
 export function EmptyState({ icon, title, description, className = "", action }: EmptyStateProps) {

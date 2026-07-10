@@ -6,6 +6,8 @@ import { Badge } from "@/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/ui/avatar";
 import { Skeleton } from "@/ui/skeleton";
 import { EmptyState } from "@/ui/empty-state";
+import { PageHeader } from "@/ui/page-header";
+import { StatsCard } from "@/ui/stats-card";
 import {
   Select,
   SelectContent,
@@ -21,6 +23,7 @@ import {
   DollarSign,
   Package,
   TrendingUp,
+  TrendingDown,
   AlertCircle,
   CheckCircle,
   RefreshCw,
@@ -51,7 +54,7 @@ export default function AdminDashboard() {
     platformRevenue: 0,
     activePackages: 0,
     usersGrowth: 0,
-    agenciesGrowth: 0,
+    newAgenciesThisMonth: 0,
     bookingsGrowth: 0,
     revenueGrowth: 0,
   };
@@ -84,7 +87,7 @@ export default function AdminDashboard() {
     }
   };
 
-  const getActivityTypeColor = (type: string) => {
+  const activityTypeLabel = (type: string) => {
     switch (type) {
       case "booking":
         return t("admin.activityBooking");
@@ -125,8 +128,8 @@ export default function AdminDashboard() {
             <Skeleton className="h-4 w-64" />
           </div>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {[...Array(4)].map((_, i) => (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+          {[...Array(5)].map((_, i) => (
             <Card key={i}>
               <CardHeader className="pb-2">
                 <Skeleton className="h-4 w-24" />
@@ -138,6 +141,10 @@ export default function AdminDashboard() {
             </Card>
           ))}
         </div>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <Skeleton className="h-96 lg:col-span-2" />
+          <Skeleton className="h-96" />
+        </div>
       </div>
     );
   }
@@ -145,7 +152,7 @@ export default function AdminDashboard() {
   if (isError) {
     return (
       <EmptyState
-        icon="AlertTriangle"
+        icon="alert-triangle"
         title={t("admin.loadErrorTitle", "Could not load dashboard")}
         description={t("admin.loadErrorDescription", "Something went wrong while loading the dashboard. Please try again.")}
         action={{ label: t("common.retry", "Retry"), onClick: () => refetch() }}
@@ -153,74 +160,81 @@ export default function AdminDashboard() {
     );
   }
 
+  const growthFooter = (percent: number) => {
+    const negative = percent < 0;
+    const Icon = negative ? TrendingDown : TrendingUp;
+    return (
+      <div className={`flex items-center text-sm ${negative ? "text-red-600 dark:text-red-400" : "text-green-600 dark:text-green-400"}`}>
+        <Icon className="w-4 h-4 me-1" aria-hidden="true" />
+        <span className="tabular-nums" dir="ltr">{negative ? "" : "+"}{percent}%</span>
+        <span className="ms-1">{t("admin.fromLastMonth")}</span>
+      </div>
+    );
+  };
+
   const metricCards = [
     {
       title: t("admin.totalUsers"),
       icon: Users,
       value: formatNumber(stats.totalUsers),
-      growth: `+${stats.usersGrowth}% ${t("admin.fromLastMonth")}`,
+      footer: growthFooter(stats.usersGrowth),
     },
     {
       title: t("admin.travelAgencies"),
       icon: Building2,
       value: formatNumber(stats.totalAgencies),
-      growth: `+${stats.agenciesGrowth} ${t("admin.newAgenciesThisMonth")}`,
+      footer: (
+        <div className="flex items-center text-sm text-muted-foreground">
+          <span className="tabular-nums me-1">+{formatNumber(stats.newAgenciesThisMonth)}</span>
+          {t("admin.newAgenciesThisMonth")}
+        </div>
+      ),
     },
     {
       title: t("admin.totalBookings"),
       icon: BookOpen,
       value: formatNumber(stats.totalBookings),
-      growth: `+${stats.bookingsGrowth}% ${t("admin.fromLastMonth")}`,
+      footer: growthFooter(stats.bookingsGrowth),
     },
     {
       title: t("admin.platformRevenue"),
       icon: DollarSign,
       value: formatCurrency(stats.platformRevenue),
-      growth: `+${stats.revenueGrowth}% ${t("admin.fromLastMonth")}`,
+      footer: growthFooter(stats.revenueGrowth),
     },
     {
       title: t("admin.activePackages", "Active packages"),
       icon: Package,
       value: formatNumber(stats.activePackages),
-      growth: t("admin.publishedNow", "published right now"),
+      footer: (
+        <div className="text-sm text-muted-foreground">{t("admin.publishedNow", "published right now")}</div>
+      ),
     },
   ];
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center justify-between">
-        <div className="text-start">
-          <h1 className="text-2xl sm:text-3xl font-bold">{t("admin.dashboard")}</h1>
-          <p className="text-muted-foreground">{t("admin.overview")}</p>
-        </div>
-        <div className="flex items-center gap-3">
-          <Button variant="outline" onClick={() => refetch()} className="flex items-center">
-            <RefreshCw className="w-4 h-4 me-2" />
-            {t("common.refresh")}
-          </Button>
-          <Button onClick={handleRefreshStats} disabled={refreshStats.isPending}>
-            <BarChart3 className="w-4 h-4 me-2" />
-            {refreshStats.isPending ? t("admin.refreshingStats", "Recomputing…") : t("admin.refreshStats", "Refresh stats")}
-          </Button>
-        </div>
-      </div>
+      <PageHeader
+        title={t("admin.dashboard")}
+        description={t("admin.overview")}
+        actions={
+          <>
+            <Button variant="outline" onClick={() => refetch()} className="flex items-center">
+              <RefreshCw className="w-4 h-4 me-2" />
+              {t("common.refresh")}
+            </Button>
+            <Button onClick={handleRefreshStats} disabled={refreshStats.isPending}>
+              <BarChart3 className="w-4 h-4 me-2" />
+              {refreshStats.isPending ? t("admin.refreshingStats", "Recomputing…") : t("admin.refreshStats", "Refresh stats")}
+            </Button>
+          </>
+        }
+      />
 
       {/* Key Metrics */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
-        {metricCards.map(({ title, icon: Icon, value, growth }) => (
-          <Card key={title}>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">{title}</CardTitle>
-              <Icon className="h-4 w-4 text-muted-foreground/40" />
-            </CardHeader>
-            <CardContent className="text-start">
-              <div className="text-2xl font-bold tabular-nums">{value}</div>
-              <div className="flex items-center text-sm text-green-600">
-                <TrendingUp className="w-4 h-4 me-1" />
-                {growth}
-              </div>
-            </CardContent>
-          </Card>
+        {metricCards.map((card) => (
+          <StatsCard key={card.title} {...card} />
         ))}
       </div>
 
@@ -374,7 +388,7 @@ export default function AdminDashboard() {
                     </p>
                     <span className="text-xs text-muted-foreground">{formatRelativeTime(new Date(activity.created_at))}</span>
                   </div>
-                  <Badge className="text-xs">{getActivityTypeColor(activity.action_type)}</Badge>
+                  <Badge className="text-xs">{activityTypeLabel(activity.action_type)}</Badge>
                 </div>
               ))}
             </div>

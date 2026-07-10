@@ -16,11 +16,12 @@ import {
     sortableKeyboardCoordinates,
     verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
-import { Plus, Search } from 'lucide-react';
+import { Globe, Map, MapPin, Plus, RefreshCw, Search, Star } from 'lucide-react';
 import { Button } from '@/ui/button';
 import { Input } from '@/ui/input';
 import { Card, CardContent } from '@/ui/card';
 import { Skeleton } from '@/ui/skeleton';
+import { PageHeader } from '@/ui/page-header';
 import { StatsGrid } from '@/ui/stats-card';
 import { EmptyState } from '@/ui/empty-state';
 import {
@@ -96,18 +97,22 @@ export default function DestinationManagement() {
         {
             title: t('adminDestinations.statTotal', 'Total Destinations'),
             value: destinations.length,
+            icon: MapPin,
         },
         {
             title: t('adminDestinations.statCountries', 'Countries'),
             value: destinations.filter((d) => d.kind === 'country').length,
+            icon: Globe,
         },
         {
             title: t('adminDestinations.statRegions', 'Regions'),
             value: destinations.filter((d) => d.kind === 'region').length,
+            icon: Map,
         },
         {
             title: t('adminDestinations.statFeatured', 'Featured'),
             value: destinations.filter((d) => d.featured).length,
+            icon: Star,
         },
     ];
 
@@ -202,7 +207,10 @@ export default function DestinationManagement() {
     if (isLoading) {
         return (
             <div className="space-y-6">
-                <Skeleton className="h-8 w-64" />
+                <div className="text-start">
+                    <Skeleton className="h-8 w-56 mb-2" />
+                    <Skeleton className="h-4 w-72" />
+                </div>
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                     {[1, 2, 3, 4].map((i) => (
                         <Skeleton key={i} className="h-28" />
@@ -215,24 +223,25 @@ export default function DestinationManagement() {
 
     return (
         <div className="space-y-6">
-            {/* Header */}
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                <div>
-                    <h1 className="text-2xl font-bold">
-                        {t('adminDestinations.title', 'Destination Management')}
-                    </h1>
-                    <p className="text-muted-foreground">
-                        {t(
-                            'adminDestinations.pageDescription',
-                            'Manage the destinations shown across the marketplace',
-                        )}
-                    </p>
-                </div>
-                <Button onClick={openCreate}>
-                    <Plus className="w-4 h-4 me-1" aria-hidden="true" />
-                    {t('adminDestinations.addDestination', 'Add Destination')}
-                </Button>
-            </div>
+            <PageHeader
+                title={t('adminDestinations.title', 'Destination Management')}
+                description={t(
+                    'adminDestinations.pageDescription',
+                    'Manage the destinations shown across the marketplace',
+                )}
+                actions={
+                    <>
+                        <Button variant="outline" onClick={() => refetch()} className="flex items-center">
+                            <RefreshCw className="w-4 h-4 me-2" />
+                            {t('common.refresh')}
+                        </Button>
+                        <Button onClick={openCreate}>
+                            <Plus className="w-4 h-4 me-1" aria-hidden="true" />
+                            {t('adminDestinations.addDestination', 'Add Destination')}
+                        </Button>
+                    </>
+                }
+            />
 
             {/* Stats */}
             <StatsGrid stats={stats} />
@@ -265,14 +274,14 @@ export default function DestinationManagement() {
             {/* Table */}
             {isError ? (
                 <EmptyState
-                    icon="map-pin"
+                    icon="alert-triangle"
                     title={t('adminDestinations.loadErrorTitle', 'Failed to load destinations')}
                     description={t(
                         'adminDestinations.loadErrorDescription',
                         'Something went wrong while loading destinations. Please try again.',
                     )}
                     action={{
-                        label: t('adminDestinations.retry', 'Retry'),
+                        label: t('common.retry', 'Retry'),
                         onClick: () => refetch(),
                     }}
                 />

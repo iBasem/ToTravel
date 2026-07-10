@@ -11,6 +11,7 @@ import { useTranslation } from "react-i18next";
 import { formatNumber, formatCurrency } from "@/lib/formatters";
 import { toast } from "sonner";
 import { exportCsv } from "@/features/admin/lib/csv";
+import { PageHeader } from "@/ui/page-header";
 
 export default function ReportsPage() {
   const { t, i18n } = useTranslation();
@@ -66,37 +67,37 @@ export default function ReportsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center justify-between">
-        <div className="text-start">
-          <h1 className="text-3xl font-bold">{t('common.reports')}</h1>
-          <p className="text-muted-foreground">{t('reports.subtitle')}</p>
-        </div>
-        <div className="flex items-center gap-3">
-          <Button variant="outline" onClick={() => refetch()} className="flex items-center">
-            <RefreshCw className="w-4 h-4 me-2" />
-            {t('common.refresh')}
-          </Button>
-          <Select value={String(monthsBack)} onValueChange={(v) => setMonthsBack(Number(v))}>
-            <SelectTrigger className="w-40">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="1">{t('reports.lastMonth')}</SelectItem>
-              <SelectItem value="3">{t('reports.last3Months')}</SelectItem>
-              <SelectItem value="6">{t('reports.last6Months')}</SelectItem>
-              <SelectItem value="12">{t('reports.lastYear')}</SelectItem>
-            </SelectContent>
-          </Select>
-          <Button className="flex items-center" onClick={handleExport}>
-            <Download className="w-4 h-4 me-2" />
-            {t('reports.exportReport')}
-          </Button>
-        </div>
-      </div>
+      <PageHeader
+        title={t('common.reports')}
+        description={t('reports.subtitle')}
+        actions={
+          <>
+            <Button variant="outline" onClick={() => refetch()} className="flex items-center">
+              <RefreshCw className="w-4 h-4 me-2" />
+              {t('common.refresh')}
+            </Button>
+            <Select value={String(monthsBack)} onValueChange={(v) => setMonthsBack(Number(v))}>
+              <SelectTrigger className="w-40" aria-label={t('reports.dateRange', 'Date range')}>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="1">{t('reports.lastMonth')}</SelectItem>
+                <SelectItem value="3">{t('reports.last3Months')}</SelectItem>
+                <SelectItem value="6">{t('reports.last6Months')}</SelectItem>
+                <SelectItem value="12">{t('reports.lastYear')}</SelectItem>
+              </SelectContent>
+            </Select>
+            <Button className="flex items-center" onClick={handleExport}>
+              <Download className="w-4 h-4 me-2" />
+              {t('reports.exportReport')}
+            </Button>
+          </>
+        }
+      />
 
       {isError && (
         <EmptyState
-          icon="AlertTriangle"
+          icon="alert-triangle"
           title={t('reports.loadErrorTitle', 'Could not load reports')}
           description={t('reports.loadErrorDescription', 'Something went wrong while loading report data. Please try again.')}
           action={{ label: t('common.retry', 'Retry'), onClick: () => refetch() }}

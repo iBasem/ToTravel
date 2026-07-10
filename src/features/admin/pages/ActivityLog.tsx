@@ -19,8 +19,9 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/ui/select";
+import { PageHeader } from "@/ui/page-header";
 import { EmptyState } from "@/ui/empty-state";
-import { Search, ChevronLeft, ChevronRight } from "lucide-react";
+import { Search, ChevronLeft, ChevronRight, RefreshCw } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { formatDate, formatRelativeTime } from "@/lib/formatters";
 import {
@@ -95,7 +96,10 @@ export default function ActivityLog() {
     if (isLoading) {
         return (
             <div className="space-y-6">
-                <Skeleton className="h-8 w-64" />
+                <div className="text-start">
+                    <Skeleton className="h-8 w-56 mb-2" />
+                    <Skeleton className="h-4 w-72" />
+                </div>
                 <div className="flex gap-3">
                     <Skeleton className="h-10 flex-1 max-w-md" />
                     <Skeleton className="h-10 w-44" />
@@ -107,18 +111,16 @@ export default function ActivityLog() {
 
     return (
         <div className="space-y-6">
-            {/* Header */}
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                <div>
-                    <h1 className="text-2xl font-bold">{t('adminActivityLog.title', 'Activity Log')}</h1>
-                    <p className="text-muted-foreground">
-                        {t('adminActivityLog.subtitle', 'Audit trail of every admin action on the platform')}
-                    </p>
-                </div>
-                <Button onClick={() => refetch()} variant="outline" size="sm">
-                    {t('common.refresh', 'Refresh')}
-                </Button>
-            </div>
+            <PageHeader
+                title={t('adminActivityLog.title', 'Activity Log')}
+                description={t('adminActivityLog.subtitle', 'Audit trail of every admin action on the platform')}
+                actions={
+                    <Button variant="outline" onClick={() => refetch()} className="flex items-center">
+                        <RefreshCw className="w-4 h-4 me-2" />
+                        {t('common.refresh')}
+                    </Button>
+                }
+            />
 
             {/* Filters */}
             <div className="flex flex-col sm:flex-row gap-3">
@@ -150,14 +152,14 @@ export default function ActivityLog() {
             {/* Table */}
             {error ? (
                 <EmptyState
-                    icon="chart-bar"
+                    icon="alert-triangle"
                     title={t('common.error')}
                     description={t('adminActivityLog.loadError', 'Failed to load activity log')}
                     action={{ label: t('common.retry', 'Retry'), onClick: () => refetch() }}
                 />
             ) : entries.length === 0 ? (
                 <EmptyState
-                    icon="chart-bar"
+                    icon="history"
                     title={t('adminActivityLog.noEntries', 'No activity found')}
                     description={t('adminActivityLog.noEntriesDesc', 'No admin actions match the current filters')}
                 />

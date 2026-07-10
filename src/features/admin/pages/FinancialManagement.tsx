@@ -22,7 +22,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/ui/dialog";
-import { DollarSign, TrendingUp, CreditCard, Building2, RefreshCw, Download } from "lucide-react";
+import { DollarSign, TrendingUp, CreditCard, Building2, RefreshCw, Download, CheckCircle2 } from "lucide-react";
+import { PageHeader } from "@/ui/page-header";
+import { StatsGrid } from "@/ui/stats-card";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from "recharts";
 import { useAdminFinancials, useProcessPayouts, type AdminPayout } from "@/features/admin/hooks/useAdminFinancials";
 import { toast } from "sonner";
@@ -152,7 +154,7 @@ export default function FinancialManagement() {
   if (isError) {
     return (
       <EmptyState
-        icon="AlertTriangle"
+        icon="alert-triangle"
         title={t("financials.loadErrorTitle", "Could not load financial data")}
         description={t("financials.loadErrorDescription", "Something went wrong while loading financial data. Please try again.")}
         action={{ label: t("common.retry", "Retry"), onClick: () => refetch() }}
@@ -164,73 +166,56 @@ export default function FinancialManagement() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center justify-between">
-        <div className="text-start">
-          <h1 className="text-3xl font-bold">{t("financials.title")}</h1>
-          <p className="text-muted-foreground">{t("financials.subtitle")}</p>
-        </div>
-        <div className="flex items-center gap-2">
-          <Button variant="outline" onClick={() => refetch()} className="flex items-center">
-            <RefreshCw className="w-4 h-4 me-2" />
-            {t("common.refresh")}
-          </Button>
-          <Button onClick={handleExportReport}>
-            <Download className="w-4 h-4 me-2" />
-            {t("financials.generateReport")}
-          </Button>
-        </div>
-      </div>
+      <PageHeader
+        title={t("financials.title")}
+        description={t("financials.subtitle")}
+        actions={
+          <>
+            <Button variant="outline" onClick={() => refetch()} className="flex items-center">
+              <RefreshCw className="w-4 h-4 me-2" />
+              {t("common.refresh")}
+            </Button>
+            <Button onClick={handleExportReport}>
+              <Download className="w-4 h-4 me-2" />
+              {t("financials.generateReport")}
+            </Button>
+          </>
+        }
+      />
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">{t("financials.totalRevenue")}</CardTitle>
-            <DollarSign className="h-4 w-4 text-muted-foreground/40" />
-          </CardHeader>
-          <CardContent className="text-start">
-            <div className="text-2xl font-bold tabular-nums">{formatCurrency(stats.totalRevenue)}</div>
-            <div className="flex items-center text-sm text-green-600">
-              <TrendingUp className="w-4 h-4 me-1" />
-              {t("financials.fromConfirmedBookings")}
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">{t("financials.platformCommission")}</CardTitle>
-            <CreditCard className="h-4 w-4 text-muted-foreground/40" />
-          </CardHeader>
-          <CardContent className="text-start">
-            <div className="text-2xl font-bold tabular-nums">{formatCurrency(stats.platformCommission)}</div>
-            <div className="text-sm text-muted-foreground">{t("financials.commissionRateDesc")}</div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">{t("financials.pendingPayouts")}</CardTitle>
-            <Building2 className="h-4 w-4 text-muted-foreground/40" />
-          </CardHeader>
-          <CardContent className="text-start">
-            <div className="text-2xl font-bold tabular-nums">{formatCurrency(stats.pendingPayouts)}</div>
-            <div className="text-sm text-muted-foreground">
-              {stats.pendingPayoutsCount} {t("financials.agenciesPending")}
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">{t("financials.processedPayouts")}</CardTitle>
-            <Building2 className="h-4 w-4 text-muted-foreground/40" />
-          </CardHeader>
-          <CardContent className="text-start">
-            <div className="text-2xl font-bold tabular-nums">{formatCurrency(stats.processedPayouts)}</div>
-            <div className="text-sm text-muted-foreground">{t("financials.totalProcessed")}</div>
-          </CardContent>
-        </Card>
-      </div>
+      <StatsGrid
+        stats={[
+          {
+            title: t("financials.totalRevenue"),
+            value: formatCurrency(stats.totalRevenue),
+            icon: DollarSign,
+            footer: (
+              <div className="flex items-center text-sm text-green-600 dark:text-green-400">
+                <TrendingUp className="w-4 h-4 me-1" aria-hidden="true" />
+                {t("financials.fromConfirmedBookings")}
+              </div>
+            ),
+          },
+          {
+            title: t("financials.platformCommission"),
+            value: formatCurrency(stats.platformCommission),
+            icon: CreditCard,
+            description: t("financials.commissionRateDesc"),
+          },
+          {
+            title: t("financials.pendingPayouts"),
+            value: formatCurrency(stats.pendingPayouts),
+            icon: Building2,
+            description: `${stats.pendingPayoutsCount} ${t("financials.agenciesPending")}`,
+          },
+          {
+            title: t("financials.processedPayouts"),
+            value: formatCurrency(stats.processedPayouts),
+            icon: CheckCircle2,
+            description: t("financials.totalProcessed"),
+          },
+        ]}
+      />
 
       <Card>
         <CardHeader className="text-start">

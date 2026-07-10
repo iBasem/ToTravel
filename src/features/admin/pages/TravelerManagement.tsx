@@ -27,7 +27,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/ui/dialog";
-import { Search, Filter, MoreHorizontal, Eye, UserX, UserCheck, RefreshCw, Download, Phone } from "lucide-react";
+import { Search, Filter, MoreHorizontal, Eye, UserX, UserCheck, RefreshCw, Download, Phone, Users, TrendingUp } from "lucide-react";
 import {
   useAdminTravelers,
   useUpdateTravelerStatus,
@@ -142,7 +142,7 @@ export default function TravelerManagement() {
   if (isError) {
     return (
       <EmptyState
-        icon="AlertTriangle"
+        icon="alert-triangle"
         title={t("travelers.loadErrorTitle", "Could not load travelers")}
         description={t("travelers.loadErrorDescription", "Something went wrong while loading travelers. Please try again.")}
         action={{ label: t("common.retry", "Retry"), onClick: () => refetch() }}
@@ -172,10 +172,10 @@ export default function TravelerManagement() {
       {/* Stats Cards */}
       <StatsGrid
         stats={[
-          { title: t("travelers.totalTravelers"), value: formatNumber(stats.total) },
-          { title: t("travelers.activeUsers"), value: formatNumber(stats.active) },
-          { title: t("common.suspended"), value: formatNumber(stats.suspended) },
-          { title: t("travelers.newThisMonth"), value: formatNumber(stats.newThisMonth) },
+          { title: t("travelers.totalTravelers"), value: formatNumber(stats.total), icon: Users },
+          { title: t("travelers.activeUsers"), value: formatNumber(stats.active), icon: UserCheck },
+          { title: t("common.suspended"), value: formatNumber(stats.suspended), icon: UserX },
+          { title: t("travelers.newThisMonth"), value: formatNumber(stats.newThisMonth), icon: TrendingUp },
         ]}
       />
 

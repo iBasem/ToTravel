@@ -14,13 +14,14 @@ import { Save, Users, Shield, Edit } from "lucide-react";
 import {
   useAdminSettings,
   useSavePlatformSettings,
+  adminSettingsKey,
   type PlatformSettingsValues,
   type EmailTemplate,
 } from "@/features/admin/hooks/useAdminSettings";
 import { useUpdateContent, type ContentPageInput } from "@/features/admin/hooks/useAdminContent";
 import { ContentFormDialog } from "@/features/admin/components/ContentFormDialog";
 import { useQueryClient } from "@tanstack/react-query";
-import { adminSettingsKey } from "@/features/admin/hooks/useAdminSettings";
+import { PageHeader } from "@/ui/page-header";
 
 export default function AdminSettings() {
   const { t } = useTranslation();
@@ -87,7 +88,7 @@ export default function AdminSettings() {
   if (isError) {
     return (
       <EmptyState
-        icon="AlertTriangle"
+        icon="alert-triangle"
         title={t("adminSettings.loadError", "Failed to load settings")}
         description={t("adminSettings.loadErrorDescription", "Something went wrong while loading platform settings. Please try again.")}
         action={{ label: t("common.retry", "Retry"), onClick: () => refetch() }}
@@ -97,16 +98,16 @@ export default function AdminSettings() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <div className="text-start">
-          <h1 className="text-2xl font-bold">{t("adminSettings.title", "Platform Settings")}</h1>
-          <p className="text-muted-foreground">{t("adminSettings.subtitle", "Configure platform-wide settings")}</p>
-        </div>
-        <Button onClick={handleSave} disabled={saveSettings.isPending}>
-          <Save className="me-2 h-4 w-4" />
-          {saveSettings.isPending ? t("adminSettings.saving", "Saving...") : t("adminSettings.saveAll", "Save All")}
-        </Button>
-      </div>
+      <PageHeader
+        title={t("adminSettings.title", "Platform Settings")}
+        description={t("adminSettings.subtitle", "Configure platform-wide settings")}
+        actions={
+          <Button onClick={handleSave} disabled={saveSettings.isPending}>
+            <Save className="me-2 h-4 w-4" />
+            {saveSettings.isPending ? t("adminSettings.saving", "Saving...") : t("adminSettings.saveAll", "Save All")}
+          </Button>
+        }
+      />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Platform Settings Card */}

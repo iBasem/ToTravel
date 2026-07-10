@@ -28,7 +28,9 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from "@/ui/alert-dialog";
-import { Search, MoreHorizontal, Trash2, Star, TrendingUp, MessageSquare, Calendar } from "lucide-react";
+import { Search, MoreHorizontal, Trash2, Star, TrendingUp, MessageSquare, Calendar, RefreshCw } from "lucide-react";
+import { PageHeader } from "@/ui/page-header";
+import { StatsCard } from "@/ui/stats-card";
 import { useAdminReviews, useDeleteReview, type AdminReview } from "@/features/admin/hooks/useAdminReviews";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
@@ -104,7 +106,7 @@ export default function ReviewManagement() {
     if (isError) {
         return (
             <EmptyState
-                icon="AlertTriangle"
+                icon="alert-triangle"
                 title={t('adminDashboard.reviewsLoadError', 'Could not load reviews')}
                 description={t('adminDashboard.reviewsLoadErrorDesc', 'Something went wrong while loading reviews. Please try again.')}
                 action={{ label: t('common.retry', 'Retry'), onClick: () => refetch() }}
@@ -114,51 +116,35 @@ export default function ReviewManagement() {
 
     return (
         <div className="space-y-6">
-            {/* Header */}
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                <div>
-                    <h1 className="text-2xl font-bold">{t('adminDashboard.reviewManagement', 'Review Management')}</h1>
-                    <p className="text-muted-foreground">{t('adminDashboard.reviewManagementDesc', 'Monitor and moderate customer reviews')}</p>
-                </div>
-                <Button onClick={() => refetch()} variant="outline" size="sm">
-                    {t('adminDashboard.refresh', 'Refresh')}
-                </Button>
-            </div>
+            <PageHeader
+                title={t('adminDashboard.reviewManagement', 'Review Management')}
+                description={t('adminDashboard.reviewManagementDesc', 'Monitor and moderate customer reviews')}
+                actions={
+                    <Button onClick={() => refetch()} variant="outline" className="flex items-center">
+                        <RefreshCw className="w-4 h-4 me-2" />
+                        {t('common.refresh', 'Refresh')}
+                    </Button>
+                }
+            />
 
             {/* Stats Cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <Card>
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">{t('adminDashboard.totalReviews', 'Total Reviews')}</CardTitle>
-                        <MessageSquare className="h-4 w-4 text-muted-foreground" />
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-2xl font-bold">{stats.total}</div>
-                    </CardContent>
-                </Card>
-
-                <Card>
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">{t('adminDashboard.averageRating', 'Average Rating')}</CardTitle>
-                        <Star className="h-4 w-4 text-yellow-400 fill-yellow-400" />
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-2xl font-bold">{stats.averageRating}</div>
-                        <div className="flex items-center gap-0.5 mt-1">
-                            {renderStars(Math.round(stats.averageRating))}
-                        </div>
-                    </CardContent>
-                </Card>
-
-                <Card>
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">{t('adminDashboard.thisMonth', 'This Month')}</CardTitle>
-                        <Calendar className="h-4 w-4 text-muted-foreground" />
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-2xl font-bold">{stats.thisMonth}</div>
-                    </CardContent>
-                </Card>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <StatsCard
+                    title={t('adminDashboard.totalReviews', 'Total Reviews')}
+                    value={stats.total}
+                    icon={MessageSquare}
+                />
+                <StatsCard
+                    title={t('adminDashboard.averageRating', 'Average Rating')}
+                    value={stats.averageRating}
+                    icon={Star}
+                    footer={<div className="flex items-center gap-0.5 mt-1">{renderStars(Math.round(stats.averageRating))}</div>}
+                />
+                <StatsCard
+                    title={t('adminDashboard.thisMonth', 'This Month')}
+                    value={stats.thisMonth}
+                    icon={Calendar}
+                />
 
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">

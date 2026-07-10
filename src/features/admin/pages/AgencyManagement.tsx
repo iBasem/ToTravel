@@ -30,8 +30,10 @@ import {
 } from "@/ui/dialog";
 import {
   Search, Filter, MoreHorizontal, Eye, Edit, CheckCircle, XCircle,
-  Building2, RefreshCw, Ban, RotateCcw, Star, Globe, Phone, MapPin, FileBadge,
+  Building2, RefreshCw, Ban, RotateCcw, Star, Globe, Phone, MapPin, FileBadge, Clock,
 } from "lucide-react";
+import { PageHeader } from "@/ui/page-header";
+import { StatsGrid } from "@/ui/stats-card";
 import { useForm } from "react-hook-form";
 import {
   useAdminAgencies,
@@ -135,7 +137,7 @@ export default function AgencyManagement() {
   if (isError) {
     return (
       <EmptyState
-        icon="AlertTriangle"
+        icon="alert-triangle"
         title={t("agencyManagement.loadErrorTitle", "Could not load agencies")}
         description={t("agencyManagement.loadErrorDescription", "Something went wrong while loading agencies. Please try again.")}
         action={{ label: t("common.retry", "Retry"), onClick: () => refetch() }}
@@ -145,42 +147,33 @@ export default function AgencyManagement() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center justify-between">
-        <div className="text-start">
-          <h1 className="text-3xl font-bold">{t("agencyManagement.title")}</h1>
-          <p className="text-muted-foreground">{t("agencyManagement.subtitle")}</p>
-        </div>
-        <div className="flex items-center gap-2">
-          <Button variant="outline" onClick={() => refetch()} className="flex items-center">
-            <RefreshCw className="w-4 h-4 me-2" />
-            {t("common.refresh")}
-          </Button>
-          <Button onClick={() => setStatusFilter("pending")}>
-            {t("agencyManagement.applications")}
-            {stats.pending > 0 && (
-              <Badge variant="secondary" className="ms-2">{stats.pending}</Badge>
-            )}
-          </Button>
-        </div>
-      </div>
+      <PageHeader
+        title={t("agencyManagement.title")}
+        description={t("agencyManagement.subtitle")}
+        actions={
+          <>
+            <Button variant="outline" onClick={() => refetch()} className="flex items-center">
+              <RefreshCw className="w-4 h-4 me-2" />
+              {t("common.refresh")}
+            </Button>
+            <Button onClick={() => setStatusFilter("pending")}>
+              {t("agencyManagement.applications")}
+              {stats.pending > 0 && (
+                <Badge variant="secondary" className="ms-2">{stats.pending}</Badge>
+              )}
+            </Button>
+          </>
+        }
+      />
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        {[
-          { label: t("agencyManagement.totalAgencies"), value: stats.total },
-          { label: t("common.active", "Active"), value: stats.active },
-          { label: t("agencyManagement.pendingApproval"), value: stats.pending },
-          { label: t("agencyManagement.totalToursListed"), value: formatNumber(stats.totalPackages) },
-        ].map((stat) => (
-          <Card key={stat.label}>
-            <CardHeader className="pb-2 text-start">
-              <CardTitle className="text-sm font-medium text-muted-foreground">{stat.label}</CardTitle>
-            </CardHeader>
-            <CardContent className="text-start">
-              <div className="text-2xl font-bold tabular-nums">{stat.value}</div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+      <StatsGrid
+        stats={[
+          { title: t("agencyManagement.totalAgencies"), value: formatNumber(stats.total), icon: Building2 },
+          { title: t("common.active", "Active"), value: formatNumber(stats.active), icon: CheckCircle },
+          { title: t("agencyManagement.pendingApproval"), value: formatNumber(stats.pending), icon: Clock },
+          { title: t("agencyManagement.totalToursListed"), value: formatNumber(stats.totalPackages), icon: Star },
+        ]}
+      />
 
       {/* Filters and Search */}
       <Card>

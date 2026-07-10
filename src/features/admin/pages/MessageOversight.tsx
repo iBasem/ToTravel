@@ -14,9 +14,10 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from "@/ui/alert-dialog";
+import { PageHeader } from "@/ui/page-header";
 import { StatsGrid } from "@/ui/stats-card";
 import { EmptyState } from "@/ui/empty-state";
-import { Search, ArrowRight, Trash2, ChevronDown, ChevronUp } from "lucide-react";
+import { Search, ArrowRight, Trash2, ChevronDown, ChevronUp, RefreshCw, MessageSquare, Mail, Users } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { formatDate } from "@/lib/formatters";
@@ -107,7 +108,10 @@ export default function MessageOversight() {
     if (isLoading) {
         return (
             <div className="space-y-6">
-                <Skeleton className="h-8 w-64" />
+                <div className="text-start">
+                    <Skeleton className="h-8 w-56 mb-2" />
+                    <Skeleton className="h-4 w-72" />
+                </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     {[1, 2, 3].map((i) => <Skeleton key={i} className="h-28" />)}
                 </div>
@@ -117,25 +121,23 @@ export default function MessageOversight() {
     }
 
     const statCards = [
-        { title: t('adminMessages.totalMessages', 'Total Messages'), value: stats.total },
-        { title: t('adminMessages.unreadMessages', 'Unread'), value: stats.unread },
-        { title: t('adminMessages.conversations', 'Conversations'), value: stats.conversations },
+        { title: t('adminMessages.totalMessages', 'Total Messages'), value: stats.total, icon: MessageSquare },
+        { title: t('adminMessages.unreadMessages', 'Unread'), value: stats.unread, icon: Mail },
+        { title: t('adminMessages.conversations', 'Conversations'), value: stats.conversations, icon: Users },
     ];
 
     return (
         <div className="space-y-6">
-            {/* Header */}
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                <div className="text-start">
-                    <h1 className="text-2xl font-bold">{t('adminMessages.title', 'Message Oversight')}</h1>
-                    <p className="text-muted-foreground">
-                        {t('adminMessages.description', 'Monitor conversations between travelers and agencies')}
-                    </p>
-                </div>
-                <Button onClick={() => refetch()} variant="outline" size="sm">
-                    {t('common.refresh', 'Refresh')}
-                </Button>
-            </div>
+            <PageHeader
+                title={t('adminMessages.title', 'Message Oversight')}
+                description={t('adminMessages.description', 'Monitor conversations between travelers and agencies')}
+                actions={
+                    <Button variant="outline" onClick={() => refetch()} className="flex items-center">
+                        <RefreshCw className="w-4 h-4 me-2" />
+                        {t('common.refresh')}
+                    </Button>
+                }
+            />
 
             {/* Stats */}
             <StatsGrid stats={statCards} className="md:grid-cols-3" />
@@ -175,7 +177,7 @@ export default function MessageOversight() {
             {/* List */}
             {isError ? (
                 <EmptyState
-                    icon="message-square"
+                    icon="alert-triangle"
                     title={t('adminMessages.errorTitle', 'Could not load messages')}
                     description={t('adminMessages.errorDescription', 'Something went wrong while loading messages. Please try again.')}
                     action={{

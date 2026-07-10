@@ -40,7 +40,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/ui/alert-dialog";
-import { Search, Filter, MoreHorizontal, Eye, XCircle, RefreshCw, Download, Undo2 } from "lucide-react";
+import { Search, Filter, MoreHorizontal, Eye, XCircle, RefreshCw, Download, Undo2, BookOpen, CheckCircle2, Clock, Calendar } from "lucide-react";
 import {
   useAdminBookings,
   useCancelBooking,
@@ -197,7 +197,7 @@ export default function AdminBookingManagement() {
   if (isError) {
     return (
       <EmptyState
-        icon="AlertTriangle"
+        icon="alert-triangle"
         title={t("adminBookings.loadErrorTitle", "Could not load bookings")}
         description={t("adminBookings.loadErrorDescription", "Something went wrong while loading bookings. Please try again.")}
         action={{ label: t("common.retry", "Retry"), onClick: () => refetch() }}
@@ -226,10 +226,10 @@ export default function AdminBookingManagement() {
 
       <StatsGrid
         stats={[
-          { title: t("adminBookings.totalBookings"), value: formatNumber(stats.total) },
-          { title: t("adminBookings.confirmedBookings", "Confirmed"), value: formatNumber(stats.confirmed) },
-          { title: t("common.pending"), value: formatNumber(stats.pending) },
-          { title: t("adminBookings.thisMonth", "This month"), value: formatNumber(stats.thisMonth) },
+          { title: t("adminBookings.totalBookings"), value: formatNumber(stats.total), icon: BookOpen },
+          { title: t("adminBookings.confirmedBookings", "Confirmed"), value: formatNumber(stats.confirmed), icon: CheckCircle2 },
+          { title: t("common.pending"), value: formatNumber(stats.pending), icon: Clock },
+          { title: t("adminBookings.thisMonth", "This month"), value: formatNumber(stats.thisMonth), icon: Calendar },
         ]}
       />
 

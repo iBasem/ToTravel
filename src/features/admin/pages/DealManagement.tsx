@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/ui/card";
+import { Card, CardContent } from "@/ui/card";
 import { Button } from "@/ui/button";
 import { Input } from "@/ui/input";
 import { Badge } from "@/ui/badge";
@@ -22,7 +22,9 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from "@/ui/alert-dialog";
-import { Search, BadgePercent, Clock, CheckCircle2, Radio, Check, X } from "lucide-react";
+import { Search, BadgePercent, Clock, CheckCircle2, Radio, Check, X, RefreshCw } from "lucide-react";
+import { PageHeader } from "@/ui/page-header";
+import { StatsGrid } from "@/ui/stats-card";
 import { useAdminDeals, useSetDealApproval, type AdminDeal } from "@/features/admin/hooks/useAdminDeals";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
@@ -103,40 +105,28 @@ export default function DealManagement() {
         );
     }
 
-    const statCards = [
-        { title: t('adminDeals.total', 'Total Deals'), value: stats.total, icon: BadgePercent },
-        { title: t('adminDeals.pending', 'Pending Review'), value: stats.pending, icon: Clock },
-        { title: t('adminDeals.approved', 'Approved'), value: stats.approved, icon: CheckCircle2 },
-        { title: t('adminDeals.liveNow', 'Live Now'), value: stats.liveNow, icon: Radio },
-    ];
-
     return (
         <div className="space-y-6">
-            {/* Header */}
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                <div>
-                    <h1 className="text-2xl font-bold">{t('adminDeals.title', 'Deal Management')}</h1>
-                    <p className="text-muted-foreground">{t('adminDeals.description', 'Review and approve agency promotional deals')}</p>
-                </div>
-                <Button onClick={() => refetch()} variant="outline" size="sm">
-                    {t('common.refresh', 'Refresh')}
-                </Button>
-            </div>
+            <PageHeader
+                title={t('adminDeals.title', 'Deal Management')}
+                description={t('adminDeals.description', 'Review and approve agency promotional deals')}
+                actions={
+                    <Button onClick={() => refetch()} variant="outline" className="flex items-center">
+                        <RefreshCw className="w-4 h-4 me-2" />
+                        {t('common.refresh', 'Refresh')}
+                    </Button>
+                }
+            />
 
             {/* Stats */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                {statCards.map(({ title, value, icon: Icon }) => (
-                    <Card key={title}>
-                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle className="text-sm font-medium">{title}</CardTitle>
-                            <Icon className="h-4 w-4 text-muted-foreground" />
-                        </CardHeader>
-                        <CardContent>
-                            <div className="text-2xl font-bold">{value}</div>
-                        </CardContent>
-                    </Card>
-                ))}
-            </div>
+            <StatsGrid
+                stats={[
+                    { title: t('adminDeals.total', 'Total Deals'), value: stats.total, icon: BadgePercent },
+                    { title: t('adminDeals.pending', 'Pending Review'), value: stats.pending, icon: Clock },
+                    { title: t('adminDeals.approved', 'Approved'), value: stats.approved, icon: CheckCircle2 },
+                    { title: t('adminDeals.liveNow', 'Live Now'), value: stats.liveNow, icon: Radio },
+                ]}
+            />
 
             {/* Filters */}
             <div className="flex flex-col sm:flex-row gap-3">
