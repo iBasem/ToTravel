@@ -1,23 +1,40 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/card";
 import { Button } from "@/ui/button";
 import { Input } from "@/ui/input";
-import { Search, Filter } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/ui/select";
+import { Search, MessageSquare } from "lucide-react";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useAgencyTravelers } from "@/features/agency/hooks/useAgencyTravelers";
 import { LoadingSpinner } from "@/ui/loading-spinner";
 import { EmptyState } from "@/ui/empty-state";
 
+type SortKey = 'recent' | 'bookings' | 'name';
+
 export default function Travelers() {
   const [searchTerm, setSearchTerm] = useState("");
+  const [sortBy, setSortBy] = useState<SortKey>('recent');
+  const navigate = useNavigate();
   const { t } = useTranslation();
   const { travelers, loading, error } = useAgencyTravelers();
 
-  // Filter travelers by search term
-  const filteredTravelers = travelers.filter(traveler =>
-    traveler.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (traveler.email && traveler.email.toLowerCase().includes(searchTerm.toLowerCase()))
-  );
+  // Filter travelers by search term, then sort
+  const filteredTravelers = travelers
+    .filter(traveler =>
+      traveler.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (traveler.email && traveler.email.toLowerCase().includes(searchTerm.toLowerCase()))
+    )
+    .sort((a, b) => {
+      switch (sortBy) {
+        case 'bookings':
+          return b.totalBookings - a.totalBookings;
+        case 'name':
+          return a.name.localeCompare(b.name);
+        default:
+          return (b.lastTripDate || '').localeCompare(a.lastTripDate || '');
+      }
+    });
 
   if (loading) {
     return (
@@ -53,10 +70,16 @@ export default function Travelers() {
             className="ps-10"
           />
         </div>
-        <Button variant="outline" className="flex items-center gap-2">
-          <Filter className="w-4 h-4" />
-          {t('agencyDashboard.filter')}
-        </Button>
+        <Select value={sortBy} onValueChange={(value) => setSortBy(value as SortKey)}>
+          <SelectTrigger className="w-full sm:w-52" aria-label={t('agencyDashboard.sortBy', 'Sort by')}>
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="recent">{t('agencyDashboard.sortRecentTrip', 'Most recent trip')}</SelectItem>
+            <SelectItem value="bookings">{t('agencyDashboard.sortMostBookings', 'Most bookings')}</SelectItem>
+            <SelectItem value="name">{t('agencyDashboard.sortByName', 'Name (A–Z)')}</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
 
       {filteredTravelers.length === 0 ? (
@@ -90,11 +113,22 @@ export default function Travelers() {
                       </div>
                     </div>
                   </div>
-                  <div className="text-end">
-                    <p className="font-medium">{traveler.totalBookings} {t('agencyDashboard.bookings')}</p>
-                    {traveler.lastTrip && (
-                      <p className="text-sm text-muted-foreground">{traveler.lastTrip}</p>
-                    )}
+                  <div className="flex items-center justify-between sm:justify-end gap-4">
+                    <div className="text-end">
+                      <p className="font-medium">{traveler.totalBookings} {t('agencyDashboard.bookings')}</p>
+                      {traveler.lastTrip && (
+                        <p className="text-sm text-muted-foreground">{traveler.lastTrip}</p>
+                      )}
+                    </div>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="flex items-center gap-1.5"
+                      onClick={() => navigate(`/travel_agency/messages?to=${traveler.id}`)}
+                    >
+                      <MessageSquare className="w-3.5 h-3.5" />
+                      {t('agencyDashboard.message')}
+                    </Button>
                   </div>
                 </div>
               ))}

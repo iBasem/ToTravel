@@ -11,6 +11,7 @@ export interface Traveler {
     phone: string | null;
     totalBookings: number;
     lastTrip: string | null;
+    lastTripDate: string | null;
 }
 
 export function useAgencyTravelers() {
@@ -37,6 +38,7 @@ export function useAgencyTravelers() {
               id,
               first_name,
               last_name,
+              email,
               phone,
               avatar_url
             ),
@@ -59,10 +61,11 @@ export function useAgencyTravelers() {
                         travelerMap.set(travelerId, {
                             id: travelerId,
                             name: `${booking.traveler.first_name ?? ''} ${booking.traveler.last_name ?? ''}`.trim() || t('common.unknown', 'Unknown'),
-                            email: t('agencyDashboard.privateEmail', 'Private'), // Email is often not directly exposed in public profile unless verified
+                            email: booking.traveler.email,
                             phone: booking.traveler.phone,
                             totalBookings: 0,
-                            lastTrip: null
+                            lastTrip: null,
+                            lastTripDate: null
                         });
                     }
 
@@ -72,6 +75,7 @@ export function useAgencyTravelers() {
                     // Since we ordered by date desc, the first time we see a traveler, it's their latest trip
                     if (!traveler.lastTrip) {
                         traveler.lastTrip = `${booking.packages.title} - ${formatDate(booking.booking_date, 'PP')}`;
+                        traveler.lastTripDate = booking.booking_date;
                     }
                 });
 
@@ -86,7 +90,9 @@ export function useAgencyTravelers() {
         };
 
         fetchTravelers();
-    }, [user]);
+        // Key on the id, not the object (auth events re-create the user object).
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [user?.id]);
 
     return { travelers, loading, error };
 }

@@ -144,7 +144,9 @@ export function useAgencyMessages() {
 
     useEffect(() => {
         fetchConversations();
-    }, [user]);
+        // Key on the id, not the object (auth events re-create the user object).
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [user?.id]);
 
     // Subscribe to realtime messages
     useEffect(() => {
@@ -175,7 +177,8 @@ export function useAgencyMessages() {
         return () => {
             supabase.removeChannel(channel);
         };
-    }, [user, selectedConversation]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [user?.id, selectedConversation]);
 
     return {
         conversations,

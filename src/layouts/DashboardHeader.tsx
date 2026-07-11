@@ -1,9 +1,12 @@
+import { useState } from "react";
 import { Search, Bell, ChevronDown, Menu } from "lucide-react";
 import { Input } from "@/ui/input";
 import { Button } from "@/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/ui/avatar";
 import { Sheet, SheetContent, SheetTrigger } from "@/ui/sheet";
+import { SidebarTrigger } from "@/ui/sidebar";
 import { useAuth } from "@/features/auth/context/AuthContext";
+import { useUnreadMessages } from "@/features/agency/hooks/useUnreadMessages";
 import { useTranslation } from "react-i18next";
 import { LanguageSwitcher } from "@/ui/LanguageSwitcher";
 import { ThemeToggle } from "@/ui/ThemeToggle";
@@ -15,7 +18,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/ui/dropdown-menu";
-import { NavLink, useLocation } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import {
   BarChart3,
   Package,
@@ -30,10 +33,20 @@ import {
 } from "lucide-react";
 
 export function DashboardHeader() {
-  const { user, profile, signOut } = useAuth();
-  const location = useLocation();
+  const { profile, signOut } = useAuth();
+  const navigate = useNavigate();
+  const { unreadCount } = useUnreadMessages();
+  const [searchTerm, setSearchTerm] = useState("");
   const { t, i18n } = useTranslation();
   const isRTL = i18n.language === 'ar' || i18n.dir() === 'rtl';
+
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const q = searchTerm.trim();
+    if (q) {
+      navigate(`/travel_agency/packages?q=${encodeURIComponent(q)}`);
+    }
+  };
 
   const menuItems = [
     { title: t('dashboard.overview'), url: "/travel_agency", icon: BarChart3 },
@@ -118,31 +131,25 @@ export function DashboardHeader() {
                   </div>
                 </div>
 
-                {/* Upgrade Section */}
-                <div className="mt-auto p-4 border-t border-border">
-                  <div className="bg-primary/5 border border-primary/20 rounded-xl p-4 text-start">
-                    <h3 className="font-semibold text-primary mb-2 text-sm">
-                      {t('agencyDashboard.enhanceExperience')}
-                    </h3>
-                    <p className="text-xs text-muted-foreground mb-3">
-                      {t('agencyDashboard.unlockPremium')}
-                    </p>
-                    <button className="w-full bg-primary text-primary-foreground px-4 py-2.5 rounded-lg text-xs font-semibold hover:bg-primary/90 transition-colors duration-200 shadow-sm">
-                      {t('agencyDashboard.upgradeNow')}
-                    </button>
-                  </div>
-                </div>
               </div>
             </SheetContent>
           </Sheet>
 
-          <div className="relative flex-1 max-w-xs sm:max-w-md">
+          {/* Desktop sidebar collapse toggle */}
+          <SidebarTrigger className="hidden lg:flex" />
+
+          <form onSubmit={handleSearchSubmit} className="relative flex-1 max-w-xs sm:max-w-md">
             <Search className="absolute top-1/2 transform -translate-y-1/2 text-muted-foreground w-3 h-3 sm:w-4 sm:h-4 start-2 sm:start-3" />
             <Input
-              placeholder={t('agencyDashboard.searchAnything')}
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') handleSearchSubmit(e);
+              }}
+              placeholder={t('agencyDashboard.searchPackages')}
               className="bg-muted border-0 h-8 sm:h-9 lg:h-10 text-xs sm:text-sm ps-7 sm:ps-10"
             />
-          </div>
+          </form>
         </div>
 
         {/* Right side controls */}
@@ -153,12 +160,20 @@ export function DashboardHeader() {
           {/* Theme Toggle */}
           <ThemeToggle />
 
-          {/* Notifications */}
-          <Button variant="ghost" size="sm" className="relative p-1 sm:p-2" aria-label={t('agencyDashboard.notifications', 'Notifications')}>
+          {/* Notifications: unread messages */}
+          <Button
+            variant="ghost"
+            size="sm"
+            className="relative p-1 sm:p-2"
+            aria-label={t('agencyDashboard.notifications', 'Notifications')}
+            onClick={() => navigate('/travel_agency/messages')}
+          >
             <Bell className="w-3 h-3 sm:w-4 sm:h-4 lg:w-5 lg:h-5" />
-            <span className="absolute w-2.5 h-2.5 sm:w-3 sm:h-3 lg:w-4 lg:h-4 bg-destructive text-destructive-foreground text-[8px] sm:text-[10px] lg:text-xs rounded-full flex items-center justify-center -top-0.5 end-0 sm:-top-1 sm:end-0">
-              1
-            </span>
+            {unreadCount > 0 && (
+              <span className="absolute min-w-[10px] h-2.5 sm:min-w-[12px] sm:h-3 lg:min-w-[16px] lg:h-4 px-0.5 bg-destructive text-destructive-foreground text-[8px] sm:text-[10px] lg:text-xs rounded-full flex items-center justify-center -top-0.5 end-0 sm:-top-1 sm:end-0 tabular-nums">
+                {unreadCount > 9 ? '9+' : unreadCount}
+              </span>
+            )}
           </Button>
 
           {/* User menu */}
@@ -179,8 +194,6 @@ export function DashboardHeader() {
             <DropdownMenuContent align={isRTL ? "start" : "end"} className="w-48 sm:w-56">
               <DropdownMenuLabel>{t('agencyDashboard.myAccount')}</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>{t('agencyDashboard.profile')}</DropdownMenuItem>
-              <DropdownMenuItem>{t('dashboard.settings')}</DropdownMenuItem>
               <DropdownMenuItem onClick={signOut}>{t('agencyDashboard.logout')}</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

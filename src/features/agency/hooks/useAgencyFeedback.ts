@@ -10,13 +10,12 @@ export interface FeedbackItem {
     rating: number;
     comment: string;
     date: string;
-    status: string;
 }
 
 export interface FeedbackStats {
     averageRating: number;
     totalReviews: number;
-    pendingReviews: number;
+    recentReviews: number;
     satisfactionRate: number;
 }
 
@@ -25,7 +24,7 @@ export function useAgencyFeedback() {
     const [stats, setStats] = useState<FeedbackStats>({
         averageRating: 0,
         totalReviews: 0,
-        pendingReviews: 0,
+        recentReviews: 0,
         satisfactionRate: 0,
     });
     const [loading, setLoading] = useState(true);
@@ -66,7 +65,6 @@ export function useAgencyFeedback() {
                     rating: r.rating,
                     comment: r.comment || '',
                     date: r.created_at,
-                    status: 'published',
                 }));
 
                 setFeedbacks(mapped);
@@ -76,7 +74,9 @@ export function useAgencyFeedback() {
                 const avgRating = totalReviews > 0
                     ? mapped.reduce((sum, f) => sum + f.rating, 0) / totalReviews
                     : 0;
-                const pendingReviews = mapped.filter(f => f.status === 'pending').length;
+                const thirtyDaysAgo = new Date();
+                thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+                const recentReviews = mapped.filter(f => new Date(f.date) >= thirtyDaysAgo).length;
                 const satisfactionRate = totalReviews > 0
                     ? Math.round(
                         (mapped.filter(f => f.rating >= 4).length / totalReviews) * 100
@@ -86,7 +86,7 @@ export function useAgencyFeedback() {
                 setStats({
                     averageRating: Math.round(avgRating * 10) / 10,
                     totalReviews,
-                    pendingReviews,
+                    recentReviews,
                     satisfactionRate,
                 });
 
@@ -99,7 +99,9 @@ export function useAgencyFeedback() {
         };
 
         fetchFeedback();
-    }, [user]);
+        // Key on the id, not the object (auth events re-create the user object).
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [user?.id]);
 
     return { feedbacks, stats, loading, error };
 }

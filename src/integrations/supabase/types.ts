@@ -636,6 +636,7 @@ export type Database = {
           exclusions: string[] | null
           exclusions_ar: string[] | null
           featured: boolean | null
+          highlights: string[]
           id: string
           inclusions: string[] | null
           inclusions_ar: string[] | null
@@ -667,6 +668,7 @@ export type Database = {
           exclusions?: string[] | null
           exclusions_ar?: string[] | null
           featured?: boolean | null
+          highlights?: string[]
           id?: string
           inclusions?: string[] | null
           inclusions_ar?: string[] | null
@@ -698,6 +700,7 @@ export type Database = {
           exclusions?: string[] | null
           exclusions_ar?: string[] | null
           featured?: boolean | null
+          highlights?: string[]
           id?: string
           inclusions?: string[] | null
           inclusions_ar?: string[] | null

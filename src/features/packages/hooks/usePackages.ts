@@ -167,7 +167,9 @@ export function usePackages() {
     if (user) {
       fetchPackages();
     }
-  }, [user, profile]);
+    // Key on stable ids, not object identity (auth events re-create both).
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.id, profile?.role]);
 
   return {
     packages,

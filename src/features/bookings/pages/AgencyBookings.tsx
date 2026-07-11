@@ -1,18 +1,23 @@
 
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/card";
 import { Badge } from "@/ui/badge";
 import { Button } from "@/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/ui/dialog";
 import { Eye, MessageSquare, Calendar, User, Phone, Mail } from "lucide-react";
 import { LoadingSpinner } from "@/ui/loading-spinner";
 import { EmptyState } from "@/ui/empty-state";
-import { useBookings } from "@/features/bookings/hooks/useBookings";
+import { useBookings, type Booking } from "@/features/bookings/hooks/useBookings";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
-import { formatDate } from "@/lib/formatters";
+import { formatDate, formatCurrency } from "@/lib/formatters";
 
 export default function Bookings() {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
+  const navigate = useNavigate();
   const { bookings, loading, error, updateBookingStatus } = useBookings();
+  const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
 
   if (loading) {
     return (
@@ -41,6 +46,8 @@ export default function Bookings() {
         return "bg-yellow-100 text-yellow-800 border-yellow-200 dark:bg-yellow-900/30 dark:text-yellow-300 dark:border-yellow-800";
       case "cancelled":
         return "bg-red-100 text-red-800 border-red-200 dark:bg-red-900/30 dark:text-red-300 dark:border-red-800";
+      case "completed":
+        return "bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-800";
       default:
         return "bg-muted text-muted-foreground border-border";
     }
@@ -54,6 +61,8 @@ export default function Bookings() {
         return t('agencyDashboard.pending');
       case "cancelled":
         return t('agencyDashboard.cancelled');
+      case "completed":
+        return t('agencyDashboard.completed', 'Completed');
       default:
         return status;
     }
@@ -126,12 +135,7 @@ export default function Bookings() {
               <div>
                 <p className="text-xs sm:text-sm font-medium text-muted-foreground">{t('agencyDashboard.revenue')}</p>
                 <p className="text-lg sm:text-2xl lg:text-3xl font-bold text-primary">
-                  {new Intl.NumberFormat(i18n.language === 'ar' ? 'ar-SA' : 'en-US', {
-                    style: 'currency',
-                    currency: 'USD',
-                    minimumFractionDigits: 0,
-                    maximumFractionDigits: 0
-                  }).format(totalRevenue)}
+                  {formatCurrency(totalRevenue)}
                 </p>
               </div>
               <MessageSquare className="w-6 h-6 sm:w-8 sm:h-8 text-primary" />
@@ -183,7 +187,7 @@ export default function Bookings() {
                       <div className="flex items-center justify-between sm:flex-col sm:items-end gap-2 sm:gap-1">
                         <div className="text-end">
                           <p className="font-bold text-base sm:text-lg text-foreground">
-                            {new Intl.NumberFormat(i18n.language === 'ar' ? 'ar-SA' : 'en-US', { style: 'currency', currency: 'USD' }).format(Number(booking.total_price))}
+                            {formatCurrency(Number(booking.total_price))}
                           </p>
                           <p className="text-xs sm:text-sm text-muted-foreground">
                             {formatDate(booking.booking_date, 'PP')}
@@ -204,11 +208,21 @@ export default function Bookings() {
                             {t('agencyDashboard.confirm')}
                           </Button>
                         )}
-                        <Button size="sm" variant="outline" className="border-border hover:bg-muted/50 text-xs px-2 py-1 gap-1">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="border-border hover:bg-muted/50 text-xs px-2 py-1 gap-1"
+                          onClick={() => setSelectedBooking(booking)}
+                        >
                           <Eye className="w-3 h-3" />
                           <span className="sr-only sm:not-sr-only">{t('agencyDashboard.view')}</span>
                         </Button>
-                        <Button size="sm" variant="outline" className="border-border hover:bg-muted/50 text-xs px-2 py-1 gap-1">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="border-border hover:bg-muted/50 text-xs px-2 py-1 gap-1"
+                          onClick={() => navigate(`/travel_agency/messages?to=${booking.traveler_id}`)}
+                        >
                           <MessageSquare className="w-3 h-3" />
                           <span className="sr-only sm:not-sr-only">{t('agencyDashboard.message')}</span>
                         </Button>
@@ -239,6 +253,78 @@ export default function Bookings() {
           )}
         </CardContent>
       </Card>
+
+      {/* Booking details dialog */}
+      <Dialog open={!!selectedBooking} onOpenChange={(open) => !open && setSelectedBooking(null)}>
+        <DialogContent className="max-w-md">
+          {selectedBooking && (
+            <>
+              <DialogHeader>
+                <DialogTitle>{t('agencyDashboard.bookingDetails', 'Booking Details')}</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4 text-start">
+                <div className="flex items-start justify-between gap-2">
+                  <div>
+                    <p className="font-semibold text-foreground">
+                      {selectedBooking.packages?.title || t('packageWizard.unknownPackage')}
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      {formatDate(selectedBooking.booking_date, 'PPPP')}
+                    </p>
+                  </div>
+                  <Badge className={`${getStatusColor(selectedBooking.status)} border font-medium text-xs capitalize`}>
+                    {getStatusLabel(selectedBooking.status)}
+                  </Badge>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-xs text-muted-foreground">{t('agencyDashboard.traveler', 'Traveler')}</p>
+                    <p className="text-sm font-medium">
+                      {selectedBooking.travelers
+                        ? `${selectedBooking.travelers.first_name} ${selectedBooking.travelers.last_name}`
+                        : t('packageWizard.unknownTraveler')}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-muted-foreground">{t('agencyDashboard.participants', 'Participants')}</p>
+                    <p className="text-sm font-medium tabular-nums">{selectedBooking.participants}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-muted-foreground">{t('agencyDashboard.totalPrice', 'Total Price')}</p>
+                    <p className="text-sm font-medium tabular-nums">{formatCurrency(Number(selectedBooking.total_price))}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-muted-foreground">{t('agencyDashboard.bookedOn', 'Booked on')}</p>
+                    <p className="text-sm font-medium">{formatDate(selectedBooking.created_at, 'PP')}</p>
+                  </div>
+                </div>
+                {(selectedBooking.travelers?.email || selectedBooking.travelers?.phone) && (
+                  <div className="flex flex-col gap-1 text-sm text-muted-foreground border-t border-border pt-3">
+                    {selectedBooking.travelers?.email && (
+                      <div className="flex items-center gap-2">
+                        <Mail className="w-3.5 h-3.5" />
+                        <span>{selectedBooking.travelers.email}</span>
+                      </div>
+                    )}
+                    {selectedBooking.travelers?.phone && (
+                      <div className="flex items-center gap-2">
+                        <Phone className="w-3.5 h-3.5" />
+                        <span dir="ltr">{selectedBooking.travelers.phone}</span>
+                      </div>
+                    )}
+                  </div>
+                )}
+                {selectedBooking.special_requests && (
+                  <div className="border-t border-border pt-3">
+                    <p className="text-xs text-muted-foreground mb-1">{t('agencyDashboard.specialRequests', 'Special requests')}</p>
+                    <p className="text-sm">{selectedBooking.special_requests}</p>
+                  </div>
+                )}
+              </div>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

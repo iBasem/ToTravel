@@ -4,8 +4,8 @@ import { Plus, Search, Filter, Package, Edit, Trash2, MoreVertical, Eye, Calenda
 import { LoadingSpinner } from "@/ui/loading-spinner";
 import { EmptyState } from "@/ui/empty-state";
 import { Input } from "@/ui/input";
-import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { useEffect, useState } from "react";
 import { Badge } from "@/ui/badge";
 import { usePackages, type PackageWithDetails } from "@/features/packages/hooks/usePackages";
 import { toast } from "sonner";
@@ -19,12 +19,22 @@ import {
 } from "@/ui/dropdown-menu";
 import { PageHeader } from "@/ui/page-header";
 
+type StatusFilter = 'all' | 'published' | 'pending' | 'draft';
+
 export default function Packages() {
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchParams] = useSearchParams();
+  const [searchTerm, setSearchTerm] = useState(searchParams.get('q') || "");
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>('all');
   const navigate = useNavigate();
   const { packages, loading, error, deletePackage, updatePackage } = usePackages();
   const { t, i18n } = useTranslation();
   const isRTL = i18n.language === 'ar';
+
+  // Keep in sync with searches submitted from the dashboard header
+  useEffect(() => {
+    const q = searchParams.get('q');
+    if (q !== null) setSearchTerm(q);
+  }, [searchParams]);
 
   const handleCreatePackage = () => {
     navigate("/travel_agency/packages/create");
@@ -77,9 +87,32 @@ export default function Packages() {
     return primary?.file_path || pkg.package_media[0]?.file_path || null;
   };
 
+  const statusBadge = (status: string | null) => {
+    switch (status) {
+      case 'published':
+        return { label: t('agencyDashboard.published'), className: 'bg-green-100 text-green-800 border-green-200 dark:bg-green-900/30 dark:text-green-300 dark:border-green-800' };
+      case 'pending':
+        return { label: t('agencyDashboard.pendingReview', 'Pending review'), className: 'bg-amber-100 text-amber-800 border-amber-200 dark:bg-amber-900/30 dark:text-amber-300 dark:border-amber-800' };
+      case 'archived':
+        return { label: t('agencyDashboard.archived', 'Archived'), className: '' };
+      case 'suspended':
+        return { label: t('agencyDashboard.suspended', 'Suspended'), className: 'bg-red-100 text-red-800 border-red-200 dark:bg-red-900/30 dark:text-red-300 dark:border-red-800' };
+      default:
+        return { label: t('agencyDashboard.draft'), className: '' };
+    }
+  };
+
+  const statusFilterOptions: { value: StatusFilter; label: string }[] = [
+    { value: 'all', label: t('agencyDashboard.allStatuses', 'All statuses') },
+    { value: 'published', label: t('agencyDashboard.published') },
+    { value: 'pending', label: t('agencyDashboard.pendingReview', 'Pending review') },
+    { value: 'draft', label: t('agencyDashboard.draft') },
+  ];
+
   const filteredPackages = packages.filter(pkg =>
-    pkg.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    pkg.destination.toLowerCase().includes(searchTerm.toLowerCase())
+    (statusFilter === 'all' || pkg.status === statusFilter) &&
+    (pkg.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      pkg.destination.toLowerCase().includes(searchTerm.toLowerCase()))
   );
 
   if (loading) {
@@ -129,10 +162,27 @@ export default function Packages() {
             className="h-8 sm:h-10 lg:h-11 bg-background border-border focus:border-primary focus:ring-primary text-xs sm:text-sm lg:text-base ps-8 sm:ps-10"
           />
         </div>
-        <Button variant="outline" className="w-full sm:w-auto border-border hover:bg-muted/50 text-xs sm:text-sm lg:text-base px-3 sm:px-4 lg:px-6 flex items-center gap-1 sm:gap-2">
-          <Filter className="w-3 h-3 sm:w-4 sm:h-4" />
-          {t('agencyDashboard.filter')}
-        </Button>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" className="w-full sm:w-auto border-border hover:bg-muted/50 text-xs sm:text-sm lg:text-base px-3 sm:px-4 lg:px-6 flex items-center gap-1 sm:gap-2">
+              <Filter className="w-3 h-3 sm:w-4 sm:h-4" />
+              {statusFilter === 'all'
+                ? t('agencyDashboard.filter')
+                : statusFilterOptions.find((o) => o.value === statusFilter)?.label}
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align={isRTL ? "start" : "end"} className="w-40 sm:w-48">
+            {statusFilterOptions.map((option) => (
+              <DropdownMenuItem
+                key={option.value}
+                onClick={() => setStatusFilter(option.value)}
+                className={`text-xs sm:text-sm ${statusFilter === option.value ? 'bg-primary/10 text-primary font-medium' : ''}`}
+              >
+                {option.label}
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
 
       {/* Packages Grid */}
@@ -156,9 +206,9 @@ export default function Packages() {
                     <div className="absolute top-2 end-2">
                       <Badge
                         variant={pkg.status === 'published' ? 'default' : 'secondary'}
-                        className={`text-xs ${pkg.status === 'published' ? 'bg-green-100 text-green-800 border-green-200 dark:bg-green-900/30 dark:text-green-300 dark:border-green-800' : ''}`}
+                        className={`text-xs ${statusBadge(pkg.status).className}`}
                       >
-                        {pkg.status === 'published' ? t('agencyDashboard.published') : t('agencyDashboard.draft')}
+                        {statusBadge(pkg.status).label}
                       </Badge>
                     </div>
                   </div>
@@ -171,9 +221,9 @@ export default function Packages() {
                     <div className="absolute top-2 end-2">
                       <Badge
                         variant={pkg.status === 'published' ? 'default' : 'secondary'}
-                        className={`text-xs ${pkg.status === 'published' ? 'bg-green-100 text-green-800 border-green-200 dark:bg-green-900/30 dark:text-green-300 dark:border-green-800' : ''}`}
+                        className={`text-xs ${statusBadge(pkg.status).className}`}
                       >
-                        {pkg.status === 'published' ? t('agencyDashboard.published') : t('agencyDashboard.draft')}
+                        {statusBadge(pkg.status).label}
                       </Badge>
                     </div>
                   </div>

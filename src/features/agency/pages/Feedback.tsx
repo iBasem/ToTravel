@@ -1,5 +1,4 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/card";
-import { Badge } from "@/ui/badge";
 import { Star, MessageSquare } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useAgencyFeedback } from "@/features/agency/hooks/useAgencyFeedback";
@@ -19,28 +18,6 @@ export default function Feedback() {
           }`}
       />
     ));
-  };
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "published":
-        return "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300";
-      case "pending":
-        return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300";
-      default:
-        return "bg-muted text-muted-foreground";
-    }
-  };
-
-  const getStatusLabel = (status: string) => {
-    switch (status) {
-      case "published":
-        return t('agencyDashboard.published');
-      case "pending":
-        return t('agencyDashboard.pending');
-      default:
-        return status;
-    }
   };
 
   if (loading) {
@@ -91,8 +68,8 @@ export default function Feedback() {
         <Card>
           <CardContent className="p-6">
             <div className="text-center">
-              <div className="text-3xl font-bold tabular-nums">{stats.pendingReviews}</div>
-              <p className="text-sm text-muted-foreground">{t('agencyDashboard.pendingReviews')}</p>
+              <div className="text-3xl font-bold tabular-nums">{stats.recentReviews}</div>
+              <p className="text-sm text-muted-foreground">{t('agencyDashboard.recentReviews30', 'New in last 30 days')}</p>
             </div>
           </CardContent>
         </Card>
@@ -132,9 +109,6 @@ export default function Feedback() {
                       <p className="text-sm text-muted-foreground">{feedback.packageTitle}</p>
                     </div>
                     <div className="text-end">
-                      <Badge variant="outline" className={getStatusColor(feedback.status)}>
-                        {getStatusLabel(feedback.status)}
-                      </Badge>
                       <p className="text-xs text-muted-foreground mt-1">
                         {formatDate(feedback.date, 'PP')}
                       </p>

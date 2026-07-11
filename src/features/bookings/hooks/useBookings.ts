@@ -90,7 +90,9 @@ export function useBookings() {
     };
 
     fetchBookings();
-  }, [user, profile]);
+    // Key on stable ids, not object identity (auth events re-create both).
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.id, profile?.role]);
 
   const updateBookingStatus = async (bookingId: string, status: string) => {
     try {

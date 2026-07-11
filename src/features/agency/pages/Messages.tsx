@@ -7,10 +7,12 @@ import { useAgencyMessages } from "@/features/agency/hooks/useAgencyMessages";
 import { LoadingSpinner } from "@/ui/loading-spinner";
 import { EmptyState } from "@/ui/empty-state";
 import { useState, useRef, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import { formatRelativeTime } from "@/lib/formatters";
 
 export default function Messages() {
   const { t } = useTranslation();
+  const [searchParams] = useSearchParams();
   const {
     conversations,
     messages,
@@ -27,6 +29,15 @@ export default function Messages() {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
+
+  // Deep link: /messages?to=<userId> opens (or starts) that conversation
+  const deepLinkTo = searchParams.get('to');
+  useEffect(() => {
+    if (!loading && deepLinkTo && selectedConversation !== deepLinkTo) {
+      fetchMessages(deepLinkTo);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loading, deepLinkTo]);
 
   const handleSend = async () => {
     if (!messageInput.trim() || !selectedConversation) return;

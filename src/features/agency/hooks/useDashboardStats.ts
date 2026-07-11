@@ -31,10 +31,12 @@ export function useDashboardStats() {
       setError(null);
 
       // Fetch total packages for this agency
-      const { count: packagesCount } = await supabase
+      const { count: packagesCount, error: packagesError } = await supabase
         .from('packages')
         .select('*', { count: 'exact', head: true })
         .eq('agency_id', user.id);
+
+      if (packagesError) throw packagesError;
 
       // Fetch total bookings
       const { data: bookingsData, error: bookingsError } = await supabase
@@ -42,16 +44,18 @@ export function useDashboardStats() {
         .select(`
           traveler_id,
           total_price,
+          status,
           packages!inner(agency_id)
         `)
         .eq('packages.agency_id', user.id);
 
-      if (bookingsError) {
-        console.error('Error fetching bookings:', bookingsError);
-      }
+      if (bookingsError) throw bookingsError;
 
       const totalBookings = bookingsData?.length || 0;
-      const totalRevenue = bookingsData?.reduce((sum, booking) => sum + Number(booking.total_price), 0) || 0;
+      // Cancelled bookings never earn revenue
+      const totalRevenue = bookingsData
+        ?.filter((booking) => booking.status !== 'cancelled')
+        .reduce((sum, booking) => sum + Number(booking.total_price), 0) || 0;
 
       // Get unique travelers count
       const uniqueTravelers = bookingsData 
@@ -74,7 +78,9 @@ export function useDashboardStats() {
 
   useEffect(() => {
     fetchStats();
-  }, [user]);
+    // Key on the id, not the object (auth events re-create the user object).
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.id]);
 
   return {
     stats,

@@ -32,9 +32,8 @@ export interface PackageBasicInfo {
   duration_nights: number;
   max_participants: number;
   featured: boolean; // NOTE: agency should not self-feature (see gap analysis M1)
+  highlights?: string[]; // persisted to packages.highlights via save_package
   // step-only / not persisted:
-  subtitle?: string;
-  highlights?: string[];
   newHighlight?: string;
   rating?: number;
 }
@@ -46,18 +45,16 @@ export interface ItineraryDay {
   activities: string[];
   meals: string[]; // NB: persisted column is itineraries.meals_included
   accommodation: string;
-  highlights?: string[]; // not persisted
   title_ar: string;
   description_ar: string;
   activities_ar: string[];
   // transient add-item inputs:
   newActivity?: string;
-  newHighlight?: string;
   newActivityAr?: string;
 }
 
 export interface PackagePricing {
-  currency: string; // not persisted (no currency column)
+  currency?: string; // legacy; platform currency is fixed (getPlatformCurrency)
   basePrice: string; // string in the form; base_price column is numeric
   inclusions: {
     accommodation: InclusionCategory;
@@ -76,8 +73,6 @@ export interface PackagePricing {
   terms_conditions: string;
   // step-only / not persisted:
   base_price?: number; // dead shadow of basePrice
-  originalPrice?: string;
-  discount?: string;
   newInclusion?: string;
   newExclusion?: string;
   newInclusionAr?: string;

@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { MediaGallery } from "./media/MediaGallery";
 import { Button } from "@/ui/button";
@@ -29,6 +29,8 @@ export function MediaStep({ data, onUpdate }: MediaStepProps) {
   const [dragOver, setDragOver] = useState(false);
   const [uploading, setUploading] = useState(false);
   const { user } = useAuth();
+  // Storage paths of files uploaded during this wizard session, keyed by media item id.
+  const sessionUploadsRef = useRef(new Map<string, string>());
 
   useEffect(() => {
     onUpdate(media);
@@ -78,6 +80,7 @@ export function MediaStep({ data, onUpdate }: MediaStepProps) {
           file_path: publicUrl
         };
 
+        sessionUploadsRef.current.set(mediaItem.id, filePath);
         newMediaItems.push(mediaItem);
       }
 
@@ -95,6 +98,20 @@ export function MediaStep({ data, onUpdate }: MediaStepProps) {
 
   const removeMedia = (id: string) => {
     setMedia(prev => prev.filter(item => item.id !== id));
+
+    // Files uploaded in this session are safe to delete from storage right
+    // away (nothing references them until save). Previously saved files are
+    // left in place so cancelling the wizard doesn't break the stored package.
+    const uploadedPath = sessionUploadsRef.current.get(id);
+    if (uploadedPath) {
+      sessionUploadsRef.current.delete(id);
+      supabase.storage
+        .from('package-media')
+        .remove([uploadedPath])
+        .then(({ error }) => {
+          if (error) console.error('Failed to delete uploaded media file:', error);
+        });
+    }
   };
 
   const setPrimary = (id: string) => {

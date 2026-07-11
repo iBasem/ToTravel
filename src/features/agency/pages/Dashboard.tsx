@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/card";
 import { Users, Package, Calendar, DollarSign } from "lucide-react";
 import { useDashboardStats } from "@/features/agency/hooks/useDashboardStats";
@@ -8,6 +9,7 @@ import { formatCurrency } from "@/lib/formatters";
 
 export default function Dashboard() {
   const { stats, loading, error } = useDashboardStats();
+  const navigate = useNavigate();
   const { t } = useTranslation();
 
 
@@ -110,7 +112,7 @@ export default function Dashboard() {
           description={t('agencyDashboard.startByCreating')}
           action={{
             label: t('agencyDashboard.createPackage'),
-            onClick: () => window.location.href = "/travel_agency/packages/create"
+            onClick: () => navigate("/travel_agency/packages/create")
           }}
         />
       )}

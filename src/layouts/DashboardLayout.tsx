@@ -1,4 +1,4 @@
-import { Outlet, useLocation } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 import { AppSidebar } from "./AppSidebar";
 import { DashboardHeader } from "./DashboardHeader";
 import { SidebarProvider, SidebarInset } from "@/ui/sidebar";
@@ -8,7 +8,6 @@ import { Loader2 } from "lucide-react";
 
 const DashboardLayout = () => {
   const { user, profile, loading } = useAuth();
-  const location = useLocation();
 
   if (loading) {
     return (
@@ -19,12 +18,10 @@ const DashboardLayout = () => {
   }
 
   if (!user) {
-    console.log('DashboardLayout - No user, redirecting to auth');
     return <Navigate to="/auth?type=agency" replace />;
   }
 
   if (profile?.role !== 'agency') {
-    console.log('DashboardLayout - Wrong role, redirecting');
     const redirectPath = profile?.role === 'admin' ? '/admin' : '/traveler/dashboard';
     return <Navigate to={redirectPath} replace />;
   }

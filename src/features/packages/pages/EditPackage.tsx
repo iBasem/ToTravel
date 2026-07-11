@@ -51,7 +51,6 @@ export default function EditPackage() {
     },
     itinerary: [],
     pricing: {
-      currency: "USD",
       basePrice: "",
       base_price: 0,
       inclusions: {
@@ -86,11 +85,12 @@ export default function EditPackage() {
     try {
       setLoading(true);
 
-      // Load package data
+      // Load package data (agency filter is defense-in-depth on top of RLS)
       const { data: packageData, error: packageError } = await supabase
         .from('packages')
         .select('*')
         .eq('id', id)
+        .eq('agency_id', user?.id ?? '')
         .single();
 
       if (packageError) throw packageError;
@@ -134,6 +134,7 @@ export default function EditPackage() {
           duration_days: packageData.duration_days || 1,
           duration_nights: packageData.duration_nights || 0,
           max_participants: packageData.max_participants || 20,
+          highlights: packageData.highlights || [],
           featured: packageData.featured || false
         },
         route: {
@@ -164,7 +165,6 @@ export default function EditPackage() {
           activities_ar: item.activities_ar || []
         })),
         pricing: {
-          currency: "USD",
           basePrice: packageData.base_price?.toString() || '',
           base_price: packageData.base_price || 0,
           inclusions: {

@@ -1,5 +1,6 @@
 
 import { useTranslation } from "react-i18next";
+import { formatCurrency } from "@/lib/formatters";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/card";
 import { Badge } from "@/ui/badge";
 import { Button } from "@/ui/button";
@@ -88,7 +89,7 @@ export function ReviewStep({ data, onUpdate }: ReviewStepProps) {
 
               <div className="pt-4 border-t">
                 <div className="text-2xl font-bold text-primary">
-                  {new Intl.NumberFormat(i18n.language === 'ar' ? 'ar-SA' : 'en-US', { style: 'currency', currency: pricing.currency || 'USD' }).format(Number(pricing.basePrice) || 0)}
+                  {formatCurrency(Number(pricing.basePrice) || 0)}
                 </div>
                 <div className="text-sm text-muted-foreground">{t('packageWizard.perPerson')}</div>
               </div>
@@ -142,7 +143,7 @@ export function ReviewStep({ data, onUpdate }: ReviewStepProps) {
         <Card>
           <CardContent className="p-4 text-center">
             <div className="text-2xl font-bold text-foreground">
-              {new Intl.NumberFormat(i18n.language === 'ar' ? 'ar-SA' : 'en-US', { style: 'currency', currency: pricing.currency || 'USD' }).format(Number(pricing.basePrice) || 0)}
+              {formatCurrency(Number(pricing.basePrice) || 0)}
             </div>
             <div className="text-sm text-muted-foreground">{t('packageWizard.basePrice')}</div>
           </CardContent>

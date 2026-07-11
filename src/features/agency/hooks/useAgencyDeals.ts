@@ -9,6 +9,7 @@ export interface Deal {
     start_date: string;
     end_date: string;
     status: string;
+    approval_status: string;
     package_id: string | null;
     created_at: string;
 }
@@ -85,7 +86,9 @@ export function useAgencyDeals() {
 
     useEffect(() => {
         fetchDeals();
-    }, [user]);
+        // Key on the id, not the object (auth events re-create the user object).
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [user?.id]);
 
     return { deals, loading, error, addDeal, deleteDeal, refetch: fetchDeals };
 }

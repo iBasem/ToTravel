@@ -32,10 +32,7 @@ export function PricingStep({ data, onUpdate }: PricingStepProps) {
     };
 
     return {
-      currency: data?.currency || "USD",
       basePrice: data?.basePrice || "",
-      originalPrice: data?.originalPrice || "",
-      discount: data?.discount || "",
       inclusions: data?.inclusions ? { ...defaultInclusions, ...data.inclusions } : defaultInclusions,
       additionalInclusions: data?.additionalInclusions || [],
       exclusions: data?.exclusions || [],

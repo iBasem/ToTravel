@@ -92,22 +92,6 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
 
-        {/* Upgrade Section - Only show when not collapsed */}
-        {!isCollapsed && (
-          <div className="mt-auto p-4 border-t border-border">
-            <div className={`bg-primary/5 border border-primary/20 rounded-xl p-4 text-start`}>
-              <h3 className="font-semibold text-primary mb-2 text-sm">
-                {t('agencyDashboard.enhanceExperience')}
-              </h3>
-              <p className="text-xs text-muted-foreground mb-3">
-                {t('agencyDashboard.unlockPremium')}
-              </p>
-              <button className="w-full bg-primary text-primary-foreground px-4 py-2.5 rounded-lg text-xs font-semibold hover:bg-primary/90 transition-all duration-200 shadow-sm">
-                {t('agencyDashboard.upgradeNow')}
-              </button>
-            </div>
-          </div>
-        )}
       </SidebarContent>
     </Sidebar>
   );

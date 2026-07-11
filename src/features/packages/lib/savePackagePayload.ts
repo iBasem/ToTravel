@@ -26,6 +26,7 @@ export function buildSavePackagePayload(formData: PackageFormData) {
       duration_days: formData.basicInfo.duration_days,
       duration_nights: formData.basicInfo.duration_nights,
       max_participants: formData.basicInfo.max_participants,
+      highlights: (formData.basicInfo.highlights || []).filter((h) => h && h.trim()),
     },
     pricing: {
       base_price: parseFloat(formData.pricing.basePrice) || 0,

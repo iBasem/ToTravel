@@ -40,15 +40,11 @@ export function BasicInfoStep({ data, onUpdate }: BasicInfoStepProps) {
     const initialDestinations = data?.destinations || (data?.destination ? [data.destination] : []);
     return {
       title: "",
-      subtitle: "",
       description: "",
       destination: "", // Keep for backward compatibility
       title_ar: "",
       description_ar: "",
       destination_ar: "",
-      duration: "",
-      maxGroupSize: "",
-      packageType: "group",
       highlights: [] as string[],
       newHighlight: "",
       category: "",
@@ -192,16 +188,6 @@ export function BasicInfoStep({ data, onUpdate }: BasicInfoStepProps) {
                 value={formData.title}
                 onChange={(e) => handleInputChange("title", e.target.value)}
                 placeholder={t('packageWizard.packageTitlePlaceholder')}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="subtitle" className="text-start block">{t('packageWizard.packageSubtitle')}</Label>
-              <Input
-                id="subtitle"
-                value={formData.subtitle}
-                onChange={(e) => handleInputChange("subtitle", e.target.value)}
-                placeholder={t('packageWizard.packageSubtitlePlaceholder')}
               />
             </div>
 

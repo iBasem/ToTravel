@@ -87,7 +87,10 @@ export function useAgencyCalendar() {
         } finally {
             setLoading(false);
         }
-    }, [user]);
+        // Key on the id, not the object: Supabase re-emits auth events on tab
+        // focus with a fresh user object, which would otherwise refetch/remount.
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [user?.id]);
 
     return {
         loading,

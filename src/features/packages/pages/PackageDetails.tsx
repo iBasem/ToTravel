@@ -178,6 +178,21 @@ export default function PackageDetails() {
             {/* Tour Header - Title, Rating, Stats */}
             <TourHeader packageData={packageDetails} />
 
+            {/* Highlights */}
+            {packageDetails.highlights && packageDetails.highlights.length > 0 && (
+              <div className="text-start">
+                <h2 className="text-xl font-bold mb-3">{t('packageWizard.highlights', 'Highlights')}</h2>
+                <ul className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2">
+                  {packageDetails.highlights.map((highlight, index) => (
+                    <li key={index} className="flex items-start gap-2 text-muted-foreground">
+                      <span className="text-primary mt-1" aria-hidden>✓</span>
+                      <span>{highlight}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
             {/* Interactive Route Map */}
             {packageDetails.package_routes && packageDetails.package_routes.length > 0 && (
               <RouteMap routes={packageDetails.package_routes} />

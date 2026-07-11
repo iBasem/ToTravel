@@ -40,7 +40,6 @@ export function PackageWizard({ isOpen, onClose }: PackageWizardProps) {
     },
     itinerary: [],
     pricing: {
-      currency: "USD",
       basePrice: "",
       base_price: 0,
       inclusions: {
@@ -121,7 +120,6 @@ export function PackageWizard({ isOpen, onClose }: PackageWizardProps) {
           },
           itinerary: [],
           pricing: {
-            currency: "USD",
             basePrice: "",
             base_price: 0,
             inclusions: {

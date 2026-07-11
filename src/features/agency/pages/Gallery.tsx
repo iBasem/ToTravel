@@ -58,6 +58,7 @@ export default function Gallery() {
       setImages(imageList);
     } catch (err) {
       console.error('Error fetching gallery:', err);
+      toast.error(t('agencyDashboard.galleryLoadFailed', 'Failed to load gallery'));
     } finally {
       setLoading(false);
     }
@@ -65,7 +66,9 @@ export default function Gallery() {
 
   useEffect(() => {
     fetchImages();
-  }, [user]);
+    // Key on the id, not the object (auth events re-create the user object).
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.id]);
 
   // Handle file upload
   const handleUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {

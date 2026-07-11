@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/ui/card";
 import { Badge } from "@/ui/badge";
 import { Checkbox } from "@/ui/checkbox";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/ui/collapsible";
-import { Plus, Trash2, GripVertical, Utensils, Bed, Activity, Star, ChevronRight, ChevronDown, X, Languages } from "lucide-react";
+import { Plus, Trash2, Utensils, Bed, Activity, ChevronRight, ChevronDown, X, Languages } from "lucide-react";
 import type { ItineraryDay } from "@/features/packages/types/wizard";
 
 interface ItineraryStepProps {
@@ -29,12 +29,10 @@ export function ItineraryStep({ data, onUpdate }: ItineraryStepProps) {
         activities: Array.isArray(item.activities) ? item.activities : [""],
         meals: Array.isArray(item.meals) ? item.meals : [],
         accommodation: item.accommodation || "",
-        highlights: Array.isArray(item.highlights) ? item.highlights : [],
         title_ar: item.title_ar || "",
         description_ar: item.description_ar || "",
         activities_ar: Array.isArray(item.activities_ar) ? item.activities_ar : [],
         newActivity: "",
-        newHighlight: "",
         newActivityAr: ""
       }));
     }
@@ -46,12 +44,10 @@ export function ItineraryStep({ data, onUpdate }: ItineraryStepProps) {
         activities: [""],
         meals: [],
         accommodation: "",
-        highlights: [],
         title_ar: "",
         description_ar: "",
         activities_ar: [],
         newActivity: "",
-        newHighlight: "",
         newActivityAr: ""
       }
     ];
@@ -69,12 +65,10 @@ export function ItineraryStep({ data, onUpdate }: ItineraryStepProps) {
       activities: [""],
       meals: [],
       accommodation: "",
-      highlights: [],
       title_ar: "",
       description_ar: "",
       activities_ar: [],
       newActivity: "",
-      newHighlight: "",
       newActivityAr: ""
     };
     setItinerary([...itinerary, newDay]);
@@ -112,30 +106,6 @@ export function ItineraryStep({ data, onUpdate }: ItineraryStepProps) {
         ? {
           ...day,
           activities: day.activities.filter((_, actIndex) => actIndex !== activityIndex)
-        }
-        : day
-    );
-    setItinerary(updatedItinerary);
-  };
-
-  const addHighlight = (dayIndex: number) => {
-    const day = itinerary[dayIndex];
-    if (day.newHighlight.trim()) {
-      const updatedItinerary = itinerary.map((d, index) =>
-        index === dayIndex
-          ? { ...d, highlights: [...d.highlights, d.newHighlight.trim()], newHighlight: "" }
-          : d
-      );
-      setItinerary(updatedItinerary);
-    }
-  };
-
-  const removeHighlight = (dayIndex: number, highlightIndex: number) => {
-    const updatedItinerary = itinerary.map((day, index) =>
-      index === dayIndex
-        ? {
-          ...day,
-          highlights: day.highlights.filter((_, hIndex) => hIndex !== highlightIndex)
         }
         : day
     );
@@ -217,7 +187,6 @@ export function ItineraryStep({ data, onUpdate }: ItineraryStepProps) {
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                <GripVertical className="w-4 h-4 text-muted-foreground cursor-move" />
                 {itinerary.length > 1 && (
                   <Button
                     variant="outline"
@@ -327,43 +296,6 @@ export function ItineraryStep({ data, onUpdate }: ItineraryStepProps) {
                     ))}
                   </div>
                 )}
-              </div>
-
-              {/* Day Highlights */}
-              <div className="space-y-3">
-                <div className="flex items-center gap-2">
-                  <Star className="w-4 h-4 text-yellow-600" />
-                  <Label className="font-medium">{t('packageWizard.dayHighlights')}</Label>
-                </div>
-
-                <div className="flex flex-wrap gap-1">
-                  {day.highlights.map((highlight, index) => (
-                    <Badge key={index} variant="outline" className="text-xs border-yellow-200 text-yellow-700 dark:border-yellow-800 dark:text-yellow-300 flex items-center gap-1">
-                      {highlight}
-                      <X
-                        className="w-3 h-3 cursor-pointer"
-                        onClick={() => removeHighlight(dayIndex, index)}
-                      />
-                    </Badge>
-                  ))}
-                </div>
-
-                <div className="flex gap-2">
-                  <Input
-                    value={day.newHighlight}
-                    onChange={(e) => updateDay(dayIndex, "newHighlight", e.target.value)}
-                    placeholder={t('packageWizard.addDayHighlight')}
-                    onKeyPress={(e) => e.key === "Enter" && addHighlight(dayIndex)}
-                  />
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={() => addHighlight(dayIndex)}
-                  >
-                    <Plus className="w-4 h-4" />
-                  </Button>
-                </div>
               </div>
 
               {/* Arabic Content */}

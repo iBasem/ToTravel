@@ -374,8 +374,11 @@
   "372": "secondary-foreground",
   "373": "20260710190000_admin_view_package_children.sql",
   "374": "scheduleLazyVisualContrast",
+  "375": "padding-x",
+  "376": "md",
   "377": "event-validation.mjs",
   "378": "ring",
+  "379": "destructive-foreground",
   "380": "shadcn_add.py",
   "381": ".__init__",
   "382": "slides-create.md",
@@ -405,10 +408,13 @@
   "406": "20260709000200_seed_approve_active_demo_deals.sql",
   "407": "destructive",
   "408": "primary",
+  "409": "muted",
   "410": "navigation-menu.tsx",
   "411": "index.ts",
   "412": "20260709120100_agency_status_normalize.sql",
   "413": "20260709120000_admin_messages_and_stats.sql",
-  "418": "20260709120200_seed_demo_admin.sql",
-  "420": "index.ts"
+  "414": "primary-foreground",
+  "415": "secondary-foreground",
+  "416": "4. Plan three variants: identity first, then mode, then axes",
+  "418": "20260709120200_seed_demo_admin.sql"
 }
