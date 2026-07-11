@@ -780,7 +780,7 @@
     "cancelSuccess": "تم إلغاء الحجز بنجاح",
     "cancelError": "فشل في إلغاء الحجز",
     "refundSuccess": "تمت معالجة الاسترداد بنجاح",
-    "refundError": "فشل في معالجة الاسترداد",
+    "refundError": "فشل الاسترداد: {{reason}}",
     "allPayments": "جميع المدفوعات (ميسر)",
     "amount": "المبلغ",
     "booked": "تاريخ الحجز",
@@ -1342,7 +1342,11 @@
     "noPackages": "لا توجد باقات لهذه الوكالة بعد.",
     "reactivateBtn": "إعادة تفعيل",
     "reviews": "تقييمات",
-    "suspendBtn": "تعليق"
+    "suspendBtn": "تعليق",
+    "suspendSuccess": "تم تعليق الوكالة",
+    "suspendError": "تعذّر تعليق الوكالة",
+    "reactivateSuccess": "تمت إعادة تفعيل الوكالة",
+    "reactivateError": "تعذّرت إعادة تفعيل الوكالة"
   },
   "toasts": {
     "signInToBook": "سجّل الدخول أولاً لحجز هذه الرحلة",

@@ -29,7 +29,7 @@ export function useAdminReports(monthsBack: number = 6) {
     queryKey: [...adminReportsKey, monthsBack],
     queryFn: async (): Promise<{ stats: ReportStats; monthlyData: MonthlyData[]; destinationData: DestinationData[] }> => {
       const [bookingsRes, packagesRes, travelersRes, regionRes] = await Promise.all([
-        supabase.from('package_bookings').select('total_price, created_at'),
+        supabase.from('package_bookings').select('traveler_id, total_price, created_at'),
         supabase.from('packages').select('id, destination, status'),
         supabase.from('travelers').select('created_at'),
         supabase.from('package_region_stats').select('*'),
@@ -58,8 +58,11 @@ export function useAdminReports(monthsBack: number = 6) {
             ? 100
             : 0;
 
+      // Conversion = share of travelers who made at least one booking (repeat
+      // bookings must not push this past 100%).
       const totalTravelers = travelersRes.data?.length || 1;
-      const conversionRate = (bookings.length / totalTravelers) * 100;
+      const travelersWhoBooked = new Set(bookings.map((b) => b.traveler_id)).size;
+      const conversionRate = (travelersWhoBooked / totalTravelers) * 100;
 
       // Monthly series over the selected range from real bookings + signups.
       const months = Array.from({ length: 12 }, (_, m) => formatDate(new Date(2026, m, 1), 'MMM'));

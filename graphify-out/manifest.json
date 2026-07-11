@@ -70,8 +70,8 @@
     "semantic_hash": ""
   },
   "src/features/admin/hooks/useAdminReports.ts": {
-    "mtime": 1783613550.7478442,
-    "ast_hash": "80a5b6b730cd9cb5fd7077c4db7ca613",
+    "mtime": 1783786298.818285,
+    "ast_hash": "b2b93ff5fca652c7c5c8456907250092",
     "semantic_hash": ""
   },
   "src/features/admin/hooks/useAdminReviews.ts": {
@@ -95,13 +95,13 @@
     "semantic_hash": ""
   },
   "src/features/admin/pages/AdminSettings.tsx": {
-    "mtime": 1783688383.3909354,
-    "ast_hash": "80689845fb3e8f2efd8f721d460e9e9f",
+    "mtime": 1783786551.637189,
+    "ast_hash": "59c256922242bac8aee789146bb149e6",
     "semantic_hash": ""
   },
   "src/features/admin/pages/AgencyManagement.tsx": {
-    "mtime": 1783688225.8995965,
-    "ast_hash": "a7fc44c7a921f5e0b868bfbf395f540f",
+    "mtime": 1783783309.6941228,
+    "ast_hash": "5991a3f9ec9c205cefd41f46e3d7b373",
     "semantic_hash": ""
   },
   "src/features/admin/pages/ContentManagement.tsx": {
@@ -625,13 +625,13 @@
     "semantic_hash": "b1e3a450a749c61b3aef4af5b82d6e57"
   },
   "src/i18n/locales/ar.json": {
-    "mtime": 1783688976.3213055,
-    "ast_hash": "11da59128d3c492ad3ef4e4cbb8c276a",
+    "mtime": 1783784536.7352414,
+    "ast_hash": "b7234b72cba83ee3bd1a2fe297ce9cd3",
     "semantic_hash": ""
   },
   "src/i18n/locales/en.json": {
-    "mtime": 1783688975.2147949,
-    "ast_hash": "41a3bcbd6b44af3badf561f9e2fdda44",
+    "mtime": 1783784535.5622613,
+    "ast_hash": "8db036ea93d65233a868fa890d5a7643",
     "semantic_hash": ""
   },
   "src/integrations/supabase/client.ts": {
@@ -1670,8 +1670,8 @@
     "semantic_hash": ""
   },
   ".impeccable/hook.cache.json": {
-    "mtime": 1783706283.7611697,
-    "ast_hash": "62206417022a54f8d942ce3656def37a",
+    "mtime": 1783786551.8700395,
+    "ast_hash": "50005db63f21f453d11d66602c195368",
     "semantic_hash": ""
   },
   "src/ui/ThemeToggle.tsx": {
@@ -2672,6 +2672,11 @@
   "src/features/admin/components/nav-items.ts": {
     "mtime": 1783687969.5520017,
     "ast_hash": "cfb3adef705927f018767ca53fdb575e",
+    "semantic_hash": ""
+  },
+  "supabase/migrations/20260710190000_admin_view_package_children.sql": {
+    "mtime": 1783784948.5067527,
+    "ast_hash": "71349699245bba09898d65cc961fba33",
     "semantic_hash": ""
   }
 }

@@ -67,11 +67,12 @@ export default function AgencyManagement() {
   const agencies = data?.agencies ?? [];
   const stats = data?.stats ?? { total: 0, active: 0, pending: 0, totalPackages: 0 };
 
-  const getStatusBadge = (status: string, isVerified: boolean) => {
-    if (status === "active" || isVerified) {
-      return <Badge className="bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300">{t("common.active", "Active")}</Badge>;
-    }
+  // The badge reflects the moderation status alone — is_verified must not
+  // mask a suspension/rejection (a suspended verified agency is suspended).
+  const getStatusBadge = (status: string) => {
     switch (status) {
+      case "active":
+        return <Badge className="bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300">{t("common.active", "Active")}</Badge>;
       case "pending":
         return <Badge className="bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300">{t("common.pending")}</Badge>;
       case "rejected":
@@ -249,7 +250,7 @@ export default function AgencyManagement() {
                     <TableCell className="text-start">{formatDate(agency.created_at, "P")}</TableCell>
                     <TableCell className="text-start font-medium">{agency.packages_count}</TableCell>
                     <TableCell className="tabular-nums text-start">{(agency.commission_rate * 100).toFixed(1)}%</TableCell>
-                    <TableCell className="text-start">{getStatusBadge(agency.status, agency.is_verified)}</TableCell>
+                    <TableCell className="text-start">{getStatusBadge(agency.status)}</TableCell>
                     <TableCell className="text-end">
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>

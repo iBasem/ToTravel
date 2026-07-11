@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/card";
 import { Button } from "@/ui/button";
 import { Input } from "@/ui/input";
@@ -38,9 +38,16 @@ export default function AdminSettings() {
   });
   const [editTemplate, setEditTemplate] = useState<EmailTemplate | null>(null);
 
-  // Sync the form once settings arrive (and after refetches while untouched).
+  // Hydrate the form from the server exactly once. Re-syncing on every
+  // refetch would clobber edits made while a save's invalidation refetch is
+  // in flight (the save round-trips the form, so later server echoes add
+  // nothing).
+  const hydrated = useRef(false);
   useEffect(() => {
-    if (data?.settings) setForm(data.settings);
+    if (data?.settings && !hydrated.current) {
+      setForm(data.settings);
+      hydrated.current = true;
+    }
   }, [data?.settings]);
 
   const adminUsers = data?.adminUsers ?? [];

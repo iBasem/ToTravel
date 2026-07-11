@@ -756,7 +756,7 @@
     "cancelSuccess": "Booking cancelled successfully",
     "cancelError": "Failed to cancel booking",
     "refundSuccess": "Refund processed successfully",
-    "refundError": "Failed to process refund",
+    "refundError": "Refund failed: {{reason}}",
     "allPayments": "All payments (Moyasar)",
     "amount": "Amount",
     "booked": "Booked",
@@ -1310,7 +1310,11 @@
     "noPackages": "This agency has no packages yet.",
     "reactivateBtn": "Reactivate",
     "reviews": "reviews",
-    "suspendBtn": "Suspend"
+    "suspendBtn": "Suspend",
+    "suspendSuccess": "Agency suspended",
+    "suspendError": "Could not suspend agency",
+    "reactivateSuccess": "Agency reactivated",
+    "reactivateError": "Could not reactivate agency"
   },
   "toasts": {
     "signInToBook": "Please sign in to book this tour",
