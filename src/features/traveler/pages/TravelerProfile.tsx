@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useAuth } from "@/features/auth/context/AuthContext";
 import { useTravelerProfile, type TravelerPreferences } from "@/features/traveler/hooks/useTravelerProfile";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/card";
@@ -28,7 +28,8 @@ import {
 export default function TravelerProfile() {
   const { t } = useTranslation();
   const { user } = useAuth();
-  const { profile: travelerRow, stats, updateProfile } = useTravelerProfile(user?.id);
+  const { profile: travelerRow, stats, updateProfile, updateAvatar } = useTravelerProfile(user?.id);
+  const avatarInputRef = useRef<HTMLInputElement>(null);
 
   const [profileData, setProfileData] = useState({
     firstName: "",
@@ -126,6 +127,19 @@ export default function TravelerProfile() {
     }
   };
 
+  const handleAvatarSelected = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = ""; // allow re-selecting the same file
+    if (!file) return;
+    try {
+      await updateAvatar.mutateAsync(file);
+      toast.success(t('travelerDashboard.avatarUpdated', 'Profile photo updated'));
+    } catch (err) {
+      console.error('Error uploading avatar:', err);
+      toast.error(t('travelerDashboard.avatarUpdateError', 'Failed to update profile photo'));
+    }
+  };
+
   const initials = `${profileData.firstName.charAt(0)}${profileData.lastName.charAt(0)}`.toUpperCase() || "?";
   const memberSinceYear = travelerRow?.created_at
     ? new Date(travelerRow.created_at).getFullYear()
@@ -149,10 +163,20 @@ export default function TravelerProfile() {
                 <AvatarImage src={travelerRow?.avatar_url ?? "/placeholder.svg"} />
                 <AvatarFallback className="text-2xl">{initials}</AvatarFallback>
               </Avatar>
+              <input
+                ref={avatarInputRef}
+                type="file"
+                accept="image/jpeg,image/png,image/webp,image/gif,image/avif"
+                className="hidden"
+                onChange={handleAvatarSelected}
+              />
               <Button
                 variant="outline"
                 size="icon"
                 className="absolute -bottom-2 -end-2 rounded-full"
+                onClick={() => avatarInputRef.current?.click()}
+                disabled={updateAvatar.isPending}
+                aria-label={t('travelerDashboard.changePhoto', 'Change profile photo')}
               >
                 <Camera className="w-4 h-4" />
               </Button>
@@ -217,9 +241,12 @@ export default function TravelerProfile() {
                   id="email"
                   type="email"
                   value={profileData.email}
-                  onChange={(e) => handleProfileUpdate('email', e.target.value)}
+                  disabled
                   dir="ltr"
                 />
+                <p className="text-xs text-muted-foreground mt-1">
+                  {t('travelerDashboard.emailReadonly', 'Your email is your sign-in identity and cannot be changed here.')}
+                </p>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>

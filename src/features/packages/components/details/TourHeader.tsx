@@ -2,15 +2,35 @@ import { useTranslation } from "react-i18next";
 import { Badge } from "@/ui/badge";
 import { Star, Clock, Users, MapPin, Heart, Share2 } from "lucide-react";
 import { Button } from "@/ui/button";
+import { toast } from "sonner";
 import { localizedText } from "@/lib/localized";
 import type { PackageDetails } from "@/features/packages/hooks/usePackageDetails";
 
 interface TourHeaderProps {
     packageData: PackageDetails;
+    isWishlisted: boolean;
+    onToggleWishlist: () => void;
 }
 
-export function TourHeader({ packageData }: TourHeaderProps) {
+export function TourHeader({ packageData, isWishlisted, onToggleWishlist }: TourHeaderProps) {
     const { t } = useTranslation();
+
+    // Native share sheet where available, clipboard fallback elsewhere.
+    const handleShare = async () => {
+        const url = window.location.href;
+        try {
+            if (navigator.share) {
+                await navigator.share({ title: localizedText(packageData, 'title'), url });
+                return;
+            }
+            await navigator.clipboard.writeText(url);
+            toast.success(t('packageDetails.linkCopied', 'Link copied to clipboard'));
+        } catch (err) {
+            if ((err as DOMException)?.name !== 'AbortError') {
+                toast.error(t('packageDetails.shareFailed', 'Could not share this page'));
+            }
+        }
+    };
     const title = localizedText(packageData, 'title');
     const destination = localizedText(packageData, 'destination');
     const description = localizedText(packageData, 'description');
@@ -91,11 +111,17 @@ export function TourHeader({ packageData }: TourHeaderProps) {
 
             {/* Action Buttons (Mobile visible, Desktop hidden - they're in sidebar) */}
             <div className="flex gap-2 mt-4 lg:hidden">
-                <Button variant="outline" size="sm" className="flex-1">
-                    <Heart className="w-4 h-4 me-2" />
-                    {t('packageDetails.save', 'Save')}
+                <Button
+                    variant="outline"
+                    size="sm"
+                    className={`flex-1 ${isWishlisted ? 'text-red-500 border-red-200 dark:border-red-800' : ''}`}
+                    onClick={onToggleWishlist}
+                    aria-pressed={isWishlisted}
+                >
+                    <Heart className={`w-4 h-4 me-2 ${isWishlisted ? 'fill-current' : ''}`} />
+                    {isWishlisted ? t('packageDetails.saved', 'Saved') : t('packageDetails.save', 'Save')}
                 </Button>
-                <Button variant="outline" size="sm" className="flex-1">
+                <Button variant="outline" size="sm" className="flex-1" onClick={handleShare}>
                     <Share2 className="w-4 h-4 me-2" />
                     {t('packageDetails.share', 'Share')}
                 </Button>

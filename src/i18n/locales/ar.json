@@ -334,7 +334,10 @@
     "viewOperatorProfile": "عرض ملف منظّم الرحلة",
     "whatsIncluded": "ما تشمله الباقة",
     "whatsNotIncluded": "ما لا تشمله الباقة",
-    "yearsExp": "سنوات خبرة"
+    "yearsExp": "سنوات خبرة",
+    "saved": "محفوظ",
+    "linkCopied": "تم نسخ الرابط",
+    "shareFailed": "تعذّرت مشاركة هذه الصفحة"
   },
   "auth": {
     "welcomeBack": "مرحباً بعودتك",
@@ -1020,7 +1023,12 @@
     "emptyWishlistDesc": "احفظ الرحلات التي تعجبك للرجوع إليها لاحقاً.",
     "noReviewsTitle": "لا توجد تقييمات بعد",
     "noReviewsDesc": "لم تكتب أي تقييمات بعد. أكمل حجزاً لتترك تقييمك الأول!",
-    "viewBookings": "عرض حجوزاتي"
+    "viewBookings": "عرض حجوزاتي",
+    "contactAgency": "تواصل مع الوكالة",
+    "avatarUpdated": "تم تحديث صورة الملف الشخصي",
+    "avatarUpdateError": "تعذّر تحديث صورة الملف الشخصي",
+    "changePhoto": "تغيير صورة الملف الشخصي",
+    "emailReadonly": "بريدك الإلكتروني هو هوية تسجيل دخولك ولا يمكن تغييره من هنا."
   },
   "packageWizard": {
     "createNewPackage": "إنشاء باقة جديدة",
@@ -1300,10 +1308,10 @@
     "participants": "مشاركين"
   },
   "errors": {
+    "404": "404",
     "somethingWentWrong": "حدث خطأ ما",
     "unexpectedError": "حدث خطأ غير متوقع.",
     "refreshPage": "تحديث الصفحة",
-    "404": "404",
     "pageNotFound": "عذراً، الصفحة غير موجودة",
     "returnHome": "العودة إلى الرئيسية",
     "networkError": "خطأ في الاتصال بالشبكة — يرجى التحقق من اتصالك",
@@ -1880,5 +1888,20 @@
     "type": "النوع",
     "unassigned": "غير مسند",
     "updateError": "فشل تحديث الإجراء المعلق"
+  },
+  "messages": {
+    "sent": "تم إرسال الرسالة — ستتواصل معك الوكالة قريبًا.",
+    "sendFailed": "تعذّر إرسال رسالتك. حاول مرة أخرى.",
+    "contactAgencyTitle": "استفسر عن {{subject}}",
+    "yourMessage": "رسالتك",
+    "messagePlaceholder": "اسأل عن المواعيد أو حجم المجموعة أو ما تحتاج إحضاره...",
+    "send": "إرسال الرسالة"
+  },
+  "voucher": {
+    "title": "قسيمة الحجز",
+    "traveler": "المسافر",
+    "paymentStatus": "الدفع",
+    "destination": "الوجهة",
+    "footer": "قدّم هذه القسيمة (مطبوعة أو على هاتفك) لمنظّم الرحلة. أُنشئت في"
   }
 }

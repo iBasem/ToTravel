@@ -1,10 +1,11 @@
-import { Search, Bell, ChevronDown, Menu } from "lucide-react";
+import { useState } from "react";
+import { Search, ChevronDown, Menu } from "lucide-react";
 import { Input } from "@/ui/input";
 import { Button } from "@/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/ui/avatar";
 import { Sheet, SheetContent, SheetTrigger } from "@/ui/sheet";
 import { TravelerSidebar } from "./TravelerSidebar";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/features/auth/context/AuthContext";
 import { useTranslation } from "react-i18next";
 import { LanguageSwitcher } from "@/ui/LanguageSwitcher";
@@ -21,9 +22,19 @@ import {
 export function TravelerHeader() {
   const { profile, signOut } = useAuth();
   const { t } = useTranslation();
+  const navigate = useNavigate();
+  const [searchQuery, setSearchQuery] = useState("");
 
   const handleLogout = async () => {
     await signOut();
+  };
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    const q = searchQuery.trim();
+    if (q) {
+      navigate(`/packages?search=${encodeURIComponent(q)}`);
+    }
   };
 
   const getInitials = () => {
@@ -53,14 +64,17 @@ export function TravelerHeader() {
             </SheetContent>
           </Sheet>
 
-          {/* Search bar - responsive */}
-          <div className="relative flex-1 max-w-xs sm:max-w-md">
+          {/* Search bar - submits to the packages list free-text filter */}
+          <form onSubmit={handleSearch} role="search" className="relative flex-1 max-w-xs sm:max-w-md">
             <Search className="absolute top-1/2 transform -translate-y-1/2 text-muted-foreground w-3 h-3 sm:w-4 sm:h-4 start-2 sm:start-3" />
             <Input
+              type="search"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
               placeholder={t('travelerDashboard.searchDestinationsTours')}
               className="bg-muted border-0 h-8 sm:h-9 lg:h-10 text-xs sm:text-sm ps-7 sm:ps-10"
             />
-          </div>
+          </form>
         </div>
 
         {/* Right side controls */}
@@ -78,14 +92,6 @@ export function TravelerHeader() {
           >
             {t('travelerDashboard.browseTours')}
           </Link>
-
-          {/* Notifications */}
-          <Button variant="ghost" size="sm" className="relative p-1 sm:p-2">
-            <Bell className="w-3 h-3 sm:w-4 sm:h-4 lg:w-5 lg:h-5" />
-            <span className="absolute w-2.5 h-2.5 sm:w-3 sm:h-3 lg:w-4 lg:h-4 bg-red-500 text-white text-[8px] sm:text-[10px] lg:text-xs rounded-full flex items-center justify-center -top-0.5 end-0 sm:-top-1 sm:end-0">
-              2
-            </span>
-          </Button>
 
           {/* User menu */}
           <DropdownMenu>
@@ -110,7 +116,6 @@ export function TravelerHeader() {
               <DropdownMenuItem asChild>
                 <Link to="/traveler/dashboard/profile" className="w-full cursor-pointer">{t('travelerDashboard.profile')}</Link>
               </DropdownMenuItem>
-              <DropdownMenuItem>{t('dashboard.settings')}</DropdownMenuItem>
               <DropdownMenuItem onClick={handleLogout} className="cursor-pointer">
                 {t('travelerDashboard.logout')}
               </DropdownMenuItem>

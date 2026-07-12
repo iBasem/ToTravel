@@ -314,7 +314,10 @@
     "viewOperatorProfile": "View Operator Profile",
     "whatsIncluded": "What's Included",
     "whatsNotIncluded": "What's Not Included",
-    "yearsExp": "Years Exp."
+    "yearsExp": "Years Exp.",
+    "saved": "Saved",
+    "linkCopied": "Link copied to clipboard",
+    "shareFailed": "Could not share this page"
   },
   "auth": {
     "welcomeBack": "Welcome back",
@@ -992,7 +995,12 @@
     "emptyWishlistDesc": "Save tours you love to revisit them later.",
     "noReviewsTitle": "No Reviews Yet",
     "noReviewsDesc": "You haven't written any reviews yet. Complete a booking to leave a review!",
-    "viewBookings": "View My Bookings"
+    "viewBookings": "View My Bookings",
+    "contactAgency": "Contact agency",
+    "avatarUpdated": "Profile photo updated",
+    "avatarUpdateError": "Failed to update profile photo",
+    "changePhoto": "Change profile photo",
+    "emailReadonly": "Your email is your sign-in identity and cannot be changed here."
   },
   "packageWizard": {
     "createNewPackage": "Create New Package",
@@ -1268,10 +1276,10 @@
     "participants": "participants"
   },
   "errors": {
+    "404": "404",
     "somethingWentWrong": "Something went wrong",
     "unexpectedError": "An unexpected error occurred.",
     "refreshPage": "Refresh Page",
-    "404": "404",
     "pageNotFound": "Oops! Page not found",
     "returnHome": "Return to Home",
     "networkError": "Network error — please check your connection",
@@ -1832,5 +1840,20 @@
     "type": "Type",
     "unassigned": "Unassigned",
     "updateError": "Failed to update pending action"
+  },
+  "messages": {
+    "sent": "Message sent — the agency will get back to you.",
+    "sendFailed": "Could not send your message. Please try again.",
+    "contactAgencyTitle": "Ask about {{subject}}",
+    "yourMessage": "Your message",
+    "messagePlaceholder": "Ask about dates, group size, what to bring...",
+    "send": "Send message"
+  },
+  "voucher": {
+    "title": "Booking Voucher",
+    "traveler": "Traveler",
+    "paymentStatus": "Payment",
+    "destination": "Destination",
+    "footer": "Present this voucher (printed or on your phone) to your tour operator. Generated on"
   }
 }

@@ -7,6 +7,8 @@ import { useAuth } from "@/features/auth/context/AuthContext";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { localizedText } from "@/lib/localized";
+import { formatCurrency } from "@/lib/formatters";
+import { getRecentlyViewedIds } from "@/features/packages/lib/recentlyViewed";
 import {
   BookOpen,
   Heart,
@@ -21,9 +23,9 @@ export default function TravelerDashboard() {
   const { t, i18n } = useTranslation();
   const { user, profile } = useAuth();
 
-  // Fetch traveler's bookings from Supabase
-  const { data: bookings = [] } = useQuery({
-    queryKey: ['traveler-bookings', user?.id],
+  // Next trips: soonest upcoming confirmed/pending bookings
+  const { data: upcomingTrips = [] } = useQuery({
+    queryKey: ['traveler-upcoming-trips', user?.id],
     queryFn: async () => {
       if (!user?.id) return [];
       const { data, error } = await supabase
@@ -39,14 +41,41 @@ export default function TravelerDashboard() {
           )
         `)
         .eq('traveler_id', user.id)
-        .order('booking_date', { ascending: false })
-        .limit(5);
+        .in('status', ['confirmed', 'pending'])
+        .gte('booking_date', new Date().toISOString().slice(0, 10))
+        .order('booking_date', { ascending: true })
+        .limit(3);
 
       if (error) {
         console.error('Error fetching bookings:', error);
         return [];
       }
       return data || [];
+    },
+    enabled: !!user?.id,
+  });
+
+  // Stats computed across ALL bookings (not just the ones shown above)
+  const { data: bookingStats = { active: 0, countries: 0 } } = useQuery({
+    queryKey: ['traveler-booking-stats', user?.id],
+    queryFn: async () => {
+      if (!user?.id) return { active: 0, countries: 0 };
+      const { data, error } = await supabase
+        .from('package_bookings')
+        .select('status, packages ( destination )')
+        .eq('traveler_id', user.id);
+      if (error) {
+        console.error('Error fetching booking stats:', error);
+        return { active: 0, countries: 0 };
+      }
+      const rows = data ?? [];
+      const active = rows.filter(b => b.status === 'confirmed' || b.status === 'pending').length;
+      const countries = new Set(
+        rows
+          .map(b => (b.packages as { destination?: string } | null)?.destination)
+          .filter(Boolean)
+      ).size;
+      return { active, countries };
     },
     enabled: !!user?.id,
   });
@@ -86,10 +115,26 @@ export default function TravelerDashboard() {
     enabled: !!user?.id,
   });
 
-  // Get stats
-  const upcomingBookingsCount = bookings.filter(b =>
-    b.status === 'confirmed' || b.status === 'pending'
-  ).length;
+  // Recently viewed packages (ids tracked in localStorage, data fetched live)
+  const recentlyViewedIds = getRecentlyViewedIds();
+  const { data: recentlyViewed = [] } = useQuery({
+    queryKey: ['traveler-recently-viewed', recentlyViewedIds.join(',')],
+    queryFn: async () => {
+      if (recentlyViewedIds.length === 0) return [];
+      const { data, error } = await supabase
+        .from('packages')
+        .select('id, title, title_ar, destination, destination_ar, duration_days, base_price')
+        .in('id', recentlyViewedIds)
+        .eq('status', 'published');
+      if (error) {
+        console.error('Error fetching recently viewed packages:', error);
+        return [];
+      }
+      // Preserve most-recently-viewed-first order
+      const byId = new Map((data ?? []).map(p => [p.id, p]));
+      return recentlyViewedIds.map(id => byId.get(id)).filter(Boolean).slice(0, 3);
+    },
+  });
 
   const getStatusTranslation = (status: string) => {
     switch (status?.toLowerCase()) {
@@ -133,7 +178,7 @@ export default function TravelerDashboard() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">{t('travelerDashboard.activeBookings')}</p>
-                <p className="text-2xl font-bold">{upcomingBookingsCount}</p>
+                <p className="text-2xl font-bold">{bookingStats.active}</p>
               </div>
               <BookOpen className="w-8 h-8 text-primary" />
             </div>
@@ -166,7 +211,7 @@ export default function TravelerDashboard() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">{t('travelerDashboard.countriesVisited')}</p>
-                <p className="text-2xl font-bold">{new Set(bookings.map(b => b.packages?.destination)).size}</p>
+                <p className="text-2xl font-bold">{bookingStats.countries}</p>
               </div>
               <MapPin className="w-8 h-8 text-green-600" />
             </div>
@@ -187,8 +232,8 @@ export default function TravelerDashboard() {
             </Link>
           </CardHeader>
           <CardContent className="space-y-4">
-            {bookings.length > 0 ? (
-              bookings.slice(0, 3).map((booking) => (
+            {upcomingTrips.length > 0 ? (
+              upcomingTrips.map((booking) => (
                 <div key={booking.id} className="flex items-center gap-4 p-3 bg-muted/50 rounded-lg">
                   <div className="w-16 h-16 rounded-lg bg-primary/10 flex items-center justify-center">
                     <MapPin className="w-6 h-6 text-primary" />
@@ -228,12 +273,33 @@ export default function TravelerDashboard() {
             </Link>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="text-center py-8 text-muted-foreground">
-              <p>{t('travelerDashboard.noRecentlyViewed')}</p>
-              <Link to="/">
-                <Button variant="link" className="mt-2">{t('travelerDashboard.browseTours')}</Button>
-              </Link>
-            </div>
+            {recentlyViewed.length > 0 ? (
+              recentlyViewed.map((pkg) => pkg && (
+                <Link
+                  key={pkg.id}
+                  to={`/packages/${pkg.id}`}
+                  className="flex items-center gap-4 p-3 bg-muted/50 rounded-lg hover:bg-muted transition-colors"
+                >
+                  <div className="w-16 h-16 rounded-lg bg-primary/10 flex items-center justify-center">
+                    <MapPin className="w-6 h-6 text-primary" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h4 className="font-medium truncate">{localizedText(pkg, 'title')}</h4>
+                    <p className="text-sm text-muted-foreground truncate">
+                      {localizedText(pkg, 'destination')} · {pkg.duration_days} {t('common.days')}
+                    </p>
+                  </div>
+                  <span className="font-semibold tabular-nums whitespace-nowrap">{formatCurrency(pkg.base_price)}</span>
+                </Link>
+              ))
+            ) : (
+              <div className="text-center py-8 text-muted-foreground">
+                <p>{t('travelerDashboard.noRecentlyViewed')}</p>
+                <Link to="/">
+                  <Button variant="link" className="mt-2">{t('travelerDashboard.browseTours')}</Button>
+                </Link>
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>

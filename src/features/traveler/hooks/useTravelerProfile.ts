@@ -72,6 +72,29 @@ export function useTravelerProfile(userId: string | undefined) {
     enabled: !!userId,
   });
 
+  // Uploads the image to avatars/{uid}/ and points travelers.avatar_url at it.
+  const updateAvatar = useMutation({
+    mutationFn: async (file: File) => {
+      if (!userId) throw new Error('Not signed in');
+      const ext = file.name.split('.').pop()?.toLowerCase() || 'jpg';
+      const path = `${userId}/avatar-${Date.now()}.${ext}`;
+      const { error: uploadError } = await supabase.storage
+        .from('avatars')
+        .upload(path, file, { cacheControl: '3600', upsert: false });
+      if (uploadError) throw uploadError;
+      const { data: { publicUrl } } = supabase.storage.from('avatars').getPublicUrl(path);
+      const { error } = await supabase
+        .from('travelers')
+        .update({ avatar_url: publicUrl })
+        .eq('id', userId);
+      if (error) throw error;
+      return publicUrl;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['traveler-profile', userId] });
+    },
+  });
+
   const updateProfile = useMutation({
     mutationFn: async (update: TravelerProfileUpdate) => {
       if (!userId) throw new Error('Not signed in');
@@ -91,5 +114,6 @@ export function useTravelerProfile(userId: string | undefined) {
     isLoading: profileQuery.isLoading,
     stats: statsQuery.data ?? { completedTours: 0, countriesVisited: 0 },
     updateProfile,
+    updateAvatar,
   };
 }

@@ -1,7 +1,6 @@
 
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import { Button } from "@/ui/button";
+import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { EmptyState } from "@/ui/empty-state";
 import { LoadingSpinner } from "@/ui/loading-spinner";
@@ -9,6 +8,7 @@ import { Card, CardContent } from "@/ui/card";
 import { StarRating } from "@/features/reviews/components/StarRating";
 import { useReviews } from "@/features/reviews/hooks/useReviews";
 import { formatDate } from "@/lib/formatters";
+import { localizedText } from "@/lib/localized";
 
 // Shape of the rows returned by useReviews().fetchTravelerReviews (reviews
 // with their embedded package and package_media).
@@ -20,12 +20,14 @@ interface TravelerReview {
   package: {
     id: string;
     title: string;
+    title_ar?: string | null;
     package_media: { file_path: string; is_primary: boolean | null }[] | null;
   } | null;
 }
 
 export default function TravelerReviews() {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const { fetchTravelerReviews } = useReviews();
   const [reviews, setReviews] = useState<TravelerReview[]>([]);
   const [loading, setLoading] = useState(true);
@@ -57,7 +59,10 @@ export default function TravelerReviews() {
       <div className="grid gap-6">
         {reviews.length > 0 ? (
           reviews.map((review) => {
-            const primaryImage = review.package.package_media?.find((m) => m.is_primary) || review.package.package_media?.[0];
+            // The package can be gone (unpublished/deleted) — the review still renders.
+            const pkg = review.package;
+            const packageTitle = pkg ? localizedText(pkg, 'title') : t('common.unknownPackage', 'Package no longer available');
+            const primaryImage = pkg?.package_media?.find((m) => m.is_primary) || pkg?.package_media?.[0];
             const imageUrl = primaryImage?.file_path || "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=100&h=100&fit=crop";
 
             return (
@@ -66,13 +71,17 @@ export default function TravelerReviews() {
                   <div className="flex gap-4 sm:gap-6">
                     <img
                       src={imageUrl}
-                      alt={review.package.title}
+                      alt={packageTitle}
                       className="w-24 h-24 sm:w-32 sm:h-32 object-cover rounded-lg flex-shrink-0"
                     />
                     <div className="flex-1 space-y-2">
                       <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2">
                         <h3 className="font-semibold text-lg hover:underline">
-                          <Link to={`/packages/${review.package.id}`}>{review.package.title}</Link>
+                          {pkg ? (
+                            <Link to={`/packages/${pkg.id}`}>{packageTitle}</Link>
+                          ) : (
+                            <span className="text-muted-foreground">{packageTitle}</span>
+                          )}
                         </h3>
                         <span className="text-sm text-muted-foreground whitespace-nowrap">
                           {formatDate(review.created_at, 'MMM d, yyyy')}
@@ -93,7 +102,7 @@ export default function TravelerReviews() {
             description={t('travelerDashboard.noReviewsDesc') || "You haven't written any reviews yet. Complete a booking to leave a review!"}
             action={{
               label: t('travelerDashboard.viewBookings') || "View My Bookings",
-              onClick: () => window.location.href = "/dashboard/bookings"
+              onClick: () => navigate("/traveler/dashboard/bookings")
             }}
           />
         )}

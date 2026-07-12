@@ -32,18 +32,23 @@ interface BookingWidgetProps {
     monthlyAvailability: MonthlyAvailability[];
     onSelectMonth: (month: string) => void;
     onCheckAvailability: () => void;
+    isWishlisted: boolean;
+    onToggleWishlist: () => void;
+    onAskAgency: () => void;
 }
 
 export function BookingWidget({
     packageData,
     monthlyAvailability,
     onSelectMonth,
-    onCheckAvailability
+    onCheckAvailability,
+    isWishlisted,
+    onToggleWishlist,
+    onAskAgency
 }: BookingWidgetProps) {
     const { t, i18n } = useTranslation();
     const isRTL = i18n.dir() === 'rtl';
     const [datePopoverOpen, setDatePopoverOpen] = useState(false);
-    const [isWishlisted, setIsWishlisted] = useState(false);
 
     // Find the lowest price across all months
     const lowestPrice = monthlyAvailability.length > 0
@@ -167,14 +172,16 @@ export function BookingWidget({
                     <Button
                         variant="outline"
                         className={`flex items-center justify-center gap-2 h-10 ${isWishlisted ? 'text-red-500 border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/30' : ''}`}
-                        onClick={() => setIsWishlisted(!isWishlisted)}
+                        onClick={onToggleWishlist}
+                        aria-pressed={isWishlisted}
                     >
                         <Heart className={`w-4 h-4 ${isWishlisted ? 'fill-current' : ''}`} />
-                        <span className="text-sm">{t('packageDetails.save', 'Save')}</span>
+                        <span className="text-sm">{isWishlisted ? t('packageDetails.saved', 'Saved') : t('packageDetails.save', 'Save')}</span>
                     </Button>
                     <Button
                         variant="outline"
                         className="flex items-center justify-center gap-2 h-10"
+                        onClick={onAskAgency}
                     >
                         <MessageCircle className="w-4 h-4" />
                         <span className="text-sm">{t('packageDetails.askQuestion', 'Ask')}</span>

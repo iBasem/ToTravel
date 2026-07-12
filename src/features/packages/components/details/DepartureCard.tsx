@@ -129,9 +129,6 @@ export function DepartureCard({ departure, durationDays, onConfirm }: DepartureC
 
                     {/* Action Buttons */}
                     <div className="flex items-center gap-3">
-                        <button className="text-sm text-teal-600 hover:text-teal-700 font-medium hover:underline">
-                            {t('packageDetails.holdSpace48h', 'Hold space for 48h')}
-                        </button>
                         <Button
                             onClick={onConfirm}
                             disabled={departure.seats_remaining === 0}

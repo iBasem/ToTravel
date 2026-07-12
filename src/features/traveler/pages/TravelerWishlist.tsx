@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/ui/button";
 import { useTranslation } from "react-i18next";
 import { EmptyState } from "@/ui/empty-state";
@@ -9,6 +9,7 @@ import { PackageCard } from "@/features/packages/components/PackageCard";
 
 export default function TravelerWishlist() {
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
   // Real data hook
   const { wishlist, loading, fetchWishlist, toggleWishlist } = useWishlist();
@@ -55,7 +56,7 @@ export default function TravelerWishlist() {
           description={t('travelerDashboard.emptyWishlistDesc')}
           action={{
             label: t('travelerDashboard.browseTours'),
-            onClick: () => window.location.href = "/packages"
+            onClick: () => navigate("/packages")
           }}
         />
       )}

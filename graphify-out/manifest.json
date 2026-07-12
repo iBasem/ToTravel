@@ -265,8 +265,8 @@
     "semantic_hash": ""
   },
   "src/features/bookings/pages/TravelerBookings.tsx": {
-    "mtime": 1783684353.0267253,
-    "ast_hash": "173dd4c68bd454eae68863b1d4b03eb6",
+    "mtime": 1783888149.0761547,
+    "ast_hash": "a9f09fdb7092b6fcf7b4ea88a566c3d8",
     "semantic_hash": ""
   },
   "src/features/home/components/DestinationsSection.tsx": {
@@ -330,13 +330,13 @@
     "semantic_hash": ""
   },
   "src/features/packages/components/details/BookingWidget.tsx": {
-    "mtime": 1783416800.5838354,
-    "ast_hash": "e0b41013e92d3ca838e3f8a67b1aa903",
+    "mtime": 1783888000.9214754,
+    "ast_hash": "2981b67c51244ac439b40bbb53e228e6",
     "semantic_hash": ""
   },
   "src/features/packages/components/details/DepartureCard.tsx": {
-    "mtime": 1783416829.7050495,
-    "ast_hash": "f43b395fdaaea51f1bcf7709516dd11c",
+    "mtime": 1783888996.9768493,
+    "ast_hash": "5e1600ad864f7f47a829931d17b38b7d",
     "semantic_hash": ""
   },
   "src/features/packages/components/details/DetailedItinerary.tsx": {
@@ -360,8 +360,8 @@
     "semantic_hash": ""
   },
   "src/features/packages/components/details/TourHeader.tsx": {
-    "mtime": 1783416932.223649,
-    "ast_hash": "586bb0c2744e8b3f33e648ad9341450d",
+    "mtime": 1783888017.9847329,
+    "ast_hash": "b6bf681996ebb4587cdab7338708f029",
     "semantic_hash": ""
   },
   "src/features/packages/components/details/WhatsIncluded.tsx": {
@@ -535,8 +535,8 @@
     "semantic_hash": ""
   },
   "src/features/packages/pages/PackageDetails.tsx": {
-    "mtime": 1783788974.7964723,
-    "ast_hash": "d6faa5730c5651dd04afcb4629709c42",
+    "mtime": 1783888578.4705477,
+    "ast_hash": "962f340eac7108530c36f4a1d63f2f0a",
     "semantic_hash": ""
   },
   "src/features/packages/pages/PackagesList.tsx": {
@@ -580,8 +580,8 @@
     "semantic_hash": ""
   },
   "src/features/reviews/hooks/useReviews.ts": {
-    "mtime": 1783438430.1781948,
-    "ast_hash": "416c3323218314496b625fbf9b3efe47",
+    "mtime": 1783888189.3439867,
+    "ast_hash": "fba77c01e3874fd3ced907a7908b4d68",
     "semantic_hash": ""
   },
   "src/features/traveler/hooks/useWishlist.ts": {
@@ -590,23 +590,23 @@
     "semantic_hash": ""
   },
   "src/features/traveler/pages/TravelerDashboard.tsx": {
-    "mtime": 1783436071.1743698,
-    "ast_hash": "ba969959bc6af8cfefb3ad311a715b41",
+    "mtime": 1783888081.8637352,
+    "ast_hash": "7d9c21733a1464882fe83d769e282bfc",
     "semantic_hash": ""
   },
   "src/features/traveler/pages/TravelerProfile.tsx": {
-    "mtime": 1783436147.7657974,
-    "ast_hash": "624aba28c88e0a1ce29a45e29e91336f",
+    "mtime": 1783888269.7602122,
+    "ast_hash": "ef1ccd66e45dc728b5ad72c1412e4f1d",
     "semantic_hash": ""
   },
   "src/features/traveler/pages/TravelerReviews.tsx": {
-    "mtime": 1783614125.9755847,
-    "ast_hash": "c70c25f010955006dace13810c311000",
+    "mtime": 1783888207.4181614,
+    "ast_hash": "a515ed9d5309c216eced6b7464036414",
     "semantic_hash": ""
   },
   "src/features/traveler/pages/TravelerWishlist.tsx": {
-    "mtime": 1783437266.8319378,
-    "ast_hash": "ce139b9157e20fcb1483dabb559efead",
+    "mtime": 1783888220.1269364,
+    "ast_hash": "b1db8af688570f4ff3c4311d6c1db67e",
     "semantic_hash": ""
   },
   "src/features/traveler/routes.tsx": {
@@ -625,13 +625,13 @@
     "semantic_hash": "b1e3a450a749c61b3aef4af5b82d6e57"
   },
   "src/i18n/locales/ar.json": {
-    "mtime": 1783789083.0183423,
-    "ast_hash": "74342c207e1999d3a8aee8c8b01ab03d",
+    "mtime": 1783888301.9358518,
+    "ast_hash": "c9a8aca1da3f48d9d73797f67b914e7b",
     "semantic_hash": ""
   },
   "src/i18n/locales/en.json": {
-    "mtime": 1783789044.7199163,
-    "ast_hash": "eca1b78a22ee8b8bdfbcdc7da269dc3a",
+    "mtime": 1783888301.9338489,
+    "ast_hash": "5a809c34a0c8e2c2cecc4bea70e0fe9a",
     "semantic_hash": ""
   },
   "src/integrations/supabase/client.ts": {
@@ -665,8 +665,8 @@
     "semantic_hash": ""
   },
   "src/layouts/TravelerHeader.tsx": {
-    "mtime": 1783426043.4962895,
-    "ast_hash": "9892123943b056ae034ef99441b5a3a9",
+    "mtime": 1783887918.6623776,
+    "ast_hash": "84b518062575c0c374106962c31fa3da",
     "semantic_hash": ""
   },
   "src/layouts/TravelerLayout.tsx": {
@@ -1265,7 +1265,7 @@
     "semantic_hash": "35707bd9960ba5281c72af927b79291f"
   },
   ".claude/settings.json": {
-    "mtime": 1783435780.382826,
+    "mtime": 1783886517.679216,
     "ast_hash": "0ae25da4e7c9524c171a8ea3d478521e",
     "semantic_hash": ""
   },
@@ -1670,8 +1670,8 @@
     "semantic_hash": ""
   },
   ".impeccable/hook.cache.json": {
-    "mtime": 1783789830.427891,
-    "ast_hash": "753fc3a566fa395d45fb460ef255820d",
+    "mtime": 1783888997.477852,
+    "ast_hash": "26d0a57d1781a488a38ae57a8ef01398",
     "semantic_hash": ""
   },
   "src/ui/ThemeToggle.tsx": {
@@ -1880,8 +1880,8 @@
     "semantic_hash": ""
   },
   "src/features/traveler/hooks/useTravelerProfile.ts": {
-    "mtime": 1783436625.1430576,
-    "ast_hash": "33daefb9f85bbf70e100c5f1b017d8bf",
+    "mtime": 1783888249.197665,
+    "ast_hash": "6fd72cf672c799e893b2ebbdce4cca77",
     "semantic_hash": ""
   },
   "supabase/migrations/20260707020000_review_authors_view.sql": {
@@ -2692,6 +2692,26 @@
   "supabase/migrations/20260711000200_package_highlights.sql": {
     "mtime": 1783788482.4874835,
     "ast_hash": "d6b3d20f255a2b0eabb1296fd5846a5e",
+    "semantic_hash": ""
+  },
+  "src/features/bookings/lib/voucher.ts": {
+    "mtime": 1783888309.1838267,
+    "ast_hash": "f08d838eb7f591835992583170718d92",
+    "semantic_hash": ""
+  },
+  "src/features/packages/components/details/ContactAgencyDialog.tsx": {
+    "mtime": 1783887985.5702314,
+    "ast_hash": "3071bf529abcee8a894b7e9e2428355a",
+    "semantic_hash": ""
+  },
+  "src/features/packages/lib/recentlyViewed.ts": {
+    "mtime": 1783887929.604061,
+    "ast_hash": "aea022fc4bdad573e29290531f484d39",
+    "semantic_hash": ""
+  },
+  "supabase/migrations/20260712000100_avatars_bucket.sql": {
+    "mtime": 1783888233.1175883,
+    "ast_hash": "8e3bb59c89370341172f3fecb1bc4c6c",
     "semantic_hash": ""
   }
 }

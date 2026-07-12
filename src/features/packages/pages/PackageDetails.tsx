@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
@@ -33,6 +33,9 @@ import type { Departure } from "@/features/packages/types";
 import { Seo } from "@/lib/seo";
 import { getPlatformCurrency } from "@/lib/formatters";
 import { localizedText, pickLocalized } from "@/lib/localized";
+import { recordPackageView } from "@/features/packages/lib/recentlyViewed";
+import { useWishlist } from "@/features/traveler/hooks/useWishlist";
+import { ContactAgencyDialog } from "@/features/packages/components/details/ContactAgencyDialog";
 
 export default function PackageDetails() {
   const { t } = useTranslation();
@@ -45,6 +48,49 @@ export default function PackageDetails() {
   // Booking modal state
   const [showBookingModal, setShowBookingModal] = useState(false);
   const [selectedDeparture, setSelectedDeparture] = useState<Departure | null>(null);
+  const [showContactDialog, setShowContactDialog] = useState(false);
+
+  // Wishlist state for the Save buttons (header + booking widget)
+  const { wishlistIds, fetchWishlist, toggleWishlist } = useWishlist();
+  const isTraveler = profile?.role === 'traveler';
+
+  useEffect(() => {
+    if (isTraveler) fetchWishlist();
+  }, [isTraveler, fetchWishlist]);
+
+  // Record the visit for the dashboard's "Recently viewed" card.
+  useEffect(() => {
+    if (id) recordPackageView(id);
+  }, [id]);
+
+  // Content loads async, so honor #reviews / #map deep links once it's ready.
+  // The gallery/map above the anchor keep shifting layout while they load, so
+  // scroll once after paint and again shortly after to land on the target.
+  useEffect(() => {
+    if (loading || !packageDetails) return;
+    const hash = window.location.hash.slice(1);
+    if (!hash) return;
+    const scroll = () => document.getElementById(hash)?.scrollIntoView({ block: 'start' });
+    const t1 = setTimeout(scroll, 100);
+    const t2 = setTimeout(scroll, 700);
+    return () => { clearTimeout(t1); clearTimeout(t2); };
+  }, [loading, packageDetails]);
+
+  const handleToggleWishlist = () => {
+    if (!user || !isTraveler) {
+      navigate('/auth?type=traveler');
+      return;
+    }
+    if (id) toggleWishlist(id);
+  };
+
+  const handleAskAgency = () => {
+    if (!user || !isTraveler) {
+      navigate('/auth?type=traveler');
+      return;
+    }
+    setShowContactDialog(true);
+  };
 
   // Availability hook - only initialize when package data is available
   const {
@@ -176,7 +222,11 @@ export default function PackageDetails() {
             )}
 
             {/* Tour Header - Title, Rating, Stats */}
-            <TourHeader packageData={packageDetails} />
+            <TourHeader
+              packageData={packageDetails}
+              isWishlisted={!!id && wishlistIds.has(id)}
+              onToggleWishlist={handleToggleWishlist}
+            />
 
             {/* Highlights */}
             {packageDetails.highlights && packageDetails.highlights.length > 0 && (
@@ -193,9 +243,11 @@ export default function PackageDetails() {
               </div>
             )}
 
-            {/* Interactive Route Map */}
+            {/* Interactive Route Map - Anchor target for card "View map" links */}
             {packageDetails.package_routes && packageDetails.package_routes.length > 0 && (
-              <RouteMap routes={packageDetails.package_routes} />
+              <div id="map" className="scroll-mt-6">
+                <RouteMap routes={packageDetails.package_routes} />
+              </div>
             )}
 
             {/* Detailed Itinerary (Accordion) */}
@@ -229,8 +281,8 @@ export default function PackageDetails() {
               durationDays={packageDetails.duration_days}
             />
 
-            {/* Reviews Section */}
-            <div className="pt-6 border-t">
+            {/* Reviews Section - Anchor target for "Write review" deep links */}
+            <div id="reviews" className="pt-6 border-t scroll-mt-6">
               <h2 className="text-2xl font-bold mb-6 text-start">
                 {t('reviews.title', 'Reviews')}
               </h2>
@@ -256,6 +308,9 @@ export default function PackageDetails() {
                 monthlyAvailability={monthlyAvailability}
                 onSelectMonth={handleSelectMonth}
                 onCheckAvailability={handleCheckAvailability}
+                isWishlisted={!!id && wishlistIds.has(id)}
+                onToggleWishlist={handleToggleWishlist}
+                onAskAgency={handleAskAgency}
               />
             </div>
           </div>
@@ -276,6 +331,14 @@ export default function PackageDetails() {
         basePrice={selectedDeparture?.discount_price || selectedDeparture?.price || packageDetails.base_price}
         maxParticipants={packageDetails.max_participants}
         departure={selectedDeparture}
+      />
+
+      {/* Ask-the-agency dialog (messages land in the agency inbox) */}
+      <ContactAgencyDialog
+        isOpen={showContactDialog}
+        onClose={() => setShowContactDialog(false)}
+        agencyId={packageDetails.agency_id}
+        subject={localizedTitle}
       />
     </div>
   );

@@ -85,6 +85,7 @@ export function useReviews() {
           package:packages (
             id,
             title,
+            title_ar,
             package_media (
               file_path,
               is_primary

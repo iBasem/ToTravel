@@ -21,19 +21,25 @@ import { LoadingSpinner } from "@/ui/loading-spinner";
 import { EmptyState } from "@/ui/empty-state";
 import { formatCurrency, formatDate } from "@/lib/formatters";
 import { localizedText } from "@/lib/localized";
+import { downloadBookingVoucher } from "@/features/bookings/lib/voucher";
+import { ContactAgencyDialog } from "@/features/packages/components/details/ContactAgencyDialog";
 
 import { useNavigate } from "react-router-dom";
 
-// The bookings query also embeds packages.package_media (see useBookings),
-// which the shared Booking interface does not declare.
+// The bookings query also embeds packages.package_media and agency_id (see
+// useBookings), which the shared Booking interface does not declare.
 type BookingWithMedia = Booking & {
   payment_status?: string | null;
-  packages?: Booking["packages"] & { package_media?: { file_path: string }[] };
+  packages?: Booking["packages"] & {
+    package_media?: { file_path: string }[];
+    agency_id?: string;
+  };
 };
 
 export default function TravelerBookings() {
   const [activeTab, setActiveTab] = useState("all");
-  const { t } = useTranslation();
+  const [contactBooking, setContactBooking] = useState<BookingWithMedia | null>(null);
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
 
   const { bookings, loading, error } = useBookings();
@@ -76,6 +82,7 @@ export default function TravelerBookings() {
     if (activeTab === "all") return true;
     if (activeTab === "upcoming") return booking.status === "confirmed" || booking.status === "pending";
     if (activeTab === "completed") return booking.status === "completed";
+    if (activeTab === "cancelled") return booking.status === "cancelled";
     return true;
   });
 
@@ -94,8 +101,28 @@ export default function TravelerBookings() {
       case "confirmed": return t('travelerDashboard.confirmed');
       case "pending": return t('travelerDashboard.pending');
       case "completed": return t('travelerDashboard.completed');
+      case "cancelled": return t('travelerDashboard.cancelled');
       default: return status;
     }
+  };
+
+  const handleDownloadVoucher = (booking: BookingWithMedia) => {
+    downloadBookingVoucher(
+      {
+        id: booking.id,
+        bookingDate: booking.booking_date,
+        participants: booking.participants,
+        totalPrice: booking.total_price,
+        status: getStatusTranslation(booking.status),
+        paymentStatus: booking.payment_status,
+        packageTitle: localizedText(booking.packages, 'title') || t('common.unknownPackage'),
+        destination: localizedText(booking.packages, 'destination') || '',
+        durationDays: booking.packages?.duration_days,
+        travelerName: [booking.travelers?.first_name, booking.travelers?.last_name].filter(Boolean).join(' ') || undefined,
+      },
+      t,
+      i18n.dir() === 'rtl' ? 'rtl' : 'ltr'
+    );
   };
 
   return (
@@ -106,10 +133,11 @@ export default function TravelerBookings() {
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
+        <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="all">{t('travelerDashboard.allBookings')}</TabsTrigger>
           <TabsTrigger value="upcoming">{t('travelerDashboard.upcoming')}</TabsTrigger>
           <TabsTrigger value="completed">{t('travelerDashboard.completed')}</TabsTrigger>
+          <TabsTrigger value="cancelled">{t('travelerDashboard.cancelled')}</TabsTrigger>
         </TabsList>
 
         <TabsContent value={activeTab} className="space-y-4 mt-6">
@@ -179,16 +207,33 @@ export default function TravelerBookings() {
                               {t('payments.payNow', 'Pay now')}
                             </Button>
                           )}
-                          <Button size="sm" variant="outline" className="flex items-center gap-2">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => handleDownloadVoucher(booking)}
+                            className="flex items-center gap-2"
+                          >
                             <Download className="w-4 h-4" />
                             {t('travelerDashboard.downloadVoucher')}
                           </Button>
-                          <Button size="sm" variant="outline" className="flex items-center gap-2">
-                            <MessageSquare className="w-4 h-4" />
-                            {t('travelerDashboard.contactSupport')}
-                          </Button>
+                          {booking.packages?.agency_id && (
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => setContactBooking(booking)}
+                              className="flex items-center gap-2"
+                            >
+                              <MessageSquare className="w-4 h-4" />
+                              {t('travelerDashboard.contactAgency', 'Contact agency')}
+                            </Button>
+                          )}
                           {booking.status === "completed" && (
-                            <Button size="sm" variant="outline" className="flex items-center gap-2">
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => navigate(`/packages/${booking.package_id}#reviews`)}
+                              className="flex items-center gap-2"
+                            >
                               <Star className="w-4 h-4" />
                               {t('travelerDashboard.writeReview')}
                             </Button>
@@ -203,6 +248,16 @@ export default function TravelerBookings() {
           )}
         </TabsContent>
       </Tabs>
+
+      {/* Message-the-agency dialog for the selected booking */}
+      {contactBooking?.packages?.agency_id && (
+        <ContactAgencyDialog
+          isOpen={!!contactBooking}
+          onClose={() => setContactBooking(null)}
+          agencyId={contactBooking.packages.agency_id}
+          subject={`${localizedText(contactBooking.packages, 'title') || t('common.unknownPackage')} · ${contactBooking.id.slice(0, 8).toUpperCase()}`}
+        />
+      )}
     </div>
   );
 }
