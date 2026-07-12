@@ -245,8 +245,8 @@
     "semantic_hash": ""
   },
   "src/features/bookings/hooks/useBookings.ts": {
-    "mtime": 1783789795.5492747,
-    "ast_hash": "8605b3b0006616c906f6e189e615b81d",
+    "mtime": 1783890822.9474008,
+    "ast_hash": "4bc58bbcc09682357be8a7ef1af4b7e2",
     "semantic_hash": ""
   },
   "src/features/bookings/hooks/useCreateBooking.ts": {
@@ -265,8 +265,8 @@
     "semantic_hash": ""
   },
   "src/features/bookings/pages/TravelerBookings.tsx": {
-    "mtime": 1783888149.0761547,
-    "ast_hash": "a9f09fdb7092b6fcf7b4ea88a566c3d8",
+    "mtime": 1783890872.428455,
+    "ast_hash": "f62a0f388cebb09fc8bb2240dd145ed3",
     "semantic_hash": ""
   },
   "src/features/home/components/DestinationsSection.tsx": {
@@ -625,13 +625,13 @@
     "semantic_hash": "b1e3a450a749c61b3aef4af5b82d6e57"
   },
   "src/i18n/locales/ar.json": {
-    "mtime": 1783888301.9358518,
-    "ast_hash": "c9a8aca1da3f48d9d73797f67b914e7b",
+    "mtime": 1783890888.2058842,
+    "ast_hash": "825b12d31cdcfd43714cef0822388038",
     "semantic_hash": ""
   },
   "src/i18n/locales/en.json": {
-    "mtime": 1783888301.9338489,
-    "ast_hash": "5a809c34a0c8e2c2cecc4bea70e0fe9a",
+    "mtime": 1783890888.2028816,
+    "ast_hash": "fa600de5a0398531f7df7c3d361b406d",
     "semantic_hash": ""
   },
   "src/integrations/supabase/client.ts": {
@@ -1670,8 +1670,8 @@
     "semantic_hash": ""
   },
   ".impeccable/hook.cache.json": {
-    "mtime": 1783888997.477852,
-    "ast_hash": "26d0a57d1781a488a38ae57a8ef01398",
+    "mtime": 1783890873.0000033,
+    "ast_hash": "aee7d76c9563ea85eb9963207e6db790",
     "semantic_hash": ""
   },
   "src/ui/ThemeToggle.tsx": {
@@ -2712,6 +2712,16 @@
   "supabase/migrations/20260712000100_avatars_bucket.sql": {
     "mtime": 1783888233.1175883,
     "ast_hash": "8e3bb59c89370341172f3fecb1bc4c6c",
+    "semantic_hash": ""
+  },
+  "src/features/bookings/hooks/useCancelBooking.ts": {
+    "mtime": 1783890838.4925334,
+    "ast_hash": "c518efa2b4d31b0fb68740d3d8758e53",
+    "semantic_hash": ""
+  },
+  "supabase/functions/cancel-booking/index.ts": {
+    "mtime": 1783890788.6021821,
+    "ast_hash": "89821b47e9608a61fd88900f4a604d2c",
     "semantic_hash": ""
   }
 }

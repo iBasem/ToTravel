@@ -13,10 +13,22 @@ import {
   MessageSquare,
   Star,
   CreditCard,
-  Loader2
+  Loader2,
+  XCircle
 } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/ui/alert-dialog";
 import { useBookings, type Booking } from "@/features/bookings/hooks/useBookings";
 import { usePayment } from "@/features/bookings/hooks/usePayment";
+import { useCancelBooking } from "@/features/bookings/hooks/useCancelBooking";
 import { LoadingSpinner } from "@/ui/loading-spinner";
 import { EmptyState } from "@/ui/empty-state";
 import { formatCurrency, formatDate } from "@/lib/formatters";
@@ -39,11 +51,27 @@ type BookingWithMedia = Booking & {
 export default function TravelerBookings() {
   const [activeTab, setActiveTab] = useState("all");
   const [contactBooking, setContactBooking] = useState<BookingWithMedia | null>(null);
+  const [cancelTarget, setCancelTarget] = useState<BookingWithMedia | null>(null);
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
 
-  const { bookings, loading, error } = useBookings();
+  const { bookings, loading, error, refetch } = useBookings();
   const { startPayment, loading: paying } = usePayment();
+  const { cancelBooking, loading: cancelling } = useCancelBooking();
+
+  const handleConfirmCancel = async () => {
+    if (!cancelTarget) return;
+    const result = await cancelBooking(cancelTarget.id);
+    setCancelTarget(null);
+    if (result.success) refetch();
+  };
+
+  // Cancellable = not started/finished and no money moved (paid bookings go
+  // through the refund flow; the edge function enforces the same rules).
+  const isCancellable = (booking: BookingWithMedia) =>
+    (booking.status === "pending" || booking.status === "confirmed") &&
+    booking.payment_status !== "paid" &&
+    booking.payment_status !== "refunded";
 
   if (loading) {
     return (
@@ -238,6 +266,17 @@ export default function TravelerBookings() {
                               {t('travelerDashboard.writeReview')}
                             </Button>
                           )}
+                          {isCancellable(booking) && (
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => setCancelTarget(booking)}
+                              className="flex items-center gap-2 text-destructive hover:text-destructive"
+                            >
+                              <XCircle className="w-4 h-4" />
+                              {t('travelerDashboard.cancelBooking', 'Cancel booking')}
+                            </Button>
+                          )}
                         </div>
                       </div>
                     </div>
@@ -248,6 +287,34 @@ export default function TravelerBookings() {
           )}
         </TabsContent>
       </Tabs>
+
+      {/* Cancel-booking confirmation */}
+      <AlertDialog open={!!cancelTarget} onOpenChange={(open) => !open && setCancelTarget(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t('travelerDashboard.cancelBookingTitle', 'Cancel this booking?')}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {t('travelerDashboard.cancelBookingDesc', {
+                title: localizedText(cancelTarget?.packages, 'title') || t('common.unknownPackage'),
+                defaultValue: 'Your booking for "{{title}}" will be cancelled and its seats released. This cannot be undone.',
+              })}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={cancelling}>
+              {t('travelerDashboard.keepBooking', 'Keep booking')}
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={(e) => { e.preventDefault(); handleConfirmCancel(); }}
+              disabled={cancelling}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {cancelling && <Loader2 className="me-2 h-4 w-4 animate-spin" />}
+              {t('travelerDashboard.confirmCancelBooking', 'Cancel booking')}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       {/* Message-the-agency dialog for the selected booking */}
       {contactBooking?.packages?.agency_id && (

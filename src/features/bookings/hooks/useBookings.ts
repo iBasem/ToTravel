@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 
 export interface Booking {
@@ -36,10 +36,8 @@ export function useBookings() {
   const [error, setError] = useState<string | null>(null);
   const { user, profile } = useAuth();
 
-  useEffect(() => {
-    if (!user || !profile) return;
-
-    const fetchBookings = async () => {
+  const fetchBookings = useCallback(async () => {
+      if (!user || !profile) return;
       try {
         setLoading(true);
         setError(null);
@@ -87,12 +85,13 @@ export function useBookings() {
       } finally {
         setLoading(false);
       }
-    };
-
-    fetchBookings();
     // Key on stable ids, not object identity (auth events re-create both).
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user?.id, profile?.role]);
+
+  useEffect(() => {
+    fetchBookings();
+  }, [fetchBookings]);
 
   const updateBookingStatus = async (bookingId: string, status: string) => {
     try {
@@ -114,5 +113,5 @@ export function useBookings() {
     }
   };
 
-  return { bookings, loading, error, updateBookingStatus };
+  return { bookings, loading, error, updateBookingStatus, refetch: fetchBookings };
 }

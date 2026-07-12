@@ -1000,7 +1000,12 @@
     "avatarUpdated": "Profile photo updated",
     "avatarUpdateError": "Failed to update profile photo",
     "changePhoto": "Change profile photo",
-    "emailReadonly": "Your email is your sign-in identity and cannot be changed here."
+    "emailReadonly": "Your email is your sign-in identity and cannot be changed here.",
+    "cancelBooking": "Cancel booking",
+    "cancelBookingTitle": "Cancel this booking?",
+    "cancelBookingDesc": "Your booking for \"{{title}}\" will be cancelled and its seats released. This cannot be undone.",
+    "keepBooking": "Keep booking",
+    "confirmCancelBooking": "Cancel booking"
   },
   "packageWizard": {
     "createNewPackage": "Create New Package",
@@ -1365,7 +1370,9 @@
     "statsLoadFailed": "Failed to load dashboard stats",
     "uploadFileFailed": "Failed to upload {{name}}",
     "uploadFailed": "Upload failed",
-    "deleteFailed": "Delete failed"
+    "deleteFailed": "Delete failed",
+    "bookingCancelled": "Booking cancelled",
+    "bookingCancelFailed": "Could not cancel the booking"
   },
   "packageCard": {
     "viewMap": "View Map",
@@ -1521,7 +1528,10 @@
     "NOT_REFUNDABLE": "This payment cannot be refunded",
     "PROVIDER_ERROR": "The payment provider returned an error. Please try again.",
     "PROVIDER_PAYMENT_MISSING": "The payment could not be found at the payment provider",
-    "PAYMENTS_NOT_CONFIGURED": "Payments are not configured on this environment"
+    "PAYMENTS_NOT_CONFIGURED": "Payments are not configured on this environment",
+    "BOOKING_COMPLETED": "A completed booking cannot be cancelled",
+    "BOOKING_PAID": "Paid bookings are cancelled via a refund — please contact support",
+    "CANCEL_FAILED": "Failed to cancel booking"
   },
   "carousel": {
     "previous": "Previous",

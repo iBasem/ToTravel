@@ -1028,7 +1028,12 @@
     "avatarUpdated": "تم تحديث صورة الملف الشخصي",
     "avatarUpdateError": "تعذّر تحديث صورة الملف الشخصي",
     "changePhoto": "تغيير صورة الملف الشخصي",
-    "emailReadonly": "بريدك الإلكتروني هو هوية تسجيل دخولك ولا يمكن تغييره من هنا."
+    "emailReadonly": "بريدك الإلكتروني هو هوية تسجيل دخولك ولا يمكن تغييره من هنا.",
+    "cancelBooking": "إلغاء الحجز",
+    "cancelBookingTitle": "إلغاء هذا الحجز؟",
+    "cancelBookingDesc": "سيتم إلغاء حجزك في \"{{title}}\" وتحرير مقاعده. لا يمكن التراجع عن هذا الإجراء.",
+    "keepBooking": "الاحتفاظ بالحجز",
+    "confirmCancelBooking": "إلغاء الحجز"
   },
   "packageWizard": {
     "createNewPackage": "إنشاء باقة جديدة",
@@ -1397,7 +1402,9 @@
     "statsLoadFailed": "تعذّر تحميل إحصاءات لوحة التحكم",
     "uploadFileFailed": "تعذّر رفع الملف {{name}}",
     "uploadFailed": "تعذّر الرفع",
-    "deleteFailed": "تعذّر الحذف"
+    "deleteFailed": "تعذّر الحذف",
+    "bookingCancelled": "تم إلغاء الحجز",
+    "bookingCancelFailed": "تعذّر إلغاء الحجز"
   },
   "packageCard": {
     "viewMap": "عرض الخريطة",
@@ -1569,7 +1576,10 @@
     "NOT_REFUNDABLE": "لا يمكن استرداد هذه الدفعة",
     "PROVIDER_ERROR": "أعاد مزود الدفع خطأً. يرجى المحاولة مرة أخرى.",
     "PROVIDER_PAYMENT_MISSING": "تعذر العثور على الدفعة لدى مزود الدفع",
-    "PAYMENTS_NOT_CONFIGURED": "المدفوعات غير مهيأة في هذه البيئة"
+    "PAYMENTS_NOT_CONFIGURED": "المدفوعات غير مهيأة في هذه البيئة",
+    "BOOKING_COMPLETED": "لا يمكن إلغاء حجز مكتمل",
+    "BOOKING_PAID": "الحجوزات المدفوعة تُلغى عبر استرداد المبلغ — يرجى التواصل مع الدعم",
+    "CANCEL_FAILED": "تعذّر إلغاء الحجز"
   },
   "carousel": {
     "previous": "السابق",
