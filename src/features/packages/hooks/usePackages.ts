@@ -15,8 +15,6 @@ export interface PackageWithDetails extends Package {
   package_media?: PackageMedia[];
 }
 
-export { useCreatePackage } from './useCreatePackage';
-
 export function usePackages() {
   const [packages, setPackages] = useState<PackageWithDetails[]>([]);
   const [loading, setLoading] = useState(true);

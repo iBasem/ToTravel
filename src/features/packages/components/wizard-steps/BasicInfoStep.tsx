@@ -32,31 +32,15 @@ interface MapboxFeature {
   place_name: string;
 }
 
+// Controlled section: reads from `data`, writes through `onUpdate`. Only
+// UI scratch state (search box, pending highlight) lives locally.
 export function BasicInfoStep({ data, onUpdate }: BasicInfoStepProps) {
   const { t } = useTranslation();
 
-  const [formData, setFormData] = useState(() => {
-    // Handle legacy single destination field and ensure destinations is an array
-    const initialDestinations = data?.destinations || (data?.destination ? [data.destination] : []);
-    return {
-      title: "",
-      description: "",
-      destination: "", // Keep for backward compatibility
-      title_ar: "",
-      description_ar: "",
-      destination_ar: "",
-      highlights: [] as string[],
-      newHighlight: "",
-      category: "",
-      difficulty_level: "moderate",
-      duration_days: 1,
-      duration_nights: 0,
-      max_participants: 20,
-      featured: false,
-      ...data,
-      destinations: initialDestinations as string[]
-    };
-  });
+  const destinations = data.destinations ?? (data.destination ? [data.destination] : []);
+  const highlights = data.highlights ?? [];
+
+  const [newHighlight, setNewHighlight] = useState("");
 
   // Destination search state
   const [destinationQuery, setDestinationQuery] = useState("");
@@ -77,10 +61,10 @@ export function BasicInfoStep({ data, onUpdate }: BasicInfoStepProps) {
       const response = await fetch(
         `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(query)}.json?access_token=${MAPBOX_TOKEN}&types=country,region&limit=5`
       );
-      const data = await response.json();
+      const result = await response.json();
 
-      if (data.features) {
-        const results: DestinationResult[] = data.features.map((feature: MapboxFeature) => ({
+      if (result.features) {
+        const results: DestinationResult[] = result.features.map((feature: MapboxFeature) => ({
           id: feature.id,
           name: feature.text,
           placeName: feature.place_name,
@@ -120,16 +104,19 @@ export function BasicInfoStep({ data, onUpdate }: BasicInfoStepProps) {
     };
   }, [destinationQuery, searchDestinations]);
 
+  const handleInputChange = (field: string, value: string | number | boolean) => {
+    onUpdate({ ...data, [field]: value });
+  };
+
   const handleDestinationSelect = (result: DestinationResult) => {
-    // Add to destinations array if not already present
-    if (!formData.destinations.includes(result.name)) {
-      const newDestinations = [...formData.destinations, result.name];
-      setFormData(prev => ({
-        ...prev,
+    if (!destinations.includes(result.name)) {
+      const newDestinations = [...destinations, result.name];
+      onUpdate({
+        ...data,
         destinations: newDestinations,
         // Keep backward compatibility with single destination field
         destination: newDestinations[0] || ""
-      }));
+      });
     }
     setDestinationQuery("");
     setShowResults(false);
@@ -137,37 +124,23 @@ export function BasicInfoStep({ data, onUpdate }: BasicInfoStepProps) {
   };
 
   const removeDestination = (index: number) => {
-    const newDestinations = formData.destinations.filter((_: string, i: number) => i !== index);
-    setFormData(prev => ({
-      ...prev,
+    const newDestinations = destinations.filter((_: string, i: number) => i !== index);
+    onUpdate({
+      ...data,
       destinations: newDestinations,
       destination: newDestinations[0] || ""
-    }));
-  };
-
-  useEffect(() => {
-    onUpdate(formData);
-  }, [formData, onUpdate]);
-
-  const handleInputChange = (field: string, value: string | number | boolean) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    });
   };
 
   const addHighlight = () => {
-    if (formData.newHighlight.trim()) {
-      setFormData(prev => ({
-        ...prev,
-        highlights: [...prev.highlights, prev.newHighlight.trim()],
-        newHighlight: ""
-      }));
+    if (newHighlight.trim()) {
+      onUpdate({ ...data, highlights: [...highlights, newHighlight.trim()] });
+      setNewHighlight("");
     }
   };
 
   const removeHighlight = (index: number) => {
-    setFormData(prev => ({
-      ...prev,
-      highlights: prev.highlights.filter((_, i) => i !== index)
-    }));
+    onUpdate({ ...data, highlights: highlights.filter((_, i) => i !== index) });
   };
 
   return (
@@ -183,7 +156,7 @@ export function BasicInfoStep({ data, onUpdate }: BasicInfoStepProps) {
               <Label htmlFor="title" className="text-start block">{t('packageWizard.packageTitle')} *</Label>
               <Input
                 id="title"
-                value={formData.title}
+                value={data.title}
                 onChange={(e) => handleInputChange("title", e.target.value)}
                 placeholder={t('packageWizard.packageTitlePlaceholder')}
               />
@@ -232,9 +205,9 @@ export function BasicInfoStep({ data, onUpdate }: BasicInfoStepProps) {
               </div>
 
               {/* Selected destinations as badges */}
-              {formData.destinations.length > 0 && (
+              {destinations.length > 0 && (
                 <div className="flex flex-wrap gap-2 mt-2">
-                  {formData.destinations.map((dest: string, index: number) => (
+                  {destinations.map((dest: string, index: number) => (
                     <Badge key={index} variant="secondary" className="flex items-center gap-1 py-1 px-2">
                       <MapPin className="w-3 h-3" />
                       {dest}
@@ -250,7 +223,7 @@ export function BasicInfoStep({ data, onUpdate }: BasicInfoStepProps) {
 
             <div className="space-y-2">
               <Label htmlFor="category" className="text-start block">{t('packageWizard.category')} *</Label>
-              <Select value={formData.category} onValueChange={(value) => handleInputChange("category", value)}>
+              <Select value={data.category} onValueChange={(value) => handleInputChange("category", value)}>
                 <SelectTrigger>
                   <SelectValue placeholder={t('packageWizard.selectCategory')} />
                 </SelectTrigger>
@@ -271,7 +244,7 @@ export function BasicInfoStep({ data, onUpdate }: BasicInfoStepProps) {
                 id="duration_days"
                 type="number"
                 min="1"
-                value={formData.duration_days}
+                value={data.duration_days}
                 onChange={(e) => handleInputChange("duration_days", parseInt(e.target.value) || 1)}
                 placeholder="14"
                 dir="ltr"
@@ -284,7 +257,7 @@ export function BasicInfoStep({ data, onUpdate }: BasicInfoStepProps) {
                 id="duration_nights"
                 type="number"
                 min="0"
-                value={formData.duration_nights}
+                value={data.duration_nights}
                 onChange={(e) => handleInputChange("duration_nights", parseInt(e.target.value) || 0)}
                 placeholder="13"
                 dir="ltr"
@@ -297,7 +270,7 @@ export function BasicInfoStep({ data, onUpdate }: BasicInfoStepProps) {
                 id="max_participants"
                 type="number"
                 min="1"
-                value={formData.max_participants}
+                value={data.max_participants}
                 onChange={(e) => handleInputChange("max_participants", parseInt(e.target.value) || 20)}
                 placeholder="16"
                 dir="ltr"
@@ -306,7 +279,7 @@ export function BasicInfoStep({ data, onUpdate }: BasicInfoStepProps) {
 
             <div className="space-y-2">
               <Label htmlFor="difficulty_level" className="text-start block">{t('packageWizard.difficultyLevel')}</Label>
-              <Select value={formData.difficulty_level} onValueChange={(value) => handleInputChange("difficulty_level", value)}>
+              <Select value={data.difficulty_level} onValueChange={(value) => handleInputChange("difficulty_level", value)}>
                 <SelectTrigger>
                   <SelectValue placeholder={t('packageWizard.selectDifficulty')} />
                 </SelectTrigger>
@@ -324,7 +297,7 @@ export function BasicInfoStep({ data, onUpdate }: BasicInfoStepProps) {
             <Label htmlFor="description" className="text-start block">{t('packageWizard.description')} *</Label>
             <Textarea
               id="description"
-              value={formData.description}
+              value={data.description}
               onChange={(e) => handleInputChange("description", e.target.value)}
               placeholder={t('packageWizard.descriptionPlaceholder')}
               className="min-h-[100px]"
@@ -348,7 +321,7 @@ export function BasicInfoStep({ data, onUpdate }: BasicInfoStepProps) {
               <Input
                 id="title_ar"
                 dir="rtl"
-                value={formData.title_ar}
+                value={data.title_ar}
                 onChange={(e) => handleInputChange("title_ar", e.target.value)}
               />
             </div>
@@ -358,7 +331,7 @@ export function BasicInfoStep({ data, onUpdate }: BasicInfoStepProps) {
               <Input
                 id="destination_ar"
                 dir="rtl"
-                value={formData.destination_ar}
+                value={data.destination_ar}
                 onChange={(e) => handleInputChange("destination_ar", e.target.value)}
               />
             </div>
@@ -369,7 +342,7 @@ export function BasicInfoStep({ data, onUpdate }: BasicInfoStepProps) {
             <Textarea
               id="description_ar"
               dir="rtl"
-              value={formData.description_ar}
+              value={data.description_ar}
               onChange={(e) => handleInputChange("description_ar", e.target.value)}
               className="min-h-[100px]"
             />
@@ -385,8 +358,8 @@ export function BasicInfoStep({ data, onUpdate }: BasicInfoStepProps) {
         <CardContent className="space-y-4">
           <div className="flex gap-2">
             <Input
-              value={formData.newHighlight}
-              onChange={(e) => handleInputChange("newHighlight", e.target.value)}
+              value={newHighlight}
+              onChange={(e) => setNewHighlight(e.target.value)}
               placeholder={t('packageWizard.addHighlight')}
               onKeyPress={(e) => e.key === "Enter" && addHighlight()}
             />
@@ -395,7 +368,7 @@ export function BasicInfoStep({ data, onUpdate }: BasicInfoStepProps) {
             </Button>
           </div>
           <div className="flex flex-wrap gap-2">
-            {formData.highlights.map((highlight: string, index: number) => (
+            {highlights.map((highlight: string, index: number) => (
               <Badge key={index} variant="secondary" className="flex items-center gap-1">
                 {highlight}
                 <X

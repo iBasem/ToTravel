@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { BasePricing } from "./pricing/BasePricing";
 import { InclusionsManager } from "./pricing/InclusionsManager";
@@ -18,162 +18,83 @@ interface PricingStepProps {
   onUpdate: (data: PackageFormData['pricing']) => void;
 }
 
+// Controlled section: pricing lives in the shared form state; only the
+// pending add-item inputs are local UI state.
 export function PricingStep({ data, onUpdate }: PricingStepProps) {
   const { t } = useTranslation();
 
-  const [formData, setFormData] = useState(() => {
-    const defaultInclusions = {
-      accommodation: { included: false, details: [] },
-      meals: { included: false, details: [] },
-      transportation: { included: false, details: [] },
-      activities: { included: false, details: [] },
-      guides: { included: false, details: [] },
-      insurance: { included: false, details: [] },
-      other: { included: false, details: [] }
-    };
+  const [newInclusion, setNewInclusion] = useState("");
+  const [newExclusion, setNewExclusion] = useState("");
+  const [newInclusionAr, setNewInclusionAr] = useState("");
+  const [newExclusionAr, setNewExclusionAr] = useState("");
 
-    return {
-      basePrice: data?.basePrice || "",
-      inclusions: data?.inclusions ? { ...defaultInclusions, ...data.inclusions } : defaultInclusions,
-      additionalInclusions: data?.additionalInclusions || [],
-      exclusions: data?.exclusions || [],
-      inclusions_ar: data?.inclusions_ar || [],
-      exclusions_ar: data?.exclusions_ar || [],
-      newInclusion: "",
-      newExclusion: "",
-      newInclusionAr: "",
-      newExclusionAr: "",
-      cancellation_policy: data?.cancellation_policy || '',
-      terms_conditions: data?.terms_conditions || ''
-    };
-  });
+  const additionalInclusions = data.additionalInclusions || [];
+  const exclusions = data.exclusions || [];
+  const inclusionsAr = data.inclusions_ar || [];
+  const exclusionsAr = data.exclusions_ar || [];
 
-  useEffect(() => {
-    onUpdate(formData);
-  }, [formData, onUpdate]);
-
-  const handleInputChange = <K extends keyof typeof formData>(field: K, value: typeof formData[K]) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+  const setField = <K extends keyof PackageFormData['pricing']>(field: K, value: PackageFormData['pricing'][K]) => {
+    onUpdate({ ...data, [field]: value });
   };
 
   const handleInclusionToggle = (category: string, checked: boolean) => {
-    setFormData(prev => ({
-      ...prev,
-      inclusions: {
-        ...prev.inclusions,
-        [category]: {
-          ...prev.inclusions[category],
-          included: checked
-        }
-      }
-    }));
+    const key = category as keyof PackageFormData['pricing']['inclusions'];
+    setField("inclusions", {
+      ...data.inclusions,
+      [key]: { ...data.inclusions[key], included: checked }
+    });
   };
 
   const addInclusionDetail = (category: string, detail: string) => {
-    if (detail.trim()) {
-      setFormData(prev => ({
-        ...prev,
-        inclusions: {
-          ...prev.inclusions,
-          [category]: {
-            ...prev.inclusions[category],
-            details: [...prev.inclusions[category].details, detail.trim()]
-          }
-        }
-      }));
-    }
+    if (!detail.trim()) return;
+    const key = category as keyof PackageFormData['pricing']['inclusions'];
+    setField("inclusions", {
+      ...data.inclusions,
+      [key]: { ...data.inclusions[key], details: [...data.inclusions[key].details, detail.trim()] }
+    });
   };
 
   const removeInclusionDetail = (category: string, index: number) => {
-    setFormData(prev => ({
-      ...prev,
-      inclusions: {
-        ...prev.inclusions,
-        [category]: {
-          ...prev.inclusions[category],
-          details: prev.inclusions[category].details.filter((_, i) => i !== index)
-        }
-      }
-    }));
+    const key = category as keyof PackageFormData['pricing']['inclusions'];
+    setField("inclusions", {
+      ...data.inclusions,
+      [key]: { ...data.inclusions[key], details: data.inclusions[key].details.filter((_, i) => i !== index) }
+    });
   };
 
   const addAdditionalInclusion = () => {
-    if (formData.newInclusion.trim()) {
-      setFormData(prev => ({
-        ...prev,
-        additionalInclusions: [...prev.additionalInclusions, prev.newInclusion.trim()],
-        newInclusion: ""
-      }));
-    }
+    if (!newInclusion.trim()) return;
+    setField("additionalInclusions", [...additionalInclusions, newInclusion.trim()]);
+    setNewInclusion("");
   };
 
   const addExclusion = () => {
-    if (formData.newExclusion.trim()) {
-      setFormData(prev => ({
-        ...prev,
-        exclusions: [...prev.exclusions, prev.newExclusion.trim()],
-        newExclusion: ""
-      }));
-    }
-  };
-
-  const removeAdditionalInclusion = (index: number) => {
-    setFormData(prev => ({
-      ...prev,
-      additionalInclusions: prev.additionalInclusions.filter((_, i) => i !== index)
-    }));
-  };
-
-  const removeExclusion = (index: number) => {
-    setFormData(prev => ({
-      ...prev,
-      exclusions: prev.exclusions.filter((_, i) => i !== index)
-    }));
+    if (!newExclusion.trim()) return;
+    setField("exclusions", [...exclusions, newExclusion.trim()]);
+    setNewExclusion("");
   };
 
   const addInclusionAr = () => {
-    if (formData.newInclusionAr.trim()) {
-      setFormData(prev => ({
-        ...prev,
-        inclusions_ar: [...prev.inclusions_ar, prev.newInclusionAr.trim()],
-        newInclusionAr: ""
-      }));
-    }
-  };
-
-  const removeInclusionAr = (index: number) => {
-    setFormData(prev => ({
-      ...prev,
-      inclusions_ar: prev.inclusions_ar.filter((_, i) => i !== index)
-    }));
+    if (!newInclusionAr.trim()) return;
+    setField("inclusions_ar", [...inclusionsAr, newInclusionAr.trim()]);
+    setNewInclusionAr("");
   };
 
   const addExclusionAr = () => {
-    if (formData.newExclusionAr.trim()) {
-      setFormData(prev => ({
-        ...prev,
-        exclusions_ar: [...prev.exclusions_ar, prev.newExclusionAr.trim()],
-        newExclusionAr: ""
-      }));
-    }
-  };
-
-  const removeExclusionAr = (index: number) => {
-    setFormData(prev => ({
-      ...prev,
-      exclusions_ar: prev.exclusions_ar.filter((_, i) => i !== index)
-    }));
+    if (!newExclusionAr.trim()) return;
+    setField("exclusions_ar", [...exclusionsAr, newExclusionAr.trim()]);
+    setNewExclusionAr("");
   };
 
   return (
     <div className="space-y-6">
       <BasePricing
-        data={formData}
-        onUpdate={handleInputChange}
+        data={{ basePrice: data.basePrice }}
+        onUpdate={(field, value) => setField(field as 'basePrice', value)}
       />
 
       <InclusionsManager
-        inclusions={formData.inclusions}
+        inclusions={data.inclusions}
         onToggle={handleInclusionToggle}
         onAddDetail={addInclusionDetail}
         onRemoveDetail={removeInclusionDetail}
@@ -187,8 +108,8 @@ export function PricingStep({ data, onUpdate }: PricingStepProps) {
         <CardContent className="space-y-4">
           <div className="flex gap-2">
             <Input
-              value={formData.newInclusion}
-              onChange={(e) => handleInputChange("newInclusion", e.target.value)}
+              value={newInclusion}
+              onChange={(e) => setNewInclusion(e.target.value)}
               placeholder={t('packageWizard.additionalInclusionPlaceholder')}
               onKeyPress={(e) => e.key === "Enter" && addAdditionalInclusion()}
             />
@@ -197,12 +118,12 @@ export function PricingStep({ data, onUpdate }: PricingStepProps) {
             </Button>
           </div>
           <div className="flex flex-wrap gap-2">
-            {formData.additionalInclusions.map((inclusion: string, index: number) => (
+            {additionalInclusions.map((inclusion: string, index: number) => (
               <Badge key={index} variant="secondary" className="flex items-center gap-1">
                 {inclusion}
                 <X
                   className="w-3 h-3 cursor-pointer"
-                  onClick={() => removeAdditionalInclusion(index)}
+                  onClick={() => setField("additionalInclusions", additionalInclusions.filter((_, i) => i !== index))}
                 />
               </Badge>
             ))}
@@ -218,8 +139,8 @@ export function PricingStep({ data, onUpdate }: PricingStepProps) {
         <CardContent className="space-y-4">
           <div className="flex gap-2">
             <Input
-              value={formData.newExclusion}
-              onChange={(e) => handleInputChange("newExclusion", e.target.value)}
+              value={newExclusion}
+              onChange={(e) => setNewExclusion(e.target.value)}
               placeholder={t('packageWizard.exclusionPlaceholder')}
               onKeyPress={(e) => e.key === "Enter" && addExclusion()}
             />
@@ -228,12 +149,12 @@ export function PricingStep({ data, onUpdate }: PricingStepProps) {
             </Button>
           </div>
           <div className="flex flex-wrap gap-2">
-            {formData.exclusions.map((exclusion: string, index: number) => (
+            {exclusions.map((exclusion: string, index: number) => (
               <Badge key={index} variant="outline" className="flex items-center gap-1">
                 {exclusion}
                 <X
                   className="w-3 h-3 cursor-pointer"
-                  onClick={() => removeExclusion(index)}
+                  onClick={() => setField("exclusions", exclusions.filter((_, i) => i !== index))}
                 />
               </Badge>
             ))}
@@ -255,8 +176,8 @@ export function PricingStep({ data, onUpdate }: PricingStepProps) {
             <div className="flex gap-2">
               <Input
                 dir="rtl"
-                value={formData.newInclusionAr}
-                onChange={(e) => handleInputChange("newInclusionAr", e.target.value)}
+                value={newInclusionAr}
+                onChange={(e) => setNewInclusionAr(e.target.value)}
                 onKeyPress={(e) => e.key === "Enter" && addInclusionAr()}
               />
               <Button type="button" onClick={addInclusionAr} size="sm">
@@ -264,12 +185,12 @@ export function PricingStep({ data, onUpdate }: PricingStepProps) {
               </Button>
             </div>
             <div className="flex flex-wrap gap-2">
-              {formData.inclusions_ar.map((inclusion: string, index: number) => (
+              {inclusionsAr.map((inclusion: string, index: number) => (
                 <Badge key={index} variant="secondary" className="flex items-center gap-1">
                   {inclusion}
                   <X
                     className="w-3 h-3 cursor-pointer"
-                    onClick={() => removeInclusionAr(index)}
+                    onClick={() => setField("inclusions_ar", inclusionsAr.filter((_, i) => i !== index))}
                   />
                 </Badge>
               ))}
@@ -281,8 +202,8 @@ export function PricingStep({ data, onUpdate }: PricingStepProps) {
             <div className="flex gap-2">
               <Input
                 dir="rtl"
-                value={formData.newExclusionAr}
-                onChange={(e) => handleInputChange("newExclusionAr", e.target.value)}
+                value={newExclusionAr}
+                onChange={(e) => setNewExclusionAr(e.target.value)}
                 onKeyPress={(e) => e.key === "Enter" && addExclusionAr()}
               />
               <Button type="button" onClick={addExclusionAr} size="sm">
@@ -290,12 +211,12 @@ export function PricingStep({ data, onUpdate }: PricingStepProps) {
               </Button>
             </div>
             <div className="flex flex-wrap gap-2">
-              {formData.exclusions_ar.map((exclusion: string, index: number) => (
+              {exclusionsAr.map((exclusion: string, index: number) => (
                 <Badge key={index} variant="outline" className="flex items-center gap-1">
                   {exclusion}
                   <X
                     className="w-3 h-3 cursor-pointer"
-                    onClick={() => removeExclusionAr(index)}
+                    onClick={() => setField("exclusions_ar", exclusionsAr.filter((_, i) => i !== index))}
                   />
                 </Badge>
               ))}
@@ -313,8 +234,8 @@ export function PricingStep({ data, onUpdate }: PricingStepProps) {
           <div className="space-y-2">
             <Label className="text-start block">{t('packageWizard.cancellationPolicy')}</Label>
             <Textarea
-              value={formData.cancellation_policy}
-              onChange={(e) => handleInputChange("cancellation_policy", e.target.value)}
+              value={data.cancellation_policy}
+              onChange={(e) => setField("cancellation_policy", e.target.value)}
               placeholder={t('packageWizard.cancellationPlaceholder')}
               className="min-h-[80px]"
             />
@@ -322,8 +243,8 @@ export function PricingStep({ data, onUpdate }: PricingStepProps) {
           <div className="space-y-2">
             <Label className="text-start block">{t('packageWizard.termsAndConditions')}</Label>
             <Textarea
-              value={formData.terms_conditions}
-              onChange={(e) => handleInputChange("terms_conditions", e.target.value)}
+              value={data.terms_conditions}
+              onChange={(e) => setField("terms_conditions", e.target.value)}
               placeholder={t('packageWizard.termsPlaceholder')}
               className="min-h-[80px]"
             />

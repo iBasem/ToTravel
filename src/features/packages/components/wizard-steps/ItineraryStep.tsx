@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/ui/button";
 import { Input } from "@/ui/input";
@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/ui/card";
 import { Badge } from "@/ui/badge";
 import { Checkbox } from "@/ui/checkbox";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/ui/collapsible";
-import { Plus, Trash2, Utensils, Bed, Activity, ChevronRight, ChevronDown, X, Languages } from "lucide-react";
+import { Plus, Trash2, Utensils, Bed, Activity, ChevronRight, ChevronDown, X, Languages, CalendarDays } from "lucide-react";
 import type { ItineraryDay } from "@/features/packages/types/wizard";
 
 interface ItineraryStepProps {
@@ -17,137 +17,78 @@ interface ItineraryStepProps {
   onUpdate: (data: ItineraryDay[]) => void;
 }
 
+const emptyDay = (day: number): ItineraryDay => ({
+  day,
+  title: "",
+  description: "",
+  activities: [],
+  meals: [],
+  accommodation: "",
+  title_ar: "",
+  description_ar: "",
+  activities_ar: []
+});
+
+// Controlled section: the itinerary lives in the shared form state; only the
+// per-day "add activity" scratch inputs are local UI state.
 export function ItineraryStep({ data, onUpdate }: ItineraryStepProps) {
   const { t, i18n } = useTranslation();
 
-  const [itinerary, setItinerary] = useState<ItineraryDay[]>(() => {
-    if (Array.isArray(data) && data.length > 0) {
-      return data.map((item, index) => ({
-        day: item.day || index + 1,
-        title: item.title || "",
-        description: item.description || "",
-        activities: Array.isArray(item.activities) ? item.activities : [""],
-        meals: Array.isArray(item.meals) ? item.meals : [],
-        accommodation: item.accommodation || "",
-        title_ar: item.title_ar || "",
-        description_ar: item.description_ar || "",
-        activities_ar: Array.isArray(item.activities_ar) ? item.activities_ar : [],
-        newActivity: "",
-        newActivityAr: ""
-      }));
-    }
-    return [
-      {
-        day: 1,
-        title: "",
-        description: "",
-        activities: [""],
-        meals: [],
-        accommodation: "",
-        title_ar: "",
-        description_ar: "",
-        activities_ar: [],
-        newActivity: "",
-        newActivityAr: ""
-      }
-    ];
-  });
-
-  useEffect(() => {
-    onUpdate(itinerary);
-  }, [itinerary, onUpdate]);
+  const itinerary = data || [];
+  const [newActivity, setNewActivity] = useState<Record<number, string>>({});
+  const [newActivityAr, setNewActivityAr] = useState<Record<number, string>>({});
 
   const addDay = () => {
-    const newDay: ItineraryDay = {
-      day: itinerary.length + 1,
-      title: "",
-      description: "",
-      activities: [""],
-      meals: [],
-      accommodation: "",
-      title_ar: "",
-      description_ar: "",
-      activities_ar: [],
-      newActivity: "",
-      newActivityAr: ""
-    };
-    setItinerary([...itinerary, newDay]);
+    onUpdate([...itinerary, emptyDay(itinerary.length + 1)]);
   };
 
   const removeDay = (dayIndex: number) => {
-    const updatedItinerary = itinerary
-      .filter((_, index) => index !== dayIndex)
-      .map((day, index) => ({ ...day, day: index + 1 }));
-    setItinerary(updatedItinerary);
+    onUpdate(
+      itinerary
+        .filter((_, index) => index !== dayIndex)
+        .map((day, index) => ({ ...day, day: index + 1 }))
+    );
   };
 
   const updateDay = <K extends keyof ItineraryDay>(dayIndex: number, field: K, value: ItineraryDay[K]) => {
-    const updatedItinerary = itinerary.map((day, index) =>
+    onUpdate(itinerary.map((day, index) =>
       index === dayIndex ? { ...day, [field]: value } : day
-    );
-    setItinerary(updatedItinerary);
+    ));
   };
 
   const addActivity = (dayIndex: number) => {
+    const pending = (newActivity[dayIndex] || "").trim();
+    if (!pending) return;
     const day = itinerary[dayIndex];
-    if (day.newActivity.trim()) {
-      const updatedItinerary = itinerary.map((d, index) =>
-        index === dayIndex
-          ? { ...d, activities: [...d.activities.filter(a => a.trim()), d.newActivity.trim()], newActivity: "" }
-          : d
-      );
-      setItinerary(updatedItinerary);
-    }
+    updateDay(dayIndex, "activities", [...day.activities.filter(a => a.trim()), pending]);
+    setNewActivity(prev => ({ ...prev, [dayIndex]: "" }));
   };
 
   const removeActivity = (dayIndex: number, activityIndex: number) => {
-    const updatedItinerary = itinerary.map((day, index) =>
-      index === dayIndex
-        ? {
-          ...day,
-          activities: day.activities.filter((_, actIndex) => actIndex !== activityIndex)
-        }
-        : day
-    );
-    setItinerary(updatedItinerary);
+    const day = itinerary[dayIndex];
+    updateDay(dayIndex, "activities", day.activities.filter((_, i) => i !== activityIndex));
   };
 
   const addActivityAr = (dayIndex: number) => {
+    const pending = (newActivityAr[dayIndex] || "").trim();
+    if (!pending) return;
     const day = itinerary[dayIndex];
-    if (day.newActivityAr.trim()) {
-      const updatedItinerary = itinerary.map((d, index) =>
-        index === dayIndex
-          ? { ...d, activities_ar: [...d.activities_ar.filter(a => a.trim()), d.newActivityAr.trim()], newActivityAr: "" }
-          : d
-      );
-      setItinerary(updatedItinerary);
-    }
+    updateDay(dayIndex, "activities_ar", [...day.activities_ar.filter(a => a.trim()), pending]);
+    setNewActivityAr(prev => ({ ...prev, [dayIndex]: "" }));
   };
 
   const removeActivityAr = (dayIndex: number, activityIndex: number) => {
-    const updatedItinerary = itinerary.map((day, index) =>
-      index === dayIndex
-        ? {
-          ...day,
-          activities_ar: day.activities_ar.filter((_, actIndex) => actIndex !== activityIndex)
-        }
-        : day
-    );
-    setItinerary(updatedItinerary);
+    const day = itinerary[dayIndex];
+    updateDay(dayIndex, "activities_ar", day.activities_ar.filter((_, i) => i !== activityIndex));
   };
 
   const toggleMeal = (dayIndex: number, meal: string) => {
-    const updatedItinerary = itinerary.map((day, index) =>
-      index === dayIndex
-        ? {
-          ...day,
-          meals: day.meals.includes(meal)
-            ? day.meals.filter(m => m !== meal)
-            : [...day.meals, meal]
-        }
-        : day
+    const day = itinerary[dayIndex];
+    updateDay(
+      dayIndex,
+      "meals",
+      day.meals.includes(meal) ? day.meals.filter(m => m !== meal) : [...day.meals, meal]
     );
-    setItinerary(updatedItinerary);
   };
 
   const mealOptions = [
@@ -169,6 +110,19 @@ export function ItineraryStep({ data, onUpdate }: ItineraryStepProps) {
         </Button>
       </div>
 
+      {itinerary.length === 0 && (
+        <div className="border-2 border-dashed border-border rounded-lg p-8 text-center">
+          <CalendarDays className="h-12 w-12 mx-auto text-muted-foreground mb-3" />
+          <p className="text-muted-foreground mb-4">
+            {t('packageWizard.dailyItineraryDesc')}
+          </p>
+          <Button type="button" variant="outline" onClick={addDay}>
+            <Plus className="w-4 h-4 me-2" />
+            {t('packageWizard.addFirstDay', 'Add your first day')}
+          </Button>
+        </div>
+      )}
+
       <div className="space-y-6">
         {itinerary.map((day, dayIndex) => (
           <Card key={dayIndex}>
@@ -187,15 +141,13 @@ export function ItineraryStep({ data, onUpdate }: ItineraryStepProps) {
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                {itinerary.length > 1 && (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => removeDay(dayIndex)}
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </Button>
-                )}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => removeDay(dayIndex)}
+                >
+                  <Trash2 className="w-4 h-4" />
+                </Button>
               </div>
             </CardHeader>
             <CardContent className="space-y-6">
@@ -237,8 +189,8 @@ export function ItineraryStep({ data, onUpdate }: ItineraryStepProps) {
 
                   <div className="flex gap-2">
                     <Input
-                      value={day.newActivity}
-                      onChange={(e) => updateDay(dayIndex, "newActivity", e.target.value)}
+                      value={newActivity[dayIndex] || ""}
+                      onChange={(e) => setNewActivity(prev => ({ ...prev, [dayIndex]: e.target.value }))}
                       placeholder={t('packageWizard.addNewActivity')}
                       onKeyPress={(e) => e.key === "Enter" && addActivity(dayIndex)}
                     />
@@ -360,8 +312,8 @@ export function ItineraryStep({ data, onUpdate }: ItineraryStepProps) {
                     <div className="flex gap-2">
                       <Input
                         dir="rtl"
-                        value={day.newActivityAr}
-                        onChange={(e) => updateDay(dayIndex, "newActivityAr", e.target.value)}
+                        value={newActivityAr[dayIndex] || ""}
+                        onChange={(e) => setNewActivityAr(prev => ({ ...prev, [dayIndex]: e.target.value }))}
                         onKeyPress={(e) => e.key === "Enter" && addActivityAr(dayIndex)}
                       />
                       <Button

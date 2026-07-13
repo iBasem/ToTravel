@@ -1,5 +1,5 @@
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { MediaGallery } from "./media/MediaGallery";
 import { Button } from "@/ui/button";
@@ -7,20 +7,11 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/features/auth/context/AuthContext";
 import { Loader2 } from "lucide-react";
+import type { MediaItem } from "@/features/packages/types/wizard";
 
 interface MediaStepProps {
   data: MediaItem[];
   onUpdate: (data: MediaItem[]) => void;
-}
-
-interface MediaItem {
-  id: string;
-  type: 'image' | 'video';
-  url: string;
-  caption: string;
-  isPrimary: boolean;
-  file_name?: string;
-  file_path?: string;
 }
 
 // Client-side checks matching the media guidelines shown below the uploader
@@ -31,18 +22,16 @@ const ALLOWED_MIME_TYPES = [
 ];
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB, as stated in guidelineMaxSize
 
+// Controlled section: the media list lives in the shared form state; upload
+// progress and the session-upload ledger are local.
 export function MediaStep({ data, onUpdate }: MediaStepProps) {
   const { t } = useTranslation();
-  const [media, setMedia] = useState<MediaItem[]>(data || []);
+  const media = data || [];
   const [dragOver, setDragOver] = useState(false);
   const [uploading, setUploading] = useState(false);
   const { user } = useAuth();
-  // Storage paths of files uploaded during this wizard session, keyed by media item id.
+  // Storage paths of files uploaded during this editor session, keyed by media item id.
   const sessionUploadsRef = useRef(new Map<string, string>());
-
-  useEffect(() => {
-    onUpdate(media);
-  }, [media, onUpdate]);
 
   const handleFileUpload = async (files: FileList) => {
     if (!user) {
@@ -92,7 +81,7 @@ export function MediaStep({ data, onUpdate }: MediaStepProps) {
           type: file.type.startsWith('image/') ? 'image' : 'video',
           url: publicUrl,
           caption: file.name,
-          isPrimary: media.length === 0 && i === 0 && newMediaItems.length === 0,
+          isPrimary: media.length === 0 && newMediaItems.length === 0,
           file_name: file.name,
           file_path: publicUrl
         };
@@ -102,7 +91,7 @@ export function MediaStep({ data, onUpdate }: MediaStepProps) {
       }
 
       if (newMediaItems.length > 0) {
-        setMedia(prev => [...prev, ...newMediaItems]);
+        onUpdate([...media, ...newMediaItems]);
         toast.success(`${newMediaItems.length} ${t('packageWizard.filesUploaded')}`);
       }
     } catch (error) {
@@ -114,11 +103,11 @@ export function MediaStep({ data, onUpdate }: MediaStepProps) {
   };
 
   const removeMedia = (id: string) => {
-    setMedia(prev => prev.filter(item => item.id !== id));
+    onUpdate(media.filter(item => item.id !== id));
 
     // Files uploaded in this session are safe to delete from storage right
     // away (nothing references them until save). Previously saved files are
-    // left in place so cancelling the wizard doesn't break the stored package.
+    // left in place so cancelling the editor doesn't break the stored package.
     const uploadedPath = sessionUploadsRef.current.get(id);
     if (uploadedPath) {
       sessionUploadsRef.current.delete(id);
@@ -132,16 +121,11 @@ export function MediaStep({ data, onUpdate }: MediaStepProps) {
   };
 
   const setPrimary = (id: string) => {
-    setMedia(prev => prev.map(item => ({
-      ...item,
-      isPrimary: item.id === id
-    })));
+    onUpdate(media.map(item => ({ ...item, isPrimary: item.id === id })));
   };
 
   const updateCaption = (id: string, caption: string) => {
-    setMedia(prev => prev.map(item =>
-      item.id === id ? { ...item, caption } : item
-    ));
+    onUpdate(media.map(item => (item.id === id ? { ...item, caption } : item)));
   };
 
   const handleDragOver = (e: React.DragEvent) => {

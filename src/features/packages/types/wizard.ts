@@ -45,10 +45,12 @@ export interface ItineraryDay {
   activities: string[];
   meals: string[]; // NB: persisted column is itineraries.meals_included
   accommodation: string;
+  // Legacy column with no wizard input; round-tripped so edits don't erase it.
+  transportation?: string;
   title_ar: string;
   description_ar: string;
   activities_ar: string[];
-  // transient add-item inputs:
+  // transient add-item inputs (kept in section-local UI state, not persisted):
   newActivity?: string;
   newActivityAr?: string;
 }

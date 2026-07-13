@@ -54,6 +54,7 @@ export function buildSavePackagePayload(formData: PackageFormData) {
       activities: (d.activities || []).filter((a) => a && a.trim()),
       meals_included: d.meals || [],
       accommodation: d.accommodation || null,
+      transportation: d.transportation || null,
       title_ar: d.title_ar,
       description_ar: d.description_ar,
       activities_ar: d.activities_ar || [],
