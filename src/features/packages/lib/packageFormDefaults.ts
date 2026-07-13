@@ -11,6 +11,7 @@ export const createInitialPackageFormData = (): PackageFormData => ({
     destination_ar: '',
     destinations: [],
     category: '',
+    package_type: 'group',
     difficulty_level: 'moderate',
     duration_days: 1,
     duration_nights: 0,
@@ -26,6 +27,7 @@ export const createInitialPackageFormData = (): PackageFormData => ({
   itinerary: [],
   pricing: {
     basePrice: "",
+    flight_option: 'not_included',
     inclusions: {
       accommodation: { included: false, details: [] },
       meals: { included: false, details: [] },

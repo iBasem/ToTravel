@@ -10,23 +10,18 @@ export interface SectionInfo {
   step: number;
   titleKey: string;
   state: SectionState;
-  // The review section is a summary, not skippable content — no "Optional" tag.
-  showOptionalTag?: boolean;
 }
 
-// Completion semantics per section: required sections track the shared
-// validation rules; optional sections read as done once they have content.
-export function getSections(formData: PackageFormData): SectionInfo[] {
-  const hasItineraryContent = (formData.itinerary || []).some(
-    d => d.title || d.description || (d.activities || []).some(a => a && a.trim())
-  );
+// Wave C sections. Required sections track the shared validation rules;
+// Departures tracks live data (>=1 upcoming scheduled date = the submit gate);
+// Media reads as done once it has content.
+export function getSections(formData: PackageFormData, departuresOk: boolean): SectionInfo[] {
   return [
     { step: 1, titleKey: 'packageWizard.basicInformation', state: missingRequiredFields(1, formData).length ? 'required' : 'complete' },
-    { step: 2, titleKey: 'packageWizard.tourRoute', state: (formData.route?.destinations || []).length ? 'complete' : 'optional' },
-    { step: 3, titleKey: 'packageWizard.itinerary', state: hasItineraryContent ? 'complete' : 'optional' },
-    { step: 4, titleKey: 'packageWizard.pricingAndPolicies', state: missingRequiredFields(4, formData).length ? 'required' : 'complete' },
+    { step: 2, titleKey: 'packageWizard.thePlan', state: missingRequiredFields(2, formData).length ? 'required' : 'complete' },
+    { step: 3, titleKey: 'packageWizard.pricingAndPolicies', state: missingRequiredFields(3, formData).length ? 'required' : 'complete' },
+    { step: 4, titleKey: 'departures.title', state: departuresOk ? 'complete' : 'required' },
     { step: 5, titleKey: 'packageWizard.mediaAndPhotos', state: (formData.media || []).length ? 'complete' : 'optional' },
-    { step: 6, titleKey: 'packageWizard.reviewAndPublish', state: 'optional', showOptionalTag: false },
   ];
 }
 
@@ -43,7 +38,7 @@ interface SectionNavProps {
 }
 
 // Free navigation between sections; completion is communicated per item and
-// the submit gate lives on the save action, not on movement.
+// the submit gate lives on the submit action, not on movement.
 export function SectionNav({ sections, currentStep, onSelect }: SectionNavProps) {
   const { t } = useTranslation();
 
@@ -67,7 +62,7 @@ export function SectionNav({ sections, currentStep, onSelect }: SectionNavProps)
               >
                 <StateIcon state={section.state} />
                 <span className="flex-1">{t(section.titleKey)}</span>
-                {section.state === 'optional' && section.showOptionalTag !== false && !isCurrent && (
+                {section.state === 'optional' && !isCurrent && (
                   <span className="text-xs text-muted-foreground/70 hidden lg:inline">
                     {t('packageWizard.optionalSection', 'Optional')}
                   </span>

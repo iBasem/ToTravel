@@ -23,6 +23,8 @@ export interface PackageDetails {
   exclusions: string[];
   exclusions_ar?: string[] | null;
   highlights?: string[] | null;
+  package_type?: string | null;
+  flight_option?: 'not_included' | 'included' | null;
   requirements: string[];
   cancellation_policy: string;
   terms_conditions: string;

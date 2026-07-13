@@ -22,6 +22,7 @@ export function buildSavePackagePayload(formData: PackageFormData) {
       description_ar: formData.basicInfo.description_ar,
       destination_ar: formData.basicInfo.destination_ar,
       category: formData.basicInfo.category,
+      package_type: formData.basicInfo.package_type,
       difficulty_level: formData.basicInfo.difficulty_level,
       duration_days: formData.basicInfo.duration_days,
       duration_nights: formData.basicInfo.duration_nights,
@@ -30,6 +31,7 @@ export function buildSavePackagePayload(formData: PackageFormData) {
     },
     pricing: {
       base_price: parseFloat(formData.pricing.basePrice) || 0,
+      flight_option: formData.pricing.flight_option,
       inclusions,
       exclusions: formData.pricing.exclusions || [],
       inclusions_ar: formData.pricing.inclusions_ar || [],

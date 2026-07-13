@@ -1,14 +1,16 @@
 import { describe, it, expect } from 'vitest';
-import { missingRequiredFields } from './wizardValidation';
+import { missingRequiredFields, missingForSubmit } from './wizardValidation';
 import { createInitialPackageFormData } from './packageFormDefaults';
 
 const valid = () => {
   const form = createInitialPackageFormData();
   form.basicInfo.title = 'Desert Trip';
-  form.basicInfo.destinations = ['Saudi Arabia'];
-  form.basicInfo.destination = 'Saudi Arabia';
   form.basicInfo.category = 'adventure';
   form.basicInfo.description = 'A trip.';
+  form.route.destinations = [{
+    id: 'stop-1', name: 'Petra', latitude: 30.3, longitude: 35.4,
+    order: 0, type: 'origin', daysSpent: 2,
+  }];
   form.pricing.basePrice = '899';
   return form;
 };
@@ -18,28 +20,31 @@ describe('missingRequiredFields', () => {
     const missing = missingRequiredFields(1, createInitialPackageFormData());
     expect(missing).toEqual([
       'packageWizard.packageTitle',
-      'packageWizard.destination',
       'packageWizard.category',
       'packageWizard.description',
     ]);
   });
 
-  it('accepts either the destinations array or the legacy scalar', () => {
-    const viaArray = valid();
-    viaArray.basicInfo.destination = '';
-    expect(missingRequiredFields(1, viaArray)).toEqual([]);
+  it('requires the plan section to have a destination (stops or legacy scalar)', () => {
+    const pristine = createInitialPackageFormData();
+    expect(missingRequiredFields(2, pristine)).toEqual(['packageWizard.destination']);
 
-    const viaScalar = valid();
-    viaScalar.basicInfo.destinations = [];
-    expect(missingRequiredFields(1, viaScalar)).toEqual([]);
+    const viaStops = valid();
+    viaStops.basicInfo.destination = '';
+    expect(missingRequiredFields(2, viaStops)).toEqual([]);
+
+    const viaLegacyScalar = valid();
+    viaLegacyScalar.route.destinations = [];
+    viaLegacyScalar.basicInfo.destination = 'Jordan';
+    expect(missingRequiredFields(2, viaLegacyScalar)).toEqual([]);
   });
 
-  it('requires a positive base price on the pricing step', () => {
+  it('requires a positive base price on the pricing section', () => {
     const form = valid();
     form.pricing.basePrice = '0';
-    expect(missingRequiredFields(4, form)).toEqual(['packageWizard.basePrice']);
+    expect(missingRequiredFields(3, form)).toEqual(['packageWizard.basePrice']);
     form.pricing.basePrice = '899';
-    expect(missingRequiredFields(4, form)).toEqual([]);
+    expect(missingRequiredFields(3, form)).toEqual([]);
   });
 
   it('treats whitespace-only title and description as missing', () => {
@@ -52,10 +57,23 @@ describe('missingRequiredFields', () => {
     ]);
   });
 
-  it('leaves the optional sections ungated', () => {
+  it('leaves departures and media sections ungated at the form level', () => {
     const pristine = createInitialPackageFormData();
-    for (const step of [2, 3, 5, 6]) {
+    for (const step of [4, 5]) {
       expect(missingRequiredFields(step, pristine)).toEqual([]);
     }
+  });
+});
+
+describe('missingForSubmit', () => {
+  it('aggregates the required fields across sections 1-3', () => {
+    expect(missingForSubmit(createInitialPackageFormData())).toEqual([
+      'packageWizard.packageTitle',
+      'packageWizard.category',
+      'packageWizard.description',
+      'packageWizard.destination',
+      'packageWizard.basePrice',
+    ]);
+    expect(missingForSubmit(valid())).toEqual([]);
   });
 });

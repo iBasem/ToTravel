@@ -1,24 +1,35 @@
+import { useTranslation } from "react-i18next";
 import { BasicInfoStep } from "@/features/packages/components/wizard-steps/BasicInfoStep";
-import { RouteStep } from "@/features/packages/components/wizard-steps/RouteStep";
-import { ItineraryStep } from "@/features/packages/components/wizard-steps/ItineraryStep";
+import { PlanStep } from "@/features/packages/components/wizard-steps/PlanStep";
 import { PricingStep } from "@/features/packages/components/wizard-steps/PricingStep";
 import { MediaStep } from "@/features/packages/components/wizard-steps/MediaStep";
-import { ReviewStep } from "@/features/packages/components/wizard-steps/ReviewStep";
+import { DeparturesEditor } from "@/features/packages/components/editor/DeparturesEditor";
+import { CalendarDays } from "lucide-react";
 import type { PackageFormData } from "@/features/packages/types/wizard";
 
+// Wave C sections: 1 Basics · 2 Plan (route + day program) · 3 Pricing ·
+// 4 Departures (tour start dates) · 5 Media. The old Review step is replaced
+// by the persistent checklist in the editor chrome.
 interface WizardStepContentProps {
   currentStep: number;
   formData: PackageFormData;
   onUpdate: <K extends keyof PackageFormData>(stepKey: K, data: PackageFormData[K]) => void;
   onFormDataUpdate: (data: PackageFormData) => void;
+  // Departures need a saved package row; null until autosave creates one.
+  packageId: string | null;
+  onDeparturesChanged?: () => void;
 }
 
 export function WizardStepContent({
   currentStep,
   formData,
   onUpdate,
-  onFormDataUpdate
+  onFormDataUpdate,
+  packageId,
+  onDeparturesChanged
 }: WizardStepContentProps) {
+  const { t } = useTranslation();
+
   switch (currentStep) {
     case 1:
       return (
@@ -29,37 +40,35 @@ export function WizardStepContent({
       );
     case 2:
       return (
-        <RouteStep
-          data={formData.route}
-          onUpdate={(data) => onUpdate('route', data)}
+        <PlanStep
+          formData={formData}
+          onUpdate={onFormDataUpdate}
         />
       );
     case 3:
-      return (
-        <ItineraryStep
-          data={formData.itinerary}
-          onUpdate={(data) => onUpdate('itinerary', data)}
-        />
-      );
-    case 4:
       return (
         <PricingStep
           data={formData.pricing}
           onUpdate={(data) => onUpdate('pricing', data)}
         />
       );
+    case 4:
+      if (!packageId) {
+        return (
+          <div className="border-2 border-dashed border-border rounded-lg p-10 text-center">
+            <CalendarDays className="h-12 w-12 mx-auto text-muted-foreground mb-3" />
+            <p className="text-muted-foreground max-w-md mx-auto">
+              {t('packageWizard.departuresNeedDraft', 'Complete the basics first — autosave will create your draft, then you can add departure dates here.')}
+            </p>
+          </div>
+        );
+      }
+      return <DeparturesEditor packageId={packageId} onChanged={onDeparturesChanged} />;
     case 5:
       return (
         <MediaStep
           data={formData.media}
           onUpdate={(data) => onUpdate('media', data)}
-        />
-      );
-    case 6:
-      return (
-        <ReviewStep
-          data={formData}
-          onUpdate={onFormDataUpdate}
         />
       );
     default:

@@ -259,6 +259,7 @@ export default function PackageDetails() {
             <WhatsIncluded
               inclusions={pickLocalized<string[]>(packageDetails, 'inclusions') || []}
               exclusions={pickLocalized<string[]>(packageDetails, 'exclusions') || []}
+              flightOption={packageDetails.flight_option}
             />
 
             {/* Operator Info */}

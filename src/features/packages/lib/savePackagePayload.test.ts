@@ -59,6 +59,15 @@ describe('buildSavePackagePayload', () => {
     expect(media[1]).toMatchObject({ media_type: 'video', is_primary: true, display_order: 1 });
   });
 
+  it('carries the package type and flight option', () => {
+    const form = base();
+    form.basicInfo.package_type = 'honeymoon';
+    form.pricing.flight_option = 'included';
+    const payload = buildSavePackagePayload(form);
+    expect(payload.basicInfo.package_type).toBe('honeymoon');
+    expect(payload.pricing.flight_option).toBe('included');
+  });
+
   it('ignores transient step-only fields so payloads compare stable for dirty checks', () => {
     const before = JSON.stringify(buildSavePackagePayload(base()));
     const form = base();

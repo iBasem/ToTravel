@@ -18,6 +18,14 @@ export interface InclusionCategory {
   details: string[];
 }
 
+// Who the package is for — orthogonal to `category` (kind of experience).
+export type PackageType = 'honeymoon' | 'family' | 'group' | 'solo';
+export const PACKAGE_TYPES: PackageType[] = ['group', 'family', 'honeymoon', 'solo'];
+
+// International flights: bundled in the price or booked by the traveler.
+// ('optional' paid add-on is a planned extension — needs an add-ons system.)
+export type FlightOption = 'not_included' | 'included';
+
 export interface PackageBasicInfo {
   title: string;
   description: string;
@@ -27,6 +35,7 @@ export interface PackageBasicInfo {
   description_ar: string;
   destination_ar: string;
   category: string;
+  package_type: PackageType;
   difficulty_level: string;
   duration_days: number;
   duration_nights: number;
@@ -58,6 +67,7 @@ export interface ItineraryDay {
 export interface PackagePricing {
   currency?: string; // legacy; platform currency is fixed (getPlatformCurrency)
   basePrice: string; // string in the form; base_price column is numeric
+  flight_option: FlightOption;
   inclusions: {
     accommodation: InclusionCategory;
     meals: InclusionCategory;
@@ -97,5 +107,4 @@ export interface PackageFormData {
   itinerary: ItineraryDay[];
   pricing: PackagePricing;
   media: MediaItem[];
-  isPublished?: boolean; // set by ReviewStep; not yet wired to status (see gap analysis)
 }

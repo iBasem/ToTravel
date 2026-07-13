@@ -1,5 +1,5 @@
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Input } from "@/ui/input";
 import { Label } from "@/ui/label";
@@ -8,128 +8,53 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/ui/badge";
 import { Button } from "@/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/card";
-import { X, Plus, Search, Loader2, MapPin } from "lucide-react";
+import { X, Plus, Heart, Users, UsersRound, User } from "lucide-react";
+import { cn } from "@/lib/utils";
 
-import type { PackageFormData } from "@/features/packages/types/wizard";
-
-const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN;
+import type { PackageFormData, PackageType } from "@/features/packages/types/wizard";
+import { PACKAGE_TYPES } from "@/features/packages/types/wizard";
 
 interface BasicInfoStepProps {
   data: PackageFormData['basicInfo'];
   onUpdate: (data: PackageFormData['basicInfo']) => void;
 }
 
-interface DestinationResult {
-  id: string;
-  name: string;
-  placeName: string;
-}
+const TYPE_ICONS: Record<PackageType, typeof Heart> = {
+  honeymoon: Heart,
+  family: Users,
+  group: UsersRound,
+  solo: User,
+};
 
-// Minimal shape of a Mapbox geocoding feature (the fields we read).
-interface MapboxFeature {
-  id: string;
-  text: string;
-  place_name: string;
-}
+// Experience categories — 'family' is a package_type (audience), not a
+// category; 'nature' and 'beach' exist in live data and are real options.
+const CATEGORIES = ['adventure', 'cultural', 'relaxation', 'luxury', 'budget', 'nature', 'beach'] as const;
 
-// Controlled section: reads from `data`, writes through `onUpdate`. Only
-// UI scratch state (search box, pending highlight) lives locally.
+// Controlled section: reads from `data`, writes through `onUpdate`. Only the
+// pending-highlight scratch input lives locally. The destination label is
+// auto-derived from the route stops in the Plan section; editing it here
+// overrides the derivation.
 export function BasicInfoStep({ data, onUpdate }: BasicInfoStepProps) {
   const { t } = useTranslation();
 
-  const destinations = data.destinations ?? (data.destination ? [data.destination] : []);
   const highlights = data.highlights ?? [];
-
   const [newHighlight, setNewHighlight] = useState("");
-
-  // Destination search state
-  const [destinationQuery, setDestinationQuery] = useState("");
-  const [destinationResults, setDestinationResults] = useState<DestinationResult[]>([]);
-  const [isSearching, setIsSearching] = useState(false);
-  const [showResults, setShowResults] = useState(false);
-  const debounceRef = useRef<NodeJS.Timeout | null>(null);
-
-  const searchDestinations = useCallback(async (query: string) => {
-    if (!query || query.length < 2) {
-      setDestinationResults([]);
-      setShowResults(false);
-      return;
-    }
-
-    setIsSearching(true);
-    try {
-      const response = await fetch(
-        `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(query)}.json?access_token=${MAPBOX_TOKEN}&types=country,region&limit=5`
-      );
-      const result = await response.json();
-
-      if (result.features) {
-        const results: DestinationResult[] = result.features.map((feature: MapboxFeature) => ({
-          id: feature.id,
-          name: feature.text,
-          placeName: feature.place_name,
-        }));
-        setDestinationResults(results);
-        setShowResults(true);
-      } else {
-        setDestinationResults([]);
-      }
-    } catch (error) {
-      console.error('Error searching destinations:', error);
-      setDestinationResults([]);
-    } finally {
-      setIsSearching(false);
-    }
-  }, []);
-
-  // Live search with debounce
-  useEffect(() => {
-    if (debounceRef.current) {
-      clearTimeout(debounceRef.current);
-    }
-
-    if (destinationQuery.length >= 2) {
-      debounceRef.current = setTimeout(() => {
-        searchDestinations(destinationQuery);
-      }, 300);
-    } else {
-      setDestinationResults([]);
-      setShowResults(false);
-    }
-
-    return () => {
-      if (debounceRef.current) {
-        clearTimeout(debounceRef.current);
-      }
-    };
-  }, [destinationQuery, searchDestinations]);
 
   const handleInputChange = (field: string, value: string | number | boolean) => {
     onUpdate({ ...data, [field]: value });
   };
 
-  const handleDestinationSelect = (result: DestinationResult) => {
-    if (!destinations.includes(result.name)) {
-      const newDestinations = [...destinations, result.name];
-      onUpdate({
-        ...data,
-        destinations: newDestinations,
-        // Keep backward compatibility with single destination field
-        destination: newDestinations[0] || ""
-      });
+  // The type drives smart defaults: honeymoon is always a couple; family
+  // trips default to easy difficulty (still editable).
+  const handleTypeChange = (type: PackageType) => {
+    const next = { ...data, package_type: type };
+    if (type === 'honeymoon') {
+      next.max_participants = 2;
     }
-    setDestinationQuery("");
-    setShowResults(false);
-    setDestinationResults([]);
-  };
-
-  const removeDestination = (index: number) => {
-    const newDestinations = destinations.filter((_: string, i: number) => i !== index);
-    onUpdate({
-      ...data,
-      destinations: newDestinations,
-      destination: newDestinations[0] || ""
-    });
+    if (type === 'family' && data.difficulty_level === 'moderate') {
+      next.difficulty_level = 'easy';
+    }
+    onUpdate(next);
   };
 
   const addHighlight = () => {
@@ -143,8 +68,46 @@ export function BasicInfoStep({ data, onUpdate }: BasicInfoStepProps) {
     onUpdate({ ...data, highlights: highlights.filter((_, i) => i !== index) });
   };
 
+  const isHoneymoon = data.package_type === 'honeymoon';
+
   return (
     <div className="space-y-6">
+      {/* Package type — who this trip is for */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-start">{t('packageWizard.packageTypeTitle', 'Who is this package for?')}</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3" role="radiogroup" aria-label={t('packageWizard.packageTypeTitle', 'Who is this package for?')}>
+            {PACKAGE_TYPES.map((type) => {
+              const Icon = TYPE_ICONS[type];
+              const selected = data.package_type === type;
+              return (
+                <button
+                  key={type}
+                  type="button"
+                  role="radio"
+                  aria-checked={selected}
+                  onClick={() => handleTypeChange(type)}
+                  className={cn(
+                    "flex flex-col items-center gap-2 rounded-lg border p-4 text-sm font-medium transition-colors",
+                    selected
+                      ? "border-primary bg-primary/10 text-primary"
+                      : "border-border text-muted-foreground hover:bg-muted hover:text-foreground"
+                  )}
+                >
+                  <Icon className="w-5 h-5" aria-hidden />
+                  {t(`packageWizard.type_${type}`)}
+                </button>
+              );
+            })}
+          </div>
+          <p className="text-sm text-muted-foreground mt-3 text-start">
+            {t(`packageWizard.typeHint_${data.package_type}`)}
+          </p>
+        </CardContent>
+      </Card>
+
       {/* Basic Package Information */}
       <Card>
         <CardHeader>
@@ -162,63 +125,37 @@ export function BasicInfoStep({ data, onUpdate }: BasicInfoStepProps) {
               />
             </div>
 
-            <div className="space-y-2 md:col-span-2">
-              <Label className="text-start block">{t('packageWizard.destination')} *</Label>
-              <div className="relative">
-                <Search className="absolute top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground z-10 start-3" />
-                {isSearching && (
-                  <Loader2 className="absolute top-1/2 -translate-y-1/2 h-4 w-4 animate-spin text-muted-foreground z-10 end-3" />
-                )}
-                <Input
-                  value={destinationQuery}
-                  onChange={(e) => setDestinationQuery(e.target.value)}
-                  onFocus={() => destinationResults.length > 0 && setShowResults(true)}
-                  placeholder={t('packageWizard.destinationPlaceholder')}
-                  className="ps-10"
-                />
+            <div className="space-y-2">
+              <Label htmlFor="title_ar" className="text-start block">{t('packageWizard.titleAr', 'Title (Arabic)')}</Label>
+              <Input
+                id="title_ar"
+                dir="rtl"
+                value={data.title_ar}
+                onChange={(e) => handleInputChange("title_ar", e.target.value)}
+              />
+            </div>
 
-                {showResults && destinationResults.length > 0 && (
-                  <div className="absolute z-50 w-full mt-1 bg-background border border-border rounded-md shadow-lg max-h-60 overflow-auto">
-                    {destinationResults.map((result) => (
-                      <button
-                        key={result.id}
-                        type="button"
-                        className="w-full p-3 hover:bg-muted flex items-center gap-3 border-b last:border-b-0 transition-colors text-start"
-                        onClick={() => handleDestinationSelect(result)}
-                      >
-                        <MapPin className="h-4 w-4 text-primary flex-shrink-0" />
-                        <div className="flex-1 min-w-0">
-                          <p className="font-medium truncate">{result.name}</p>
-                          <p className="text-sm text-muted-foreground truncate">{result.placeName}</p>
-                        </div>
-                        <Plus className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-                      </button>
-                    ))}
-                  </div>
-                )}
+            <div className="space-y-2">
+              <Label htmlFor="destination" className="text-start block">{t('packageWizard.destinationLabel', 'Destination label')}</Label>
+              <Input
+                id="destination"
+                value={data.destination}
+                onChange={(e) => handleInputChange("destination", e.target.value)}
+                placeholder={t('packageWizard.destinationAutoHint', 'Filled automatically from your route stops')}
+              />
+              <p className="text-xs text-muted-foreground text-start">
+                {t('packageWizard.destinationAutoHint', 'Filled automatically from your route stops')}
+              </p>
+            </div>
 
-                {showResults && destinationQuery.length >= 2 && destinationResults.length === 0 && !isSearching && (
-                  <div className="absolute z-50 w-full mt-1 bg-background border border-border rounded-md shadow-lg p-4 text-center text-muted-foreground">
-                    {t('packageWizard.noResultsFound', 'No destinations found')}
-                  </div>
-                )}
-              </div>
-
-              {/* Selected destinations as badges */}
-              {destinations.length > 0 && (
-                <div className="flex flex-wrap gap-2 mt-2">
-                  {destinations.map((dest: string, index: number) => (
-                    <Badge key={index} variant="secondary" className="flex items-center gap-1 py-1 px-2">
-                      <MapPin className="w-3 h-3" />
-                      {dest}
-                      <X
-                        className="w-3 h-3 cursor-pointer hover:text-destructive ms-1"
-                        onClick={() => removeDestination(index)}
-                      />
-                    </Badge>
-                  ))}
-                </div>
-              )}
+            <div className="space-y-2">
+              <Label htmlFor="destination_ar" className="text-start block">{t('packageWizard.destinationAr', 'Destination (Arabic)')}</Label>
+              <Input
+                id="destination_ar"
+                dir="rtl"
+                value={data.destination_ar}
+                onChange={(e) => handleInputChange("destination_ar", e.target.value)}
+              />
             </div>
 
             <div className="space-y-2">
@@ -228,18 +165,32 @@ export function BasicInfoStep({ data, onUpdate }: BasicInfoStepProps) {
                   <SelectValue placeholder={t('packageWizard.selectCategory')} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="adventure">{t('packageWizard.adventure')}</SelectItem>
-                  <SelectItem value="cultural">{t('packageWizard.cultural')}</SelectItem>
-                  <SelectItem value="relaxation">{t('packageWizard.relaxation')}</SelectItem>
-                  <SelectItem value="family">{t('packageWizard.family')}</SelectItem>
-                  <SelectItem value="luxury">{t('packageWizard.luxury')}</SelectItem>
-                  <SelectItem value="budget">{t('packageWizard.budget')}</SelectItem>
+                  {CATEGORIES.map((c) => (
+                    <SelectItem key={c} value={c}>{t(`packageWizard.${c}`)}</SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
 
+            {!isHoneymoon && (
+              <div className="space-y-2">
+                <Label htmlFor="difficulty_level" className="text-start block">{t('packageWizard.difficultyLevel')}</Label>
+                <Select value={data.difficulty_level} onValueChange={(value) => handleInputChange("difficulty_level", value)}>
+                  <SelectTrigger>
+                    <SelectValue placeholder={t('packageWizard.selectDifficulty')} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="easy">{t('packageWizard.easy')}</SelectItem>
+                    <SelectItem value="moderate">{t('packageWizard.moderate')}</SelectItem>
+                    <SelectItem value="challenging">{t('packageWizard.challenging')}</SelectItem>
+                    <SelectItem value="expert">{t('packageWizard.expert')}</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+
             <div className="space-y-2">
-              <Label htmlFor="duration_days" className="text-start block">{t('packageWizard.durationDays')} *</Label>
+              <Label htmlFor="duration_days" className="text-start block">{t('packageWizard.durationDays')}</Label>
               <Input
                 id="duration_days"
                 type="number"
@@ -249,6 +200,9 @@ export function BasicInfoStep({ data, onUpdate }: BasicInfoStepProps) {
                 placeholder="14"
                 dir="ltr"
               />
+              <p className="text-xs text-muted-foreground text-start">
+                {t('packageWizard.durationAutoHint', 'Follows your day plan; edit to override')}
+              </p>
             </div>
 
             <div className="space-y-2">
@@ -264,89 +218,55 @@ export function BasicInfoStep({ data, onUpdate }: BasicInfoStepProps) {
               />
             </div>
 
+            {isHoneymoon ? (
+              <div className="space-y-2">
+                <Label className="text-start block">{t('packageWizard.maxParticipants')}</Label>
+                <p className="text-sm text-muted-foreground border rounded-md px-3 py-2 text-start">
+                  {t('packageWizard.honeymoonCoupleNote', 'Fixed at 2 — honeymoon packages are for couples')}
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                <Label htmlFor="max_participants" className="text-start block">{t('packageWizard.maxParticipants')}</Label>
+                <Input
+                  id="max_participants"
+                  type="number"
+                  min="1"
+                  value={data.max_participants}
+                  onChange={(e) => handleInputChange("max_participants", parseInt(e.target.value) || 20)}
+                  placeholder="16"
+                  dir="ltr"
+                />
+              </div>
+            )}
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="max_participants" className="text-start block">{t('packageWizard.maxParticipants')}</Label>
-              <Input
-                id="max_participants"
-                type="number"
-                min="1"
-                value={data.max_participants}
-                onChange={(e) => handleInputChange("max_participants", parseInt(e.target.value) || 20)}
-                placeholder="16"
-                dir="ltr"
+              <Label htmlFor="description" className="text-start block">{t('packageWizard.description')} *</Label>
+              <Textarea
+                id="description"
+                value={data.description}
+                onChange={(e) => handleInputChange("description", e.target.value)}
+                placeholder={t('packageWizard.descriptionPlaceholder')}
+                className="min-h-[100px]"
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="difficulty_level" className="text-start block">{t('packageWizard.difficultyLevel')}</Label>
-              <Select value={data.difficulty_level} onValueChange={(value) => handleInputChange("difficulty_level", value)}>
-                <SelectTrigger>
-                  <SelectValue placeholder={t('packageWizard.selectDifficulty')} />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="easy">{t('packageWizard.easy')}</SelectItem>
-                  <SelectItem value="moderate">{t('packageWizard.moderate')}</SelectItem>
-                  <SelectItem value="challenging">{t('packageWizard.challenging')}</SelectItem>
-                  <SelectItem value="expert">{t('packageWizard.expert')}</SelectItem>
-                </SelectContent>
-              </Select>
+              <Label htmlFor="description_ar" className="text-start block">{t('packageWizard.descriptionAr', 'Description (Arabic)')}</Label>
+              <Textarea
+                id="description_ar"
+                dir="rtl"
+                value={data.description_ar}
+                onChange={(e) => handleInputChange("description_ar", e.target.value)}
+                className="min-h-[100px]"
+              />
             </div>
           </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="description" className="text-start block">{t('packageWizard.description')} *</Label>
-            <Textarea
-              id="description"
-              value={data.description}
-              onChange={(e) => handleInputChange("description", e.target.value)}
-              placeholder={t('packageWizard.descriptionPlaceholder')}
-              className="min-h-[100px]"
-            />
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Arabic Content */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-start">{t('packageWizard.arabicContent', 'Arabic content (optional)')}</CardTitle>
           <p className="text-sm text-muted-foreground text-start">
             {t('packageWizard.arabicContentHint', 'Shown to Arabic-speaking travelers; English is used when empty')}
           </p>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="title_ar" className="text-start block">{t('packageWizard.titleAr', 'Title (Arabic)')}</Label>
-              <Input
-                id="title_ar"
-                dir="rtl"
-                value={data.title_ar}
-                onChange={(e) => handleInputChange("title_ar", e.target.value)}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="destination_ar" className="text-start block">{t('packageWizard.destinationAr', 'Destination (Arabic)')}</Label>
-              <Input
-                id="destination_ar"
-                dir="rtl"
-                value={data.destination_ar}
-                onChange={(e) => handleInputChange("destination_ar", e.target.value)}
-              />
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="description_ar" className="text-start block">{t('packageWizard.descriptionAr', 'Description (Arabic)')}</Label>
-            <Textarea
-              id="description_ar"
-              dir="rtl"
-              value={data.description_ar}
-              onChange={(e) => handleInputChange("description_ar", e.target.value)}
-              className="min-h-[100px]"
-            />
-          </div>
         </CardContent>
       </Card>
 

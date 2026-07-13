@@ -18,7 +18,6 @@ import {
 import { CSS } from '@dnd-kit/utilities';
 import { Button } from '@/ui/button';
 import { Input } from '@/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/ui/select';
 import { GripVertical, Trash2, MapPin, Calendar } from 'lucide-react';
 import { RouteDestination } from './types';
 
@@ -86,21 +85,13 @@ function SortableDestination({ destination, index, onUpdate, onRemove }: Sortabl
           />
 
           <div className="flex items-center gap-3 flex-wrap">
-            <Select
-              value={destination.type}
-              onValueChange={(value: 'origin' | 'stop' | 'destination') =>
-                onUpdate(destination.id, { type: value })
-              }
-            >
-              <SelectTrigger className="w-32 h-8 text-sm">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="origin">{t('packageWizard.origin', 'Start')}</SelectItem>
-                <SelectItem value="stop">{t('packageWizard.stop', 'Stop')}</SelectItem>
-                <SelectItem value="destination">{t('packageWizard.destinationType', 'Destination')}</SelectItem>
-              </SelectContent>
-            </Select>
+            {/* Role is positional (first = start, last = destination) —
+                derived automatically when stops are added or reordered. */}
+            <span className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium ${typeColors[destination.type]}`}>
+              {destination.type === 'origin' && t('packageWizard.origin', 'Start')}
+              {destination.type === 'stop' && t('packageWizard.stop', 'Stop')}
+              {destination.type === 'destination' && t('packageWizard.destinationType', 'Destination')}
+            </span>
 
             <div className="flex items-center gap-2">
               <Calendar className="h-4 w-4 text-muted-foreground" />

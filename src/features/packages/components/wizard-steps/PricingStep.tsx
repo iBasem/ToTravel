@@ -9,9 +9,13 @@ import { Textarea } from "@/ui/textarea";
 import { Label } from "@/ui/label";
 import { Button } from "@/ui/button";
 import { Badge } from "@/ui/badge";
-import { Plus, X } from "lucide-react";
+import { RadioGroup, RadioGroupItem } from "@/ui/radio-group";
+import { Plus, X, Plane, BookmarkPlus, Loader2 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/features/auth/context/AuthContext";
+import { toast } from "sonner";
 
-import type { PackageFormData } from "@/features/packages/types/wizard";
+import type { PackageFormData, FlightOption } from "@/features/packages/types/wizard";
 
 interface PricingStepProps {
   data: PackageFormData['pricing'];
@@ -22,11 +26,13 @@ interface PricingStepProps {
 // pending add-item inputs are local UI state.
 export function PricingStep({ data, onUpdate }: PricingStepProps) {
   const { t } = useTranslation();
+  const { user } = useAuth();
 
   const [newInclusion, setNewInclusion] = useState("");
   const [newExclusion, setNewExclusion] = useState("");
   const [newInclusionAr, setNewInclusionAr] = useState("");
   const [newExclusionAr, setNewExclusionAr] = useState("");
+  const [savingDefaults, setSavingDefaults] = useState(false);
 
   const additionalInclusions = data.additionalInclusions || [];
   const exclusions = data.exclusions || [];
@@ -86,12 +92,64 @@ export function PricingStep({ data, onUpdate }: PricingStepProps) {
     setNewExclusionAr("");
   };
 
+  // Owner-approved extra: write the current policies to the agency profile
+  // as defaults; the editor prefills them into every new package.
+  const saveAsAgencyDefaults = async () => {
+    if (!user) return;
+    setSavingDefaults(true);
+    const { error } = await supabase
+      .from('travel_agencies')
+      .update({
+        default_cancellation_policy: data.cancellation_policy || null,
+        default_terms_conditions: data.terms_conditions || null,
+      })
+      .eq('id', user.id);
+    setSavingDefaults(false);
+    if (error) {
+      toast.error(t('common.updateError', 'Something went wrong'));
+      return;
+    }
+    toast.success(t('packageWizard.defaultsSaved', 'Saved as your agency defaults'));
+  };
+
   return (
     <div className="space-y-6">
       <BasePricing
         data={{ basePrice: data.basePrice }}
         onUpdate={(field, value) => setField(field as 'basePrice', value)}
       />
+
+      {/* International flights — bundled or booked by the traveler */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-start">
+            <Plane className="w-5 h-5" />
+            {t('packageWizard.flightsTitle', 'International flights')}
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <RadioGroup
+            value={data.flight_option}
+            onValueChange={(value) => setField("flight_option", value as FlightOption)}
+            className="space-y-3"
+          >
+            <div className="flex items-start gap-3">
+              <RadioGroupItem value="not_included" id="flights-not-included" className="mt-1" />
+              <Label htmlFor="flights-not-included" className="cursor-pointer text-start">
+                <span className="font-medium block">{t('packageWizard.flightsNotIncluded', 'Not included')}</span>
+                <span className="text-sm text-muted-foreground">{t('packageWizard.flightsNotIncludedHint', 'Travelers book their own flights — shown clearly on the package page')}</span>
+              </Label>
+            </div>
+            <div className="flex items-start gap-3">
+              <RadioGroupItem value="included" id="flights-included" className="mt-1" />
+              <Label htmlFor="flights-included" className="cursor-pointer text-start">
+                <span className="font-medium block">{t('packageWizard.flightsIncluded', 'Included in the package price')}</span>
+                <span className="text-sm text-muted-foreground">{t('packageWizard.flightsIncludedHint', 'Your base price covers international flights')}</span>
+              </Label>
+            </div>
+          </RadioGroup>
+        </CardContent>
+      </Card>
 
       <InclusionsManager
         inclusions={data.inclusions}
@@ -100,7 +158,7 @@ export function PricingStep({ data, onUpdate }: PricingStepProps) {
         onRemoveDetail={removeInclusionDetail}
       />
 
-      {/* Additional Inclusions */}
+      {/* Additional Inclusions — EN and AR side by side */}
       <Card>
         <CardHeader>
           <CardTitle className="text-start">{t('packageWizard.additionalInclusions')}</CardTitle>
@@ -128,10 +186,36 @@ export function PricingStep({ data, onUpdate }: PricingStepProps) {
               </Badge>
             ))}
           </div>
+
+          <div className="space-y-3 border-t pt-4">
+            <Label className="text-start block">{t('packageWizard.inclusionsAr', "What's included (Arabic)")}</Label>
+            <div className="flex gap-2">
+              <Input
+                dir="rtl"
+                value={newInclusionAr}
+                onChange={(e) => setNewInclusionAr(e.target.value)}
+                onKeyPress={(e) => e.key === "Enter" && addInclusionAr()}
+              />
+              <Button type="button" onClick={addInclusionAr} size="sm">
+                <Plus className="w-4 h-4" />
+              </Button>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {inclusionsAr.map((inclusion: string, index: number) => (
+                <Badge key={index} variant="secondary" className="flex items-center gap-1">
+                  {inclusion}
+                  <X
+                    className="w-3 h-3 cursor-pointer"
+                    onClick={() => setField("inclusions_ar", inclusionsAr.filter((_, i) => i !== index))}
+                  />
+                </Badge>
+              ))}
+            </div>
+          </div>
         </CardContent>
       </Card>
 
-      {/* Exclusions */}
+      {/* Exclusions — EN and AR side by side */}
       <Card>
         <CardHeader>
           <CardTitle className="text-start">{t('packageWizard.whatsNotIncluded')}</CardTitle>
@@ -159,45 +243,8 @@ export function PricingStep({ data, onUpdate }: PricingStepProps) {
               </Badge>
             ))}
           </div>
-        </CardContent>
-      </Card>
 
-      {/* Arabic Content */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-start">{t('packageWizard.arabicContent', 'Arabic content (optional)')}</CardTitle>
-          <p className="text-sm text-muted-foreground text-start">
-            {t('packageWizard.arabicContentHint', 'Shown to Arabic-speaking travelers; English is used when empty')}
-          </p>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="space-y-4">
-            <Label className="text-start block">{t('packageWizard.inclusionsAr', "What's included (Arabic)")}</Label>
-            <div className="flex gap-2">
-              <Input
-                dir="rtl"
-                value={newInclusionAr}
-                onChange={(e) => setNewInclusionAr(e.target.value)}
-                onKeyPress={(e) => e.key === "Enter" && addInclusionAr()}
-              />
-              <Button type="button" onClick={addInclusionAr} size="sm">
-                <Plus className="w-4 h-4" />
-              </Button>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {inclusionsAr.map((inclusion: string, index: number) => (
-                <Badge key={index} variant="secondary" className="flex items-center gap-1">
-                  {inclusion}
-                  <X
-                    className="w-3 h-3 cursor-pointer"
-                    onClick={() => setField("inclusions_ar", inclusionsAr.filter((_, i) => i !== index))}
-                  />
-                </Badge>
-              ))}
-            </div>
-          </div>
-
-          <div className="space-y-4">
+          <div className="space-y-3 border-t pt-4">
             <Label className="text-start block">{t('packageWizard.exclusionsAr', "What's not included (Arabic)")}</Label>
             <div className="flex gap-2">
               <Input
@@ -249,6 +296,20 @@ export function PricingStep({ data, onUpdate }: PricingStepProps) {
               className="min-h-[80px]"
             />
           </div>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={saveAsAgencyDefaults}
+            disabled={savingDefaults || (!data.cancellation_policy && !data.terms_conditions)}
+            className="flex items-center gap-2"
+          >
+            {savingDefaults ? <Loader2 className="w-4 h-4 animate-spin" /> : <BookmarkPlus className="w-4 h-4" />}
+            {t('packageWizard.saveAsDefaults', 'Save as agency default')}
+          </Button>
+          <p className="text-xs text-muted-foreground text-start">
+            {t('packageWizard.defaultsHint', 'Defaults are pre-filled into every new package you create.')}
+          </p>
         </CardContent>
       </Card>
     </div>

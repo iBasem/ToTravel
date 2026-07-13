@@ -1,6 +1,6 @@
 import { Button } from "@/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/card";
-import { Plus, Search, Filter, Package, Edit, Trash2, MoreVertical, Eye, CalendarDays } from "lucide-react";
+import { Plus, Search, Filter, Package, Edit, Trash2, MoreVertical, Eye, CalendarDays, Copy } from "lucide-react";
 import { LoadingSpinner } from "@/ui/loading-spinner";
 import { EmptyState } from "@/ui/empty-state";
 import { Input } from "@/ui/input";
@@ -50,6 +50,11 @@ export default function Packages() {
 
   const handleManageDepartures = (packageId: string) => {
     navigate(`/travel_agency/packages/${packageId}/departures`);
+  };
+
+  // Opens the editor pre-filled from this package as a brand-new draft.
+  const handleDuplicatePackage = (packageId: string) => {
+    navigate(`/travel_agency/packages/create?duplicate=${packageId}`);
   };
 
   const handleDeletePackage = async (packageId: string, title: string) => {
@@ -253,6 +258,10 @@ export default function Packages() {
                           <CalendarDays className="w-3 h-3 sm:w-4 sm:h-4 me-1 sm:me-2" />
                           {t('departures.manage', 'Manage departures')}
                         </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleDuplicatePackage(pkg.id)} className="text-xs sm:text-sm">
+                          <Copy className="w-3 h-3 sm:w-4 sm:h-4 me-1 sm:me-2" />
+                          {t('packageWizard.duplicate', 'Duplicate')}
+                        </DropdownMenuItem>
                         <DropdownMenuItem onClick={() => togglePublishStatus(pkg)} className="text-xs sm:text-sm">
                           {pkg.status === 'published' ? t('agencyDashboard.unpublish') : t('agencyDashboard.publish')}
                         </DropdownMenuItem>
@@ -268,7 +277,12 @@ export default function Packages() {
                   </div>
                 </CardHeader>
                 <CardContent className="space-y-2 sm:space-y-3 px-3 sm:px-4 lg:px-6 pb-3 sm:pb-4 lg:pb-6 text-start">
-                  <p className="text-xs sm:text-sm text-muted-foreground">{pkg.destination}</p>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <Badge variant="outline" className="text-xs">
+                      {t(`packageWizard.type_${pkg.package_type || 'group'}`)}
+                    </Badge>
+                    <p className="text-xs sm:text-sm text-muted-foreground">{pkg.destination}</p>
+                  </div>
                   <p className="text-xs sm:text-sm text-muted-foreground">{pkg.duration_days} {t('common.days')}, {pkg.duration_nights} {t('agencyDashboard.nights')}</p>
                   <div className="flex items-center justify-between">
                     <p className="text-base sm:text-lg lg:text-xl font-bold text-primary">

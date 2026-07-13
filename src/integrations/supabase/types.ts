@@ -636,11 +636,13 @@ export type Database = {
           exclusions: string[] | null
           exclusions_ar: string[] | null
           featured: boolean | null
+          flight_option: string
           highlights: string[]
           id: string
           inclusions: string[] | null
           inclusions_ar: string[] | null
           max_participants: number | null
+          package_type: string
           requirements: string[] | null
           status: string | null
           terms_conditions: string | null
@@ -668,11 +670,13 @@ export type Database = {
           exclusions?: string[] | null
           exclusions_ar?: string[] | null
           featured?: boolean | null
+          flight_option?: string
           highlights?: string[]
           id?: string
           inclusions?: string[] | null
           inclusions_ar?: string[] | null
           max_participants?: number | null
+          package_type?: string
           requirements?: string[] | null
           status?: string | null
           terms_conditions?: string | null
@@ -700,11 +704,13 @@ export type Database = {
           exclusions?: string[] | null
           exclusions_ar?: string[] | null
           featured?: boolean | null
+          flight_option?: string
           highlights?: string[]
           id?: string
           inclusions?: string[] | null
           inclusions_ar?: string[] | null
           max_participants?: number | null
+          package_type?: string
           requirements?: string[] | null
           status?: string | null
           terms_conditions?: string | null
@@ -900,6 +906,8 @@ export type Database = {
           contact_person_last_name: string
           country: string | null
           created_at: string
+          default_cancellation_policy: string | null
+          default_terms_conditions: string | null
           email: string
           id: string
           is_verified: boolean | null
@@ -922,6 +930,8 @@ export type Database = {
           contact_person_last_name?: string
           country?: string | null
           created_at?: string
+          default_cancellation_policy?: string | null
+          default_terms_conditions?: string | null
           email: string
           id: string
           is_verified?: boolean | null
@@ -944,6 +954,8 @@ export type Database = {
           contact_person_last_name?: string
           country?: string | null
           created_at?: string
+          default_cancellation_policy?: string | null
+          default_terms_conditions?: string | null
           email?: string
           id?: string
           is_verified?: boolean | null

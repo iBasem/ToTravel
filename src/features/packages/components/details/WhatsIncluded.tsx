@@ -122,13 +122,13 @@ function InclusionItem({ item, isExclusion = false, isOpen, onToggle }: Inclusio
     );
 }
 
-export function WhatsIncluded({ inclusions, exclusions }: WhatsIncludedProps) {
+export function WhatsIncluded({ inclusions, exclusions, flightOption }: WhatsIncludedProps) {
     const { t } = useTranslation();
 
     const [openItems, setOpenItems] = useState<Set<string>>(new Set());
     const [allExpanded, setAllExpanded] = useState(false);
 
-    if ((!inclusions || inclusions.length === 0) && (!exclusions || exclusions.length === 0)) {
+    if ((!inclusions || inclusions.length === 0) && (!exclusions || exclusions.length === 0) && !flightOption) {
         return null;
     }
 
@@ -173,6 +173,19 @@ export function WhatsIncluded({ inclusions, exclusions }: WhatsIncludedProps) {
                 </div>
             </CardHeader>
             <CardContent className="pt-0">
+                {/* International flights — always stated plainly so travelers
+                    know whether to book their own */}
+                {flightOption && (
+                    <div className="flex items-center gap-3 rounded-md bg-muted/50 border border-border px-4 py-3 mb-4 text-start">
+                        <Plane className={`w-5 h-5 flex-shrink-0 ${flightOption === 'included' ? 'text-teal-600' : 'text-muted-foreground'}`} />
+                        <span className="text-sm font-medium text-foreground">
+                            {flightOption === 'included'
+                                ? t('packageDetails.flightsIncluded', 'International flights are included in the price')
+                                : t('packageDetails.flightsNotIncluded', 'International flights are not included — travelers book their own')}
+                        </span>
+                    </div>
+                )}
+
                 {/* Inclusions List */}
                 {inclusions && inclusions.length > 0 && (
                     <div className="mb-6">
