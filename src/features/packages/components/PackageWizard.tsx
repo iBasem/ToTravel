@@ -1,11 +1,13 @@
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/ui/dialog";
 import { Button } from "@/ui/button";
 import { Progress } from "@/ui/progress";
 import { WizardStepContent } from "@/features/packages/components/wizard/WizardStepContent";
 import { useCreatePackage } from "@/features/packages/hooks/useCreatePackage";
+import { buildSavePackagePayload } from "@/features/packages/lib/savePackagePayload";
+import { missingRequiredFields } from "@/features/packages/lib/wizardValidation";
 import type { PackageFormData } from "@/features/packages/types/wizard";
 
 interface PackageWizardProps {
@@ -13,64 +15,80 @@ interface PackageWizardProps {
   onClose: () => void;
 }
 
+const createInitialFormData = (): PackageFormData => ({
+  basicInfo: {
+    title: '',
+    description: '',
+    destination: '',
+    title_ar: '',
+    description_ar: '',
+    destination_ar: '',
+    destinations: [] as string[],
+    category: '',
+    difficulty_level: 'moderate',
+    duration_days: 1,
+    duration_nights: 0,
+    max_participants: 20,
+    featured: false
+  },
+  route: {
+    destinations: [],
+    travelMode: 'driving',
+    showDistances: true
+  },
+  itinerary: [],
+  pricing: {
+    basePrice: "",
+    base_price: 0,
+    inclusions: {
+      accommodation: { included: false, details: [] },
+      meals: { included: false, details: [] },
+      transportation: { included: false, details: [] },
+      activities: { included: false, details: [] },
+      guides: { included: false, details: [] },
+      insurance: { included: false, details: [] },
+      other: { included: false, details: [] }
+    },
+    additionalInclusions: [],
+    exclusions: [],
+    inclusions_ar: [],
+    exclusions_ar: [],
+    cancellation_policy: '',
+    terms_conditions: ''
+  },
+  media: []
+});
+
 export function PackageWizard({ isOpen, onClose }: PackageWizardProps) {
   const { t, i18n } = useTranslation();
 
   const [currentStep, setCurrentStep] = useState(1);
-  const [formData, setFormData] = useState<PackageFormData>({
-    basicInfo: {
-      title: '',
-      description: '',
-      destination: '',
-      title_ar: '',
-      description_ar: '',
-      destination_ar: '',
-      destinations: [] as string[],
-      category: '',
-      difficulty_level: 'moderate',
-      duration_days: 1,
-      duration_nights: 0,
-      max_participants: 20,
-      featured: false
-    },
-    route: {
-      destinations: [],
-      travelMode: 'driving',
-      showDistances: true
-    },
-    itinerary: [],
-    pricing: {
-      basePrice: "",
-      base_price: 0,
-      inclusions: {
-        accommodation: { included: false, details: [] },
-        meals: { included: false, details: [] },
-        transportation: { included: false, details: [] },
-        activities: { included: false, details: [] },
-        guides: { included: false, details: [] },
-        insurance: { included: false, details: [] },
-        other: { included: false, details: [] }
-      },
-      additionalInclusions: [],
-      exclusions: [],
-      inclusions_ar: [],
-      exclusions_ar: [],
-      cancellation_policy: '',
-      terms_conditions: ''
-    },
-    media: []
-  });
+  const [formData, setFormData] = useState<PackageFormData>(createInitialFormData);
 
   const { createPackage, loading } = useCreatePackage();
+
+  // Dirty = what would be saved differs from a pristine form. Comparing via
+  // the save payload ignores transient step-only fields (newHighlight, etc.).
+  const pristinePayload = useMemo(
+    () => JSON.stringify(buildSavePackagePayload(createInitialFormData())),
+    []
+  );
+  const isDirty = JSON.stringify(buildSavePackagePayload(formData)) !== pristinePayload;
+
+  const handleClose = () => {
+    if (isDirty && !window.confirm(t('packageWizard.unsavedChangesConfirm'))) {
+      return;
+    }
+    onClose();
+  };
 
   const totalSteps = 6;
   const progress = (currentStep / totalSteps) * 100;
 
   const updateFormData = <K extends keyof PackageFormData>(stepKey: K, data: PackageFormData[K]) => {
-    setFormData(prev => ({
-      ...prev,
-      [stepKey]: data
-    }));
+    // Bail out on identical references: steps re-push their state from a
+    // useEffect on every render, and returning prev stops the update loop.
+    setFormData(prev => (prev[stepKey] === data ? prev : { ...prev, [stepKey]: data }));
   };
 
   const handleFormDataUpdate = (data: PackageFormData) => {
@@ -97,49 +115,7 @@ export function PackageWizard({ isOpen, onClose }: PackageWizardProps) {
       if (result.success) {
         onClose();
         setCurrentStep(1);
-        setFormData({
-          basicInfo: {
-            title: '',
-            description: '',
-            destination: '',
-            title_ar: '',
-            description_ar: '',
-            destination_ar: '',
-            destinations: [],
-            category: '',
-            difficulty_level: 'moderate',
-            duration_days: 1,
-            duration_nights: 0,
-            max_participants: 20,
-            featured: false
-          },
-          route: {
-            destinations: [],
-            travelMode: 'driving',
-            showDistances: true
-          },
-          itinerary: [],
-          pricing: {
-            basePrice: "",
-            base_price: 0,
-            inclusions: {
-              accommodation: { included: false, details: [] },
-              meals: { included: false, details: [] },
-              transportation: { included: false, details: [] },
-              activities: { included: false, details: [] },
-              guides: { included: false, details: [] },
-              insurance: { included: false, details: [] },
-              other: { included: false, details: [] }
-            },
-            additionalInclusions: [],
-            exclusions: [],
-            inclusions_ar: [],
-            exclusions_ar: [],
-            cancellation_policy: '',
-            terms_conditions: ''
-          },
-          media: []
-        });
+        setFormData(createInitialFormData());
       }
     } catch (error) {
       console.error('Package creation failed:', error);
@@ -158,34 +134,13 @@ export function PackageWizard({ isOpen, onClose }: PackageWizardProps) {
     }
   };
 
-  const isStepValid = (step: number) => {
-    switch (step) {
-      case 1: {
-        // Support both destinations array and legacy destination field
-        const hasDestination = (formData.basicInfo.destinations && formData.basicInfo.destinations.length > 0) ||
-          formData.basicInfo.destination;
-        return !!(formData.basicInfo.title &&
-          hasDestination &&
-          formData.basicInfo.category &&
-          formData.basicInfo.duration_days > 0);
-      }
-      case 2: // route is optional
-        return true;
-      case 3: // itinerary is optional
-        return true;
-      case 4:
-        return !!(formData.pricing.basePrice && parseFloat(formData.pricing.basePrice) > 0);
-      case 5: // media is optional
-        return true;
-      case 6:
-        return true;
-      default:
-        return false;
-    }
-  };
+  // Steps 2/3/5/6 are optional; 1 and 4 gate on the shared required-field rules.
+  const missingFields = missingRequiredFields(currentStep, formData);
+  const isStepValid = (step: number) =>
+    step >= 1 && step <= 6 && missingRequiredFields(step, formData).length === 0;
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog open={isOpen} onOpenChange={(open) => { if (!open) handleClose(); }}>
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader className="text-start">
           <DialogTitle className="text-2xl font-bold">
@@ -209,7 +164,15 @@ export function PackageWizard({ isOpen, onClose }: PackageWizardProps) {
           />
         </div>
 
-        {/* 
+        {missingFields.length > 0 && (
+          <p className="text-sm text-muted-foreground text-start" role="status">
+            {t('packageWizard.missingRequired', {
+              fields: missingFields.map((key) => t(key)).join(i18n.language === 'ar' ? '، ' : ', ')
+            })}
+          </p>
+        )}
+
+        {/*
          * RTL Wizard Navigation:
          * - Previous action on the RIGHT (going back = going right in RTL)
          * - Next action on the LEFT (going forward = going left in RTL)
@@ -226,7 +189,7 @@ export function PackageWizard({ isOpen, onClose }: PackageWizardProps) {
 
           {/* Action buttons */}
           <div className="flex gap-2">
-            <Button variant="outline" onClick={onClose}>
+            <Button variant="outline" onClick={handleClose}>
               {t('common.cancel')}
             </Button>
 

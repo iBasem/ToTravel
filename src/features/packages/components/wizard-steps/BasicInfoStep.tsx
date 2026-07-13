@@ -146,12 +146,10 @@ export function BasicInfoStep({ data, onUpdate }: BasicInfoStepProps) {
   };
 
   useEffect(() => {
-    console.log('BasicInfoStep formData updated:', formData);
     onUpdate(formData);
   }, [formData, onUpdate]);
 
   const handleInputChange = (field: string, value: string | number | boolean) => {
-    console.log(`Updating field ${field} with value:`, value);
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 

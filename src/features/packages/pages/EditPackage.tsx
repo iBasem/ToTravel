@@ -1,12 +1,12 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/ui/dialog";
 import { Button } from "@/ui/button";
 import { Progress } from "@/ui/progress";
 import { WizardStepContent } from "@/features/packages/components/wizard/WizardStepContent";
 import type { ItineraryDay, PackageFormData } from "@/features/packages/types/wizard";
 import { buildSavePackagePayload } from "@/features/packages/lib/savePackagePayload";
+import { missingRequiredFields } from "@/features/packages/lib/wizardValidation";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/features/auth/context/AuthContext";
 import { toast } from "sonner";
@@ -75,6 +75,20 @@ export default function EditPackage() {
   const totalSteps = 6;
   const progress = (currentStep / totalSteps) * 100;
 
+  // Save-payload snapshot of the loaded package; comparing payloads ignores
+  // transient step-only fields so navigating steps doesn't read as a change.
+  const baselinePayloadRef = useRef<string | null>(null);
+  const isDirty =
+    baselinePayloadRef.current !== null &&
+    JSON.stringify(buildSavePackagePayload(formData as PackageFormData)) !== baselinePayloadRef.current;
+
+  const handleCancel = () => {
+    if (isDirty && !window.confirm(t('packageWizard.unsavedChangesConfirm'))) {
+      return;
+    }
+    navigate('/travel_agency/packages');
+  };
+
   useEffect(() => {
     if (id) {
       loadPackage();
@@ -117,7 +131,7 @@ export default function EditPackage() {
         .order('display_order');
 
       // Map data to form structure
-      setFormData({
+      const mapped: EditPackageFormData = {
         basicInfo: {
           title: packageData.title || '',
           description: packageData.description || '',
@@ -192,7 +206,9 @@ export default function EditPackage() {
           file_name: item.file_name,
           file_path: item.file_path
         }))
-      });
+      };
+      setFormData(mapped);
+      baselinePayloadRef.current = JSON.stringify(buildSavePackagePayload(mapped as PackageFormData));
     } catch (error) {
       console.error('Error loading package:', error);
       toast.error(t('agencyDashboard.errorLoadingPackages', 'Failed to load package'));
@@ -203,10 +219,13 @@ export default function EditPackage() {
   };
 
   const updateFormData = (stepKey: string, data: unknown) => {
-    setFormData(prev => ({
-      ...prev,
-      [stepKey]: data
-    }));
+    // Bail out on identical references: steps re-push their state from a
+    // useEffect on every render, and returning prev stops the update loop.
+    setFormData(prev => (
+      prev[stepKey as keyof EditPackageFormData] === data
+        ? prev
+        : { ...prev, [stepKey]: data }
+    ));
   };
 
   const handleFormDataUpdate = (data: PackageFormData) => {
@@ -262,27 +281,10 @@ export default function EditPackage() {
     }
   };
 
-  const isStepValid = (step: number) => {
-    switch (step) {
-      case 1:
-        return !!(formData.basicInfo.title &&
-          formData.basicInfo.destination &&
-          formData.basicInfo.category &&
-          formData.basicInfo.duration_days > 0);
-      case 2:
-        return true; // Route step is optional
-      case 3:
-        return true; // Itinerary is optional
-      case 4:
-        return !!(formData.pricing.basePrice && parseFloat(formData.pricing.basePrice) > 0);
-      case 5:
-        return true; // Media is optional
-      case 6:
-        return true;
-      default:
-        return false;
-    }
-  };
+  // Steps 2/3/5/6 are optional; 1 and 4 gate on the same shared rules as create.
+  const missingFields = missingRequiredFields(currentStep, formData as PackageFormData);
+  const isStepValid = (step: number) =>
+    step >= 1 && step <= 6 && missingRequiredFields(step, formData as PackageFormData).length === 0;
 
   if (loading) {
     return (
@@ -318,6 +320,14 @@ export default function EditPackage() {
         />
       </div>
 
+      {missingFields.length > 0 && (
+        <p className="text-sm text-muted-foreground text-start" role="status">
+          {t('packageWizard.missingRequired', {
+            fields: missingFields.map((key) => t(key)).join(i18n.language === 'ar' ? '، ' : ', ')
+          })}
+        </p>
+      )}
+
       <div className="flex justify-between pt-4 border-t">
         <Button
           variant="outline"
@@ -328,7 +338,7 @@ export default function EditPackage() {
         </Button>
 
         <div className="flex gap-2">
-          <Button variant="outline" onClick={() => navigate('/travel_agency/packages')}>
+          <Button variant="outline" onClick={handleCancel}>
             {t('common.cancel')}
           </Button>
 

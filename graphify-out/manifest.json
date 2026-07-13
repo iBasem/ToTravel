@@ -310,8 +310,8 @@
     "semantic_hash": ""
   },
   "src/features/packages/components/PackageWizard.tsx": {
-    "mtime": 1783788928.3746345,
-    "ast_hash": "7f29a9f22c1a6d0a5d47513e2affe15a",
+    "mtime": 1783976454.3143456,
+    "ast_hash": "930ea4e219afe6bae136b48c19f91844",
     "semantic_hash": ""
   },
   "src/features/packages/components/Pagination.tsx": {
@@ -385,28 +385,28 @@
     "semantic_hash": "411af7100f172008a634bd45eecdaf6d"
   },
   "src/features/packages/components/wizard-steps/BasicInfoStep.tsx": {
-    "mtime": 1783788772.9325292,
-    "ast_hash": "a8627465ebe538c50e6d5999abfc66a6",
+    "mtime": 1783976292.8635235,
+    "ast_hash": "8c901dce675efe30ee0731de9d168ac1",
     "semantic_hash": ""
   },
   "src/features/packages/components/wizard-steps/ItineraryStep.tsx": {
-    "mtime": 1783788837.8676488,
-    "ast_hash": "cba56c913b0e213c03a8cc3706737296",
+    "mtime": 1783976280.7625084,
+    "ast_hash": "59062885f0a87225ae81fde4985443d6",
     "semantic_hash": ""
   },
   "src/features/packages/components/wizard-steps/MediaStep.tsx": {
-    "mtime": 1783788890.1948876,
-    "ast_hash": "007a624e7dc0f421859546a0313fd12b",
+    "mtime": 1783976327.9557898,
+    "ast_hash": "99333cd3e7fd6d0356ce55ddd4df4a48",
     "semantic_hash": ""
   },
   "src/features/packages/components/wizard-steps/PricingStep.tsx": {
-    "mtime": 1783788675.065009,
-    "ast_hash": "9f65916c8a7f00ef7f4ee491d20a4da1",
+    "mtime": 1783976306.045188,
+    "ast_hash": "f55cd11b6a89ed3ac304a82c9569c4f2",
     "semantic_hash": ""
   },
   "src/features/packages/components/wizard-steps/ReviewStep.tsx": {
-    "mtime": 1783788739.853941,
-    "ast_hash": "edb2f067371c7ec4ca552275eec979f8",
+    "mtime": 1783976290.0518599,
+    "ast_hash": "0294d9088bbf3a37900656f83f26f634",
     "semantic_hash": ""
   },
   "src/features/packages/components/wizard-steps/RouteStep.tsx": {
@@ -415,9 +415,9 @@
     "semantic_hash": "80a4af4ab2ad5331c31b9de4d339455a"
   },
   "src/features/packages/components/wizard-steps/media/MediaGallery.tsx": {
-    "mtime": 1782888287.9440432,
-    "ast_hash": "832fb74e2737ac00ca346649af421b83",
-    "semantic_hash": "832fb74e2737ac00ca346649af421b83"
+    "mtime": 1783976278.634758,
+    "ast_hash": "855b88ee6e1ea10f2a763902af2bc2ae",
+    "semantic_hash": ""
   },
   "src/features/packages/components/wizard-steps/pricing/BasePricing.tsx": {
     "mtime": 1783788646.4950132,
@@ -449,26 +449,6 @@
     "ast_hash": "efbc6127ea6711d7b83d937f6ecdaf86",
     "semantic_hash": "efbc6127ea6711d7b83d937f6ecdaf86"
   },
-  "src/features/packages/components/wizard/WizardHeader.tsx": {
-    "mtime": 1783416917.711954,
-    "ast_hash": "6ad6810343e28dccb280dee684e258de",
-    "semantic_hash": ""
-  },
-  "src/features/packages/components/wizard/WizardNavigation.tsx": {
-    "mtime": 1782888287.947043,
-    "ast_hash": "cc38797012e685253717e1a4416d3ee1",
-    "semantic_hash": "cc38797012e685253717e1a4416d3ee1"
-  },
-  "src/features/packages/components/wizard/WizardNavigationButtons.tsx": {
-    "mtime": 1782888287.947043,
-    "ast_hash": "e42e1f321c8ced6c05001751dc89149f",
-    "semantic_hash": "e42e1f321c8ced6c05001751dc89149f"
-  },
-  "src/features/packages/components/wizard/WizardProgress.tsx": {
-    "mtime": 1783416923.4637637,
-    "ast_hash": "092a89423ba34a50df342f79b627bdb5",
-    "semantic_hash": ""
-  },
   "src/features/packages/components/wizard/WizardStepContent.tsx": {
     "mtime": 1783330419.787969,
     "ast_hash": "b7546625501cc269a3f691bcc86c299f",
@@ -495,8 +475,8 @@
     "semantic_hash": "fc9846ca8f602a3361536c5fcd981c55"
   },
   "src/features/packages/hooks/usePackageDetails.ts": {
-    "mtime": 1783436041.873716,
-    "ast_hash": "b8ad4ca000a853c72947c1f8131e19ee",
+    "mtime": 1783976629.655076,
+    "ast_hash": "63868b6bb6e6f39c46865dd51c5f023c",
     "semantic_hash": ""
   },
   "src/features/packages/hooks/usePackages.ts": {
@@ -525,8 +505,8 @@
     "semantic_hash": ""
   },
   "src/features/packages/pages/EditPackage.tsx": {
-    "mtime": 1783788905.844683,
-    "ast_hash": "2a3ba2f3d59948ade27aecdee103fc00",
+    "mtime": 1783976526.2658784,
+    "ast_hash": "6e8099b882445ebee22298422f5b0da1",
     "semantic_hash": ""
   },
   "src/features/packages/pages/ManagePackages.tsx": {
@@ -625,13 +605,13 @@
     "semantic_hash": "b1e3a450a749c61b3aef4af5b82d6e57"
   },
   "src/i18n/locales/ar.json": {
-    "mtime": 1783965164.972385,
-    "ast_hash": "eab92538e4fc74c3105d2c2e61f5282a",
+    "mtime": 1783976266.4978423,
+    "ast_hash": "4795b6b172ac31102b5ece6eb26716b5",
     "semantic_hash": ""
   },
   "src/i18n/locales/en.json": {
-    "mtime": 1783965164.9703834,
-    "ast_hash": "de807fadfd292041d49a8e46f3d55891",
+    "mtime": 1783976260.8975937,
+    "ast_hash": "480eafdff96276367e911bc14041cfb7",
     "semantic_hash": ""
   },
   "src/integrations/supabase/client.ts": {
@@ -1670,8 +1650,8 @@
     "semantic_hash": ""
   },
   ".impeccable/hook.cache.json": {
-    "mtime": 1783968453.5756063,
-    "ast_hash": "bc46b64cbd4ab341bc8374b4810f88c7",
+    "mtime": 1783976629.9099276,
+    "ast_hash": "b75214f5fd9e6f103afa9bcf66f08267",
     "semantic_hash": ""
   },
   "src/ui/ThemeToggle.tsx": {
@@ -2722,6 +2702,11 @@
   "supabase/functions/cancel-booking/index.ts": {
     "mtime": 1783890788.6021821,
     "ast_hash": "89821b47e9608a61fd88900f4a604d2c",
+    "semantic_hash": ""
+  },
+  "src/features/packages/lib/wizardValidation.ts": {
+    "mtime": 1783976378.420966,
+    "ast_hash": "2b893fb103e02bc7a1ea286e677ffd5a",
     "semantic_hash": ""
   }
 }

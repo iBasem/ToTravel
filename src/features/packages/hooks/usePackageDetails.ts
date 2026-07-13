@@ -22,6 +22,7 @@ export interface PackageDetails {
   inclusions_ar?: string[] | null;
   exclusions: string[];
   exclusions_ar?: string[] | null;
+  highlights?: string[] | null;
   requirements: string[];
   cancellation_policy: string;
   terms_conditions: string;

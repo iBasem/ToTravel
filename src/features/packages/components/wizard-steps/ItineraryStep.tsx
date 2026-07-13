@@ -181,7 +181,7 @@ export function ItineraryStep({ data, onUpdate }: ItineraryStepProps) {
                   <Input
                     value={day.title}
                     onChange={(e) => updateDay(dayIndex, "title", e.target.value)}
-                    placeholder={t('packageWizard.accommodationPlaceholder')}
+                    placeholder={t('packageWizard.dayTitlePlaceholder')}
                     className="font-medium text-lg border-none px-0 focus-visible:ring-0"
                   />
                 </div>

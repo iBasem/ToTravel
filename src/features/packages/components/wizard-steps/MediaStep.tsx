@@ -23,6 +23,14 @@ interface MediaItem {
   file_path?: string;
 }
 
+// Client-side checks matching the media guidelines shown below the uploader
+// (storage-side enforcement is pending the R2 migration — SEC-6).
+const ALLOWED_MIME_TYPES = [
+  'image/jpeg', 'image/png', 'image/gif',
+  'video/mp4', 'video/quicktime',
+];
+const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB, as stated in guidelineMaxSize
+
 export function MediaStep({ data, onUpdate }: MediaStepProps) {
   const { t } = useTranslation();
   const [media, setMedia] = useState<MediaItem[]>(data || []);
@@ -48,6 +56,15 @@ export function MediaStep({ data, onUpdate }: MediaStepProps) {
 
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
+
+        if (!ALLOWED_MIME_TYPES.includes(file.type)) {
+          toast.error(t('packageWizard.invalidFileType', { name: file.name }));
+          continue;
+        }
+        if (file.size > MAX_FILE_SIZE) {
+          toast.error(t('packageWizard.fileTooLarge', { name: file.name }));
+          continue;
+        }
 
         // Generate unique file path
         const fileExt = file.name.split('.').pop();
@@ -190,7 +207,7 @@ export function MediaStep({ data, onUpdate }: MediaStepProps) {
                   type="file"
                   id="photo-upload"
                   multiple
-                  accept="image/*"
+                  accept="image/jpeg,image/png,image/gif"
                   onChange={handleFileInputChange}
                   className="hidden"
                 />
@@ -206,7 +223,7 @@ export function MediaStep({ data, onUpdate }: MediaStepProps) {
                   type="file"
                   id="video-upload"
                   multiple
-                  accept="video/*"
+                  accept="video/mp4,video/quicktime"
                   onChange={handleFileInputChange}
                   className="hidden"
                 />

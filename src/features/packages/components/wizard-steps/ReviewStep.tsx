@@ -135,7 +135,10 @@ export function ReviewStep({ data, onUpdate }: ReviewStepProps) {
         <Card>
           <CardContent className="p-4 text-center">
             <div className="text-2xl font-bold text-foreground">
-              {Object.values(pricing.inclusions || {}).filter(Boolean).length}
+              {Object.values(pricing.inclusions || {}).reduce(
+                (sum, cat) => sum + (cat?.included ? cat.details.length : 0),
+                0
+              ) + (pricing.additionalInclusions?.length || 0)}
             </div>
             <div className="text-sm text-muted-foreground">{t('packageWizard.inclusions')}</div>
           </CardContent>

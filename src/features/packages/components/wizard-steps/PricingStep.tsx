@@ -5,6 +5,7 @@ import { BasePricing } from "./pricing/BasePricing";
 import { InclusionsManager } from "./pricing/InclusionsManager";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/card";
 import { Input } from "@/ui/input";
+import { Textarea } from "@/ui/textarea";
 import { Label } from "@/ui/label";
 import { Button } from "@/ui/button";
 import { Badge } from "@/ui/badge";
@@ -311,18 +312,20 @@ export function PricingStep({ data, onUpdate }: PricingStepProps) {
         <CardContent className="space-y-4">
           <div className="space-y-2">
             <Label className="text-start block">{t('packageWizard.cancellationPolicy')}</Label>
-            <Input
+            <Textarea
               value={formData.cancellation_policy}
               onChange={(e) => handleInputChange("cancellation_policy", e.target.value)}
               placeholder={t('packageWizard.cancellationPlaceholder')}
+              className="min-h-[80px]"
             />
           </div>
           <div className="space-y-2">
             <Label className="text-start block">{t('packageWizard.termsAndConditions')}</Label>
-            <Input
+            <Textarea
               value={formData.terms_conditions}
               onChange={(e) => handleInputChange("terms_conditions", e.target.value)}
               placeholder={t('packageWizard.termsPlaceholder')}
+              className="min-h-[80px]"
             />
           </div>
         </CardContent>

@@ -53,7 +53,7 @@ export function MediaGallery({
 
                 {item.isPrimary && (
                   <div className="absolute top-2 start-2 bg-primary text-primary-foreground px-2 py-1 rounded text-xs font-medium">
-                    {t('agencyDashboard.published')}
+                    {t('packageWizard.primaryPhoto', 'Primary photo')}
                   </div>
                 )}
 
@@ -84,7 +84,7 @@ export function MediaGallery({
                     onClick={() => onSetPrimary(item.id)}
                     className="w-full"
                   >
-                    {t('agencyDashboard.publish')}
+                    {t('packageWizard.setAsPrimary', 'Set as primary')}
                   </Button>
                 )}
               </div>
