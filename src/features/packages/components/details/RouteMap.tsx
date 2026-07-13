@@ -169,7 +169,10 @@ export function RouteMap({ routes }: RouteMapProps) {
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="relative w-full h-[300px] rounded-lg overflow-hidden border border-border">
-          <div ref={mapContainer} className="absolute inset-0" />
+          {/* h-full, not absolute: mapbox-gl.css loads after Tailwind and its
+              .mapboxgl-map { position: relative } overrides .absolute, collapsing
+              the container to 0px height. */}
+          <div ref={mapContainer} className="h-full w-full" />
           {!mapLoaded && (
             <div className="absolute inset-0 flex items-center justify-center bg-muted">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />

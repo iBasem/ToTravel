@@ -354,13 +354,12 @@
   "352": "$type",
   "353": "radius",
   "354": "lg",
-  "355": "Codex: Visual Direction & Asset Production",
   "356": "4. Plan three variants: identity first, then mode, then axes",
   "357": "Handle fallback",
-  "358": "useAdminActivityLog.ts",
   "359": "Common Rules for Professional UI",
   "360": "Example Workflow",
   "362": "20260709000000_deals_approval_and_public_feed.sql",
+  "364": "xl",
   "365": "muted",
   "366": "Tips for Better Results",
   "367": "When to Apply",
@@ -413,5 +412,6 @@
   "414": "primary-foreground",
   "415": "secondary-foreground",
   "416": "4. Plan three variants: identity first, then mode, then axes",
-  "418": "20260709120200_seed_demo_admin.sql"
+  "418": "20260709120200_seed_demo_admin.sql",
+  "424": "primary"
 }
