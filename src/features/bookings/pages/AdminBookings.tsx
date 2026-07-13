@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { shortId } from "@/lib/utils";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/card";
 import { Button } from "@/ui/button";
 import { Input } from "@/ui/input";
@@ -297,7 +298,7 @@ export default function AdminBookingManagement() {
                       <TableRow key={booking.id}>
                         <TableCell className="text-start">
                           <div className="font-medium">{pkgTitle(booking.package_title, booking.package_title_ar)}</div>
-                          <div className="text-sm text-muted-foreground font-mono">{booking.id.slice(0, 8)}</div>
+                          <div className="text-sm text-muted-foreground font-mono">{shortId(booking.id)}</div>
                         </TableCell>
                         <TableCell className="text-start">
                           <div>{booking.traveler_name || "—"}</div>
@@ -408,7 +409,7 @@ export default function AdminBookingManagement() {
                   <TableBody>
                     {filteredPayments.map((payment) => (
                       <TableRow key={payment.id}>
-                        <TableCell className="font-mono text-sm text-start">{payment.id.slice(0, 8)}</TableCell>
+                        <TableCell className="font-mono text-sm text-start">{shortId(payment.id)}</TableCell>
                         <TableCell className="text-start">{pkgTitle(payment.package_title, payment.package_title_ar) || "—"}</TableCell>
                         <TableCell className="text-start">{payment.traveler_name || "—"}</TableCell>
                         <TableCell className="tabular-nums text-start">{formatCurrency(payment.amount)}</TableCell>

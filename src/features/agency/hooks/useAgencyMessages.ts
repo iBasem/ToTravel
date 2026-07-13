@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { shortId } from '@/lib/utils';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/features/auth/context/AuthContext';
 
@@ -52,7 +53,7 @@ export function useAgencyMessages() {
                 if (!convMap.has(otherId)) {
                     convMap.set(otherId, {
                         id: otherId,
-                        travelerName: otherId.slice(0, 8), // fallback until the profile lookup below resolves
+                        travelerName: shortId(otherId), // fallback until the profile lookup below resolves
                         lastMessage: msg.content,
                         lastMessageTime: msg.created_at,
                         unread: msg.sender_id !== user.id && !msg.read_at,

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { shortId } from "@/lib/utils";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/card";
 import { Button } from "@/ui/button";
 import { Badge } from "@/ui/badge";
@@ -25,7 +26,7 @@ import {
 import { DollarSign, TrendingUp, CreditCard, Building2, RefreshCw, Download, CheckCircle2 } from "lucide-react";
 import { PageHeader } from "@/ui/page-header";
 import { StatsGrid } from "@/ui/stats-card";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from "recharts";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Legend, Tooltip } from "recharts";
 import { useAdminFinancials, useProcessPayouts, type AdminPayout } from "@/features/admin/hooks/useAdminFinancials";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
@@ -229,6 +230,8 @@ export default function FinancialManagement() {
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="name" />
                   <YAxis orientation={isRTL ? "right" : "left"} />
+                  <Tooltip formatter={(value: number) => formatCurrency(value)} />
+                  <Legend />
                   <Line type="monotone" dataKey="revenue" stroke="#3B82F6" strokeWidth={2} name={t("financials.totalRevenue")} />
                   <Line type="monotone" dataKey="commission" stroke="#10B981" strokeWidth={2} name={t("financials.platformCommission")} />
                 </LineChart>
@@ -270,7 +273,7 @@ export default function FinancialManagement() {
               <TableBody>
                 {payouts.map((payout) => (
                   <TableRow key={payout.id}>
-                    <TableCell className="font-mono text-sm text-start">{payout.id.slice(0, 8)}</TableCell>
+                    <TableCell className="font-mono text-sm text-start">{shortId(payout.id)}</TableCell>
                     <TableCell className="font-medium text-start">{payout.agency_name || "—"}</TableCell>
                     <TableCell className="text-start">
                       {formatDate(payout.period_start, "P")} - {formatDate(payout.period_end, "P")}

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { initials } from "@/lib/utils";
 import { Search, ChevronDown, Menu } from "lucide-react";
 import { Input } from "@/ui/input";
 import { Button } from "@/ui/button";
@@ -37,12 +38,12 @@ export function TravelerHeader() {
     }
   };
 
-  const getInitials = () => {
-    if (profile?.first_name && profile?.last_name) {
-      return `${profile.first_name[0]}${profile.last_name[0]}`.toUpperCase();
-    }
-    return "U";
-  };
+  const getInitials = () =>
+    initials(
+      [profile?.first_name, profile?.last_name].filter(Boolean).join(" ") ||
+        profile?.email ||
+        "U",
+    );
 
   const { i18n } = useTranslation();
   const isRTL = i18n.language === 'ar' || i18n.dir() === 'rtl';
@@ -98,7 +99,7 @@ export function TravelerHeader() {
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="flex items-center gap-1 sm:gap-2 p-0.5 sm:p-1 lg:p-2">
                 <Avatar className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8">
-                  <AvatarImage src={profile?.avatar_url || "/placeholder.svg"} />
+                  <AvatarImage src={profile?.avatar_url || undefined} />
                   <AvatarFallback className="text-[10px] sm:text-xs lg:text-sm">{getInitials()}</AvatarFallback>
                 </Avatar>
                 <div className="hidden md:block text-start">

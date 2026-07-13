@@ -1,5 +1,6 @@
 import type { TFunction } from 'i18next';
 import { formatCurrency, formatDate } from '@/lib/formatters';
+import { shortId } from '@/lib/utils';
 
 export interface VoucherData {
     id: string;
@@ -20,7 +21,7 @@ export interface VoucherData {
  * owns — no extra backend round-trip is needed.
  */
 export function downloadBookingVoucher(v: VoucherData, t: TFunction, dir: 'ltr' | 'rtl' = 'ltr'): void {
-    const ref = v.id.slice(0, 8).toUpperCase();
+    const ref = shortId(v.id);
     const row = (label: string, value: string) => `
       <tr>
         <td style="padding:8px 12px;color:#6b7280;white-space:nowrap;">${label}</td>

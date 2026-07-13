@@ -42,44 +42,44 @@ export default function Feedback() {
         {t('agencyDashboard.customerFeedback')}
       </h1>
 
-      {/* Stats Cards - Dynamic */}
+      {/* Stats Cards — same label/value pattern as the agency overview cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
         <Card>
-          <CardContent className="p-6">
-            <div className="text-center">
-              <div className="text-3xl font-bold tabular-nums">{stats.averageRating}</div>
-              <div className="flex justify-center mt-1">
-                {renderStars(Math.round(stats.averageRating))}
-              </div>
-              <p className="text-sm text-muted-foreground mt-1">{t('agencyDashboard.averageRating')}</p>
-            </div>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">{t('agencyDashboard.averageRating')}</CardTitle>
+            <Star className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
+          </CardHeader>
+          <CardContent className="text-start">
+            <div className="text-2xl font-bold tabular-nums">{stats.averageRating}</div>
+            <div className="flex mt-1">{renderStars(Math.round(stats.averageRating))}</div>
           </CardContent>
         </Card>
 
         <Card>
-          <CardContent className="p-6">
-            <div className="text-center">
-              <div className="text-3xl font-bold tabular-nums">{stats.totalReviews}</div>
-              <p className="text-sm text-muted-foreground">{t('agencyDashboard.totalReviews')}</p>
-            </div>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">{t('agencyDashboard.totalReviews')}</CardTitle>
+            <MessageSquare className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
+          </CardHeader>
+          <CardContent className="text-start">
+            <div className="text-2xl font-bold tabular-nums">{stats.totalReviews}</div>
           </CardContent>
         </Card>
 
         <Card>
-          <CardContent className="p-6">
-            <div className="text-center">
-              <div className="text-3xl font-bold tabular-nums">{stats.recentReviews}</div>
-              <p className="text-sm text-muted-foreground">{t('agencyDashboard.recentReviews30', 'New in last 30 days')}</p>
-            </div>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">{t('agencyDashboard.recentReviews30', 'New in last 30 days')}</CardTitle>
+          </CardHeader>
+          <CardContent className="text-start">
+            <div className="text-2xl font-bold tabular-nums">{stats.recentReviews}</div>
           </CardContent>
         </Card>
 
         <Card>
-          <CardContent className="p-6">
-            <div className="text-center">
-              <div className="text-3xl font-bold tabular-nums">{stats.satisfactionRate}%</div>
-              <p className="text-sm text-muted-foreground">{t('agencyDashboard.satisfactionRate')}</p>
-            </div>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">{t('agencyDashboard.satisfactionRate')}</CardTitle>
+          </CardHeader>
+          <CardContent className="text-start">
+            <div className="text-2xl font-bold tabular-nums">{stats.satisfactionRate}%</div>
           </CardContent>
         </Card>
       </div>
@@ -118,7 +118,7 @@ export default function Feedback() {
                     {renderStars(feedback.rating)}
                     <span className="text-sm text-muted-foreground ms-2">({feedback.rating}/5)</span>
                   </div>
-                  <p className="text-foreground">{feedback.comment}</p>
+                  <p dir="auto" className="text-foreground text-start">{feedback.comment}</p>
                 </div>
               ))}
             </div>

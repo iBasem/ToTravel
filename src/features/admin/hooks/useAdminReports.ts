@@ -96,7 +96,10 @@ export function useAdminReports(monthsBack: number = 6) {
         regionCounts.set(bucket, (regionCounts.get(bucket) ?? 0) + (r.package_count ?? 0));
       }
       const totalDestinations = Array.from(regionCounts.values()).reduce((a, b) => a + b, 0) || 1;
-      const colors = ['#3B82F6', '#10B981', '#F59E0B', '#EF4444'];
+      // Categorical ramp in the platform chart family: primary blue + green,
+      // violet for the third bucket, neutral slate for the "Others" catch-all
+      // (amber/red are reserved for warning/error meanings elsewhere).
+      const colors = ['#3B82F6', '#10B981', '#8B5CF6', '#94A3B8'];
 
       return {
         stats: {

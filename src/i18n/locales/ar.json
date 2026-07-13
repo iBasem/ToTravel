@@ -690,7 +690,9 @@
     "uploadFirstMedia": "ارفع أولى صورك لعرض رحلاتك ووجهاتك.",
     "uploadSuccess": "تم رفع الملفات بنجاح",
     "uploading": "جارٍ الرفع...",
-    "privateEmail": "خاص"
+    "privateEmail": "خاص",
+    "upcomingDepartures": "المغادرات القادمة",
+    "noUpcomingDepartures": "لا توجد مغادرات قادمة"
   },
   "admin": {
     "dashboard": "لوحة تحكم المسؤول",
@@ -704,7 +706,7 @@
     "platformRevenue": "إيرادات المنصة",
     "revenueBookingsTrend": "اتجاه الإيرادات والحجوزات",
     "last6Months": "آخر 6 أشهر",
-    "revenueLabel": "الإيرادات ($)",
+    "revenueLabel": "الإيرادات (ر.س)",
     "pendingActions": "الإجراءات المعلقة",
     "allCaughtUp": "كل شيء محدث! لا توجد إجراءات معلقة.",
     "resolve": "حل",
@@ -756,7 +758,11 @@
       "pending_action_assign": "إسناد إجراء معلق",
       "pending_action_start": "بدء إجراء معلق",
       "pending_action_resolve": "حل إجراء معلق",
-      "pending_action_dismiss": "تجاهل إجراء معلق"
+      "pending_action_dismiss": "تجاهل إجراء معلق",
+      "refund_request": "طلب استرداد",
+      "tour_review": "مراجعة باقة",
+      "payout_review": "مراجعة مدفوعات",
+      "content_review": "مراجعة محتوى"
     },
     "adminPanel": "لوحة الإدارة",
     "systemAnalytics": "تحليلات النظام",

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { shortId } from "@/lib/utils";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/card";
 import { Button } from "@/ui/button";
 import { Input } from "@/ui/input";
@@ -243,7 +244,7 @@ export default function AgencyManagement() {
                         </div>
                       </div>
                     </TableCell>
-                    <TableCell className="font-mono text-sm text-start">{agency.id.slice(0, 8)}</TableCell>
+                    <TableCell className="font-mono text-sm text-start">{shortId(agency.id)}</TableCell>
                     <TableCell className="text-start">
                       {agency.contact_person_first_name} {agency.contact_person_last_name}
                     </TableCell>

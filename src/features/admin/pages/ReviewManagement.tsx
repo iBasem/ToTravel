@@ -261,7 +261,7 @@ export default function ReviewManagement() {
                                         <TableCell className="text-sm">{review.agency_name}</TableCell>
                                         <TableCell>{renderStars(review.rating)}</TableCell>
                                         <TableCell className="hidden md:table-cell max-w-xs">
-                                            <p className="text-sm text-muted-foreground truncate">
+                                            <p dir="auto" className="text-sm text-muted-foreground truncate">
                                                 {review.comment || <span className="italic">{t('adminDashboard.noComment', 'No comment')}</span>}
                                             </p>
                                         </TableCell>

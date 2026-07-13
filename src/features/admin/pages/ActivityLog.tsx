@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { displayName } from "@/lib/utils";
 import { Card, CardContent } from "@/ui/card";
 import { Button } from "@/ui/button";
 import { Input } from "@/ui/input";
@@ -179,7 +180,7 @@ export default function ActivityLog() {
                             <TableBody>
                                 {entries.map(entry => (
                                     <TableRow key={entry.id}>
-                                        <TableCell className="font-medium whitespace-nowrap">{entry.user_name}</TableCell>
+                                        <TableCell className="font-medium whitespace-nowrap">{displayName(entry.user_name)}</TableCell>
                                         <TableCell>{actionTypeBadge(entry.action_type)}</TableCell>
                                         <TableCell className="max-w-md">
                                             <span className="line-clamp-2">{entry.action_description}</span>

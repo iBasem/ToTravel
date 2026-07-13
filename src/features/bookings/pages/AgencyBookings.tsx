@@ -5,7 +5,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/ui/card";
 import { Badge } from "@/ui/badge";
 import { Button } from "@/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/ui/dialog";
-import { Eye, MessageSquare, Calendar, User, Phone, Mail } from "lucide-react";
+import { Eye, MessageSquare, Calendar, Phone, Mail, Clock, CheckCircle2, DollarSign } from "lucide-react";
+import { shortId } from "@/lib/utils";
 import { LoadingSpinner } from "@/ui/loading-spinner";
 import { EmptyState } from "@/ui/empty-state";
 import { useBookings, type Booking } from "@/features/bookings/hooks/useBookings";
@@ -91,57 +92,26 @@ export default function Bookings() {
         <p className="text-xs sm:text-sm lg:text-base text-muted-foreground mt-1">{t('agencyDashboard.trackBookings')}</p>
       </div>
 
-      {/* Stats Cards */}
+      {/* Stats Cards — same quiet vocabulary as the agency overview cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
-        <Card className="bg-card border-border">
-          <CardContent className="p-3 sm:p-4 lg:p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs sm:text-sm font-medium text-muted-foreground">{t('agencyDashboard.totalBookings')}</p>
-                <p className="text-lg sm:text-2xl lg:text-3xl font-bold text-foreground">{bookings.length}</p>
+        {[
+          { label: t('agencyDashboard.totalBookings'), value: String(bookings.length), icon: Calendar },
+          { label: t('agencyDashboard.pending'), value: String(pendingBookings), icon: Clock },
+          { label: t('agencyDashboard.confirmed'), value: String(confirmedBookings), icon: CheckCircle2 },
+          { label: t('agencyDashboard.revenue'), value: formatCurrency(totalRevenue), icon: DollarSign },
+        ].map(({ label, value, icon: Icon }) => (
+          <Card key={label} className="bg-card border-border">
+            <CardContent className="p-3 sm:p-4 lg:p-6">
+              <div className="flex items-start justify-between">
+                <div>
+                  <p className="text-xs sm:text-sm font-medium text-muted-foreground">{label}</p>
+                  <p className="text-lg sm:text-2xl lg:text-3xl font-bold text-foreground tabular-nums">{value}</p>
+                </div>
+                <Icon className="w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground/40" aria-hidden="true" />
               </div>
-              <Calendar className="w-6 h-6 sm:w-8 sm:h-8 text-primary" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-card border-border">
-          <CardContent className="p-3 sm:p-4 lg:p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs sm:text-sm font-medium text-muted-foreground">{t('agencyDashboard.pending')}</p>
-                <p className="text-lg sm:text-2xl lg:text-3xl font-bold text-yellow-600">{pendingBookings}</p>
-              </div>
-              <User className="w-6 h-6 sm:w-8 sm:h-8 text-yellow-600" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-card border-border">
-          <CardContent className="p-3 sm:p-4 lg:p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs sm:text-sm font-medium text-muted-foreground">{t('agencyDashboard.confirmed')}</p>
-                <p className="text-lg sm:text-2xl lg:text-3xl font-bold text-green-600">{confirmedBookings}</p>
-              </div>
-              <Eye className="w-6 h-6 sm:w-8 sm:h-8 text-green-600" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-card border-border">
-          <CardContent className="p-3 sm:p-4 lg:p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs sm:text-sm font-medium text-muted-foreground">{t('agencyDashboard.revenue')}</p>
-                <p className="text-lg sm:text-2xl lg:text-3xl font-bold text-primary">
-                  {formatCurrency(totalRevenue)}
-                </p>
-              </div>
-              <MessageSquare className="w-6 h-6 sm:w-8 sm:h-8 text-primary" />
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        ))}
       </div>
 
       {/* Bookings List */}
@@ -162,8 +132,8 @@ export default function Bookings() {
                           <p className="font-semibold text-sm sm:text-base text-foreground">
                             {booking.travelers ? `${booking.travelers.first_name} ${booking.travelers.last_name}` : t('packageWizard.unknownTraveler')}
                           </p>
-                          <span className="text-xs text-muted-foreground bg-muted px-1.5 py-0.5 rounded">
-                            {booking.id.slice(-8)}
+                          <span className="text-xs text-muted-foreground bg-muted px-1.5 py-0.5 rounded font-mono">
+                            {shortId(booking.id)}
                           </span>
                         </div>
                       </div>

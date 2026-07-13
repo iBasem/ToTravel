@@ -7,7 +7,7 @@ import { useAuth } from "@/features/auth/context/AuthContext";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { localizedText } from "@/lib/localized";
-import { formatCurrency } from "@/lib/formatters";
+import { formatCurrency, formatDate } from "@/lib/formatters";
 import { getRecentlyViewedIds } from "@/features/packages/lib/recentlyViewed";
 import {
   BookOpen,
@@ -20,7 +20,7 @@ import {
 } from "lucide-react";
 
 export default function TravelerDashboard() {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const { user, profile } = useAuth();
 
   // Next trips: soonest upcoming confirmed/pending bookings
@@ -146,13 +146,14 @@ export default function TravelerDashboard() {
     }
   };
 
-  const getStatusVariant = (status: string) => {
+  // Platform-wide status colors: confirmed green, pending yellow, completed blue.
+  const getStatusClass = (status: string) => {
     switch (status?.toLowerCase()) {
-      case "confirmed": return "default" as const;
-      case "pending": return "secondary" as const;
-      case "completed": return "outline" as const;
-      case "cancelled": return "destructive" as const;
-      default: return "secondary" as const;
+      case "confirmed": return "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300";
+      case "pending": return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300";
+      case "completed": return "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300";
+      case "cancelled": return "bg-muted text-muted-foreground";
+      default: return "bg-muted text-muted-foreground";
     }
   };
 
@@ -242,10 +243,10 @@ export default function TravelerDashboard() {
                     <h4 className="font-medium">{localizedText(booking.packages, 'title') || t('common.package')}</h4>
                     <p className="text-sm text-muted-foreground flex items-center gap-1">
                       <Clock className="w-4 h-4" />
-                      {new Date(booking.booking_date).toLocaleDateString(i18n.language === 'ar' ? 'ar-SA' : 'en-US')}
+                      {formatDate(booking.booking_date, 'PP')}
                     </p>
                   </div>
-                  <Badge variant={getStatusVariant(booking.status || 'pending')}>
+                  <Badge className={getStatusClass(booking.status || 'pending')}>
                     {getStatusTranslation(booking.status || 'pending')}
                   </Badge>
                 </div>
@@ -268,8 +269,8 @@ export default function TravelerDashboard() {
               <TrendingUp className="w-5 h-5" />
               {t('travelerDashboard.recentlyViewed')}
             </CardTitle>
-            <Link to="/traveler/dashboard/wishlist">
-              <Button variant="outline" size="sm">{t('travelerDashboard.viewWishlist')}</Button>
+            <Link to="/packages">
+              <Button variant="outline" size="sm">{t('travelerDashboard.browseTours')}</Button>
             </Link>
           </CardHeader>
           <CardContent className="space-y-4">

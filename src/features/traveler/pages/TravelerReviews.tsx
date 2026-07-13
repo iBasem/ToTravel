@@ -88,7 +88,7 @@ export default function TravelerReviews() {
                         </span>
                       </div>
                       <StarRating rating={review.rating} readonly size="sm" />
-                      <p className="text-muted-foreground text-sm sm:text-base">{review.comment}</p>
+                      <p dir="auto" className="text-muted-foreground text-sm sm:text-base text-start">{review.comment}</p>
                     </div>
                   </div>
                 </CardContent>

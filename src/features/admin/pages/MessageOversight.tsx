@@ -224,7 +224,7 @@ export default function MessageOversight() {
                                             </span>
                                         </div>
                                     </div>
-                                    <p className={`text-sm text-muted-foreground whitespace-pre-wrap text-start ${isExpanded ? '' : 'line-clamp-2'}`}>
+                                    <p dir="auto" className={`text-sm text-muted-foreground whitespace-pre-wrap text-start ${isExpanded ? '' : 'line-clamp-2'}`}>
                                         {message.content}
                                     </p>
                                     <div className="flex items-center justify-between gap-2">

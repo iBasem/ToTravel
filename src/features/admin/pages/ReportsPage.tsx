@@ -3,8 +3,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/ui/card";
 import { Button } from "@/ui/button";
 import { Skeleton } from "@/ui/skeleton";
 import { EmptyState } from "@/ui/empty-state";
+import { StatsGrid } from "@/ui/stats-card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/ui/select";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, PieChart, Pie, Cell, Tooltip } from "recharts";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, PieChart, Pie, Cell, Tooltip, Legend } from "recharts";
 import { Download, TrendingUp, Users, Package, DollarSign, RefreshCw } from "lucide-react";
 import { useAdminReports } from "@/features/admin/hooks";
 import { useTranslation } from "react-i18next";
@@ -104,53 +105,34 @@ export default function ReportsPage() {
         />
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">{t('reports.growthRate')}</CardTitle>
-            <TrendingUp className="h-4 w-4 text-muted-foreground/40" />
-          </CardHeader>
-          <CardContent className="text-start">
-            <div className="text-2xl font-bold tabular-nums">
-              {stats.growthRate > 0 ? '+' : ''}{stats.growthRate}%
-            </div>
-            <p className="text-xs text-muted-foreground">{t('reports.vsPrevious')}</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">{t('reports.avgBookingValue')}</CardTitle>
-            <DollarSign className="h-4 w-4 text-muted-foreground/40" />
-          </CardHeader>
-          <CardContent className="text-start">
-            <div className="text-2xl font-bold tabular-nums">{formatCurrency(stats.avgBookingValue)}</div>
-            <p className="text-xs text-muted-foreground">{t('reports.perBooking')}</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">{t('reports.conversionRate')}</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground/40" />
-          </CardHeader>
-          <CardContent className="text-start">
-            <div className="text-2xl font-bold tabular-nums">{stats.conversionRate}%</div>
-            <p className="text-xs text-muted-foreground">{t('reports.travelersToBookings')}</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">{t('reports.activePackages')}</CardTitle>
-            <Package className="h-4 w-4 text-muted-foreground/40" />
-          </CardHeader>
-          <CardContent className="text-start">
-            <div className="text-2xl font-bold tabular-nums">{formatNumber(stats.activePackages)}</div>
-            <p className="text-xs text-muted-foreground">{t('reports.publishedPackages')}</p>
-          </CardContent>
-        </Card>
-      </div>
+      <StatsGrid
+        stats={[
+          {
+            title: t('reports.growthRate'),
+            value: `${stats.growthRate > 0 ? '+' : ''}${stats.growthRate}%`,
+            icon: TrendingUp,
+            description: t('reports.vsPrevious'),
+          },
+          {
+            title: t('reports.avgBookingValue'),
+            value: formatCurrency(stats.avgBookingValue),
+            icon: DollarSign,
+            description: t('reports.perBooking'),
+          },
+          {
+            title: t('reports.conversionRate'),
+            value: `${stats.conversionRate}%`,
+            icon: Users,
+            description: t('reports.travelersToBookings'),
+          },
+          {
+            title: t('reports.activePackages'),
+            value: formatNumber(stats.activePackages),
+            icon: Package,
+            description: t('reports.publishedPackages'),
+          },
+        ]}
+      />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card>
@@ -166,8 +148,9 @@ export default function ReportsPage() {
                     <XAxis dataKey="name" />
                     <YAxis orientation={isRTL ? 'right' : 'left'} />
                     <Tooltip />
-                    <Bar dataKey="bookings" fill="#3B82F6" name={t('common.bookings')} />
-                    <Bar dataKey="users" fill="#10B981" name={t('common.newUsers')} />
+                    <Legend />
+                    <Bar dataKey="bookings" fill="#3B82F6" name={t('common.bookings')} radius={[4, 4, 0, 0]} />
+                    <Bar dataKey="users" fill="#10B981" name={t('common.newUsers')} radius={[4, 4, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
               ) : (
@@ -201,6 +184,7 @@ export default function ReportsPage() {
                         <Cell key={`cell-${index}`} fill={entry.color} />
                       ))}
                     </Pie>
+                    <Tooltip formatter={(value: number) => `${value}%`} />
                   </PieChart>
                 </ResponsiveContainer>
               ) : (

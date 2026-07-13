@@ -29,7 +29,8 @@ import {
   RefreshCw,
   BarChart3,
 } from "lucide-react";
-import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tooltip } from "recharts";
+import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tooltip, Legend } from "recharts";
+import { displayName, initials } from "@/lib/utils";
 import {
   useAdminDashboard,
   useResolvePendingAction,
@@ -72,7 +73,7 @@ export default function AdminDashboard() {
     });
   };
 
-  const getPriorityColor = (priority: string) => {
+  const priorityLabel = (priority: string) => {
     switch (priority) {
       case "urgent":
         return t("admin.priorityUrgent");
@@ -84,6 +85,20 @@ export default function AdminDashboard() {
         return t("admin.priorityLow");
       default:
         return priority;
+    }
+  };
+
+  // Same visual vocabulary as the Pending Actions page (PendingActionsQueue).
+  const priorityBadge = (priority: string) => {
+    switch (priority) {
+      case "urgent":
+        return <Badge variant="destructive" className="text-xs ms-auto">{priorityLabel(priority)}</Badge>;
+      case "high":
+        return <Badge className="text-xs ms-auto bg-deal text-deal-foreground border-transparent hover:bg-deal">{priorityLabel(priority)}</Badge>;
+      case "medium":
+        return <Badge variant="secondary" className="text-xs ms-auto">{priorityLabel(priority)}</Badge>;
+      default:
+        return <Badge variant="outline" className="text-xs ms-auto">{priorityLabel(priority)}</Badge>;
     }
   };
 
@@ -266,6 +281,7 @@ export default function AdminDashboard() {
                     <YAxis yAxisId="left" orientation={isRTL ? "right" : "left"} />
                     <YAxis yAxisId="right" orientation={isRTL ? "left" : "right"} />
                     <Tooltip />
+                    <Legend />
                     <Line yAxisId="left" type="monotone" dataKey="revenue" stroke="#3B82F6" strokeWidth={2} name={t("admin.revenueLabel")} />
                     <Line yAxisId="right" type="monotone" dataKey="bookings" stroke="#10B981" strokeWidth={2} name={t("common.bookings")} />
                   </LineChart>
@@ -302,7 +318,7 @@ export default function AdminDashboard() {
                       <Badge variant="outline" className="text-xs">
                         {formatActionType(action.action_type)}
                       </Badge>
-                      <Badge className="text-xs ms-auto">{getPriorityColor(action.priority)}</Badge>
+                      {priorityBadge(action.priority)}
                     </div>
                     <h4 className="font-medium text-sm mt-1">{action.title}</h4>
                     <p className="text-xs text-muted-foreground">{action.description}</p>
@@ -345,6 +361,7 @@ export default function AdminDashboard() {
                   <YAxis yAxisId="left" orientation={isRTL ? "right" : "left"} />
                   <YAxis yAxisId="right" orientation={isRTL ? "left" : "right"} />
                   <Tooltip />
+                  <Legend />
                   <Bar yAxisId="left" dataKey="total_revenue" fill="#3B82F6" name={t("admin.revenueLabel")} radius={[4, 4, 0, 0]} />
                   <Bar yAxisId="right" dataKey="total_bookings" fill="#10B981" name={t("common.bookings")} radius={[4, 4, 0, 0]} />
                   <Bar yAxisId="right" dataKey="new_travelers" fill="#F59E0B" name={t("admin.newTravelers", "New travelers")} radius={[4, 4, 0, 0]} />
@@ -380,15 +397,15 @@ export default function AdminDashboard() {
                 <div key={activity.id} className="flex items-start gap-3">
                   <Avatar className="w-8 h-8">
                     <AvatarImage src={activity.avatar_url ?? undefined} />
-                    <AvatarFallback>{activity.user_name[0]}</AvatarFallback>
+                    <AvatarFallback>{initials(activity.user_name)}</AvatarFallback>
                   </Avatar>
                   <div className="flex-1 text-start">
                     <p className="text-sm">
-                      <span className="font-medium">{activity.user_name}</span> {activity.action_description}
+                      <span className="font-medium">{displayName(activity.user_name)}</span> {activity.action_description}
                     </p>
                     <span className="text-xs text-muted-foreground">{formatRelativeTime(new Date(activity.created_at))}</span>
                   </div>
-                  <Badge className="text-xs">{activityTypeLabel(activity.action_type)}</Badge>
+                  <Badge variant="secondary" className="text-xs">{activityTypeLabel(activity.action_type)}</Badge>
                 </div>
               ))}
             </div>

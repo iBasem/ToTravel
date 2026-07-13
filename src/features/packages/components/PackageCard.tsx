@@ -5,6 +5,7 @@ import type { PackageWithMedia } from '../hooks/usePublishedPackages';
 import { RouteMapThumbnail } from './RouteMapThumbnail';
 import { formatCurrency, formatNumber } from '@/lib/formatters';
 import { localizedText } from '@/lib/localized';
+import '../styles/packages-listing.css';
 
 interface PackageCardProps {
     packageData: PackageWithMedia & {

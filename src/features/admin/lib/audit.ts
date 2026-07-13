@@ -41,7 +41,7 @@ export function useAdminAudit() {
     (entry: AdminAuditEntry) => {
       const name =
         [profile?.first_name, profile?.last_name].filter(Boolean).join(' ') ||
-        user?.email ||
+        user?.email?.split('@')[0] ||
         'Admin';
       return logAdminAction({ id: user?.id, name }, entry);
     },

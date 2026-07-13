@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { shortId } from "@/lib/utils";
 import { Card, CardContent } from "@/ui/card";
 import { Button } from "@/ui/button";
 import { Badge } from "@/ui/badge";
@@ -213,7 +214,7 @@ export default function TravelerBookings() {
                                 {booking.participants} {booking.participants === 1 ? t('booking.travelerSingular') : t('booking.travelerPlural')}
                               </div>
                             </div>
-                            <p className="text-sm text-muted-foreground">{t('travelerDashboard.bookingRef')}: {booking.id.slice(0, 8).toUpperCase()}</p>
+                            <p className="text-sm text-muted-foreground">{t('travelerDashboard.bookingRef')}: {shortId(booking.id)}</p>
                           </div>
                           <div className="text-end">
                             <Badge className={getStatusColor(booking.status)}>
@@ -235,15 +236,17 @@ export default function TravelerBookings() {
                               {t('payments.payNow', 'Pay now')}
                             </Button>
                           )}
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => handleDownloadVoucher(booking)}
-                            className="flex items-center gap-2"
-                          >
-                            <Download className="w-4 h-4" />
-                            {t('travelerDashboard.downloadVoucher')}
-                          </Button>
+                          {booking.status !== "cancelled" && (
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => handleDownloadVoucher(booking)}
+                              className="flex items-center gap-2"
+                            >
+                              <Download className="w-4 h-4" />
+                              {t('travelerDashboard.downloadVoucher')}
+                            </Button>
+                          )}
                           {booking.packages?.agency_id && (
                             <Button
                               size="sm"
@@ -322,7 +325,7 @@ export default function TravelerBookings() {
           isOpen={!!contactBooking}
           onClose={() => setContactBooking(null)}
           agencyId={contactBooking.packages.agency_id}
-          subject={`${localizedText(contactBooking.packages, 'title') || t('common.unknownPackage')} · ${contactBooking.id.slice(0, 8).toUpperCase()}`}
+          subject={`${localizedText(contactBooking.packages, 'title') || t('common.unknownPackage')} · ${shortId(contactBooking.id)}`}
         />
       )}
     </div>

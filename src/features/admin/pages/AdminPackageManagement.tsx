@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { shortId } from "@/lib/utils";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/card";
 import { Button } from "@/ui/button";
 import { Input } from "@/ui/input";
@@ -218,7 +219,7 @@ export default function AdminPackageManagement() {
                       <Link to={`/admin/packages/${pkg.id}`} className="font-medium text-foreground hover:underline">
                         {isAr && pkg.title_ar ? pkg.title_ar : pkg.title}
                       </Link>
-                      <div className="text-sm text-muted-foreground tabular-nums">{pkg.id.slice(0, 8)}</div>
+                      <div className="text-sm text-muted-foreground tabular-nums">{shortId(pkg.id)}</div>
                     </TableCell>
                     <TableCell className="text-start">{pkg.agency_name || "—"}</TableCell>
                     <TableCell className="text-start">{isAr && pkg.destination_ar ? pkg.destination_ar : pkg.destination}</TableCell>

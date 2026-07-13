@@ -8,7 +8,7 @@ import { LoadingSpinner } from "@/ui/loading-spinner";
 import { EmptyState } from "@/ui/empty-state";
 import { useState, useRef, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
-import { formatRelativeTime } from "@/lib/formatters";
+import { formatRelativeTime, formatDate } from "@/lib/formatters";
 
 export default function Messages() {
   const { t } = useTranslation();
@@ -116,7 +116,7 @@ export default function Messages() {
                         )}
                       </span>
                     </div>
-                    <p className={`text-sm truncate ${conversation.unread ? 'text-foreground' : 'text-muted-foreground'}`}>
+                    <p dir="auto" className={`text-sm truncate text-start ${conversation.unread ? 'text-foreground' : 'text-muted-foreground'}`}>
                       {conversation.lastMessage}
                     </p>
                   </button>
@@ -154,9 +154,9 @@ export default function Messages() {
                           : 'bg-primary text-primary-foreground'
                           }`}
                       >
-                        <p>{msg.content}</p>
+                        <p dir="auto">{msg.content}</p>
                         <p className="text-xs mt-1 opacity-70">
-                          {new Date(msg.created_at).toLocaleTimeString()}
+                          {formatDate(msg.created_at, 'p')}
                         </p>
                       </div>
                     </div>

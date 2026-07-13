@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { shortId, displayName, initials } from "@/lib/utils";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/card";
 import { Button } from "@/ui/button";
 import { Input } from "@/ui/input";
@@ -235,19 +236,18 @@ export default function TravelerManagement() {
                         <Avatar className="w-8 h-8">
                           <AvatarImage src={traveler.avatar_url || undefined} />
                           <AvatarFallback>
-                            {traveler.first_name?.[0]}
-                            {traveler.last_name?.[0]}
+                            {initials(`${traveler.first_name ?? ""} ${traveler.last_name ?? ""}`.trim() || traveler.email)}
                           </AvatarFallback>
                         </Avatar>
                         <div className="text-start">
                           <div className="font-medium">
-                            {traveler.first_name} {traveler.last_name}
+                            {displayName({ full_name: `${traveler.first_name ?? ""} ${traveler.last_name ?? ""}`.trim(), email: traveler.email })}
                           </div>
                           <div className="text-sm text-muted-foreground">{traveler.email}</div>
                         </div>
                       </div>
                     </TableCell>
-                    <TableCell className="font-mono text-sm text-start">{traveler.id.slice(0, 8)}</TableCell>
+                    <TableCell className="font-mono text-sm text-start">{shortId(traveler.id)}</TableCell>
                     <TableCell className="text-start">{formatDate(traveler.created_at, "P")}</TableCell>
                     <TableCell className="text-start">{traveler.bookings_count}</TableCell>
                     <TableCell className="text-start">{getStatusBadge(traveler.status)}</TableCell>
@@ -321,11 +321,10 @@ function TravelerProfileDialog({ traveler, onClose }: { traveler: AdminTraveler 
                 <Avatar className="w-10 h-10">
                   <AvatarImage src={traveler.avatar_url || undefined} />
                   <AvatarFallback>
-                    {traveler.first_name?.[0]}
-                    {traveler.last_name?.[0]}
+                    {initials(`${traveler.first_name ?? ""} ${traveler.last_name ?? ""}`.trim() || traveler.email)}
                   </AvatarFallback>
                 </Avatar>
-                {traveler.first_name} {traveler.last_name}
+                {displayName({ full_name: `${traveler.first_name ?? ""} ${traveler.last_name ?? ""}`.trim(), email: traveler.email })}
               </DialogTitle>
               <DialogDescription className="text-start">{traveler.email}</DialogDescription>
             </DialogHeader>

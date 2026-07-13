@@ -666,7 +666,9 @@
     "uploadFirstMedia": "Upload your first photos to showcase your tours and destinations.",
     "uploadSuccess": "Files uploaded successfully",
     "uploading": "Uploading...",
-    "privateEmail": "Private"
+    "privateEmail": "Private",
+    "upcomingDepartures": "Upcoming Departures",
+    "noUpcomingDepartures": "No upcoming departures"
   },
   "admin": {
     "dashboard": "Admin Dashboard",
@@ -680,7 +682,7 @@
     "platformRevenue": "Platform Revenue",
     "revenueBookingsTrend": "Revenue & Bookings Trend",
     "last6Months": "Last 6 Months",
-    "revenueLabel": "Revenue ($)",
+    "revenueLabel": "Revenue (SAR)",
     "pendingActions": "Pending Actions",
     "allCaughtUp": "All caught up! No pending actions.",
     "resolve": "Resolve",
@@ -732,7 +734,11 @@
       "pending_action_assign": "Pending Action Assigned",
       "pending_action_start": "Pending Action Started",
       "pending_action_resolve": "Pending Action Resolved",
-      "pending_action_dismiss": "Pending Action Dismissed"
+      "pending_action_dismiss": "Pending Action Dismissed",
+      "refund_request": "Refund Request",
+      "tour_review": "Tour Review",
+      "payout_review": "Payout Review",
+      "content_review": "Content Review"
     },
     "adminPanel": "Admin Panel",
     "systemAnalytics": "System Analytics",
@@ -973,7 +979,7 @@
     "publishedReviews": "Your Published Reviews",
     "reviewedOn": "Reviewed on",
     "myWishlist": "My Wishlist",
-    "toursSavedForLater": "tours saved for later",
+    "toursSavedForLater": "Tours saved for later",
     "shareWishlist": "Share Wishlist",
     "wishlistEmpty": "Your wishlist is empty",
     "startExploring": "Start exploring and save tours you love!",
@@ -1404,7 +1410,7 @@
     "languages": "English, Arabic",
     "operator": "Operator",
     "goldTier": "Gold",
-    "percentOff": "-{{percent}}% OFF",
+    "percentOff": "{{percent}}% OFF",
     "from": "From",
     "perPerson": "per person",
     "priceNote": "Price based on Private Double Room",

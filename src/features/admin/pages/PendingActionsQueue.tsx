@@ -342,9 +342,9 @@ export default function PendingActionsQueue() {
                                 {filteredActions.map(action => (
                                     <TableRow key={action.id}>
                                         <TableCell className="max-w-64">
-                                            <div className="font-medium truncate">{action.title}</div>
+                                            <div dir="auto" className="font-medium truncate text-start">{action.title}</div>
                                             {action.description && (
-                                                <div className="text-xs text-muted-foreground truncate">{action.description}</div>
+                                                <div dir="auto" className="text-xs text-muted-foreground truncate text-start">{action.description}</div>
                                             )}
                                         </TableCell>
                                         <TableCell>

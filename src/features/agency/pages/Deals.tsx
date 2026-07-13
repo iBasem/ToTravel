@@ -5,6 +5,7 @@ import { Plus, Percent, Calendar, Package, Trash2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useAgencyDeals } from "@/features/agency/hooks/useAgencyDeals";
 import { usePackages } from "@/features/packages/hooks/usePackages";
+import { formatDate } from "@/lib/formatters";
 import { LoadingSpinner } from "@/ui/loading-spinner";
 import { EmptyState } from "@/ui/empty-state";
 import { useState } from "react";
@@ -76,7 +77,7 @@ export default function Deals() {
       case "paused":
         return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300";
       case "expired":
-        return "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300";
+        return "bg-muted text-muted-foreground";
       default:
         return "bg-muted text-muted-foreground";
     }
@@ -238,7 +239,8 @@ export default function Deals() {
                     </Button>
                   </div>
                 </div>
-                {approvalBadge(deal.approval_status) && (
+                {/* Approval state is moot once a deal has expired — show one status, not two. */}
+                {deal.status !== "expired" && approvalBadge(deal.approval_status) && (
                   <Badge className={`w-fit mt-1 ${approvalBadge(deal.approval_status)!.className}`}>
                     {approvalBadge(deal.approval_status)!.label}
                   </Badge>
@@ -261,7 +263,7 @@ export default function Deals() {
 
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
                     <Calendar className="w-4 h-4" />
-                    <span>{deal.start_date} → {deal.end_date}</span>
+                    <span>{formatDate(deal.start_date)} – {formatDate(deal.end_date)}</span>
                   </div>
                 </div>
               </CardContent>

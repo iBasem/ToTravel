@@ -4,6 +4,7 @@ import { useAuth } from "@/features/auth/context/AuthContext";
 import { useTravelerProfile, type TravelerPreferences } from "@/features/traveler/hooks/useTravelerProfile";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/card";
 import { Button } from "@/ui/button";
+import { initials as getInitials } from "@/lib/utils";
 import { Input } from "@/ui/input";
 import { Label } from "@/ui/label";
 import { Textarea } from "@/ui/textarea";
@@ -140,7 +141,9 @@ export default function TravelerProfile() {
     }
   };
 
-  const initials = `${profileData.firstName.charAt(0)}${profileData.lastName.charAt(0)}`.toUpperCase() || "?";
+  const avatarInitials = getInitials(
+    [profileData.firstName, profileData.lastName].filter(Boolean).join(" ") || profileData.email,
+  );
   const memberSinceYear = travelerRow?.created_at
     ? new Date(travelerRow.created_at).getFullYear()
     : new Date().getFullYear();
@@ -160,8 +163,8 @@ export default function TravelerProfile() {
           <CardHeader className="text-center">
             <div className="relative mx-auto">
               <Avatar className="w-24 h-24 mx-auto mb-4">
-                <AvatarImage src={travelerRow?.avatar_url ?? "/placeholder.svg"} />
-                <AvatarFallback className="text-2xl">{initials}</AvatarFallback>
+                <AvatarImage src={travelerRow?.avatar_url ?? undefined} />
+                <AvatarFallback className="text-2xl">{avatarInitials}</AvatarFallback>
               </Avatar>
               <input
                 ref={avatarInputRef}

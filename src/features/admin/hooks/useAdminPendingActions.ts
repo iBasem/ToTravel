@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { shortId } from '@/lib/utils';
 import { supabase } from '@/integrations/supabase/client';
 import type { Database } from '@/integrations/supabase/types';
 
@@ -111,8 +112,8 @@ export function useAdminUsers() {
           id: profile.id,
           name:
             [profile.first_name, profile.last_name].filter(Boolean).join(' ') ||
-            profile.email ||
-            profile.id,
+            profile.email?.split('@')[0] ||
+            shortId(profile.id),
           email: profile.email,
         }));
     },
