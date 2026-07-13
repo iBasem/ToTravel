@@ -1011,7 +1011,8 @@
     "cancelBookingTitle": "Cancel this booking?",
     "cancelBookingDesc": "Your booking for \"{{title}}\" will be cancelled and its seats released. This cannot be undone.",
     "keepBooking": "Keep booking",
-    "confirmCancelBooking": "Cancel booking"
+    "confirmCancelBooking": "Cancel booking",
+    "messagesWillAppear": "Ask an agency about a package or booking and the conversation will appear here."
   },
   "packageWizard": {
     "createNewPackage": "Create New Package",

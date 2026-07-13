@@ -195,8 +195,8 @@
     "semantic_hash": ""
   },
   "src/features/agency/pages/Messages.tsx": {
-    "mtime": 1783918617.031553,
-    "ast_hash": "03902a4dc1d8f96e1bbc0b3fe31d57b6",
+    "mtime": 1783965153.642136,
+    "ast_hash": "12a576ac87c0549842058ff3cd1ba369",
     "semantic_hash": ""
   },
   "src/features/agency/pages/Travelers.tsx": {
@@ -610,9 +610,9 @@
     "semantic_hash": ""
   },
   "src/features/traveler/routes.tsx": {
-    "mtime": 1782888287.9730914,
-    "ast_hash": "d8aa2a3b990b02eb4392341dbbfae2b9",
-    "semantic_hash": "d8aa2a3b990b02eb4392341dbbfae2b9"
+    "mtime": 1783965100.1849794,
+    "ast_hash": "dde67470f5940bfad0f5f6b6cb95d8d5",
+    "semantic_hash": ""
   },
   "src/hooks/use-mobile.tsx": {
     "mtime": 1767631015.384841,
@@ -625,13 +625,13 @@
     "semantic_hash": "b1e3a450a749c61b3aef4af5b82d6e57"
   },
   "src/i18n/locales/ar.json": {
-    "mtime": 1783919137.323367,
-    "ast_hash": "5c7f4bbd3b56850c5ee4ac79db748075",
+    "mtime": 1783965164.972385,
+    "ast_hash": "eab92538e4fc74c3105d2c2e61f5282a",
     "semantic_hash": ""
   },
   "src/i18n/locales/en.json": {
-    "mtime": 1783919451.7345493,
-    "ast_hash": "c8760663df56284a4fb5fad151f659bb",
+    "mtime": 1783965164.9703834,
+    "ast_hash": "de807fadfd292041d49a8e46f3d55891",
     "semantic_hash": ""
   },
   "src/integrations/supabase/client.ts": {
@@ -675,8 +675,8 @@
     "semantic_hash": "9fbc8bf99a2faaf95696e5f32fbef96c"
   },
   "src/layouts/TravelerSidebar.tsx": {
-    "mtime": 1783349239.3103611,
-    "ast_hash": "5b482ae7f8687ea001aeb0102dc3ee13",
+    "mtime": 1783965134.0690246,
+    "ast_hash": "371885c17073e32ae65a3fcf67cee767",
     "semantic_hash": ""
   },
   "src/lib/formatters.test.ts": {
@@ -1670,8 +1670,8 @@
     "semantic_hash": ""
   },
   ".impeccable/hook.cache.json": {
-    "mtime": 1783918891.6183207,
-    "ast_hash": "0b7aaaefe7f00db5d1cfc57a349f5bdb",
+    "mtime": 1783965153.8183546,
+    "ast_hash": "02981bfb8f59a6dfab67cc09b2bfd67f",
     "semantic_hash": ""
   },
   "src/ui/ThemeToggle.tsx": {

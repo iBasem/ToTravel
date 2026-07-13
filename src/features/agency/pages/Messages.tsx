@@ -9,9 +9,14 @@ import { EmptyState } from "@/ui/empty-state";
 import { useState, useRef, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { formatRelativeTime, formatDate } from "@/lib/formatters";
+import { useAuth } from "@/features/auth/context/AuthContext";
 
 export default function Messages() {
   const { t } = useTranslation();
+  const { profile } = useAuth();
+  // The page is shared between the agency and traveler portals; only the
+  // empty-state copy differs by who the counterparty is.
+  const isTraveler = profile?.role === 'traveler';
   const [searchParams] = useSearchParams();
   const {
     conversations,
@@ -84,7 +89,9 @@ export default function Messages() {
         <EmptyState
           icon="message-square"
           title={t('agencyDashboard.noMessagesYet', { defaultValue: 'No Messages Yet' })}
-          description={t('agencyDashboard.messagesWillAppear', { defaultValue: 'Messages from travelers will appear here when they contact you.' })}
+          description={isTraveler
+            ? t('travelerDashboard.messagesWillAppear', { defaultValue: 'Ask an agency about a package or booking and the conversation will appear here.' })
+            : t('agencyDashboard.messagesWillAppear', { defaultValue: 'Messages from travelers will appear here when they contact you.' })}
         />
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

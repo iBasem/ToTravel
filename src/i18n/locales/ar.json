@@ -1039,7 +1039,8 @@
     "cancelBookingTitle": "إلغاء هذا الحجز؟",
     "cancelBookingDesc": "سيتم إلغاء حجزك في \"{{title}}\" وتحرير مقاعده. لا يمكن التراجع عن هذا الإجراء.",
     "keepBooking": "الاحتفاظ بالحجز",
-    "confirmCancelBooking": "إلغاء الحجز"
+    "confirmCancelBooking": "إلغاء الحجز",
+    "messagesWillAppear": "استفسر من وكالة عن باقة أو حجز وستظهر المحادثة هنا."
   },
   "packageWizard": {
     "createNewPackage": "إنشاء باقة جديدة",

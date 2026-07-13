@@ -4,10 +4,12 @@ import {
   BarChart3,
   BookOpen,
   Heart,
+  MessageSquare,
   Star,
   User,
   MapPin
 } from "lucide-react";
+import { useUnreadMessages } from "@/features/agency/hooks/useUnreadMessages";
 import {
   Sidebar,
   SidebarContent,
@@ -24,11 +26,14 @@ export function TravelerSidebar() {
   const location = useLocation();
   const { t, i18n } = useTranslation();
   const isRTL = i18n.language === 'ar' || i18n.dir() === 'rtl';
+  // Same realtime unread count the agency header uses (recipient = auth.uid()).
+  const { unreadCount } = useUnreadMessages();
 
   const menuItems = [
     { title: t('dashboard.overview'), url: "/traveler/dashboard", icon: BarChart3 },
     { title: t('travelerDashboard.myBookings'), url: "/traveler/dashboard/bookings", icon: BookOpen },
     { title: t('travelerDashboard.myWishlist'), url: "/traveler/dashboard/wishlist", icon: Heart },
+    { title: t('dashboard.messages'), url: "/traveler/dashboard/messages", icon: MessageSquare, badge: unreadCount },
     { title: t('travelerDashboard.myReviews'), url: "/traveler/dashboard/reviews", icon: Star },
     { title: t('travelerDashboard.profile'), url: "/traveler/dashboard/profile", icon: User },
   ];
@@ -74,8 +79,18 @@ export function TravelerSidebar() {
                         : "text-muted-foreground hover:bg-muted hover:text-foreground"
                         }`}
                     >
-                      <item.icon className="w-5 h-5 flex-shrink-0" />
+                      <span className="relative flex-shrink-0">
+                        <item.icon className="w-5 h-5" />
+                        {isCollapsed && (item.badge ?? 0) > 0 && (
+                          <span className="absolute -top-1 -end-1 w-2 h-2 rounded-full bg-destructive" aria-hidden />
+                        )}
+                      </span>
                       {!isCollapsed && <span>{item.title}</span>}
+                      {!isCollapsed && (item.badge ?? 0) > 0 && (
+                        <span className="ms-auto min-w-[20px] h-5 px-1.5 rounded-full bg-destructive text-destructive-foreground text-xs flex items-center justify-center tabular-nums">
+                          {item.badge! > 9 ? '9+' : item.badge}
+                        </span>
+                      )}
                     </NavLink>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
