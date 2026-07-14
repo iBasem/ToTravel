@@ -43,7 +43,7 @@ export function HeroGallery({ images, title, isBestSeller = false }: HeroGallery
             <div className="relative">
                 {/* Best Seller Badge */}
                 {isBestSeller && (
-                    <Badge className="absolute top-4 start-4 z-10 bg-gradient-to-r from-amber-500 to-orange-500 text-white px-3 py-1.5 text-sm font-semibold shadow-lg">
+                    <Badge className="absolute top-4 start-4 z-10 bg-amber-400 text-amber-950 hover:bg-amber-400 px-3 py-1.5 text-sm font-semibold shadow-lg">
                         <Award className="w-4 h-4 me-1" />
                         {t('packageDetails.bestSeller', 'Best Seller')}
                     </Badge>

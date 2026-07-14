@@ -282,8 +282,8 @@ export default function AdminDashboard() {
                     <YAxis yAxisId="right" orientation={isRTL ? "left" : "right"} />
                     <Tooltip />
                     <Legend />
-                    <Line yAxisId="left" type="monotone" dataKey="revenue" stroke="#3B82F6" strokeWidth={2} name={t("admin.revenueLabel")} />
-                    <Line yAxisId="right" type="monotone" dataKey="bookings" stroke="#10B981" strokeWidth={2} name={t("common.bookings")} />
+                    <Line yAxisId="left" type="monotone" dataKey="revenue" stroke="hsl(var(--chart-1))" strokeWidth={2} name={t("admin.revenueLabel")} />
+                    <Line yAxisId="right" type="monotone" dataKey="bookings" stroke="hsl(var(--chart-2))" strokeWidth={2} name={t("common.bookings")} />
                   </LineChart>
                 </ResponsiveContainer>
               ) : (
@@ -362,9 +362,9 @@ export default function AdminDashboard() {
                   <YAxis yAxisId="right" orientation={isRTL ? "left" : "right"} />
                   <Tooltip />
                   <Legend />
-                  <Bar yAxisId="left" dataKey="total_revenue" fill="#3B82F6" name={t("admin.revenueLabel")} radius={[4, 4, 0, 0]} />
-                  <Bar yAxisId="right" dataKey="total_bookings" fill="#10B981" name={t("common.bookings")} radius={[4, 4, 0, 0]} />
-                  <Bar yAxisId="right" dataKey="new_travelers" fill="#F59E0B" name={t("admin.newTravelers", "New travelers")} radius={[4, 4, 0, 0]} />
+                  <Bar yAxisId="left" dataKey="total_revenue" fill="hsl(var(--chart-1))" name={t("admin.revenueLabel")} radius={[4, 4, 0, 0]} />
+                  <Bar yAxisId="right" dataKey="total_bookings" fill="hsl(var(--chart-2))" name={t("common.bookings")} radius={[4, 4, 0, 0]} />
+                  <Bar yAxisId="right" dataKey="new_travelers" fill="hsl(var(--chart-3))" name={t("admin.newTravelers", "New travelers")} radius={[4, 4, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             ) : (

@@ -189,7 +189,7 @@ export default function DealManagement() {
                                         <TableCell className="text-muted-foreground">{deal.travel_agencies?.company_name ?? '—'}</TableCell>
                                         <TableCell className="text-muted-foreground max-w-48 truncate">{packageTitle(deal)}</TableCell>
                                         <TableCell>
-                                            <span className="font-semibold text-deal">
+                                            <span className="font-semibold">
                                                 {t('packageCard.percentOff', { percent: Math.round(deal.discount_percentage) })}
                                             </span>
                                         </TableCell>

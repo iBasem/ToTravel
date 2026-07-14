@@ -86,7 +86,7 @@ export function TourCard({ package: pkg, deal }: TourCardProps) {
             <>
               <div>
                 <span className="me-1">{t('common.from')}</span>
-                <s className="text-deal">{formatCurrency(pkg.base_price)}</s>
+                <s>{formatCurrency(pkg.base_price)}</s>
               </div>
               <div className="flex items-baseline gap-1">
                 <span className="text-base sm:text-lg font-bold text-foreground">

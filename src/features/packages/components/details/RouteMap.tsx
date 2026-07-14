@@ -3,7 +3,7 @@ import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardHeader, CardTitle } from '@/ui/card';
-import { MapPin, Navigation } from 'lucide-react';
+import { Loader2, MapPin, Navigation } from 'lucide-react';
 import { applyMapLanguage, ensureMapboxRTLTextPlugin } from '@/lib/mapbox-rtl';
 
 const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN;
@@ -89,9 +89,10 @@ export function RouteMap({ routes }: RouteMapProps) {
             </div>
           `;
         } else {
-          // Stop marker - blue circle with white center
+          // Stop marker - teal circle with white center (matches --chart-2 family;
+          // mapbox paint/markers can't resolve CSS vars)
           el.innerHTML = `
-            <div style="width: 20px; height: 20px; border-radius: 50%; background: #3b82f6; border: 3px solid white; box-shadow: 0 2px 6px rgba(0,0,0,0.3);"></div>
+            <div style="width: 20px; height: 20px; border-radius: 50%; background: #0d9488; border: 3px solid white; box-shadow: 0 2px 6px rgba(0,0,0,0.3);"></div>
           `;
         }
 
@@ -135,7 +136,7 @@ export function RouteMap({ routes }: RouteMapProps) {
             'line-cap': 'round'
           },
           paint: {
-            'line-color': '#3b82f6',
+            'line-color': '#0d9488',
             'line-width': 3
           }
         });
@@ -175,7 +176,7 @@ export function RouteMap({ routes }: RouteMapProps) {
           <div ref={mapContainer} className="h-full w-full" />
           {!mapLoaded && (
             <div className="absolute inset-0 flex items-center justify-center bg-muted">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
             </div>
           )}
         </div>
@@ -198,7 +199,7 @@ export function RouteMap({ routes }: RouteMapProps) {
                     ? 'bg-green-500'
                     : dest.destination_type === 'destination'
                       ? 'bg-red-500'
-                      : 'bg-blue-500'
+                      : 'bg-teal-600'
                   }`}>
                   {index + 1}
                 </div>
@@ -209,7 +210,7 @@ export function RouteMap({ routes }: RouteMapProps) {
                         ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300'
                         : dest.destination_type === 'destination'
                           ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300'
-                          : 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300'
+                          : 'bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-300'
                       }`}>
                       {getStatusLabel()}
                     </span>
@@ -224,7 +225,7 @@ export function RouteMap({ routes }: RouteMapProps) {
                     ? 'text-green-500'
                     : dest.destination_type === 'destination'
                       ? 'text-red-500'
-                      : 'text-blue-500'
+                      : 'text-teal-600'
                   }`} />
               </div>
             );

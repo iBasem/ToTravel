@@ -78,7 +78,7 @@ interface InclusionItemProps {
 function InclusionItem({ item, isExclusion = false, isOpen, onToggle }: InclusionItemProps) {
     const { t } = useTranslation();
     const IconComponent = isExclusion ? XCircle : getInclusionIcon(item);
-    const iconColor = isExclusion ? 'text-red-500' : 'text-teal-600';
+    const iconColor = isExclusion ? 'text-red-500 dark:text-red-400' : 'text-green-600 dark:text-green-400';
     const showDietary = !isExclusion && hasDietaryOptions(item);
 
     return (
@@ -158,12 +158,12 @@ export function WhatsIncluded({ inclusions, exclusions, flightOption }: WhatsInc
             <CardHeader className="pb-2">
                 <div className="flex items-center justify-between">
                     <CardTitle className="flex items-center gap-2">
-                        <CheckCircle className="w-5 h-5 text-teal-600" />
+                        <CheckCircle className="w-5 h-5 text-green-600 dark:text-green-400" />
                         {t('packageDetails.whatsIncluded', "What's Included")}
                     </CardTitle>
                     <button
                         onClick={toggleAll}
-                        className="text-sm text-teal-600 hover:text-teal-700 font-medium"
+                        className="text-sm text-primary hover:text-primary/80 font-medium"
                     >
                         {allExpanded
                             ? t('packageDetails.collapseAll', 'Collapse All')
@@ -177,7 +177,7 @@ export function WhatsIncluded({ inclusions, exclusions, flightOption }: WhatsInc
                     know whether to book their own */}
                 {flightOption && (
                     <div className="flex items-center gap-3 rounded-md bg-muted/50 border border-border px-4 py-3 mb-4 text-start">
-                        <Plane className={`w-5 h-5 flex-shrink-0 ${flightOption === 'included' ? 'text-teal-600' : 'text-muted-foreground'}`} />
+                        <Plane className={`w-5 h-5 flex-shrink-0 ${flightOption === 'included' ? 'text-green-600 dark:text-green-400' : 'text-muted-foreground'}`} />
                         <span className="text-sm font-medium text-foreground">
                             {flightOption === 'included'
                                 ? t('packageDetails.flightsIncluded', 'International flights are included in the price')

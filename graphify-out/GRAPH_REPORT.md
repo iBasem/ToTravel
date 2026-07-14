@@ -1,16 +1,16 @@
 # Graph Report - ToTravel  (2026-07-14)
 
 ## Corpus Check
-- 514 files · ~510,907 words
+- 514 files · ~510,914 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 6154 nodes · 12514 edges · 422 communities (332 shown, 90 thin omitted)
+- 6154 nodes · 12514 edges · 428 communities (337 shown, 91 thin omitted)
 - Extraction: 98% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 221 edges (avg confidence: 0.72)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `891c5434`
+- Built from commit: `ef67dbb4`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -367,10 +367,10 @@
 - [[_COMMUNITY_20260714100000_wavec_types_flights_gates.sql|20260714100000_wavec_types_flights_gates.sql]]
 - [[_COMMUNITY_scheduleLazyVisualContrast|scheduleLazyVisualContrast]]
 - [[_COMMUNITY_padding-x|padding-x]]
-- [[_COMMUNITY_destructive|destructive]]
+- [[_COMMUNITY_main|main]]
 - [[_COMMUNITY_event-validation.mjs|event-validation.mjs]]
 - [[_COMMUNITY_ring|ring]]
-- [[_COMMUNITY_destructive-foreground|destructive-foreground]]
+- [[_COMMUNITY_BORDER_SAFE_TAGS|BORDER_SAFE_TAGS]]
 - [[_COMMUNITY_shadcn_add.py|shadcn_add.py]]
 - [[_COMMUNITY_.__init__|.__init__]]
 - [[_COMMUNITY_slides-create|slides-create.md]]
@@ -401,12 +401,18 @@
 - [[_COMMUNITY_navigation-menu.tsx|navigation-menu.tsx]]
 - [[_COMMUNITY_index.ts|index.ts]]
 - [[_COMMUNITY_20260709120100_agency_status_normalize.sql|20260709120100_agency_status_normalize.sql]]
-- [[_COMMUNITY_primary-foreground|primary-foreground]]
-- [[_COMMUNITY_secondary-foreground|secondary-foreground]]
+- [[_COMMUNITY_padding-y|padding-y]]
+- [[_COMMUNITY_none|none]]
+- [[_COMMUNITY__generate_intelligent_overrides|_generate_intelligent_overrides]]
+- [[_COMMUNITY_16|16]]
 - [[_COMMUNITY_8|8]]
 - [[_COMMUNITY_destructive-foreground|destructive-foreground]]
+- [[_COMMUNITY_3|3]]
 - [[_COMMUNITY_primary-foreground|primary-foreground]]
 - [[_COMMUNITY_secondary-foreground|secondary-foreground]]
+- [[_COMMUNITY_muted-foreground|muted-foreground]]
+- [[_COMMUNITY_primary-hover|primary-hover]]
+- [[_COMMUNITY_search.py|search.py]]
 
 ## God Nodes (most connected - your core abstractions)
 1. `Json` - 108 edges
@@ -435,7 +441,7 @@
 ## Import Cycles
 - None detected.
 
-## Communities (422 total, 90 thin omitted)
+## Communities (428 total, 91 thin omitted)
 
 ### Community 0 - "Admin & Agency Pages"
 Cohesion: 0.03
@@ -490,8 +496,8 @@ Cohesion: 0.07
 Nodes (55): ACK_EXTS, applyConfigSource(), applyDetectorConfigSource(), clampByte(), clampGroupedToBudget(), clampToBudget(), cleanIgnoreValueDisplay(), cloneDefaultConfig() (+47 more)
 
 ### Community 14 - "Core UI Primitives"
-Cohesion: 0.06
-Nodes (35): BookingWidget(), BookingWidgetProps, StarRating(), StarRatingProps, TravelerReview, TravelerReviews(), cn(), ButtonProps (+27 more)
+Cohesion: 0.10
+Nodes (36): AdminHeader(), usePendingActionsCount(), SortableDestinationRow(), SortableDestinationRowProps, AdminDestination, OperatorInfo(), MediaGallery(), MediaGalleryProps (+28 more)
 
 ### Community 15 - "Package Detail Sections"
 Cohesion: 0.08
@@ -506,8 +512,8 @@ Cohesion: 0.20
 Nodes (17): on_auth_user_created, public.handle_new_user(), public.has_role(), public.itineraries, public.package_bookings, public.package_media, public.packages, public.profiles (+9 more)
 
 ### Community 18 - "Component Aliases Config"
-Cohesion: 0.12
-Nodes (15): aliases, components, hooks, lib, ui, utils, rsc, $schema (+7 more)
+Cohesion: 0.18
+Nodes (10): aliases, components, hooks, lib, ui, utils, rsc, $schema (+2 more)
 
 ### Community 19 - "Tour Cards & Listings"
 Cohesion: 0.10
@@ -531,7 +537,7 @@ Nodes (7): CheckboxFilter(), CheckboxFilterItem, CheckboxFilterProps, FiltersSid
 
 ### Community 24 - "Admin Agencies & Travelers Hooks"
 Cohesion: 0.08
-Nodes (36): checkBorders(), checkClippedOverflow(), checkElementBorders(), checkElementBordersDOM(), checkElementClippedOverflow(), checkElementClippedOverflowDOM(), checkElementHeroEyebrow(), checkElementHeroEyebrowDOM() (+28 more)
+Nodes (36): buildSelectorSegment(), checkBorders(), checkClippedOverflow(), checkElementBorders(), checkElementBordersDOM(), checkElementClippedOverflow(), checkElementClippedOverflowDOM(), checkElementItalicSerif() (+28 more)
 
 ### Community 25 - "Auth Context & Admin Content"
 Cohesion: 0.14
@@ -598,8 +604,8 @@ Cohesion: 0.48
 Nodes (6): calculateZoom(), encodePolyline(), encodeSignedValue(), getStaticMapUrl(), makeCircleCoords(), RoutePoint
 
 ### Community 41 - "Toggle Components"
-Cohesion: 0.10
-Nodes (36): AdminHeader(), usePendingActionsCount(), SortableDestinationRow(), SortableDestinationRowProps, AdminDestination, OperatorInfo(), MediaGallery(), MediaGalleryProps (+28 more)
+Cohesion: 0.06
+Nodes (35): BookingWidget(), BookingWidgetProps, StarRating(), StarRatingProps, TravelerReview, TravelerReviews(), cn(), ButtonProps (+27 more)
 
 ### Community 42 - "OTP Input"
 Cohesion: 0.33
@@ -754,8 +760,8 @@ Cohesion: 0.08
 Nodes (36): format_context(), format_result(), main(), Format a single search result for display, Format contextual recommendations for display., BM25, calculate_pattern_break(), detect_domain() (+28 more)
 
 ### Community 140 - "TravelerBookings.tsx"
-Cohesion: 0.13
-Nodes (25): browserColorsClose(), browserDesignSystemConfig(), browserFindingsFromMap(), browserHasDirectText(), browserPrimaryFont(), browserRadiusTokens(), browserSampleText(), checkBrowserDesignSystemSources() (+17 more)
+Cohesion: 0.14
+Nodes (21): browserColorsClose(), browserHasDirectText(), browserRadiusTokens(), browserSampleText(), checkElementDesignSystemDOM(), enableCycleMode(), getSpotlightBackdrop(), isBrowserDesignColorAllowed() (+13 more)
 
 ### Community 141 - "MapboxMap.tsx"
 Cohesion: 0.05
@@ -782,8 +788,8 @@ Cohesion: 0.14
 Nodes (13): Cleanup, Exit, Handle `accept`, Handle `discard`, Handle `manual_edit_apply`, Handle `prefetch`, Handle `steer`, Poll loop (+5 more)
 
 ### Community 166 - "useAgencyDeals.ts"
-Cohesion: 0.25
-Nodes (7): Extract Flow, Step 1: Discover the Design System, Step 2: Identify Patterns, Step 3: Plan Extraction, Step 4: Extract & Enrich, Step 5: Migrate, Step 6: Document
+Cohesion: 0.21
+Nodes (11): DestinationSearch(), DestinationSearchProps, SearchResult, DestinationsList(), DestinationsListProps, SortableDestinationProps, MapboxMapProps, defaultRouteData (+3 more)
 
 ### Community 167 - "useDashboardStats.ts"
 Cohesion: 0.08
@@ -810,8 +816,8 @@ Cohesion: 0.06
 Nodes (35): Banner Design (Built-in), Banner: Design Rules, Banner: Quick Size Reference, Banner: Top Art Styles, Banner: Workflow, CIP Design (Built-in), CIP: Generate Brief, CIP: Generate Mockups (+27 more)
 
 ### Community 177 - "parseAnyColor"
-Cohesion: 0.13
-Nodes (22): borderColorsFromStyle(), borderWidthsFromStyle(), checkCreamPalette(), checkElementGptBorderShadow(), checkElementGptBorderShadowDOM(), checkElementQualityDOM(), checkGptThinBorderWideShadow(), checkQuality() (+14 more)
+Cohesion: 0.15
+Nodes (19): borderColorsFromStyle(), borderWidthsFromStyle(), checkElementGptBorderShadow(), checkElementGptBorderShadowDOM(), checkElementQualityDOM(), checkGptThinBorderWideShadow(), checkQuality(), colorsNearlyMatch() (+11 more)
 
 ### Community 178 - "The Toolkit"
 Cohesion: 0.10
@@ -886,16 +892,16 @@ Cohesion: 0.12
 Nodes (16): Accessibility Considerations, Anti-reflexes worth defending against, Classic Typography Principles, Fluid Type, Font Selection & Pairing, Modern Web Typography, Modular Scale & Hierarchy, OpenType Features (+8 more)
 
 ### Community 196 - "resolveContext"
-Cohesion: 0.25
-Nodes (9): buildSelectorSegment(), generateSelector(), isElementHidden(), isLikelyHashedClass(), postSerializedFindings(), renderBrowserFindings(), scanResultMeta(), serializeFindings() (+1 more)
+Cohesion: 0.15
+Nodes (14): browserColorsClose(), browserHasDirectText(), browserRadiusTokens(), browserSampleText(), checkElementDesignSystemDOM(), isBrowserDesignColorAllowed(), isBrowserDesignRadiusAllowed(), isBrowserTransparentCss() (+6 more)
 
 ### Community 197 - "analyzeVisualContrastCandidate"
 Cohesion: 0.20
 Nodes (12): addBrowserFindings(), addVisualContrastFindings(), addVisualContrastResult(), clearOverlays(), detachOverlay(), disconnectLazyVisualContrastObserver(), postExtensionError(), rememberVisualContrastAnalysis() (+4 more)
 
 ### Community 198 - "collectBrowserFindings"
-Cohesion: 0.12
-Nodes (19): browserColorsClose(), browserDesignSystemConfig(), browserFindingsFromMap(), browserHasDirectText(), browserPrimaryFont(), browserRadiusTokens(), browserSampleText(), checkBrowserDesignSystemSources() (+11 more)
+Cohesion: 0.21
+Nodes (12): browserDesignSystemConfig(), browserFindingsFromMap(), browserPrimaryFont(), checkBrowserDesignSystemSources(), checkCreamPalette(), checkHtmlPatterns(), collectBrowserFindings(), collectBrowserFindingsAsync() (+4 more)
 
 ### Community 199 - "Generate Report"
 Cohesion: 0.13
@@ -950,8 +956,8 @@ Cohesion: 0.32
 Nodes (11): kebab(), listSnapshotsForSlug(), main(), nowFilenameStamp(), parseFrontmatter(), readLatestSnapshot(), readTrend(), serializeFrontmatter() (+3 more)
 
 ### Community 213 - "animate.md"
-Cohesion: 0.25
-Nodes (10): emptyDay(), ItineraryStep(), ItineraryStepProps, dayStopNames(), deriveDestination(), emptyDay(), PlanStep(), withDerivedTypes() (+2 more)
+Cohesion: 0.18
+Nodes (13): addBrowserFindings(), addVisualContrastFindings(), addVisualContrastResult(), clearOverlays(), detachOverlay(), disconnectLazyVisualContrastObserver(), postExtensionError(), rememberVisualContrastAnalysis() (+5 more)
 
 ### Community 214 - "craft.md"
 Cohesion: 0.06
@@ -970,8 +976,8 @@ Cohesion: 0.18
 Nodes (16): loadContext(), resolveTargetSelection(), safeRead(), parseTargetOptions(), parseTargetPath(), TargetArgError, __dirname, ensureServerRunning() (+8 more)
 
 ### Community 218 - "scheduleLazyVisualContrast"
-Cohesion: 0.40
-Nodes (7): RouteMap(), RouteMapThumbnail(), RouteMapThumbnailProps, RoutePoint, MapboxMap(), applyMapLanguage(), ensureMapboxRTLTextPlugin()
+Cohesion: 0.32
+Nodes (8): browserDesignSystemConfig(), browserFindingsFromMap(), browserPrimaryFont(), checkBrowserDesignSystemSources(), collectBrowserFindings(), collectBrowserFindingsAsync(), decodeBrowserGoogleFamily(), normalizeBrowserFontName()
 
 ### Community 219 - "readConfig"
 Cohesion: 0.05
@@ -1038,8 +1044,8 @@ Cohesion: 0.07
 Nodes (28): Absolute Don'ts, Approved Backgrounds, Before Using Logo, Clear Space, Co-branding, Color Rules, Color Usage, Color Variants (+20 more)
 
 ### Community 235 - "collectVisualContrastCandidates"
-Cohesion: 0.32
-Nodes (8): buildSelectorSegment(), generateSelector(), isLikelyHashedClass(), postSerializedFindings(), renderBrowserFindings(), scanResultMeta(), serializeFindings(), css
+Cohesion: 0.25
+Nodes (9): buildSelectorSegment(), generateSelector(), isLikelyHashedClass(), tailwind, baseColor, config, css, cssVariables (+1 more)
 
 ### Community 236 - "normalizeIgnoreValueEntries"
 Cohesion: 0.12
@@ -1054,8 +1060,8 @@ Cohesion: 0.22
 Nodes (9): 1. The Wall of Options, 2. The Memory Bridge, 3. The Hidden Navigation, 4. The Jargon Barrier, 5. The Visual Noise Floor, 6. The Inconsistent Pattern, 7. The Multi-Task Demand, 8. The Context Switch (+1 more)
 
 ### Community 239 - "serializeFindings"
-Cohesion: 0.18
-Nodes (13): checkElementOversizedH1(), checkElementOversizedH1DOM(), checkElementQuality(), checkOversizedH1(), checkRepeatedSectionKickers(), checkRepeatedSectionKickersDOM(), checkRepeatedSectionKickersFromDoc(), cleanInlineText() (+5 more)
+Cohesion: 0.12
+Nodes (18): checkElementHeroEyebrow(), checkElementHeroEyebrowDOM(), checkElementOversizedH1(), checkElementOversizedH1DOM(), checkElementQuality(), checkHeroEyebrow(), checkOversizedH1(), checkRepeatedSectionKickers() (+10 more)
 
 ### Community 240 - "Product"
 Cohesion: 0.22
@@ -1107,11 +1113,11 @@ Nodes (8): checkElementMotion(), checkElementMotionDOM(), checkMotion(), checkEl
 
 ### Community 252 - "error-boundary.tsx"
 Cohesion: 0.29
-Nodes (8): padding-y, input, $type, $value, focus-ring, padding-y, $type, $value
+Nodes (8): padding-x, input, $type, $value, focus-ring, padding-x, $type, $value
 
 ### Community 253 - "normalizeGitHubEvent"
 Cohesion: 0.25
-Nodes (7): Breadcrumb, BreadcrumbEllipsis(), BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator()
+Nodes (10): emptyDay(), ItineraryStep(), ItineraryStepProps, dayStopNames(), deriveDestination(), emptyDay(), PlanStep(), withDerivedTypes() (+2 more)
 
 ### Community 254 - "isGeneratedFile"
 Cohesion: 0.14
@@ -1146,8 +1152,8 @@ Cohesion: 0.08
 Nodes (24): Apparel, Business Card, Car/Sedan, CIP Deliverable Guide, Core Identity, Digital Assets, Email Signature, Envelope (+16 more)
 
 ### Community 262 - "index.ts"
-Cohesion: 0.10
-Nodes (21): BM25, detect_domain(), _load_csv(), Load CSV and return list of dicts, Core search function using BM25, Auto-detect the most relevant domain from query, Main search function with auto-domain detection, Search across all domains and combine results (+13 more)
+Cohesion: 0.17
+Nodes (14): detect_domain(), _load_csv(), Load CSV and return list of dicts, Core search function using BM25, Auto-detect the most relevant domain from query, Main search function with auto-domain detection, Search across all domains and combine results, search() (+6 more)
 
 ### Community 263 - "States and Variants"
 Cohesion: 0.08
@@ -1170,12 +1176,12 @@ Cohesion: 0.09
 Nodes (22): @apply Directive, Best Practices, Color Customization, Complete Tailwind Config, Configuration Examples, Content Configuration, Custom Color Palette, Custom Font Sizes (+14 more)
 
 ### Community 268 - "core.py"
-Cohesion: 0.15
-Nodes (15): BM25, detect_domain(), _load_csv(), BM25 ranking algorithm for text search, Lowercase, split, remove punctuation, filter short words, Build BM25 index from documents, Score all documents against query, Load CSV and return list of dicts (+7 more)
+Cohesion: 0.25
+Nodes (10): detect_domain(), _load_csv(), Load CSV and return list of dicts, Core search function using BM25, Auto-detect the most relevant domain from query, Main search function with auto-domain detection, Search stack-specific guidelines, search() (+2 more)
 
 ### Community 269 - "design_system.py"
-Cohesion: 0.13
-Nodes (22): ansi_ljust(), _detect_page_type(), format_ascii_box(), format_markdown(), format_master_md(), format_page_override_md(), generate_design_system(), _generate_intelligent_overrides() (+14 more)
+Cohesion: 0.15
+Nodes (18): ansi_ljust(), format_ascii_box(), format_markdown(), format_master_md(), format_page_override_md(), generate_design_system(), hex_to_ansi(), persist_design_system() (+10 more)
 
 ### Community 270 - "spacing"
 Cohesion: 0.09
@@ -1214,12 +1220,12 @@ Cohesion: 0.11
 Nodes (18): 1. Wordmark (Logotype), 2. Lettermark (Monogram), 3. Pictorial Mark (Brand Mark), 4. Abstract Mark, 5. Mascot, 6. Emblem, 7. Combination Mark, Aesthetic Styles (+10 more)
 
 ### Community 279 - "search"
-Cohesion: 0.11
-Nodes (22): BM25, detect_domain(), get_cip_brief(), _load_csv(), Load CSV and return list of dicts, Core search function using BM25, Auto-detect the most relevant domain from query, Main search function with auto-domain detection (+14 more)
+Cohesion: 0.22
+Nodes (12): detect_domain(), get_cip_brief(), _load_csv(), Load CSV and return list of dicts, Core search function using BM25, Auto-detect the most relevant domain from query, Main search function with auto-domain detection, Search across all domains and combine results (+4 more)
 
 ### Community 280 - "color"
 Cohesion: 0.11
-Nodes (19): $type, $value, background, foreground, muted-foreground, primary, primary-hover, secondary (+11 more)
+Nodes (19): $type, $value, background, destructive-foreground, muted, primary-foreground, secondary, secondary-foreground (+11 more)
 
 ### Community 281 - "Storage Management"
 Cohesion: 0.11
@@ -1246,8 +1252,8 @@ Cohesion: 0.11
 Nodes (18): 1.1 Prerequisite: workspace, 1.2 Prerequisite: seed test, 1.3 Explore the app, 1.4 Write the spec file, 1. Planning, 2.1 Inputs, 2.2 Generate one scenario, 2.3 Generate multiple scenarios (+10 more)
 
 ### Community 287 - "formatters.ts"
-Cohesion: 0.21
-Nodes (11): DestinationSearch(), DestinationSearchProps, SearchResult, DestinationsList(), DestinationsListProps, SortableDestinationProps, MapboxMapProps, defaultRouteData (+3 more)
+Cohesion: 0.40
+Nodes (7): RouteMap(), RouteMapThumbnail(), RouteMapThumbnailProps, RoutePoint, MapboxMap(), applyMapLanguage(), ensureMapboxRTLTextPlugin()
 
 ### Community 288 - "Tracing"
 Cohesion: 0.12
@@ -1354,8 +1360,8 @@ Cohesion: 0.22
 Nodes (7): main(), Add all available shadcn/ui components.          Args:             overwrite:, List installed components.          Returns:             Tuple of (success, m, Check if shadcn is initialized in project.          Returns:             True, Get list of already installed components.          Returns:             List, Read shadcn version from project package.json; fall back to a pinned default., Add shadcn/ui components.          Args:             components: List of comp
 
 ### Community 314 - "card"
-Cohesion: 0.20
-Nodes (12): $type, $value, bg, bg, padding, shadow, card, bg (+4 more)
+Cohesion: 0.15
+Nodes (17): $type, $value, $type, $value, bg, bg, border, padding (+9 more)
 
 ### Community 315 - "HEADING_TAGS"
 Cohesion: 0.18
@@ -1414,8 +1420,8 @@ Cohesion: 0.29
 Nodes (7): append-arrays, append-string, Consent prompt template, CSP detection (first-time only), Drift-heal warning, First-time setup (config missing or invalid), Troubleshooting
 
 ### Community 329 - "useAdminDeals.ts"
-Cohesion: 0.40
-Nodes (6): isNeutralBorderColor(), checkBorders(), checkElementBorders(), checkElementBordersDOM(), isNeutralColor(), BORDER_SAFE_TAGS
+Cohesion: 0.28
+Nodes (5): BM25, BM25 ranking algorithm for text search, Lowercase, split, remove punctuation, filter short words, Build BM25 index from documents, Score all documents against query
 
 ### Community 330 - "Commands"
 Cohesion: 0.20
@@ -1506,8 +1512,8 @@ Cohesion: 0.40
 Nodes (4): Brand Guidelines Template, Document Structure, Extractable Fields, Usage
 
 ### Community 352 - "Step 3: Ask strategic questions (for PRODUCT.md)"
-Cohesion: 0.60
-Nodes (5): $type, $value, border, border, border
+Cohesion: 0.28
+Nodes (5): BM25, BM25 ranking algorithm for text search, Lowercase, split, remove punctuation, filter short words, Build BM25 index from documents, Score all documents against query
 
 ### Community 353 - "radius"
 Cohesion: 0.60
@@ -1558,8 +1564,8 @@ Cohesion: 0.33
 Nodes (5): ToggleGroup, ToggleGroupContext, ToggleGroupItem, Toggle, toggleVariants
 
 ### Community 365 - "muted"
-Cohesion: 0.67
-Nodes (4): $type, $value, none, none
+Cohesion: 0.28
+Nodes (5): BM25, BM25 ranking algorithm for text search, Lowercase, split, remove punctuation, filter short words, Build BM25 index from documents, Score all documents against query
 
 ### Community 366 - "Tips for Better Results"
 Cohesion: 0.50
@@ -1570,8 +1576,8 @@ Cohesion: 0.50
 Nodes (4): Must Use, Recommended, Skip, When to Apply
 
 ### Community 368 - "index.ts"
-Cohesion: 0.67
-Nodes (4): padding-x, padding-x, $type, $value
+Cohesion: 0.25
+Nodes (7): Extract Flow, Step 1: Discover the Design System, Step 2: Identify Patterns, Step 3: Plan Extraction, Step 4: Extract & Enrich, Step 5: Migrate, Step 6: Document
 
 ### Community 370 - "primary-foreground"
 Cohesion: 0.70
@@ -1586,16 +1592,16 @@ Cohesion: 0.67
 Nodes (3): public.packages, public.save_package(), public.travel_agencies
 
 ### Community 374 - "scheduleLazyVisualContrast"
-Cohesion: 0.18
-Nodes (13): addBrowserFindings(), addVisualContrastFindings(), addVisualContrastResult(), clearOverlays(), detachOverlay(), disconnectLazyVisualContrastObserver(), postExtensionError(), rememberVisualContrastAnalysis() (+5 more)
+Cohesion: 0.25
+Nodes (7): Breadcrumb, BreadcrumbEllipsis(), BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator()
 
 ### Community 375 - "padding-x"
-Cohesion: 0.40
-Nodes (3): TravelerHeader(), TravelerSidebar(), SidebarInset
-
-### Community 376 - "destructive"
 Cohesion: 0.67
-Nodes (3): $type, $value, 16
+Nodes (3): primary, $type, $value
+
+### Community 376 - "main"
+Cohesion: 0.47
+Nodes (5): format_brief(), format_results(), main(), Format search results for display, Format CIP brief for display
 
 ### Community 377 - "event-validation.mjs"
 Cohesion: 0.26
@@ -1605,29 +1611,37 @@ Nodes (12): FORBIDDEN_MANUAL_EDIT_TEXT_CHARS, INSERT_POSITIONS, isValidId(), isV
 Cohesion: 0.67
 Nodes (3): ring, $type, $value
 
-### Community 379 - "destructive-foreground"
-Cohesion: 0.67
-Nodes (3): $type, $value, 1
+### Community 379 - "BORDER_SAFE_TAGS"
+Cohesion: 0.40
+Nodes (6): isNeutralBorderColor(), checkBorders(), checkElementBorders(), checkElementBordersDOM(), isNeutralColor(), BORDER_SAFE_TAGS
 
 ### Community 407 - "destructive"
 Cohesion: 0.32
 Nodes (8): checkElementTextOverflowDOM(), classSelector(), clippedByInset(), clippedByRect(), expandBoxShorthand(), firstMetricLengthPx(), isScreenReaderOnlyTextStyle(), metricLengthPx()
 
 ### Community 409 - "muted"
-Cohesion: 0.67
-Nodes (3): muted, $type, $value
+Cohesion: 0.40
+Nodes (3): TravelerHeader(), TravelerSidebar(), SidebarInset
 
 ### Community 410 - "navigation-menu.tsx"
 Cohesion: 0.25
 Nodes (7): NavigationMenu, NavigationMenuContent, NavigationMenuIndicator, NavigationMenuList, NavigationMenuTrigger, navigationMenuTriggerStyle, NavigationMenuViewport
 
-### Community 414 - "primary-foreground"
+### Community 414 - "padding-y"
 Cohesion: 0.67
-Nodes (3): $type, $value, 3
+Nodes (4): padding-y, padding-y, $type, $value
 
-### Community 415 - "secondary-foreground"
+### Community 415 - "none"
 Cohesion: 0.67
-Nodes (3): destructive, $type, $value
+Nodes (4): $type, $value, none, none
+
+### Community 417 - "_generate_intelligent_overrides"
+Cohesion: 0.50
+Nodes (4): _detect_page_type(), _generate_intelligent_overrides(), Generate intelligent overrides based on page type using layered search., Detect page type from context and search results.
+
+### Community 419 - "16"
+Cohesion: 0.67
+Nodes (3): $type, $value, 16
 
 ### Community 420 - "8"
 Cohesion: 0.67
@@ -1635,30 +1649,42 @@ Nodes (3): $type, $value, 8
 
 ### Community 421 - "destructive-foreground"
 Cohesion: 0.67
-Nodes (3): destructive-foreground, $type, $value
+Nodes (3): $type, $value, 1
+
+### Community 422 - "3"
+Cohesion: 0.67
+Nodes (3): $type, $value, 3
 
 ### Community 423 - "primary-foreground"
 Cohesion: 0.67
-Nodes (3): primary-foreground, $type, $value
+Nodes (3): destructive, $type, $value
 
 ### Community 424 - "secondary-foreground"
 Cohesion: 0.67
-Nodes (3): secondary-foreground, $type, $value
+Nodes (3): foreground, $type, $value
+
+### Community 425 - "muted-foreground"
+Cohesion: 0.67
+Nodes (3): muted-foreground, $type, $value
+
+### Community 426 - "primary-hover"
+Cohesion: 0.67
+Nodes (3): primary-hover, $type, $value
 
 ## Knowledge Gaps
 - **2242 isolated node(s):** `$schema`, `$value`, `$type`, `$value`, `$type` (+2237 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **90 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **91 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `Json` connect `useDashboardStats.ts` to `Admin & Agency Pages`, `positionParamsPanel`, `Carousel & React Core`, `Home Page Sections`, `Auth Guards & Redirects`, `Package Detail Sections`, `Tour Cards & Listings`, `Command Palette`, `usePackages.ts`, `Context Menu`, `Booking Widget & Popover`, `localized.ts`, `Breadcrumb Component`, `Drawer Component`, `Navigation Menu`, `manual-edit-routes.mjs`, `readLiveServerInfo`, `Agency Travelers`, `Agency Bookings`, `impeccable-paths.mjs`, `TravelerBookings.tsx`, `context-signals.mjs`, `Extract Flow`, `critique-storage.mjs`, `Agency Self-Verify Risk`, `live.mjs`, `scheduleLazyVisualContrast`, `readConfig`, `pin.mjs`, `4. Plan three variants: identity first, then mode, then axes`, `Handle fallback`, `RouteMapThumbnail.tsx`, `primary-foreground`, `serializeFindings`, `isGeneratedFile`?**
+- **Why does `Json` connect `useDashboardStats.ts` to `Admin & Agency Pages`, `positionParamsPanel`, `Carousel & React Core`, `Home Page Sections`, `Auth Guards & Redirects`, `Package Detail Sections`, `Tour Cards & Listings`, `Command Palette`, `usePackages.ts`, `Context Menu`, `formatters.ts`, `Booking Widget & Popover`, `localized.ts`, `Breadcrumb Component`, `Drawer Component`, `Navigation Menu`, `manual-edit-routes.mjs`, `readLiveServerInfo`, `Agency Travelers`, `Agency Bookings`, `impeccable-paths.mjs`, `TravelerBookings.tsx`, `context-signals.mjs`, `Extract Flow`, `critique-storage.mjs`, `Agency Self-Verify Risk`, `live.mjs`, `readConfig`, `pin.mjs`, `4. Plan three variants: identity first, then mode, then axes`, `Handle fallback`, `RouteMapThumbnail.tsx`, `primary-foreground`, `serializeFindings`, `isGeneratedFile`?**
   _High betweenness centrality (0.134) - this node is a cross-community bridge._
-- **Why does `el()` connect `Star Rating & Utils` to `Admin & Agency Pages`, `Admin Hooks Layer`, `positionParamsPanel`, `TravelerBookings.tsx`, `useBookings.ts`, `Gallery & Inclusions`, `Admin Agencies & Travelers Hooks`, `Command Palette`, `DetailedItinerary.tsx`, `Booking Widget & Popover`, `Agency Feedback`, `parseAnyColor`, `GENERIC_FONTS`, `resolveContext`, `collectBrowserFindings`, `Color & Contrast`, `scheduleLazyVisualContrast`, `collectVisualContrastCandidates`, `normalizeIgnoreValueEntries`, `serializeFindings`?**
-  _High betweenness centrality (0.060) - this node is a cross-community bridge._
-- **Why does `v()` connect `Package Filters` to `DetailedItinerary.tsx`, `Agency Calendar & Booking Modal`, `Deploying ToTravel to Cloudflare Pages`, `App Entry & Route Groups`, `Home Page Sections`, `Agency Feedback`, `context-signals.mjs`, `Admin Agencies & Travelers Hooks`, `readConfig`?**
-  _High betweenness centrality (0.046) - this node is a cross-community bridge._
+- **Why does `el()` connect `Star Rating & Utils` to `Admin & Agency Pages`, `Admin Hooks Layer`, `positionParamsPanel`, `TravelerBookings.tsx`, `useBookings.ts`, `Gallery & Inclusions`, `Admin Agencies & Travelers Hooks`, `Command Palette`, `formatters.ts`, `DetailedItinerary.tsx`, `Booking Widget & Popover`, `Agency Feedback`, `GENERIC_FONTS`, `resolveContext`, `collectBrowserFindings`, `Color & Contrast`, `scheduleLazyVisualContrast`, `normalizeIgnoreValueEntries`, `serializeFindings`?**
+  _High betweenness centrality (0.061) - this node is a cross-community bridge._
+- **Why does `v()` connect `Package Filters` to `DetailedItinerary.tsx`, `Agency Calendar & Booking Modal`, `Deploying ToTravel to Cloudflare Pages`, `App Entry & Route Groups`, `Home Page Sections`, `serializeFindings`, `Agency Feedback`, `context-signals.mjs`, `readConfig`?**
+  _High betweenness centrality (0.039) - this node is a cross-community bridge._
 - **What connects `Resolve token reference like {primitive.color.ocean-blue.500} to hex value.`, `Load colors from assets/design-tokens.json for overlay gradients.      Resolve`, `Load background configuration from CSV.` to the rest of the system?**
   _2465 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Admin & Agency Pages` be split into smaller, more focused modules?**

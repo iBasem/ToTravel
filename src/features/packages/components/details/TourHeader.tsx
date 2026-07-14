@@ -51,7 +51,7 @@ export function TourHeader({ packageData, isWishlisted, onToggleWishlist }: Tour
             {/* Badges Row */}
             <div className="flex flex-wrap items-center gap-2 mb-3">
                 {packageData.featured && (
-                    <Badge className="bg-gradient-to-r from-amber-500 to-orange-500 text-white border-0">
+                    <Badge className="bg-amber-400 text-amber-950 hover:bg-amber-400 border-0">
                         ★ {t('common.featured', 'Featured')}
                     </Badge>
                 )}

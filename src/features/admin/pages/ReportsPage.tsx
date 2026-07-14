@@ -149,8 +149,8 @@ export default function ReportsPage() {
                     <YAxis orientation={isRTL ? 'right' : 'left'} />
                     <Tooltip />
                     <Legend />
-                    <Bar dataKey="bookings" fill="#3B82F6" name={t('common.bookings')} radius={[4, 4, 0, 0]} />
-                    <Bar dataKey="users" fill="#10B981" name={t('common.newUsers')} radius={[4, 4, 0, 0]} />
+                    <Bar dataKey="bookings" fill="hsl(var(--chart-1))" name={t('common.bookings')} radius={[4, 4, 0, 0]} />
+                    <Bar dataKey="users" fill="hsl(var(--chart-2))" name={t('common.newUsers')} radius={[4, 4, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
               ) : (

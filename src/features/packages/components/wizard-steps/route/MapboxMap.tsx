@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { Loader2 } from 'lucide-react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { useTranslation } from 'react-i18next';
@@ -79,7 +80,7 @@ export function MapboxMap({ destinations, onMapClick, isRTL = false }: MapboxMap
           ? 'bg-green-500'
           : dest.type === 'destination'
             ? 'bg-red-500'
-            : 'bg-blue-500'
+            : 'bg-teal-600'
         }">
           ${index + 1}
         </div>
@@ -134,7 +135,7 @@ export function MapboxMap({ destinations, onMapClick, isRTL = false }: MapboxMap
           'line-cap': 'round'
         },
         paint: {
-          'line-color': '#3b82f6',
+          'line-color': '#0d9488',
           'line-width': 3,
           'line-dasharray': [2, 1]
         }
@@ -167,7 +168,7 @@ export function MapboxMap({ destinations, onMapClick, isRTL = false }: MapboxMap
       <div ref={mapContainer} className="h-full w-full" />
       {!mapLoaded && (
         <div className="absolute inset-0 flex items-center justify-center bg-muted">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
         </div>
       )}
     </div>

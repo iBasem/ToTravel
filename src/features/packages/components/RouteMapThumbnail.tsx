@@ -88,7 +88,7 @@ export function RouteMapThumbnail({ routes }: RouteMapThumbnailProps) {
           'line-cap': 'round',
         },
         paint: {
-          'line-color': '#2196F3',
+          'line-color': '#0d9488',
           'line-width': 2.5,
         },
       });
@@ -102,7 +102,7 @@ export function RouteMapThumbnail({ routes }: RouteMapThumbnailProps) {
           'circle-color': '#ffffff',
           'circle-radius': 5,
           'circle-stroke-width': 2.5,
-          'circle-stroke-color': '#2196F3',
+          'circle-stroke-color': '#0d9488',
         },
       });
 

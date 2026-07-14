@@ -36,7 +36,7 @@ export function downloadBookingVoucher(v: VoucherData, t: TFunction, dir: 'ltr' 
 </head>
 <body style="font-family:system-ui,-apple-system,'Segoe UI',Tahoma,sans-serif;background:#f5f5f5;margin:0;padding:24px;">
   <div style="max-width:640px;margin:0 auto;background:#fff;border-radius:12px;overflow:hidden;border:1px solid #e5e7eb;">
-    <div style="background:#0f766e;color:#fff;padding:20px 24px;">
+    <div style="background:#b44e2d;color:#fff;padding:20px 24px;">
       <div style="font-size:22px;font-weight:700;">ToTravel</div>
       <div style="opacity:.85;">${t('voucher.title', 'Booking Voucher')}</div>
     </div>

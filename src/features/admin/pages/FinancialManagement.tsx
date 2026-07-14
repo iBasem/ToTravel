@@ -232,8 +232,8 @@ export default function FinancialManagement() {
                   <YAxis orientation={isRTL ? "right" : "left"} />
                   <Tooltip formatter={(value: number) => formatCurrency(value)} />
                   <Legend />
-                  <Line type="monotone" dataKey="revenue" stroke="#3B82F6" strokeWidth={2} name={t("financials.totalRevenue")} />
-                  <Line type="monotone" dataKey="commission" stroke="#10B981" strokeWidth={2} name={t("financials.platformCommission")} />
+                  <Line type="monotone" dataKey="revenue" stroke="hsl(var(--chart-1))" strokeWidth={2} name={t("financials.totalRevenue")} />
+                  <Line type="monotone" dataKey="commission" stroke="hsl(var(--chart-2))" strokeWidth={2} name={t("financials.platformCommission")} />
                 </LineChart>
               </ResponsiveContainer>
             ) : (

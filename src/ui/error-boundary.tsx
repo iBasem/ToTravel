@@ -32,8 +32,8 @@ export class ErrorBoundary extends Component<Props, State> {
                 <div className="min-h-screen flex items-center justify-center bg-muted/50 p-4">
                     <div className="max-w-md w-full text-center space-y-4">
                         <div className="flex justify-center">
-                            <div className="p-3 bg-red-100 rounded-full">
-                                <AlertTriangle className="w-8 h-8 text-red-600" />
+                            <div className="p-3 bg-destructive/10 rounded-full">
+                                <AlertTriangle className="w-8 h-8 text-destructive" />
                             </div>
                         </div>
                         <h1 className="text-2xl font-bold text-foreground">{i18next.t('errors.somethingWentWrong')}</h1>
@@ -45,7 +45,6 @@ export class ErrorBoundary extends Component<Props, State> {
                                 this.setState({ hasError: false, error: null });
                                 window.location.reload();
                             }}
-                            className="bg-blue-600 hover:bg-blue-700"
                         >
                             {i18next.t('errors.refreshPage')}
                         </Button>

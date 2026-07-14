@@ -92,9 +92,9 @@ export function DeparturesEditor({ packageId, onChanged }: DeparturesEditorProps
 
   const statusBadge = (d: { seats_remaining: number; status: string }) => {
     if (d.status === 'cancelled') return <Badge variant="outline">{t('departures.cancelled', 'Cancelled')}</Badge>;
-    if (d.seats_remaining === 0) return <Badge className="bg-red-100 text-red-800">{t('departures.soldOut', 'Sold out')}</Badge>;
-    if (d.seats_remaining <= 3) return <Badge className="bg-yellow-100 text-yellow-800">{t('departures.limited', 'Limited')}</Badge>;
-    return <Badge className="bg-green-100 text-green-800">{t('departures.available', 'Available')}</Badge>;
+    if (d.seats_remaining === 0) return <Badge className="bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300">{t('departures.soldOut', 'Sold out')}</Badge>;
+    if (d.seats_remaining <= 3) return <Badge className="bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300">{t('departures.limited', 'Limited')}</Badge>;
+    return <Badge className="bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300">{t('departures.available', 'Available')}</Badge>;
   };
 
   return (

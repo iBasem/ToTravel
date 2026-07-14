@@ -106,7 +106,7 @@ export function AvailabilitySection({
 
                         {/* Check Availability Button */}
                         <Button
-                            className="h-12 px-6 bg-teal-600 hover:bg-teal-700 text-white font-medium md:ms-auto"
+                            className="h-12 px-6 font-medium md:ms-auto"
                             onClick={() => {
                                 const section = document.getElementById('upcoming-departures');
                                 if (section) {
@@ -144,7 +144,7 @@ export function AvailabilitySection({
                 {/* Loading State */}
                 {loading && (
                     <div className="flex items-center justify-center py-12">
-                        <Loader2 className="w-8 h-8 animate-spin text-teal-600" />
+                        <Loader2 className="w-8 h-8 animate-spin text-primary" />
                         <span className="ms-3 text-muted-foreground">{t('common.loading', 'Loading...')}</span>
                     </div>
                 )}

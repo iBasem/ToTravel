@@ -18,7 +18,7 @@ const NotFound = () => {
       <div className="text-center">
         <h1 className="text-4xl font-bold mb-4">{t('errors.404', '404')}</h1>
         <p className="text-xl text-muted-foreground mb-4">{t('errors.pageNotFound', 'Oops! Page not found')}</p>
-        <Link to="/" className="text-blue-500 hover:text-blue-700 underline">
+        <Link to="/" className="text-primary hover:text-primary/80 underline">
           {t('errors.returnHome', 'Return to Home')}
         </Link>
       </div>

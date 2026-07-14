@@ -45,15 +45,15 @@ export default function AdminAuth() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-4">
-      <Card className="w-full max-w-md border-slate-700 bg-slate-800/50 backdrop-blur-sm">
+    <div className="min-h-screen flex items-center justify-center bg-muted/50 p-4">
+      <Card className="w-full max-w-md">
         <CardHeader className="text-center space-y-4">
           <div className="mx-auto w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center">
             <Shield className="w-8 h-8 text-primary" />
           </div>
           <div>
-            <CardTitle className="text-2xl font-bold text-white">{t('adminAuth.title', 'Admin Access')}</CardTitle>
-            <CardDescription className="text-slate-400">
+            <CardTitle className="text-2xl font-bold">{t('adminAuth.title', 'Admin Access')}</CardTitle>
+            <CardDescription>
               {t('adminAuth.subtitle', 'Restricted access. Authorized personnel only.')}
             </CardDescription>
           </div>
@@ -61,14 +61,14 @@ export default function AdminAuth() {
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             {error && (
-              <Alert variant="destructive" className="bg-red-900/20 border-red-900">
+              <Alert variant="destructive">
                 <AlertCircle className="h-4 w-4" />
                 <AlertDescription>{error}</AlertDescription>
               </Alert>
             )}
 
             <div className="space-y-2">
-              <Label htmlFor="email" className="text-slate-200">{t('common.email')}</Label>
+              <Label htmlFor="email">{t('common.email')}</Label>
               <Input
                 id="email"
                 type="email"
@@ -77,13 +77,12 @@ export default function AdminAuth() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 disabled={loading}
-                className="bg-slate-700/50 border-slate-600 text-white placeholder:text-slate-500"
                 dir="ltr"
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password" className="text-slate-200">{t('common.password')}</Label>
+              <Label htmlFor="password">{t('common.password')}</Label>
               <Input
                 id="password"
                 type="password"
@@ -92,7 +91,6 @@ export default function AdminAuth() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 disabled={loading}
-                className="bg-slate-700/50 border-slate-600 text-white placeholder:text-slate-500"
                 dir="ltr"
               />
             </div>
@@ -113,7 +111,7 @@ export default function AdminAuth() {
             </Button>
           </form>
 
-          <p className="mt-6 text-center text-xs text-slate-500">
+          <p className="mt-6 text-center text-xs text-muted-foreground">
             {t('adminAuth.footer1', 'This portal is for authorized administrators only.')}
             <br />
             {t('adminAuth.footer2', 'Unauthorized access attempts are logged.')}

@@ -30,7 +30,7 @@ export function DepartureCard({ departure, durationDays, onConfirm }: DepartureC
             }`}>
             {/* Discount Badge - Top End Corner */}
             {hasDiscount && (
-                <Badge className="absolute top-4 end-4 bg-red-500 text-white font-semibold px-2 py-1">
+                <Badge className="absolute top-4 end-4 bg-deal text-deal-foreground font-semibold px-2 py-1">
                     -{discountPercent}%
                 </Badge>
             )}
@@ -134,7 +134,7 @@ export function DepartureCard({ departure, durationDays, onConfirm }: DepartureC
                             disabled={departure.seats_remaining === 0}
                             className={`min-w-[130px] ${departure.seats_remaining === 0
                                 ? 'bg-muted text-muted-foreground cursor-not-allowed'
-                                : 'bg-teal-600 hover:bg-teal-700'
+                                : ''
                                 }`}
                         >
                             {departure.seats_remaining === 0
