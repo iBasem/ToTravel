@@ -162,6 +162,21 @@
   .scrollbar-none::-webkit-scrollbar {
     display: none;
   }
+
+  /* Slow drift for dashed "flight path" decorations (agency CTA card) */
+  @keyframes dash-drift {
+    to {
+      stroke-dashoffset: -32;
+    }
+  }
+  .animate-dash-drift {
+    animation: dash-drift 3s linear infinite;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .animate-dash-drift {
+      animation: none;
+    }
+  }
 }
 
 /* Arabic Typography Enhancements */
