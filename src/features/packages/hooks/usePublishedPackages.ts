@@ -6,11 +6,14 @@ import type { Database } from '@/integrations/supabase/types';
 type Package = Database['public']['Tables']['packages']['Row'];
 type PackageMedia = Database['public']['Tables']['package_media']['Row'];
 type PackageRoute = Database['public']['Tables']['package_routes']['Row'];
+type PackageDeparture = Database['public']['Tables']['package_departures']['Row'];
 
 export interface PackageWithMedia extends Package {
   package_media?: PackageMedia[];
   /* Route coordinates for static map thumbnail */
   package_routes?: Pick<PackageRoute, 'latitude' | 'longitude' | 'destination_order' | 'name'>[];
+  /* Upcoming departure dates for the "When" (month) search filter */
+  package_departures?: Pick<PackageDeparture, 'departure_date' | 'status'>[];
 }
 
 export function usePublishedPackages() {
@@ -28,7 +31,8 @@ export function usePublishedPackages() {
         .select(`
           *,
           package_media (*),
-          package_routes (latitude, longitude, destination_order, name)
+          package_routes (latitude, longitude, destination_order, name),
+          package_departures (departure_date, status)
         `)
         .eq('status', 'published')
         .order('featured', { ascending: false })

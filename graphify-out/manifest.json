@@ -285,8 +285,8 @@
     "semantic_hash": ""
   },
   "src/features/home/components/HeroSection.tsx": {
-    "mtime": 1783598187.9306538,
-    "ast_hash": "ca1e3d693fe9167278fc1ea840eec75b",
+    "mtime": 1783998897.065607,
+    "ast_hash": "823867ba7e88c7a5b3cfdf121d2a08d4",
     "semantic_hash": ""
   },
   "src/features/home/components/TourCard.tsx": {
@@ -470,9 +470,9 @@
     "semantic_hash": ""
   },
   "src/features/packages/hooks/usePublishedPackages.ts": {
-    "mtime": 1782888287.9500425,
-    "ast_hash": "6be16323f503b4415eef4349fb71cdb6",
-    "semantic_hash": "6be16323f503b4415eef4349fb71cdb6"
+    "mtime": 1783998808.9577672,
+    "ast_hash": "1bacecb735fd88a36f060cb1082d8c41",
+    "semantic_hash": ""
   },
   "src/features/packages/lib/savePackagePayload.ts": {
     "mtime": 1783989543.8836324,
@@ -505,8 +505,8 @@
     "semantic_hash": ""
   },
   "src/features/packages/pages/PackagesList.tsx": {
-    "mtime": 1783598154.8313038,
-    "ast_hash": "1248a1ffff7d140884e584e4eec934fd",
+    "mtime": 1783998968.9158182,
+    "ast_hash": "93eaaa685676c0e743f339cac0d0812e",
     "semantic_hash": ""
   },
   "src/features/packages/routes.tsx": {
@@ -590,13 +590,13 @@
     "semantic_hash": "b1e3a450a749c61b3aef4af5b82d6e57"
   },
   "src/i18n/locales/ar.json": {
-    "mtime": 1783989741.7308385,
-    "ast_hash": "257abf9e77f68a7d676ac6d97ef611d1",
+    "mtime": 1783999085.4381175,
+    "ast_hash": "68977535d4c7d490e09cc9473bf6f06d",
     "semantic_hash": ""
   },
   "src/i18n/locales/en.json": {
-    "mtime": 1783989739.133509,
-    "ast_hash": "c71b34536f224e6a0a93ccc7eab2d61d",
+    "mtime": 1783999019.244885,
+    "ast_hash": "9dba70929e975ff86d7721d798cb386f",
     "semantic_hash": ""
   },
   "src/integrations/supabase/client.ts": {
@@ -850,9 +850,9 @@
     "semantic_hash": "d04e7b7557d3232fcfc1bd341f929615"
   },
   "src/ui/popover.tsx": {
-    "mtime": 1782888287.986095,
-    "ast_hash": "686fa6dc4c8e3f0e5c0e542b2a62ec4f",
-    "semantic_hash": "686fa6dc4c8e3f0e5c0e542b2a62ec4f"
+    "mtime": 1784002226.9461532,
+    "ast_hash": "60ae57ce0b626ed2ae76d0bdbdd1a1ca",
+    "semantic_hash": ""
   },
   "src/ui/progress.tsx": {
     "mtime": 1782888287.986095,
@@ -1635,8 +1635,8 @@
     "semantic_hash": ""
   },
   ".impeccable/hook.cache.json": {
-    "mtime": 1783994119.97446,
-    "ast_hash": "f42b9d604d09b26409daf56197e2c267",
+    "mtime": 1784002257.1973186,
+    "ast_hash": "9d276f890b947a024f0e967254328dc1",
     "semantic_hash": ""
   },
   "src/ui/ThemeToggle.tsx": {
@@ -1840,8 +1840,8 @@
     "semantic_hash": ""
   },
   "src/features/packages/hooks/useDestinations.ts": {
-    "mtime": 1783435942.5166488,
-    "ast_hash": "1904e32e307764e592da1ce6300f9f3f",
+    "mtime": 1783998803.7249434,
+    "ast_hash": "6b44def4fedfbc19b7d09d196ef1f61d",
     "semantic_hash": ""
   },
   "src/features/traveler/hooks/useTravelerProfile.ts": {
@@ -2747,6 +2747,21 @@
   "supabase/migrations/20260714120000_package_addons.sql": {
     "mtime": 1783989330.6359825,
     "ast_hash": "1bcf01ba890b006400da1fa51b430e12",
+    "semantic_hash": ""
+  },
+  "src/features/home/components/search/DestinationField.tsx": {
+    "mtime": 1784002256.669624,
+    "ast_hash": "db71b6abce0f3dbec2bfdb71451b2ca4",
+    "semantic_hash": ""
+  },
+  "src/features/home/components/search/MonthField.tsx": {
+    "mtime": 1783998858.7742474,
+    "ast_hash": "b82f61ccd7b4d29f17e668c6217732fa",
+    "semantic_hash": ""
+  },
+  "src/features/home/components/search/TravelersField.tsx": {
+    "mtime": 1783998872.4040973,
+    "ast_hash": "4f5fdcea9096cadec09db5700346c5f5",
     "semantic_hash": ""
   }
 }

@@ -2,7 +2,10 @@ import { useState, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/ui/button";
-import { MapPin, Calendar, Search, Users } from "lucide-react";
+import { Search } from "lucide-react";
+import { DestinationField, type DestinationSelection } from "./search/DestinationField";
+import { MonthField } from "./search/MonthField";
+import { TravelersField } from "./search/TravelersField";
 
 const HERO_IMAGE =
   "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1900&h=900&fit=crop";
@@ -13,19 +16,23 @@ const HERO_IMAGE =
  * of the card that routes to the packages listing.
  */
 export function HeroSection() {
-  const [searchLocation, setSearchLocation] = useState("");
-  const [searchDate, setSearchDate] = useState("");
-  const [travelers, setTravelers] = useState("2");
+  const [destination, setDestination] = useState<DestinationSelection | null>(null);
+  const [destinationText, setDestinationText] = useState("");
+  const [month, setMonth] = useState<string | null>(null);
+  const [adults, setAdults] = useState(2);
+  const [childrenCount, setChildrenCount] = useState(0);
   const { t } = useTranslation();
   const navigate = useNavigate();
 
   const handleSearch = (event: FormEvent) => {
     event.preventDefault();
     const params = new URLSearchParams();
-    if (searchLocation.trim()) params.set("search", searchLocation.trim());
-    if (searchDate.trim()) params.set("when", searchDate.trim());
-    if (travelers) params.set("travelers", travelers);
-    navigate(`/packages${params.toString() ? `?${params.toString()}` : ""}`);
+    if (destination) params.set("destination", destination.slug);
+    else if (destinationText.trim()) params.set("search", destinationText.trim());
+    if (month) params.set("month", month);
+    params.set("adults", String(adults));
+    if (childrenCount > 0) params.set("children", String(childrenCount));
+    navigate(`/packages?${params.toString()}`);
   };
 
   return (
@@ -55,46 +62,27 @@ export function HeroSection() {
             role="search"
             className="mt-8 sm:mt-12 w-full bg-card text-card-foreground rounded-3xl sm:rounded-full shadow-xl p-2 flex flex-col sm:flex-row sm:items-stretch gap-1 sm:gap-0"
           >
-            <label className="flex items-center gap-2.5 flex-1 min-w-0 px-4 py-2.5 cursor-text">
-              <MapPin className="w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground shrink-0" aria-hidden="true" />
-              <input
-                value={searchLocation}
-                onChange={(e) => setSearchLocation(e.target.value)}
-                placeholder={t('hero.whereTo')}
-                aria-label={t('hero.whereTo')}
-                className="w-full bg-transparent outline-none text-sm sm:text-base font-medium placeholder:text-muted-foreground"
-              />
-            </label>
+            <DestinationField
+              value={destination}
+              text={destinationText}
+              onTextChange={setDestinationText}
+              onSelect={setDestination}
+            />
 
             <div className="hidden sm:block w-px bg-border my-2" aria-hidden="true" />
 
-            <label className="flex items-center gap-2.5 flex-1 min-w-0 px-4 py-2.5 border-t border-border sm:border-t-0 cursor-text">
-              <Calendar className="w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground shrink-0" aria-hidden="true" />
-              <input
-                value={searchDate}
-                onChange={(e) => setSearchDate(e.target.value)}
-                placeholder={t('hero.when')}
-                aria-label={t('hero.when')}
-                className="w-full bg-transparent outline-none text-sm sm:text-base font-medium placeholder:text-muted-foreground"
-              />
-            </label>
+            <MonthField value={month} onChange={setMonth} />
 
             <div className="hidden sm:block w-px bg-border my-2" aria-hidden="true" />
 
-            <label className="flex items-center gap-2.5 px-4 py-2.5 border-t border-border sm:border-t-0">
-              <Users className="w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground shrink-0" aria-hidden="true" />
-              <select
-                value={travelers}
-                onChange={(e) => setTravelers(e.target.value)}
-                aria-label={t('hero.travelers')}
-                className="bg-transparent outline-none text-sm sm:text-base font-medium cursor-pointer"
-              >
-                <option value="1">{t('hero.adults1')}</option>
-                <option value="2">{t('hero.adults2')}</option>
-                <option value="3">{t('hero.adults3')}</option>
-                <option value="4">{t('hero.adults4')}</option>
-              </select>
-            </label>
+            <TravelersField
+              adults={adults}
+              childrenCount={childrenCount}
+              onChange={(nextAdults, nextChildren) => {
+                setAdults(nextAdults);
+                setChildrenCount(nextChildren);
+              }}
+            />
 
             <Button
               type="submit"

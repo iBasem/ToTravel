@@ -11,6 +11,25 @@ export interface DestinationWithStats extends DestinationRow {
 }
 
 /**
+ * Full destinations catalog (countries + regions, no stats) for the hero
+ * search combobox and for resolving /packages?destination=<slug> filters.
+ */
+export function useDestinationOptions() {
+  return useQuery({
+    queryKey: ['destinations', 'options'],
+    queryFn: async (): Promise<DestinationRow[]> => {
+      const { data, error } = await supabase
+        .from('destinations')
+        .select('*')
+        .order('display_order', { ascending: true });
+
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
+}
+
+/**
  * Destinations catalog (replaces the hardcoded DESTINATION_DATA array and the
  * home-page destinationCards array). For country cards the live tour count,
  * average price and average rating come from the destination_stats view,

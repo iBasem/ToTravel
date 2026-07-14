@@ -1,10 +1,12 @@
 import React, { useState, useMemo } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Star } from 'lucide-react';
+import { Star, X } from 'lucide-react';
 import { HeaderSection } from '@/features/home/components/HeaderSection';
 import { FooterSection } from '@/features/home/components/FooterSection';
 import { usePublishedPackages } from '../hooks/usePublishedPackages';
+import { useDestinationOptions } from '../hooks/useDestinations';
+import { localizedText } from '@/lib/localized';
 import { PackageCard } from '../components/PackageCard';
 import { FiltersSidebar, type FilterState } from '../components/filters/FiltersSidebar';
 import { Pagination } from '../components/Pagination';
@@ -17,8 +19,25 @@ import '../styles/packages-listing.css';
 
 const ITEMS_PER_PAGE = 15;
 
-export default function PackagesList() {
+function FilterChip({ label, onRemove }: { label: string; onRemove: () => void }) {
   const { t } = useTranslation();
+  return (
+    <span className="inline-flex items-center gap-1.5 ps-3 pe-1.5 py-1 rounded-full bg-secondary text-secondary-foreground text-sm font-medium">
+      {label}
+      <button
+        type="button"
+        onClick={onRemove}
+        aria-label={t('common.clearFilters')}
+        className="rounded-full p-0.5 hover:bg-foreground/10 transition-colors"
+      >
+        <X size={14} aria-hidden="true" />
+      </button>
+    </span>
+  );
+}
+
+export default function PackagesList() {
+  const { t, i18n } = useTranslation();
   const { packages, loading, error, refetch } = usePublishedPackages();
 
   // Wishlist state
@@ -96,18 +115,91 @@ export default function PackagesList() {
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
 
-  // Free-text query from the home hero search (/packages?search=...)
-  const [searchParams] = useSearchParams();
+  // Hero search params (/packages?search=&destination=&month=&adults=&children=)
+  const [searchParams, setSearchParams] = useSearchParams();
   const searchQuery = (searchParams.get('search') ?? '').trim().toLowerCase();
+  const destinationSlug = searchParams.get('destination');
+  const rawMonth = searchParams.get('month');
+  const monthFilter = rawMonth && /^\d{4}-(0[1-9]|1[0-2])$/.test(rawMonth) ? rawMonth : null;
+  const adults = Math.max(0, parseInt(searchParams.get('adults') ?? '', 10) || 0);
+  const childrenCount = Math.max(0, parseInt(searchParams.get('children') ?? '', 10) || 0);
+  const partySize = adults + childrenCount;
+
+  const { data: destinationRows = [] } = useDestinationOptions();
+  const selectedDestination = destinationSlug
+    ? destinationRows.find((d) => d.slug === destinationSlug) ?? null
+    : null;
+
+  // Country names (en + ar) to match against packages.destination text.
+  // A continent selection expands to every country tagged with its region
+  // keys; multi-country packages match because destination is a
+  // comma-separated list checked by containment (same rule as the
+  // destination_stats view).
+  const destinationNames = useMemo(() => {
+    if (!selectedDestination) return [];
+    const rows =
+      selectedDestination.kind === 'region'
+        ? destinationRows.filter(
+            (d) =>
+              d.kind === 'country' &&
+              d.region_keys.some((key) => selectedDestination.region_keys.includes(key))
+          )
+        : [selectedDestination];
+    return rows
+      .flatMap((d) => [d.name, d.name_ar])
+      .filter((name): name is string => !!name)
+      .map((name) => name.toLowerCase());
+  }, [selectedDestination, destinationRows]);
+
+  const removeSearchParams = (...keys: string[]) => {
+    const next = new URLSearchParams(searchParams);
+    keys.forEach((key) => next.delete(key));
+    setSearchParams(next, { replace: true });
+  };
 
   // Filtered + sorted packages
   const processedPackages = useMemo(() => {
+    const todayIso = new Date().toISOString().slice(0, 10);
     const result = packages.filter((pkg) => {
       const matchesSearch =
         searchQuery === '' ||
         [pkg.title, pkg.title_ar, pkg.destination, pkg.destination_ar]
           .some(field => (field ?? '').toLowerCase().includes(searchQuery));
       if (!matchesSearch) return false;
+
+      if (destinationSlug) {
+        const haystack = `${pkg.destination ?? ''}|${pkg.destination_ar ?? ''}`.toLowerCase();
+        const matchesDestination = destinationNames.length > 0
+          ? destinationNames.some((name) => haystack.includes(name))
+          : haystack.includes(destinationSlug.toLowerCase());
+        if (!matchesDestination) return false;
+      }
+
+      if (monthFilter) {
+        const upcoming = (pkg.package_departures ?? []).filter(
+          (d) => d.status === 'scheduled' && d.departure_date >= todayIso
+        );
+        let matchesMonth: boolean;
+        if (upcoming.length > 0) {
+          matchesMonth = upcoming.some((d) => d.departure_date.startsWith(monthFilter));
+        } else if (pkg.available_from || pkg.available_to) {
+          // No fixed departures: fall back to the availability window
+          const monthStart = `${monthFilter}-01`;
+          const monthEnd = `${monthFilter}-31`;
+          matchesMonth =
+            (!pkg.available_from || pkg.available_from.slice(0, 10) <= monthEnd) &&
+            (!pkg.available_to || pkg.available_to.slice(0, 10) >= monthStart);
+        } else {
+          // Undated packages are treated as available any month
+          matchesMonth = true;
+        }
+        if (!matchesMonth) return false;
+      }
+
+      const matchesParty =
+        partySize === 0 || pkg.max_participants == null || pkg.max_participants >= partySize;
+      if (!matchesParty) return false;
+
       const matchesLength =
         pkg.duration_days >= filters.lengthRange[0] &&
         pkg.duration_days <= filters.lengthRange[1];
@@ -149,12 +241,12 @@ export default function PackagesList() {
     }
 
     return result;
-  }, [packages, filters, searchQuery]);
+  }, [packages, filters, searchQuery, destinationSlug, destinationNames, monthFilter, partySize]);
 
   // Reset page when filters change
   React.useEffect(() => {
     setCurrentPage(1);
-  }, [filters, searchQuery]);
+  }, [filters, searchQuery, destinationSlug, monthFilter, partySize]);
 
   const totalPages = Math.ceil(processedPackages.length / ITEMS_PER_PAGE);
   const paginatedPackages = processedPackages.slice(
@@ -236,6 +328,47 @@ export default function PackagesList() {
                 <Star size={18} className="pkg-results-star" fill="currentColor" />
                 <span>{t('tours.resultsCount', { count: processedPackages.length })}</span>
               </div>
+
+              {/* Active hero-search filters */}
+              {(searchQuery || destinationSlug || monthFilter || partySize > 0) && (
+                <div className="flex flex-wrap items-center gap-2 mb-4">
+                  {destinationSlug && (
+                    <FilterChip
+                      label={
+                        selectedDestination
+                          ? localizedText(selectedDestination, 'name')
+                          : destinationSlug
+                      }
+                      onRemove={() => removeSearchParams('destination')}
+                    />
+                  )}
+                  {searchQuery && (
+                    <FilterChip
+                      label={`"${searchParams.get('search')}"`}
+                      onRemove={() => removeSearchParams('search')}
+                    />
+                  )}
+                  {monthFilter && (
+                    <FilterChip
+                      label={new Intl.DateTimeFormat(i18n.language, {
+                        month: 'long',
+                        year: 'numeric',
+                      }).format(new Date(
+                        Number(monthFilter.slice(0, 4)),
+                        Number(monthFilter.slice(5, 7)) - 1,
+                        1
+                      ))}
+                      onRemove={() => removeSearchParams('month')}
+                    />
+                  )}
+                  {partySize > 0 && (
+                    <FilterChip
+                      label={t('tours.travelersCount', { count: partySize })}
+                      onRemove={() => removeSearchParams('adults', 'children')}
+                    />
+                  )}
+                </div>
+              )}
 
               {/* Card List */}
               {paginatedPackages.length > 0 ? (
