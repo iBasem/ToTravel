@@ -22,9 +22,20 @@ export interface InclusionCategory {
 export type PackageType = 'honeymoon' | 'family' | 'group' | 'solo';
 export const PACKAGE_TYPES: PackageType[] = ['group', 'family', 'honeymoon', 'solo'];
 
-// International flights: bundled in the price or booked by the traveler.
-// ('optional' paid add-on is a planned extension — needs an add-ons system.)
-export type FlightOption = 'not_included' | 'included';
+// International flights: bundled in the price, booked by the traveler, or
+// offered as an optional paid add-on (defined in the add-ons list below).
+export type FlightOption = 'not_included' | 'included' | 'optional';
+
+// A priced optional extra the traveler can select at booking (flight,
+// transfer, insurance, honeymoon extras, ...). Price is a string in the
+// form (like basePrice); numeric in the payload/DB.
+export interface PackageAddonForm {
+  id?: string; // DB row id when loaded; absent for new rows
+  name: string;
+  name_ar: string;
+  price: string;
+  per_person: boolean;
+}
 
 export interface PackageBasicInfo {
   title: string;
@@ -68,6 +79,7 @@ export interface PackagePricing {
   currency?: string; // legacy; platform currency is fixed (getPlatformCurrency)
   basePrice: string; // string in the form; base_price column is numeric
   flight_option: FlightOption;
+  addons: PackageAddonForm[];
   inclusions: {
     accommodation: InclusionCategory;
     meals: InclusionCategory;

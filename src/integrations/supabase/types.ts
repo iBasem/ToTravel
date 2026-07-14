@@ -396,8 +396,53 @@ export type Database = {
         }
         Relationships: []
       }
+      package_addons: {
+        Row: {
+          created_at: string
+          display_order: number
+          id: string
+          name: string
+          name_ar: string | null
+          package_id: string
+          per_person: boolean
+          price: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          display_order?: number
+          id?: string
+          name: string
+          name_ar?: string | null
+          package_id: string
+          per_person?: boolean
+          price: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          display_order?: number
+          id?: string
+          name?: string
+          name_ar?: string | null
+          package_id?: string
+          per_person?: boolean
+          price?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "package_addons_package_id_fkey"
+            columns: ["package_id"]
+            isOneToOne: false
+            referencedRelation: "packages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       package_bookings: {
         Row: {
+          addons: Json
           booking_date: string
           created_at: string
           departure_id: string | null
@@ -414,6 +459,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          addons?: Json
           booking_date: string
           created_at?: string
           departure_id?: string | null
@@ -430,6 +476,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          addons?: Json
           booking_date?: string
           created_at?: string
           departure_id?: string | null

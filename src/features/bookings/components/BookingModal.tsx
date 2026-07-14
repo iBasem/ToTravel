@@ -5,6 +5,7 @@ import { Input } from '@/ui/input';
 import { Textarea } from '@/ui/textarea';
 import { Label } from '@/ui/label';
 import { Calendar } from '@/ui/calendar';
+import { Checkbox } from '@/ui/checkbox';
 import { Popover, PopoverContent, PopoverTrigger } from '@/ui/popover';
 import { CalendarIcon, Users, Loader2 } from 'lucide-react';
 import { format } from 'date-fns';
@@ -14,7 +15,7 @@ import { useCreateBooking } from '@/features/bookings/hooks/useCreateBooking';
 import { useAuth } from '@/features/auth/context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import type { Departure } from '@/features/packages/types';
+import type { Departure, PackageAddon } from '@/features/packages/types';
 
 interface BookingModalProps {
     isOpen: boolean;
@@ -24,6 +25,7 @@ interface BookingModalProps {
     basePrice: number;
     maxParticipants?: number;
     departure?: Departure | null;
+    addons?: PackageAddon[];
 }
 
 export function BookingModal({
@@ -34,11 +36,13 @@ export function BookingModal({
     basePrice,
     maxParticipants = 20,
     departure,
+    addons = [],
 }: BookingModalProps) {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     const [date, setDate] = useState<Date>();
     const [participants, setParticipants] = useState(1);
     const [specialRequests, setSpecialRequests] = useState('');
+    const [selectedAddonIds, setSelectedAddonIds] = useState<Set<string>>(new Set());
     const { createBooking, loading } = useCreateBooking();
     const { user } = useAuth();
     const navigate = useNavigate();
@@ -47,7 +51,26 @@ export function BookingModal({
     const effectiveMax = departure
         ? Math.max(1, Math.min(maxParticipants, departure.seats_remaining))
         : maxParticipants;
-    const totalPrice = basePrice * participants;
+
+    // Display estimate only — the edge function recomputes the total
+    // server-side from the same inputs.
+    const selectedAddons = addons.filter((a) => selectedAddonIds.has(a.id));
+    const addonTotal = selectedAddons.reduce(
+        (sum, a) => sum + (a.per_person ? a.price * participants : a.price),
+        0
+    );
+    const totalPrice = basePrice * participants + addonTotal;
+
+    const addonLabel = (addon: PackageAddon) =>
+        i18n.language === 'ar' && addon.name_ar ? addon.name_ar : addon.name;
+
+    const toggleAddon = (id: string) => {
+        setSelectedAddonIds((prev) => {
+            const next = new Set(prev);
+            if (next.has(id)) next.delete(id); else next.add(id);
+            return next;
+        });
+    };
 
     const handleSubmit = async () => {
         if (!user) {
@@ -67,6 +90,7 @@ export function BookingModal({
             participants,
             specialRequests,
             departureId: departure?.id,
+            addonIds: [...selectedAddonIds],
         });
 
         if (result.success) {
@@ -150,6 +174,35 @@ export function BookingModal({
                         </div>
                     </div>
 
+                    {/* Optional extras */}
+                    {addons.length > 0 && (
+                        <div className="space-y-2">
+                            <Label>{t('booking.optionalExtras', 'Optional extras')}</Label>
+                            <div className="space-y-2">
+                                {addons.map((addon) => (
+                                    <label
+                                        key={addon.id}
+                                        className="flex items-center justify-between gap-3 rounded-md border px-3 py-2 cursor-pointer hover:bg-muted/50 transition-colors"
+                                    >
+                                        <span className="flex items-center gap-2">
+                                            <Checkbox
+                                                checked={selectedAddonIds.has(addon.id)}
+                                                onCheckedChange={() => toggleAddon(addon.id)}
+                                            />
+                                            <span className="text-sm">{addonLabel(addon)}</span>
+                                        </span>
+                                        <span className="text-sm font-medium whitespace-nowrap">
+                                            +{formatCurrency(addon.price)}
+                                            {addon.per_person && (
+                                                <span className="text-muted-foreground font-normal"> / {t('booking.perPerson', 'person')}</span>
+                                            )}
+                                        </span>
+                                    </label>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+
                     {/* Special Requests */}
                     <div className="space-y-2">
                         <Label>{t('booking.specialRequests')}</Label>
@@ -170,6 +223,14 @@ export function BookingModal({
                             <span>{t('booking.participants')}</span>
                             <span>× {participants}</span>
                         </div>
+                        {selectedAddons.map((addon) => (
+                            <div key={addon.id} className="flex justify-between mb-2 text-sm text-muted-foreground">
+                                <span>{addonLabel(addon)}</span>
+                                <span>
+                                    +{formatCurrency(addon.per_person ? addon.price * participants : addon.price)}
+                                </span>
+                            </div>
+                        ))}
                         <div className="flex justify-between text-lg font-bold border-t pt-2">
                             <span>{t('common.total')}</span>
                             <span>{formatCurrency(totalPrice)}</span>

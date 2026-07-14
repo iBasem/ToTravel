@@ -61,6 +61,15 @@ export function buildSavePackagePayload(formData: PackageFormData) {
       description_ar: d.description_ar,
       activities_ar: d.activities_ar || [],
     })),
+    addons: (formData.pricing.addons || [])
+      .filter((a) => a.name && a.name.trim())
+      .map((a, i) => ({
+        name: a.name.trim(),
+        name_ar: a.name_ar || null,
+        price: parseFloat(a.price) || 0,
+        per_person: a.per_person,
+        display_order: i,
+      })),
     media: (formData.media || []).map((m, i) => ({
       file_name: m.file_name || "",
       file_path: m.file_path || m.url,

@@ -10,12 +10,14 @@ import { Label } from "@/ui/label";
 import { Button } from "@/ui/button";
 import { Badge } from "@/ui/badge";
 import { RadioGroup, RadioGroupItem } from "@/ui/radio-group";
-import { Plus, X, Plane, BookmarkPlus, Loader2 } from "lucide-react";
+import { Checkbox } from "@/ui/checkbox";
+import { Plus, X, Plane, BookmarkPlus, Loader2, Trash2, PlusCircle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/features/auth/context/AuthContext";
 import { toast } from "sonner";
+import { getPlatformCurrency } from "@/lib/formatters";
 
-import type { PackageFormData, FlightOption } from "@/features/packages/types/wizard";
+import type { PackageFormData, FlightOption, PackageAddonForm } from "@/features/packages/types/wizard";
 
 interface PricingStepProps {
   data: PackageFormData['pricing'];
@@ -147,7 +149,78 @@ export function PricingStep({ data, onUpdate }: PricingStepProps) {
                 <span className="text-sm text-muted-foreground">{t('packageWizard.flightsIncludedHint', 'Your base price covers international flights')}</span>
               </Label>
             </div>
+            <div className="flex items-start gap-3">
+              <RadioGroupItem value="optional" id="flights-optional" className="mt-1" />
+              <Label htmlFor="flights-optional" className="cursor-pointer text-start">
+                <span className="font-medium block">{t('packageWizard.flightsOptional', 'Offered as an optional add-on')}</span>
+                <span className="text-sm text-muted-foreground">{t('packageWizard.flightsOptionalHint', 'Add the flight as a priced extra below — travelers choose it at booking')}</span>
+              </Label>
+            </div>
           </RadioGroup>
+        </CardContent>
+      </Card>
+
+      {/* Optional extras — priced add-ons travelers select at booking */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-start">
+            <PlusCircle className="w-5 h-5" />
+            {t('packageWizard.addonsTitle', 'Optional extras')}
+          </CardTitle>
+          <p className="text-sm text-muted-foreground text-start">
+            {t('packageWizard.addonsHint', 'Priced add-ons travelers can select at booking — flights, transfers, insurance...')}
+          </p>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          {(data.addons || []).map((addon, index) => (
+            <div key={index} className="grid grid-cols-1 sm:grid-cols-[1fr_1fr_120px_auto_auto] gap-2 items-center border rounded-md p-3">
+              <Input
+                value={addon.name}
+                onChange={(e) => setField("addons", data.addons.map((a, i) => i === index ? { ...a, name: e.target.value } : a))}
+                placeholder={t('packageWizard.addonNamePlaceholder', 'e.g., International flight from Riyadh')}
+              />
+              <Input
+                dir="rtl"
+                value={addon.name_ar}
+                onChange={(e) => setField("addons", data.addons.map((a, i) => i === index ? { ...a, name_ar: e.target.value } : a))}
+                placeholder={t('packageWizard.addonNameArPlaceholder', 'Arabic name (optional)')}
+              />
+              <Input
+                type="number"
+                min="0"
+                dir="ltr"
+                value={addon.price}
+                onChange={(e) => setField("addons", data.addons.map((a, i) => i === index ? { ...a, price: e.target.value } : a))}
+                placeholder={`0 ${getPlatformCurrency()}`}
+              />
+              <Label className="flex items-center gap-2 cursor-pointer text-sm whitespace-nowrap">
+                <Checkbox
+                  checked={addon.per_person}
+                  onCheckedChange={(checked) => setField("addons", data.addons.map((a, i) => i === index ? { ...a, per_person: !!checked } : a))}
+                />
+                {t('packageWizard.perPerson', 'per person')}
+              </Label>
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                onClick={() => setField("addons", data.addons.filter((_, i) => i !== index))}
+                className="text-destructive hover:text-destructive hover:bg-destructive/10"
+              >
+                <Trash2 className="w-4 h-4" />
+              </Button>
+            </div>
+          ))}
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => setField("addons", [...(data.addons || []), { name: '', name_ar: '', price: '', per_person: true } as PackageAddonForm])}
+            className="flex items-center gap-2"
+          >
+            <Plus className="w-4 h-4" />
+            {t('packageWizard.addAddon', 'Add extra')}
+          </Button>
         </CardContent>
       </Card>
 

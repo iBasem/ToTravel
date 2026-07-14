@@ -59,6 +59,20 @@ describe('buildSavePackagePayload', () => {
     expect(media[1]).toMatchObject({ media_type: 'video', is_primary: true, display_order: 1 });
   });
 
+  it('maps add-ons with numeric prices and drops nameless rows', () => {
+    const form = base();
+    form.pricing.addons = [
+      { name: 'International flight from Riyadh', name_ar: 'رحلة جوية', price: '1200', per_person: true },
+      { name: '   ', name_ar: '', price: '50', per_person: false }, // blank name -> dropped
+      { name: 'Travel insurance', name_ar: '', price: '', per_person: false },
+    ];
+    const addons = buildSavePackagePayload(form).addons;
+    expect(addons).toEqual([
+      { name: 'International flight from Riyadh', name_ar: 'رحلة جوية', price: 1200, per_person: true, display_order: 0 },
+      { name: 'Travel insurance', name_ar: null, price: 0, per_person: false, display_order: 1 },
+    ]);
+  });
+
   it('carries the package type and flight option', () => {
     const form = base();
     form.basicInfo.package_type = 'honeymoon';

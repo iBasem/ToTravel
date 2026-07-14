@@ -18,10 +18,11 @@ export async function loadPackageFormData(
 
   if (packageError) throw packageError;
 
-  const [{ data: routeData }, { data: itineraryData }, { data: mediaData }] = await Promise.all([
+  const [{ data: routeData }, { data: itineraryData }, { data: mediaData }, { data: addonData }] = await Promise.all([
     supabase.from('package_routes').select('*').eq('package_id', id).order('destination_order'),
     supabase.from('itineraries').select('*').eq('package_id', id).order('day_number'),
     supabase.from('package_media').select('*').eq('package_id', id).order('display_order'),
+    supabase.from('package_addons').select('*').eq('package_id', id).order('display_order'),
   ]);
 
   const formData: PackageFormData = {
@@ -72,6 +73,13 @@ export async function loadPackageFormData(
     pricing: {
       basePrice: packageData.base_price?.toString() || '',
       flight_option: (packageData.flight_option || 'not_included') as FlightOption,
+      addons: (addonData || []).map(item => ({
+        id: item.id,
+        name: item.name,
+        name_ar: item.name_ar || '',
+        price: item.price?.toString() || '0',
+        per_person: item.per_person,
+      })),
       inclusions: {
         accommodation: { included: false, details: [] },
         meals: { included: false, details: [] },

@@ -416,6 +416,9 @@
   "414": "primary-foreground",
   "415": "secondary-foreground",
   "416": "4. Plan three variants: identity first, then mode, then axes",
-  "417": "search.py",
-  "418": "20260709120200_seed_demo_admin.sql"
+  "418": "20260709120200_seed_demo_admin.sql",
+  "420": "8",
+  "421": "destructive-foreground",
+  "423": "primary-foreground",
+  "424": "secondary-foreground"
 }

@@ -181,7 +181,9 @@ export function WhatsIncluded({ inclusions, exclusions, flightOption }: WhatsInc
                         <span className="text-sm font-medium text-foreground">
                             {flightOption === 'included'
                                 ? t('packageDetails.flightsIncluded', 'International flights are included in the price')
-                                : t('packageDetails.flightsNotIncluded', 'International flights are not included — travelers book their own')}
+                                : flightOption === 'optional'
+                                    ? t('packageDetails.flightsOptional', 'International flights are available as an optional add-on at booking')
+                                    : t('packageDetails.flightsNotIncluded', 'International flights are not included — travelers book their own')}
                         </span>
                     </div>
                 )}

@@ -42,12 +42,13 @@ Deno.serve(async (req: Request) => {
       return json(400, { code: "INVALID_BODY", error: "Invalid JSON body" });
     }
 
-    const { package_id, booking_date, participants, special_requests, departure_id } = payload as {
+    const { package_id, booking_date, participants, special_requests, departure_id, addon_ids } = payload as {
       package_id?: string;
       booking_date?: string;
       participants?: number;
       special_requests?: string;
       departure_id?: string;
+      addon_ids?: string[];
     };
 
     if (!package_id || typeof package_id !== "string") {
@@ -60,6 +61,9 @@ Deno.serve(async (req: Request) => {
     }
     if (!Number.isInteger(participants) || (participants as number) < 1) {
       return json(400, { code: "INVALID_PARTICIPANTS", error: "participants must be a positive integer" });
+    }
+    if (addon_ids !== undefined && (!Array.isArray(addon_ids) || addon_ids.length > 20 || addon_ids.some((a) => typeof a !== "string"))) {
+      return json(400, { code: "INVALID_ADDONS", error: "addon_ids must be an array of ids" });
     }
 
     // Service-role client: trusted reads/writes independent of RLS
@@ -114,7 +118,37 @@ Deno.serve(async (req: Request) => {
       departureId = dep.id as string;
     }
 
-    const total_price = unitPrice * (participants as number);
+    // Add-ons are priced server-side from package_addons and snapshotted on
+    // the booking (name + price frozen at booking time) — the client only
+    // sends ids, never prices.
+    let addonTotal = 0;
+    let addonSnapshot: Array<{
+      id: string; name: string; name_ar: string | null; price: number; per_person: boolean;
+    }> = [];
+    const uniqueAddonIds = [...new Set(addon_ids ?? [])];
+    if (uniqueAddonIds.length > 0) {
+      const { data: addonRows, error: addonError } = await adminClient
+        .from("package_addons")
+        .select("id, name, name_ar, price, per_person")
+        .eq("package_id", package_id)
+        .in("id", uniqueAddonIds);
+      if (addonError || !addonRows || addonRows.length !== uniqueAddonIds.length) {
+        return json(400, { code: "INVALID_ADDONS", error: "One or more add-ons not found for this package" });
+      }
+      addonSnapshot = addonRows.map((a) => ({
+        id: a.id as string,
+        name: a.name as string,
+        name_ar: (a.name_ar as string | null) ?? null,
+        price: Number(a.price),
+        per_person: Boolean(a.per_person),
+      }));
+      addonTotal = addonSnapshot.reduce(
+        (sum, a) => sum + (a.per_person ? a.price * (participants as number) : a.price),
+        0,
+      );
+    }
+
+    const total_price = unitPrice * (participants as number) + addonTotal;
 
     const { data: booking, error: insertError } = await adminClient
       .from("package_bookings")
@@ -125,6 +159,7 @@ Deno.serve(async (req: Request) => {
         departure_id: departureId,
         participants,
         total_price,
+        addons: addonSnapshot,
         special_requests: special_requests || null,
         status: "pending",
         payment_status: "pending",

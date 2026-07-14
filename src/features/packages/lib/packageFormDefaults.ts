@@ -28,6 +28,7 @@ export const createInitialPackageFormData = (): PackageFormData => ({
   pricing: {
     basePrice: "",
     flight_option: 'not_included',
+    addons: [],
     inclusions: {
       accommodation: { included: false, details: [] },
       meals: { included: false, details: [] },

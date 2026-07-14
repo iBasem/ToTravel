@@ -332,6 +332,7 @@ export default function PackageDetails() {
         basePrice={selectedDeparture?.discount_price || selectedDeparture?.price || packageDetails.base_price}
         maxParticipants={packageDetails.max_participants}
         departure={selectedDeparture}
+        addons={packageDetails.package_addons}
       />
 
       {/* Ask-the-agency dialog (messages land in the agency inbox) */}

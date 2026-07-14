@@ -235,8 +235,8 @@
     "semantic_hash": ""
   },
   "src/features/bookings/components/BookingModal.tsx": {
-    "mtime": 1783416833.7841835,
-    "ast_hash": "91b2d3e42466c407e0f7e164565c9919",
+    "mtime": 1783989676.7531595,
+    "ast_hash": "86895ead5947c9937bc92bd296d9d859",
     "semantic_hash": ""
   },
   "src/features/bookings/hooks/useAdminBookings.ts": {
@@ -250,8 +250,8 @@
     "semantic_hash": ""
   },
   "src/features/bookings/hooks/useCreateBooking.ts": {
-    "mtime": 1783337527.1014714,
-    "ast_hash": "984f9e95ac5b9f4f993aa4b5a381bbdc",
+    "mtime": 1783989633.0453362,
+    "ast_hash": "746eddaccd6e7135963aa1ff3a01eae5",
     "semantic_hash": ""
   },
   "src/features/bookings/pages/AdminBookings.tsx": {
@@ -360,8 +360,8 @@
     "semantic_hash": ""
   },
   "src/features/packages/components/details/WhatsIncluded.tsx": {
-    "mtime": 1783985823.87618,
-    "ast_hash": "8a7310e42a9a5485e0668748c851f1a4",
+    "mtime": 1783989605.3846252,
+    "ast_hash": "16da2cc340463bfdfd5311e7bb93649d",
     "semantic_hash": ""
   },
   "src/features/packages/components/filters/CheckboxFilter.tsx": {
@@ -395,8 +395,8 @@
     "semantic_hash": ""
   },
   "src/features/packages/components/wizard-steps/PricingStep.tsx": {
-    "mtime": 1783985550.0013766,
-    "ast_hash": "8a72604cca69e13cffb9d83111b27f10",
+    "mtime": 1783989589.714511,
+    "ast_hash": "b026fae8d7ec7e18406a7ac439f73ae6",
     "semantic_hash": ""
   },
   "src/features/packages/components/wizard-steps/RouteStep.tsx": {
@@ -460,8 +460,8 @@
     "semantic_hash": "fc9846ca8f602a3361536c5fcd981c55"
   },
   "src/features/packages/hooks/usePackageDetails.ts": {
-    "mtime": 1783985852.9209144,
-    "ast_hash": "7df6ea80328522bfc2c8680dbfbe94ab",
+    "mtime": 1783989617.6235414,
+    "ast_hash": "2858b0f571a74bf63c232ce951f7de19",
     "semantic_hash": ""
   },
   "src/features/packages/hooks/usePackages.ts": {
@@ -475,8 +475,8 @@
     "semantic_hash": "6be16323f503b4415eef4349fb71cdb6"
   },
   "src/features/packages/lib/savePackagePayload.ts": {
-    "mtime": 1783985263.5376408,
-    "ast_hash": "1867ea65c6bba4ce5679788275257cd8",
+    "mtime": 1783989543.8836324,
+    "ast_hash": "874ef40495542c5d89a504eaae1761b5",
     "semantic_hash": ""
   },
   "src/features/packages/pages/CreatePackage.tsx": {
@@ -500,8 +500,8 @@
     "semantic_hash": ""
   },
   "src/features/packages/pages/PackageDetails.tsx": {
-    "mtime": 1783985851.081838,
-    "ast_hash": "c5834b04f4e4ce48a2ab39e876b1238a",
+    "mtime": 1783989686.156452,
+    "ast_hash": "90a53988c219841ecd59f6626e7027dd",
     "semantic_hash": ""
   },
   "src/features/packages/pages/PackagesList.tsx": {
@@ -515,13 +515,13 @@
     "semantic_hash": "736f773c4aa7430075363fbf02f2f7f4"
   },
   "src/features/packages/types.ts": {
-    "mtime": 1783985848.5975752,
-    "ast_hash": "4083b7bf7ab4b409087b6aac3fdab342",
+    "mtime": 1783989602.2025964,
+    "ast_hash": "b9b0976586acad536abdb498a5861f81",
     "semantic_hash": ""
   },
   "src/features/packages/types/wizard.ts": {
-    "mtime": 1783985244.4949884,
-    "ast_hash": "9fda9d4cfcc0eb683e1561da2335dfc4",
+    "mtime": 1783989540.1941488,
+    "ast_hash": "a07ed5f0b6cbbcb47768828720854780",
     "semantic_hash": ""
   },
   "src/features/packages/utils/staticMap.ts": {
@@ -590,13 +590,13 @@
     "semantic_hash": "b1e3a450a749c61b3aef4af5b82d6e57"
   },
   "src/i18n/locales/ar.json": {
-    "mtime": 1783986002.8403802,
-    "ast_hash": "f6c217762186bdaa94995c7b4cda868c",
+    "mtime": 1783989741.7308385,
+    "ast_hash": "257abf9e77f68a7d676ac6d97ef611d1",
     "semantic_hash": ""
   },
   "src/i18n/locales/en.json": {
-    "mtime": 1783985989.634282,
-    "ast_hash": "f2a08a5262f6d2cf0af5aa00c4b7840b",
+    "mtime": 1783989739.133509,
+    "ast_hash": "c71b34536f224e6a0a93ccc7eab2d61d",
     "semantic_hash": ""
   },
   "src/integrations/supabase/client.ts": {
@@ -605,8 +605,8 @@
     "semantic_hash": "83f621c852514877a7f6d612119fd1e4"
   },
   "src/integrations/supabase/types.ts": {
-    "mtime": 1783985221.817432,
-    "ast_hash": "abe0ca50ff87eab8504a90d8dcda45ec",
+    "mtime": 1783989523.4076493,
+    "ast_hash": "f6280dae875e0533b408a4a08216755f",
     "semantic_hash": ""
   },
   "src/layouts/AdminLayout.tsx": {
@@ -955,8 +955,8 @@
     "semantic_hash": "7e393cbddcd7aef31ec1c0ca332a4319"
   },
   "supabase/functions/create-booking/index.ts": {
-    "mtime": 1783337416.0385277,
-    "ast_hash": "951cd27eb16f4eed40bd52d799f9e1e4",
+    "mtime": 1783989409.5963626,
+    "ast_hash": "99464c2b2c121851f82deeae521e9089",
     "semantic_hash": ""
   },
   "supabase/functions/create-review/index.ts": {
@@ -1635,8 +1635,8 @@
     "semantic_hash": ""
   },
   ".impeccable/hook.cache.json": {
-    "mtime": 1783986080.1276314,
-    "ast_hash": "ca249b5c6cf1239ece4366f279a1ceea",
+    "mtime": 1783989820.014621,
+    "ast_hash": "2efd3b5e76a4cc428d802125959b356b",
     "semantic_hash": ""
   },
   "src/ui/ThemeToggle.tsx": {
@@ -2710,13 +2710,13 @@
     "semantic_hash": ""
   },
   "src/features/packages/lib/packageFormDefaults.ts": {
-    "mtime": 1783985260.2423582,
-    "ast_hash": "15368f6593123d13e72c3b99ca47d05c",
+    "mtime": 1783989542.0794017,
+    "ast_hash": "2f883615a71b27488525b9d7ed6978fc",
     "semantic_hash": ""
   },
   "src/features/packages/lib/savePackagePayload.test.ts": {
-    "mtime": 1783986035.2981968,
-    "ast_hash": "88f5618da4a3ab20ff516591ae614c94",
+    "mtime": 1783989819.759523,
+    "ast_hash": "9326ecbc70a607a281305c9c72f0cad4",
     "semantic_hash": ""
   },
   "src/features/packages/lib/wizardValidation.test.ts": {
@@ -2735,13 +2735,18 @@
     "semantic_hash": ""
   },
   "src/features/packages/lib/loadPackageFormData.ts": {
-    "mtime": 1783985718.0324647,
-    "ast_hash": "83c5d6c725d93abdab132c8832d55923",
+    "mtime": 1783989559.7129054,
+    "ast_hash": "b983b580e1fe8c35df4a84ee920d8b94",
     "semantic_hash": ""
   },
   "supabase/migrations/20260714100000_wavec_types_flights_gates.sql": {
     "mtime": 1783985069.1825101,
     "ast_hash": "0d31c47e46dccd7a063d44a693ad7a8e",
+    "semantic_hash": ""
+  },
+  "supabase/migrations/20260714120000_package_addons.sql": {
+    "mtime": 1783989330.6359825,
+    "ast_hash": "1bcf01ba890b006400da1fa51b430e12",
     "semantic_hash": ""
   }
 }

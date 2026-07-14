@@ -10,6 +10,8 @@ export interface BookingFormData {
     participants: number;
     specialRequests?: string;
     departureId?: string;
+    // Selected optional extras — ids only; the edge function prices them.
+    addonIds?: string[];
 }
 
 export function useCreateBooking() {
@@ -34,6 +36,7 @@ export function useCreateBooking() {
                     participants: formData.participants,
                     special_requests: formData.specialRequests || null,
                     departure_id: formData.departureId || null,
+                    addon_ids: formData.addonIds?.length ? formData.addonIds : undefined,
                 },
             });
 

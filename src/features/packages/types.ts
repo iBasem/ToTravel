@@ -81,8 +81,19 @@ export interface HeroGalleryProps {
 export interface WhatsIncludedProps {
     inclusions: string[];
     exclusions: string[];
-    // International flights bundled in the price, or booked by the traveler.
-    flightOption?: 'not_included' | 'included' | null;
+    // International flights bundled in the price, booked by the traveler,
+    // or offered as a priced optional add-on.
+    flightOption?: 'not_included' | 'included' | 'optional' | null;
+}
+
+// A bookable optional extra as shown to travelers.
+export interface PackageAddon {
+    id: string;
+    name: string;
+    name_ar: string | null;
+    price: number;
+    per_person: boolean;
+    display_order: number;
 }
 
 // Props for the OperatorInfo component

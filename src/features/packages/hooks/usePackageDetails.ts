@@ -24,7 +24,15 @@ export interface PackageDetails {
   exclusions_ar?: string[] | null;
   highlights?: string[] | null;
   package_type?: string | null;
-  flight_option?: 'not_included' | 'included' | null;
+  flight_option?: 'not_included' | 'included' | 'optional' | null;
+  package_addons?: Array<{
+    id: string;
+    name: string;
+    name_ar: string | null;
+    price: number;
+    per_person: boolean;
+    display_order: number;
+  }>;
   requirements: string[];
   cancellation_policy: string;
   terms_conditions: string;
@@ -133,6 +141,14 @@ export function usePackageDetails(packageId: string | undefined) {
               destination_type,
               days_spent,
               place_id
+            ),
+            package_addons (
+              id,
+              name,
+              name_ar,
+              price,
+              per_person,
+              display_order
             ),
             travel_agencies (
               id,
