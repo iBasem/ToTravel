@@ -155,8 +155,8 @@
     "semantic_hash": ""
   },
   "src/features/agency/hooks/useAgencyMessages.ts": {
-    "mtime": 1783918737.2773318,
-    "ast_hash": "9cea84155a8e567f8b2aae01a060882e",
+    "mtime": 1784176705.0452166,
+    "ast_hash": "7c15aac99457a4c27ba0c350e8a1a218",
     "semantic_hash": ""
   },
   "src/features/agency/hooks/useAgencyTravelers.ts": {
@@ -195,8 +195,8 @@
     "semantic_hash": ""
   },
   "src/features/agency/pages/Messages.tsx": {
-    "mtime": 1783965153.642136,
-    "ast_hash": "12a576ac87c0549842058ff3cd1ba369",
+    "mtime": 1784177235.5478964,
+    "ast_hash": "065774ca91b2e534f6617207ee2582f3",
     "semantic_hash": ""
   },
   "src/features/agency/pages/Travelers.tsx": {
@@ -590,13 +590,13 @@
     "semantic_hash": "b1e3a450a749c61b3aef4af5b82d6e57"
   },
   "src/i18n/locales/ar.json": {
-    "mtime": 1784173415.3391638,
-    "ast_hash": "20232e6ad4c6f6b896123aff43c90471",
+    "mtime": 1784176109.441986,
+    "ast_hash": "50e119e61995b4ab08bca42650fd773f",
     "semantic_hash": ""
   },
   "src/i18n/locales/en.json": {
-    "mtime": 1784173403.9352517,
-    "ast_hash": "c96ae9153e24f6a8fc2cc54e3708e73e",
+    "mtime": 1784176086.064314,
+    "ast_hash": "6ffe511ea1aaf491cb95d0ad85558c90",
     "semantic_hash": ""
   },
   "src/integrations/supabase/client.ts": {
@@ -1635,8 +1635,8 @@
     "semantic_hash": ""
   },
   ".impeccable/hook.cache.json": {
-    "mtime": 1784174207.1562946,
-    "ast_hash": "7ebf3150d2dff1b335ff61e6d27095e2",
+    "mtime": 1784177236.1537013,
+    "ast_hash": "204cf79bdbc1dfec5f7c2c462e70b3fa",
     "semantic_hash": ""
   },
   "src/ui/ThemeToggle.tsx": {
@@ -2837,6 +2837,26 @@
   "src/features/packages/components/manage/status.ts": {
     "mtime": 1784173252.1572359,
     "ast_hash": "4d142d3e2df0276ae8774c1980f946a5",
+    "semantic_hash": ""
+  },
+  "src/features/agency/components/messages/ConversationListItem.tsx": {
+    "mtime": 1784175902.4540653,
+    "ast_hash": "1bdc2cde5a3a33949b524714cbf4c830",
+    "semantic_hash": ""
+  },
+  "src/features/agency/components/messages/MessageThread.tsx": {
+    "mtime": 1784176956.187418,
+    "ast_hash": "72888f7db26d8131e73ecf85a1632c3b",
+    "semantic_hash": ""
+  },
+  "src/features/agency/components/messages/NewMessageDialog.tsx": {
+    "mtime": 1784176545.0551622,
+    "ast_hash": "3d2617def83188e7d3d0a04bfb68ad73",
+    "semantic_hash": ""
+  },
+  "src/features/agency/components/messages/messageTime.ts": {
+    "mtime": 1784175886.1116226,
+    "ast_hash": "8668bfbcd72317b1288305df8ee82e76",
     "semantic_hash": ""
   }
 }

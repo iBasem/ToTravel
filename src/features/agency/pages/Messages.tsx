@@ -1,67 +1,121 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/ui/card";
+import { useState, useMemo, useEffect } from "react";
+import { useSearchParams, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import { Search, Plus, MessageSquare } from "lucide-react";
 import { Button } from "@/ui/button";
 import { Input } from "@/ui/input";
-import { MessageSquare, Send } from "lucide-react";
-import { useTranslation } from "react-i18next";
-import { useAgencyMessages } from "@/features/agency/hooks/useAgencyMessages";
 import { LoadingSpinner } from "@/ui/loading-spinner";
 import { EmptyState } from "@/ui/empty-state";
-import { useState, useRef, useEffect } from "react";
-import { useSearchParams } from "react-router-dom";
-import { formatRelativeTime, formatDate } from "@/lib/formatters";
+import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/features/auth/context/AuthContext";
+import { useAgencyMessages } from "@/features/agency/hooks/useAgencyMessages";
+import { ConversationListItem } from "@/features/agency/components/messages/ConversationListItem";
+import { MessageThread } from "@/features/agency/components/messages/MessageThread";
+import { NewMessageDialog } from "@/features/agency/components/messages/NewMessageDialog";
 
 export default function Messages() {
   const { t } = useTranslation();
-  const { profile } = useAuth();
-  // The page is shared between the agency and traveler portals; only the
-  // empty-state copy differs by who the counterparty is.
-  const isTraveler = profile?.role === 'traveler';
+  const { user, profile } = useAuth();
+  const isTraveler = profile?.role === "traveler";
+  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+
   const {
-    conversations,
-    messages,
-    selectedConversation,
-    loading,
-    error,
-    fetchMessages,
-    sendMessage,
+    conversations, messages, selectedConversation, loading, error, fetchMessages, sendMessage,
   } = useAgencyMessages();
-  const [messageInput, setMessageInput] = useState("");
-  const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Auto-scroll to bottom when new messages arrive
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
+  const [search, setSearch] = useState("");
+  const [mobileThreadOpen, setMobileThreadOpen] = useState(false);
+  const [newOpen, setNewOpen] = useState(false);
+  // Identity for a freshly-composed thread that has no history yet, so the
+  // header shows the recipient before the first message creates a Conversation.
+  const [pendingRecipient, setPendingRecipient] = useState<{ id: string; name: string } | null>(null);
 
-  // Deep link: /messages?to=<userId> opens (or starts) that conversation
-  const deepLinkTo = searchParams.get('to');
+  // Deep link: ?to=<userId> opens/starts that conversation.
+  const deepLinkTo = searchParams.get("to");
   useEffect(() => {
     if (!loading && deepLinkTo && selectedConversation !== deepLinkTo) {
       fetchMessages(deepLinkTo);
+      setMobileThreadOpen(true);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loading, deepLinkTo]);
 
-  const handleSend = async () => {
-    if (!messageInput.trim() || !selectedConversation) return;
-    try {
-      await sendMessage(selectedConversation, messageInput);
-      setMessageInput("");
-    } catch {
-      // Error is logged in the hook
-    }
+  const openConversation = (id: string) => {
+    fetchMessages(id);
+    setMobileThreadOpen(true);
   };
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      handleSend();
+  // On desktop, open the most recent thread by default (matches an inbox landing).
+  // Skipped on mobile so opening the page doesn't silently mark the newest thread read.
+  useEffect(() => {
+    if (loading || deepLinkTo || selectedConversation || conversations.length === 0) return;
+    if (window.matchMedia("(min-width: 1024px)").matches) {
+      fetchMessages(conversations[0].id);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loading, conversations, selectedConversation, deepLinkTo]);
+
+  const handleNewSelect = (traveler: { id: string; name: string }) => {
+    setNewOpen(false);
+    setPendingRecipient(traveler);
+    openConversation(traveler.id);
   };
 
-  const formatTime = (dateStr: string) => formatRelativeTime(dateStr);
+  // A thread opened without history (e.g. the ?to= deep link from a booking) has
+  // no Conversation yet — resolve the recipient's name so the header isn't blank.
+  useEffect(() => {
+    if (!selectedConversation) return;
+    if (conversations.some((c) => c.id === selectedConversation)) return;
+    if (pendingRecipient?.id === selectedConversation) return;
+    let cancelled = false;
+    (async () => {
+      const { data: tr } = await supabase
+        .from("travelers")
+        .select("id, first_name, last_name")
+        .eq("id", selectedConversation)
+        .maybeSingle();
+      if (cancelled) return;
+      if (tr) {
+        const name = `${tr.first_name ?? ""} ${tr.last_name ?? ""}`.trim();
+        setPendingRecipient({ id: tr.id, name: name || t("common.traveler", "Traveler") });
+        return;
+      }
+      const { data: ag } = await supabase
+        .from("travel_agencies")
+        .select("id, company_name")
+        .eq("id", selectedConversation)
+        .maybeSingle();
+      if (cancelled || !ag) return;
+      setPendingRecipient({ id: ag.id, name: ag.company_name || t("common.traveler", "Traveler") });
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [selectedConversation, conversations, pendingRecipient, t]);
+
+  const filtered = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    return q
+      ? conversations.filter(
+          (c) => c.travelerName.toLowerCase().includes(q) || c.lastMessage.toLowerCase().includes(q),
+        )
+      : conversations;
+  }, [conversations, search]);
+
+  const activeConversation =
+    conversations.find((c) => c.id === selectedConversation) ??
+    (pendingRecipient && pendingRecipient.id === selectedConversation
+      ? {
+          id: pendingRecipient.id,
+          travelerName: pendingRecipient.name,
+          avatarUrl: null,
+          lastMessage: "",
+          lastMessageTime: "",
+          unread: false,
+          unreadCount: 0,
+        }
+      : undefined);
 
   if (loading) {
     return (
@@ -73,126 +127,105 @@ export default function Messages() {
 
   if (error) {
     return (
-      <div className="text-center py-8">
-        <p className="text-destructive">{t('common.error')}: {error}</p>
+      <EmptyState icon="message-square" title={t("common.error")} description={error} />
+    );
+  }
+
+  // No conversations and nothing open — first-run empty state.
+  if (conversations.length === 0 && !selectedConversation) {
+    return (
+      <div className="space-y-4">
+        <EmptyState
+          icon="message-square"
+          title={t("agencyDashboard.noMessagesYet", "No Messages Yet")}
+          description={
+            isTraveler
+              ? t("travelerDashboard.messagesWillAppear", "Ask an agency about a package or booking and the conversation will appear here.")
+              : t("agencyDashboard.messagesWillAppear", "Messages from travelers will appear here when they contact you.")
+          }
+          action={
+            isTraveler
+              ? undefined
+              : { label: t("agencyDashboard.newMessage", "New Message"), onClick: () => setNewOpen(true) }
+          }
+        />
+        {!isTraveler && <NewMessageDialog open={newOpen} onOpenChange={setNewOpen} onSelect={handleNewSelect} />}
       </div>
     );
   }
 
+  const counterpartyLabel = isTraveler
+    ? t("agencyDashboard.travelAgency", "Travel Agency")
+    : t("common.traveler", "Traveler");
+
   return (
-    <div className="space-y-6">
-      <h1 className="text-2xl sm:text-3xl font-bold">
-        {t('agencyDashboard.messagesCommunication')}
-      </h1>
-
-      {conversations.length === 0 && !selectedConversation ? (
-        <EmptyState
-          icon="message-square"
-          title={t('agencyDashboard.noMessagesYet', { defaultValue: 'No Messages Yet' })}
-          description={isTraveler
-            ? t('travelerDashboard.messagesWillAppear', { defaultValue: 'Ask an agency about a package or booking and the conversation will appear here.' })
-            : t('agencyDashboard.messagesWillAppear', { defaultValue: 'Messages from travelers will appear here when they contact you.' })}
-        />
-      ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Conversations sidebar */}
-          <Card className="lg:col-span-1">
-            <CardHeader>
-              <CardTitle>{t('agencyDashboard.conversations')}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                {conversations.map((conversation) => (
-                  <button
-                    key={conversation.id}
-                    type="button"
-                    onClick={() => fetchMessages(conversation.id)}
-                    className={`w-full p-3 rounded-lg text-start transition-colors ${selectedConversation === conversation.id
-                      ? 'bg-primary/10'
-                      : 'hover:bg-muted'
-                      }`}
-                  >
-                    <div className="flex justify-between items-start gap-2 mb-1">
-                      <p className={`truncate ${conversation.unread ? 'font-semibold' : 'font-medium'}`}>
-                        {conversation.travelerName}
-                      </p>
-                      <span className="flex items-center gap-1.5 flex-shrink-0 text-xs text-muted-foreground">
-                        {formatTime(conversation.lastMessageTime)}
-                        {conversation.unread && (
-                          <span className="w-2 h-2 rounded-full bg-primary" aria-label={t('agencyDashboard.unread', 'Unread')} />
-                        )}
-                      </span>
-                    </div>
-                    <p dir="auto" className={`text-sm truncate text-start ${conversation.unread ? 'text-foreground' : 'text-muted-foreground'}`}>
-                      {conversation.lastMessage}
-                    </p>
-                  </button>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Chat area */}
-          <Card className="lg:col-span-2">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <MessageSquare className="w-5 h-5" />
-                {t('agencyDashboard.chat')}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              {!selectedConversation ? (
-                <div className="flex items-center justify-center h-64 text-muted-foreground">
-                  <div className="text-center">
-                    <MessageSquare className="w-16 h-16 mx-auto mb-4 text-muted-foreground/40" />
-                    <p>{t('agencyDashboard.selectConversation')}</p>
-                  </div>
-                </div>
-              ) : (
-                <div className="h-64 overflow-y-auto space-y-3 mb-4 p-2">
-                  {messages.map((msg) => (
-                    <div
-                      key={msg.id}
-                      className={`flex ${msg.sender_id === selectedConversation ? 'justify-start' : 'justify-end'}`}
-                    >
-                      <div
-                        className={`max-w-[70%] px-4 py-2 rounded-lg text-sm ${msg.sender_id === selectedConversation
-                          ? 'bg-muted text-foreground'
-                          : 'bg-primary text-primary-foreground'
-                          }`}
-                      >
-                        <p dir="auto">{msg.content}</p>
-                        <p className="text-xs mt-1 opacity-70">
-                          {formatDate(msg.created_at, 'p')}
-                        </p>
-                      </div>
-                    </div>
-                  ))}
-                  <div ref={messagesEndRef} />
-                </div>
-              )}
-
-              <div className="flex items-center gap-2 mt-4">
-                <Input
-                  placeholder={t('agencyDashboard.typeMessage')}
-                  className="flex-1"
-                  value={messageInput}
-                  onChange={(e) => setMessageInput(e.target.value)}
-                  onKeyDown={handleKeyPress}
-                  disabled={!selectedConversation}
-                />
-                <Button
-                  onClick={handleSend}
-                  disabled={!selectedConversation || !messageInput.trim()}
-                  aria-label={t('agencyDashboard.sendMessage', 'Send message')}
-                >
-                  <Send className="w-4 h-4 rtl-flip" />
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+    <div className="rounded-2xl border border-border bg-card overflow-hidden flex h-[calc(100vh-9rem)]">
+      {/* Conversation list */}
+      <aside className={`w-full lg:w-80 lg:shrink-0 lg:flex flex-col min-h-0 bg-muted/20 lg:border-e border-border ${mobileThreadOpen ? "hidden lg:flex" : "flex"}`}>
+        <div className="p-3 shrink-0">
+          <div className="relative">
+            <Search className="absolute top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground start-3" />
+            <Input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder={t("agencyDashboard.searchNameChat", "Search name, chat, etc")}
+              className="ps-9 h-10"
+            />
+          </div>
         </div>
-      )}
+
+        <div className="flex-1 min-h-0 overflow-y-auto px-3 space-y-1.5">
+          {filtered.length === 0 ? (
+            <p className="text-sm text-muted-foreground text-center py-8">
+              {t("agencyDashboard.noConversationsFound", "No conversations found")}
+            </p>
+          ) : (
+            filtered.map((c) => (
+              <ConversationListItem
+                key={c.id}
+                conversation={c}
+                selected={c.id === selectedConversation}
+                onSelect={openConversation}
+              />
+            ))
+          )}
+        </div>
+
+        {!isTraveler && (
+          <div className="p-3 mt-auto border-t border-border shrink-0">
+            <Button onClick={() => setNewOpen(true)} className="w-full gap-2">
+              <Plus className="h-4 w-4" />
+              {t("agencyDashboard.newMessage", "New Message")}
+            </Button>
+          </div>
+        )}
+      </aside>
+
+      {/* Thread */}
+      <section className={`flex-1 min-w-0 lg:flex flex-col min-h-0 ${mobileThreadOpen ? "flex" : "hidden lg:flex"}`}>
+        {selectedConversation ? (
+          <div key={selectedConversation} className="flex-1 min-h-0 flex flex-col animate-in fade-in-0 duration-200 motion-reduce:animate-none">
+            <MessageThread
+              conversation={activeConversation}
+              messages={messages}
+              currentUserId={user?.id ?? ""}
+              counterpartyLabel={counterpartyLabel}
+              onSend={(content) => sendMessage(selectedConversation, content)}
+              onBack={() => setMobileThreadOpen(false)}
+              onViewProfile={isTraveler ? undefined : () => navigate("/travel_agency/travelers")}
+            />
+          </div>
+        ) : (
+          <div className="h-full grid place-items-center text-center text-muted-foreground p-6">
+            <div>
+              <MessageSquare className="h-14 w-14 mx-auto mb-3 text-muted-foreground/30" />
+              <p className="text-sm">{t("agencyDashboard.selectConversation")}</p>
+            </div>
+          </div>
+        )}
+      </section>
+
+      {!isTraveler && <NewMessageDialog open={newOpen} onOpenChange={setNewOpen} onSelect={handleNewSelect} />}
     </div>
   );
 }

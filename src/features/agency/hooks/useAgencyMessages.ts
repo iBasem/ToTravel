@@ -6,9 +6,11 @@ import { useAuth } from '@/features/auth/context/AuthContext';
 export interface Conversation {
     id: string;            // the other user's ID
     travelerName: string;
+    avatarUrl: string | null;
     lastMessage: string;
     lastMessageTime: string;
     unread: boolean;
+    unreadCount: number;
 }
 
 export interface Message {
@@ -28,12 +30,14 @@ export function useAgencyMessages() {
     const [error, setError] = useState<string | null>(null);
     const { user } = useAuth();
 
-    // Fetch all conversations (grouped by the other user)
-    const fetchConversations = async () => {
+    // Fetch all conversations (grouped by the other user). Background refreshes
+    // (realtime, post-send) pass silent=true so they don't flash the full-page
+    // loading state.
+    const fetchConversations = async (silent = false) => {
         if (!user) return;
 
         try {
-            setLoading(true);
+            if (!silent) setLoading(true);
             setError(null);
 
             const { data, error: fetchError } = await supabase
@@ -47,31 +51,42 @@ export function useAgencyMessages() {
             // Group messages by the other party
             const convMap = new Map<string, Conversation>();
 
+            // Messages arrive newest-first, so the first row seen per party is the
+            // latest. Unread is tallied across every message from that party.
             for (const msg of (data || [])) {
                 const otherId = msg.sender_id === user.id ? msg.recipient_id : msg.sender_id;
+                const isUnreadIncoming = msg.recipient_id === user.id && !msg.read_at;
 
-                if (!convMap.has(otherId)) {
+                const existing = convMap.get(otherId);
+                if (!existing) {
                     convMap.set(otherId, {
                         id: otherId,
                         travelerName: shortId(otherId), // fallback until the profile lookup below resolves
+                        avatarUrl: null,
                         lastMessage: msg.content,
                         lastMessageTime: msg.created_at,
-                        unread: msg.sender_id !== user.id && !msg.read_at,
+                        unread: isUnreadIncoming,
+                        unreadCount: isUnreadIncoming ? 1 : 0,
                     });
+                } else if (isUnreadIncoming) {
+                    existing.unreadCount += 1;
+                    existing.unread = true;
                 }
             }
 
-            // Resolve display names from traveler/agency profiles (RLS permitting).
+            // Resolve display names + avatars from traveler/agency profiles (RLS permitting).
             const otherIds = Array.from(convMap.keys());
             if (otherIds.length > 0) {
                 const [{ data: travelerRows }, { data: agencyRows }] = await Promise.all([
-                    supabase.from('travelers').select('id, first_name, last_name').in('id', otherIds),
+                    supabase.from('travelers').select('id, first_name, last_name, avatar_url').in('id', otherIds),
                     supabase.from('travel_agencies').select('id, company_name').in('id', otherIds),
                 ]);
                 travelerRows?.forEach(tr => {
                     const conv = convMap.get(tr.id);
+                    if (!conv) return;
                     const name = `${tr.first_name ?? ''} ${tr.last_name ?? ''}`.trim();
-                    if (conv && name) conv.travelerName = name;
+                    if (name) conv.travelerName = name;
+                    if (tr.avatar_url) conv.avatarUrl = tr.avatar_url;
                 });
                 agencyRows?.forEach(ag => {
                     const conv = convMap.get(ag.id);
@@ -84,7 +99,7 @@ export function useAgencyMessages() {
             console.error('Error fetching conversations:', err);
             setError(err instanceof Error ? err.message : String(err));
         } finally {
-            setLoading(false);
+            if (!silent) setLoading(false);
         }
     };
 
@@ -136,6 +151,8 @@ export function useAgencyMessages() {
 
             if (sendError) throw sendError;
             setMessages(prev => [...prev, data]);
+            // Surface a newly-started thread in the list without a spinner flash.
+            fetchConversations(true);
             return data;
         } catch (err) {
             console.error('Error sending message:', err);
@@ -169,8 +186,8 @@ export function useAgencyMessages() {
                     if (selectedConversation === newMsg.sender_id) {
                         setMessages(prev => [...prev, newMsg]);
                     }
-                    // Refresh conversation list
-                    fetchConversations();
+                    // Refresh conversation list (silent — no spinner flash)
+                    fetchConversations(true);
                 }
             )
             .subscribe();
