@@ -1,124 +1,102 @@
+import { useEffect, useMemo, useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import { Plus, Search, Filter, ChevronLeft } from "lucide-react";
 import { Button } from "@/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/ui/card";
-import { Plus, Search, Filter, Package, Edit, Trash2, MoreVertical, Eye, CalendarDays, Copy } from "lucide-react";
+import { Input } from "@/ui/input";
 import { LoadingSpinner } from "@/ui/loading-spinner";
 import { EmptyState } from "@/ui/empty-state";
-import { Input } from "@/ui/input";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import { useEffect, useState } from "react";
-import { Badge } from "@/ui/badge";
-import { usePackages, type PackageWithDetails } from "@/features/packages/hooks/usePackages";
-import { toast } from "sonner";
-import { useTranslation } from "react-i18next";
-import { formatCurrency } from "@/lib/formatters";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/ui/dropdown-menu";
 import { PageHeader } from "@/ui/page-header";
+import {
+  DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,
+} from "@/ui/dropdown-menu";
+import { toast } from "sonner";
+import { usePackages, type PackageWithDetails } from "@/features/packages/hooks/usePackages";
+import { PackageListItem } from "@/features/packages/components/manage/PackageListItem";
+import { PackageDetailPane } from "@/features/packages/components/manage/PackageDetailPane";
+import { TripSchedule } from "@/features/packages/components/manage/TripSchedule";
 
-type StatusFilter = 'all' | 'published' | 'pending' | 'draft';
+type StatusFilter = "all" | "published" | "pending" | "draft";
 
 export default function Packages() {
   const [searchParams] = useSearchParams();
-  const [searchTerm, setSearchTerm] = useState(searchParams.get('q') || "");
-  const [statusFilter, setStatusFilter] = useState<StatusFilter>('all');
   const navigate = useNavigate();
   const { packages, loading, error, deletePackage, updatePackage } = usePackages();
   const { t, i18n } = useTranslation();
-  const isRTL = i18n.language === 'ar';
+  const isRTL = i18n.language === "ar";
 
-  // Keep in sync with searches submitted from the dashboard header
+  const [searchTerm, setSearchTerm] = useState(searchParams.get("q") || "");
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  // On desktop both panes show at once (selectedId drives the split view). On
+  // mobile the list comes first; tapping a row opens the detail overlay.
+  const [mobileDetailOpen, setMobileDetailOpen] = useState(false);
+
+  const handleSelect = (id: string) => {
+    setSelectedId(id);
+    setMobileDetailOpen(true);
+  };
+
   useEffect(() => {
-    const q = searchParams.get('q');
+    const q = searchParams.get("q");
     if (q !== null) setSearchTerm(q);
   }, [searchParams]);
 
-  const handleCreatePackage = () => {
-    navigate("/travel_agency/packages/create");
-  };
+  const filtered = useMemo(
+    () =>
+      packages.filter(
+        (pkg) =>
+          (statusFilter === "all" || pkg.status === statusFilter) &&
+          (pkg.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            pkg.destination.toLowerCase().includes(searchTerm.toLowerCase())),
+      ),
+    [packages, statusFilter, searchTerm],
+  );
 
-  const handleEditPackage = (packageId: string) => {
-    navigate(`/travel_agency/packages/${packageId}/edit`);
-  };
-
-  const handleViewPackage = (packageId: string) => {
-    navigate(`/travel_agency/packages/${packageId}`);
-  };
-
-  const handleManageDepartures = (packageId: string) => {
-    navigate(`/travel_agency/packages/${packageId}/departures`);
-  };
-
-  // Opens the editor pre-filled from this package as a brand-new draft.
-  const handleDuplicatePackage = (packageId: string) => {
-    navigate(`/travel_agency/packages/create?duplicate=${packageId}`);
-  };
-
-  const handleDeletePackage = async (packageId: string, title: string) => {
-    if (confirm(`${t('common.deletePackageConfirm', 'Are you sure you want to delete')} "${title}"?`)) {
-      try {
-        await deletePackage(packageId);
-        toast.success(t('packageWizard.packageDeleted', 'Package deleted successfully'));
-      } catch (error) {
-        toast.error(t('errors.somethingWentWrong', 'Error deleting package'));
-      }
+  // Keep a valid selection: default to the first row, and fall back if the
+  // selected package is filtered out of view.
+  useEffect(() => {
+    if (filtered.length === 0) {
+      setSelectedId(null);
+    } else if (!selectedId || !filtered.some((p) => p.id === selectedId)) {
+      setSelectedId(filtered[0].id);
     }
-  };
+  }, [filtered, selectedId]);
 
-  const togglePublishStatus = async (pkg: PackageWithDetails) => {
+  const selected = filtered.find((p) => p.id === selectedId) ?? null;
+
+  const handleCreate = () => navigate("/travel_agency/packages/create");
+
+  const handleTogglePublish = async (pkg: PackageWithDetails) => {
     try {
-      // Publishing requires admin approval: submitting sends the package to
-      // 'pending'; unpublishing a live package returns it to 'draft'.
-      const newStatus = pkg.status === 'published' ? 'draft' : 'pending';
+      const newStatus = pkg.status === "published" ? "draft" : "pending";
       await updatePackage(pkg.id, { status: newStatus });
       toast.success(
-        newStatus === 'pending'
-          ? t('agencyDashboard.submittedForReview', 'Submitted for review')
-          : t('agencyDashboard.unpublished', 'Unpublished')
+        newStatus === "pending"
+          ? t("agencyDashboard.submittedForReview", "Submitted for review")
+          : t("agencyDashboard.unpublished", "Unpublished"),
       );
-    } catch (error) {
-      toast.error(t('agencyDashboard.errorLoadingPackages'));
+    } catch {
+      toast.error(t("agencyDashboard.errorLoadingPackages"));
     }
   };
 
-  const getPrimaryImage = (pkg: PackageWithDetails) => {
-    if (!pkg.package_media || pkg.package_media.length === 0) {
-      return null;
-    }
-    const primary = pkg.package_media.find((m) => m.is_primary);
-    return primary?.file_path || pkg.package_media[0]?.file_path || null;
-  };
-
-  const statusBadge = (status: string | null) => {
-    switch (status) {
-      case 'published':
-        return { label: t('agencyDashboard.published'), className: 'bg-green-100 text-green-800 border-green-200 dark:bg-green-900/30 dark:text-green-300 dark:border-green-800' };
-      case 'pending':
-        return { label: t('agencyDashboard.pendingReview', 'Pending review'), className: 'bg-amber-100 text-amber-800 border-amber-200 dark:bg-amber-900/30 dark:text-amber-300 dark:border-amber-800' };
-      case 'archived':
-        return { label: t('agencyDashboard.archived', 'Archived'), className: '' };
-      case 'suspended':
-        return { label: t('agencyDashboard.suspended', 'Suspended'), className: 'bg-red-100 text-red-800 border-red-200 dark:bg-red-900/30 dark:text-red-300 dark:border-red-800' };
-      default:
-        return { label: t('agencyDashboard.draft'), className: '' };
+  const handleDelete = async (pkg: PackageWithDetails) => {
+    if (!confirm(`${t("common.deletePackageConfirm", "Are you sure you want to delete")} "${pkg.title}"?`)) return;
+    try {
+      await deletePackage(pkg.id);
+      toast.success(t("packageWizard.packageDeleted", "Package deleted successfully"));
+    } catch {
+      toast.error(t("errors.somethingWentWrong", "Error deleting package"));
     }
   };
 
-  const statusFilterOptions: { value: StatusFilter; label: string }[] = [
-    { value: 'all', label: t('agencyDashboard.allStatuses', 'All statuses') },
-    { value: 'published', label: t('agencyDashboard.published') },
-    { value: 'pending', label: t('agencyDashboard.pendingReview', 'Pending review') },
-    { value: 'draft', label: t('agencyDashboard.draft') },
+  const statusOptions: { value: StatusFilter; label: string }[] = [
+    { value: "all", label: t("agencyDashboard.allStatuses", "All statuses") },
+    { value: "published", label: t("agencyDashboard.published") },
+    { value: "pending", label: t("agencyDashboard.pendingReview", "Pending review") },
+    { value: "draft", label: t("agencyDashboard.draft") },
   ];
-
-  const filteredPackages = packages.filter(pkg =>
-    (statusFilter === 'all' || pkg.status === statusFilter) &&
-    (pkg.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      pkg.destination.toLowerCase().includes(searchTerm.toLowerCase()))
-  );
 
   if (loading) {
     return (
@@ -130,197 +108,138 @@ export default function Packages() {
 
   if (error) {
     return (
-      <div className="text-center py-8">
-        <p className="text-destructive text-sm sm:text-base">{t('agencyDashboard.errorLoadingPackages')}: {error}</p>
-        <Button onClick={() => window.location.reload()} className="mt-4 text-sm sm:text-base">
-          {t('common.retry')}
-        </Button>
+      <EmptyState
+        icon="alert-triangle"
+        title={t("agencyDashboard.errorLoadingPackages")}
+        description={error}
+        action={{ label: t("common.retry"), onClick: () => window.location.reload() }}
+      />
+    );
+  }
+
+  // Brand-new agency, no packages at all.
+  if (packages.length === 0) {
+    return (
+      <div className="space-y-6">
+        <PageHeader title={t("agencyDashboard.travelPackages")} description={t("agencyDashboard.managePackages")} />
+        <EmptyState
+          icon="package"
+          title={t("agencyDashboard.noPackagesYet")}
+          description={t("agencyDashboard.createFirstPackageDesc")}
+          action={{ label: t("agencyDashboard.createPackage"), onClick: handleCreate }}
+        />
       </div>
     );
   }
 
-  return (
-    <div className="space-y-4 sm:space-y-6 lg:space-y-8">
-      {/* Header Section */}
-      <PageHeader
-        title={t('agencyDashboard.travelPackages')}
-        description={t('agencyDashboard.managePackages')}
-        actions={
-          <Button
-            onClick={handleCreatePackage}
-            className="w-full sm:w-auto bg-primary hover:bg-primary/90 text-primary-foreground shadow-sm text-xs sm:text-sm lg:text-base px-3 sm:px-4 lg:px-6 py-2 sm:py-2.5 lg:py-3 flex items-center gap-1 sm:gap-2"
-          >
-            <Plus className="w-3 h-3 sm:w-4 sm:h-4" />
-            {t('agencyDashboard.createPackage')}
-          </Button>
-        }
-      />
+  const detailActions = (pkg: PackageWithDetails) => ({
+    onEdit: () => navigate(`/travel_agency/packages/${pkg.id}/edit`),
+    onManageDepartures: () => navigate(`/travel_agency/packages/${pkg.id}/departures`),
+    onDuplicate: () => navigate(`/travel_agency/packages/create?duplicate=${pkg.id}`),
+    onTogglePublish: () => handleTogglePublish(pkg),
+    onPreview: () => navigate(`/travel_agency/packages/${pkg.id}`),
+    onDelete: () => handleDelete(pkg),
+  });
 
-      {/* Search and Filter Section */}
-      <div className="flex flex-col gap-3 sm:flex-row sm:gap-4">
-        <div className="relative flex-1">
-          <Search className="absolute top-1/2 transform -translate-y-1/2 h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground start-2 sm:start-3" />
+  const listPane = (
+    <div className="flex flex-col h-full min-h-0 p-3">
+      <div className="space-y-2.5 pb-3">
+        <div className="relative">
+          <Search className="absolute top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground start-3" />
           <Input
-            placeholder={t('agencyDashboard.searchPackages')}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="h-8 sm:h-10 lg:h-11 bg-background border-border focus:border-primary focus:ring-primary text-xs sm:text-sm lg:text-base ps-8 sm:ps-10"
+            placeholder={t("agencyDashboard.searchPackagesLocation", "Search package, location…")}
+            className="ps-9 h-10"
           />
         </div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="w-full sm:w-auto border-border hover:bg-muted/50 text-xs sm:text-sm lg:text-base px-3 sm:px-4 lg:px-6 flex items-center gap-1 sm:gap-2">
-              <Filter className="w-3 h-3 sm:w-4 sm:h-4" />
-              {statusFilter === 'all'
-                ? t('agencyDashboard.filter')
-                : statusFilterOptions.find((o) => o.value === statusFilter)?.label}
+            <Button variant="outline" className="w-full justify-start gap-2 h-9 text-sm">
+              <Filter className="h-4 w-4" />
+              {statusFilter === "all"
+                ? t("agencyDashboard.allStatuses", "All statuses")
+                : statusOptions.find((o) => o.value === statusFilter)?.label}
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align={isRTL ? "start" : "end"} className="w-40 sm:w-48">
-            {statusFilterOptions.map((option) => (
+          <DropdownMenuContent align="start" className="w-48">
+            {statusOptions.map((o) => (
               <DropdownMenuItem
-                key={option.value}
-                onClick={() => setStatusFilter(option.value)}
-                className={`text-xs sm:text-sm ${statusFilter === option.value ? 'bg-primary/10 text-primary font-medium' : ''}`}
+                key={o.value}
+                onClick={() => setStatusFilter(o.value)}
+                className={statusFilter === o.value ? "bg-primary/10 text-primary font-medium" : ""}
               >
-                {option.label}
+                {o.label}
               </DropdownMenuItem>
             ))}
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
 
-      {/* Packages Grid */}
-      {filteredPackages.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4 lg:gap-6">
-          {filteredPackages.map((pkg) => {
-            const thumbnail = getPrimaryImage(pkg);
-            return (
-              <Card key={pkg.id} className="cursor-pointer hover:shadow-lg transition-all duration-200 border-border hover:-translate-y-1 bg-card overflow-hidden">
-                {/* Thumbnail */}
-                {thumbnail ? (
-                  <div className="relative h-40 w-full overflow-hidden" onClick={() => handleViewPackage(pkg.id)}>
-                    <img
-                      src={thumbnail}
-                      alt={pkg.title}
-                      className="w-full h-full object-cover transition-transform hover:scale-105"
-                      onError={(e) => {
-                        (e.target as HTMLImageElement).style.display = 'none';
-                      }}
-                    />
-                    <div className="absolute top-2 end-2">
-                      <Badge
-                        variant={pkg.status === 'published' ? 'default' : 'secondary'}
-                        className={`text-xs ${statusBadge(pkg.status).className}`}
-                      >
-                        {statusBadge(pkg.status).label}
-                      </Badge>
-                    </div>
-                  </div>
-                ) : (
-                  <div
-                    className="relative h-40 w-full bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center"
-                    onClick={() => handleViewPackage(pkg.id)}
-                  >
-                    <Package className="w-12 h-12 text-primary/40" />
-                    <div className="absolute top-2 end-2">
-                      <Badge
-                        variant={pkg.status === 'published' ? 'default' : 'secondary'}
-                        className={`text-xs ${statusBadge(pkg.status).className}`}
-                      >
-                        {statusBadge(pkg.status).label}
-                      </Badge>
-                    </div>
-                  </div>
-                )}
+      <div className="flex-1 min-h-0 overflow-y-auto space-y-2 pe-1 -me-1">
+        {filtered.length === 0 ? (
+          <p className="text-sm text-muted-foreground text-center py-8">
+            {t("agencyDashboard.noPackagesFound")}
+          </p>
+        ) : (
+          filtered.map((pkg) => (
+            <PackageListItem key={pkg.id} pkg={pkg} selected={pkg.id === selectedId} onSelect={handleSelect} />
+          ))
+        )}
+      </div>
 
-                <CardHeader className="pb-2 sm:pb-3 px-3 sm:px-4 lg:px-6 pt-3 sm:pt-4 text-start">
-                  <div className="flex items-start justify-between gap-2">
-                    <CardTitle className="text-sm sm:text-base lg:text-lg font-semibold text-foreground line-clamp-2 flex-1 leading-tight">
-                      {pkg.title}
-                    </CardTitle>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="sm" className="h-6 w-6 sm:h-8 sm:w-8 p-0">
-                          <MoreVertical className="w-3 h-3 sm:w-4 sm:h-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align={isRTL ? "start" : "end"} className="w-40 sm:w-48">
-                        <DropdownMenuItem onClick={() => handleViewPackage(pkg.id)} className="text-xs sm:text-sm">
-                          <Eye className="w-3 h-3 sm:w-4 sm:h-4 me-1 sm:me-2" />
-                          {t('common.viewDetails')}
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => handleEditPackage(pkg.id)} className="text-xs sm:text-sm">
-                          <Edit className="w-3 h-3 sm:w-4 sm:h-4 me-1 sm:me-2" />
-                          {t('common.edit')}
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => handleManageDepartures(pkg.id)} className="text-xs sm:text-sm">
-                          <CalendarDays className="w-3 h-3 sm:w-4 sm:h-4 me-1 sm:me-2" />
-                          {t('departures.manage', 'Manage departures')}
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => handleDuplicatePackage(pkg.id)} className="text-xs sm:text-sm">
-                          <Copy className="w-3 h-3 sm:w-4 sm:h-4 me-1 sm:me-2" />
-                          {t('packageWizard.duplicate', 'Duplicate')}
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => togglePublishStatus(pkg)} className="text-xs sm:text-sm">
-                          {pkg.status === 'published' ? t('agencyDashboard.unpublish') : t('agencyDashboard.publish')}
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          onClick={() => handleDeletePackage(pkg.id, pkg.title)}
-                          className="text-destructive text-xs sm:text-sm"
-                        >
-                          <Trash2 className="w-3 h-3 sm:w-4 sm:h-4 me-1 sm:me-2" />
-                          {t('common.delete')}
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </div>
-                </CardHeader>
-                <CardContent className="space-y-2 sm:space-y-3 px-3 sm:px-4 lg:px-6 pb-3 sm:pb-4 lg:pb-6 text-start">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <Badge variant="outline" className="text-xs">
-                      {t(`packageWizard.type_${pkg.package_type || 'group'}`)}
-                    </Badge>
-                    <p className="text-xs sm:text-sm text-muted-foreground">{pkg.destination}</p>
-                  </div>
-                  <p className="text-xs sm:text-sm text-muted-foreground">{pkg.duration_days} {t('common.days')}, {pkg.duration_nights} {t('agencyDashboard.nights')}</p>
-                  <div className="flex items-center justify-between">
-                    <p className="text-base sm:text-lg lg:text-xl font-bold text-primary">
-                      {formatCurrency(pkg.base_price)}
-                    </p>
-                  </div>
-                  <div className="flex items-center justify-between pt-1 sm:pt-2 border-t border-border">
-                    <span className="text-xs sm:text-sm text-muted-foreground">
-                      {t('agencyDashboard.daysPlanned', { count: pkg.itineraries?.length || 0 })}
-                    </span>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="text-primary hover:text-primary hover:bg-primary/10 text-xs sm:text-sm h-6 sm:h-8 px-2 sm:px-3"
-                      onClick={() => handleViewPackage(pkg.id)}
-                    >
-                      {t('common.viewDetails')}
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            );
-          })}
-        </div>
-      ) : (
-        <EmptyState
-          icon="package"
-          title={searchTerm ? t('agencyDashboard.noPackagesFound') : t('agencyDashboard.noPackagesYet')}
-          description={searchTerm
-            ? t('agencyDashboard.tryAdjustingSearch')
-            : t('agencyDashboard.createFirstPackageDesc')
-          }
-          action={!searchTerm ? {
-            label: t('agencyDashboard.createPackage'),
-            onClick: handleCreatePackage
-          } : undefined}
-        />
-      )}
+      <div className="pt-3 mt-auto border-t border-border">
+        <Button onClick={handleCreate} className="w-full gap-2">
+          <Plus className="h-4 w-4" />
+          {t("agencyDashboard.addPackage", "Add Package")}
+        </Button>
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="space-y-4">
+      <PageHeader title={t("agencyDashboard.travelPackages")} description={t("agencyDashboard.managePackages")} />
+
+      {/* One contained panel. Desktop: three independent-scroll columns (recessed
+          list · card detail · recessed schedule). Mobile: list, then detail. */}
+      <div className="rounded-2xl border border-border bg-card overflow-hidden lg:flex lg:h-[calc(100vh-13rem)]">
+        {/* Left list — recessed neutral layer */}
+        <aside className={`lg:w-80 lg:shrink-0 lg:h-full lg:border-e border-border bg-muted/30 ${mobileDetailOpen ? "hidden lg:flex" : "flex"} flex-col min-h-0`}>
+          {listPane}
+        </aside>
+
+        {/* Detail + schedule */}
+        {selected ? (
+          <section className={`${mobileDetailOpen ? "flex" : "hidden lg:flex"} flex-col lg:flex-row lg:flex-1 lg:min-w-0 lg:h-full min-h-0`}>
+            {/* Mobile back to list */}
+            <button
+              type="button"
+              onClick={() => setMobileDetailOpen(false)}
+              className="lg:hidden flex items-center gap-1 text-sm text-muted-foreground px-4 pt-4 self-start"
+            >
+              <ChevronLeft className="h-4 w-4 rtl:rotate-180" />
+              {t("agencyDashboard.backToList", "Back to packages")}
+            </button>
+
+            <div
+              key={selected.id}
+              className="lg:flex-1 lg:min-w-0 lg:h-full lg:overflow-y-auto p-4 sm:p-6 animate-in fade-in-0 duration-200 motion-reduce:animate-none"
+            >
+              <PackageDetailPane pkg={selected} isRTL={isRTL} {...detailActions(selected)} />
+            </div>
+
+            <div className="lg:w-80 xl:w-[22rem] lg:shrink-0 lg:h-full lg:overflow-y-auto lg:border-s border-border bg-muted/20 p-5">
+              <h3 className="text-base font-semibold mb-4 text-start">{t("agencyDashboard.tripSchedule", "Trip Schedule")}</h3>
+              <TripSchedule key={selected.id} itineraries={selected.itineraries ?? []} />
+            </div>
+          </section>
+        ) : (
+          <section className="hidden lg:flex flex-1 items-center justify-center">
+            <p className="text-sm text-muted-foreground">{t("agencyDashboard.selectPackage", "Select a package")}</p>
+          </section>
+        )}
+      </div>
     </div>
   );
 }
