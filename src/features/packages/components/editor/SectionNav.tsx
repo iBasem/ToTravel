@@ -12,16 +12,17 @@ export interface SectionInfo {
   state: SectionState;
 }
 
-// Wave C sections. Required sections track the shared validation rules;
+// Editor sections. Required sections track the shared validation rules;
 // Departures tracks live data (>=1 upcoming scheduled date = the submit gate);
-// Media reads as done once it has content.
+// Stays and Media are optional and read as done once they have content.
 export function getSections(formData: PackageFormData, departuresOk: boolean): SectionInfo[] {
   return [
     { step: 1, titleKey: 'packageWizard.basicInformation', state: missingRequiredFields(1, formData).length ? 'required' : 'complete' },
     { step: 2, titleKey: 'packageWizard.thePlan', state: missingRequiredFields(2, formData).length ? 'required' : 'complete' },
-    { step: 3, titleKey: 'packageWizard.pricingAndPolicies', state: missingRequiredFields(3, formData).length ? 'required' : 'complete' },
-    { step: 4, titleKey: 'departures.title', state: departuresOk ? 'complete' : 'required' },
-    { step: 5, titleKey: 'packageWizard.mediaAndPhotos', state: (formData.media || []).length ? 'complete' : 'optional' },
+    { step: 3, titleKey: 'packageWizard.stays', state: (formData.hotels || []).length ? 'complete' : 'optional' },
+    { step: 4, titleKey: 'packageWizard.pricingAndPolicies', state: missingRequiredFields(4, formData).length ? 'required' : 'complete' },
+    { step: 5, titleKey: 'departures.title', state: departuresOk ? 'complete' : 'required' },
+    { step: 6, titleKey: 'packageWizard.mediaAndPhotos', state: (formData.media || []).length ? 'complete' : 'optional' },
   ];
 }
 

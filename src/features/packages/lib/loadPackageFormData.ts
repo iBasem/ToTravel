@@ -1,6 +1,6 @@
 import { supabase } from "@/integrations/supabase/client";
 import type { PackageFormData } from "@/features/packages/types/wizard";
-import type { PackageType, FlightOption } from "@/features/packages/types/wizard";
+import type { PackageType, FlightOption, HotelKind } from "@/features/packages/types/wizard";
 
 // Loads a package graph into the editor's form shape. Shared by edit mode
 // and duplicate-package (which strips identity and reuses the content).
@@ -18,11 +18,12 @@ export async function loadPackageFormData(
 
   if (packageError) throw packageError;
 
-  const [{ data: routeData }, { data: itineraryData }, { data: mediaData }, { data: addonData }] = await Promise.all([
+  const [{ data: routeData }, { data: itineraryData }, { data: mediaData }, { data: addonData }, { data: hotelData }] = await Promise.all([
     supabase.from('package_routes').select('*').eq('package_id', id).order('destination_order'),
     supabase.from('itineraries').select('*').eq('package_id', id).order('day_number'),
     supabase.from('package_media').select('*').eq('package_id', id).order('display_order'),
     supabase.from('package_addons').select('*').eq('package_id', id).order('display_order'),
+    supabase.from('package_hotels').select('*').eq('package_id', id).order('display_order'),
   ]);
 
   const formData: PackageFormData = {
@@ -69,6 +70,18 @@ export async function loadPackageFormData(
       title_ar: item.title_ar || '',
       description_ar: item.description_ar || '',
       activities_ar: item.activities_ar || []
+    })),
+    hotels: (hotelData || []).map(item => ({
+      id: item.id,
+      name: item.name,
+      name_ar: item.name_ar || '',
+      kind: (item.kind || 'hotel') as HotelKind,
+      room_type: item.room_type || '',
+      room_type_ar: item.room_type_ar || '',
+      star_rating: item.star_rating ?? null,
+      day_numbers: item.day_numbers || [],
+      upgrade_available: item.upgrade_available ?? false,
+      image_path: item.image_path ?? null,
     })),
     pricing: {
       basePrice: packageData.base_price?.toString() || '',

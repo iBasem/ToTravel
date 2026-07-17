@@ -3,8 +3,9 @@ import type { PackageFormData } from "@/features/packages/types/wizard";
 // Required-field rules per editor section, shared by the editor's gates,
 // the section nav, and the checklist so they can't drift.
 //
-// Wave C sections: 1 Basics · 2 Plan (route + itinerary) · 3 Pricing ·
-// 4 Departures (validated against live departures, not form state) · 5 Media.
+// Sections: 1 Basics · 2 Plan (route + itinerary) · 3 Stays (optional) ·
+// 4 Pricing · 5 Departures (validated against live departures, not form state) ·
+// 6 Media. Only 1/2/4 carry required rules — keep missingForSubmit in sync.
 // Returns the i18n label keys of missing fields; empty array = section passes.
 export function missingRequiredFields(step: number, formData: PackageFormData): string[] {
   const missing: string[] = [];
@@ -24,7 +25,9 @@ export function missingRequiredFields(step: number, formData: PackageFormData): 
     if (!hasDestination) missing.push("packageWizard.destination");
   }
 
-  if (step === 3) {
+  // Step 3 (Stays) is optional and has no required rule.
+
+  if (step === 4) {
     if (!(parseFloat(formData.pricing.basePrice) > 0)) {
       missing.push("packageWizard.basePrice");
     }
@@ -36,5 +39,6 @@ export function missingRequiredFields(step: number, formData: PackageFormData): 
 // Everything the submit-for-review action requires from the form itself
 // (the >=1 upcoming departure gate is checked against live data separately).
 export function missingForSubmit(formData: PackageFormData): string[] {
-  return [1, 2, 3].flatMap((step) => missingRequiredFields(step, formData));
+  // 3 (Stays) and 6 (Media) are optional; 5 (Departures) is gated on live data.
+  return [1, 2, 4].flatMap((step) => missingRequiredFields(step, formData));
 }

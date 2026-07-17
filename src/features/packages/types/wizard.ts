@@ -103,6 +103,27 @@ export interface PackagePricing {
   newExclusionAr?: string;
 }
 
+export type HotelKind = 'hotel' | 'resort' | 'lodge' | 'guesthouse' | 'camp' | 'cruise' | 'apartment';
+
+/**
+ * An accommodation shown on the package's "Where You'll Stay" section. Authored
+ * entirely by the agency (name typed, one image uploaded) — deliberately not
+ * sourced from a hotel API, whose terms forbid storing name+photo. Following the
+ * tour-operator convention the name carries its own hedge ("… or similar").
+ */
+export interface PackageHotel {
+  id: string;              // client-side row key only; the DB row is replaced on save
+  name: string;
+  name_ar?: string;
+  kind: HotelKind;
+  room_type?: string;      // free text: "Deluxe Room", "Sea-view Suite"
+  room_type_ar?: string;
+  star_rating: number | null;
+  day_numbers: number[];   // maps onto itineraries.day_number
+  upgrade_available: boolean;
+  image_path: string | null;
+}
+
 export interface MediaItem {
   id: string;
   type: 'image' | 'video';
@@ -117,6 +138,7 @@ export interface PackageFormData {
   basicInfo: PackageBasicInfo;
   route: RouteData;
   itinerary: ItineraryDay[];
+  hotels: PackageHotel[];
   pricing: PackagePricing;
   media: MediaItem[];
 }

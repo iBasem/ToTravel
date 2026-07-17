@@ -33,6 +33,19 @@ export interface PackageDetails {
     per_person: boolean;
     display_order: number;
   }>;
+  package_hotels?: Array<{
+    id: string;
+    name: string;
+    name_ar: string | null;
+    kind: string;
+    room_type: string | null;
+    room_type_ar: string | null;
+    star_rating: number | null;
+    day_numbers: number[];
+    upgrade_available: boolean;
+    image_path: string | null;
+    display_order: number;
+  }>;
   requirements: string[];
   cancellation_policy: string;
   terms_conditions: string;
@@ -148,6 +161,19 @@ export function usePackageDetails(packageId: string | undefined) {
               name_ar,
               price,
               per_person,
+              display_order
+            ),
+            package_hotels (
+              id,
+              name,
+              name_ar,
+              kind,
+              room_type,
+              room_type_ar,
+              star_rating,
+              day_numbers,
+              upgrade_available,
+              image_path,
               display_order
             ),
             travel_agencies (

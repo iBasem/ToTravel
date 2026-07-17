@@ -396,6 +396,65 @@ export type Database = {
         }
         Relationships: []
       }
+      package_hotels: {
+        Row: {
+          created_at: string
+          day_numbers: number[]
+          display_order: number
+          id: string
+          image_path: string | null
+          kind: string
+          name: string
+          name_ar: string | null
+          package_id: string
+          room_type: string | null
+          room_type_ar: string | null
+          star_rating: number | null
+          updated_at: string
+          upgrade_available: boolean
+        }
+        Insert: {
+          created_at?: string
+          day_numbers?: number[]
+          display_order?: number
+          id?: string
+          image_path?: string | null
+          kind?: string
+          name: string
+          name_ar?: string | null
+          package_id: string
+          room_type?: string | null
+          room_type_ar?: string | null
+          star_rating?: number | null
+          updated_at?: string
+          upgrade_available?: boolean
+        }
+        Update: {
+          created_at?: string
+          day_numbers?: number[]
+          display_order?: number
+          id?: string
+          image_path?: string | null
+          kind?: string
+          name?: string
+          name_ar?: string | null
+          package_id?: string
+          room_type?: string | null
+          room_type_ar?: string | null
+          star_rating?: number | null
+          updated_at?: string
+          upgrade_available?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "package_hotels_package_id_fkey"
+            columns: ["package_id"]
+            isOneToOne: false
+            referencedRelation: "packages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       package_addons: {
         Row: {
           created_at: string

@@ -61,6 +61,20 @@ export function buildSavePackagePayload(formData: PackageFormData) {
       description_ar: d.description_ar,
       activities_ar: d.activities_ar || [],
     })),
+    hotels: (formData.hotels || [])
+      .filter((h) => h.name && h.name.trim())
+      .map((h, i) => ({
+        name: h.name.trim(),
+        name_ar: h.name_ar || null,
+        kind: h.kind,
+        room_type: h.room_type?.trim() || null,
+        room_type_ar: h.room_type_ar?.trim() || null,
+        star_rating: h.star_rating ?? null,
+        day_numbers: h.day_numbers || [],
+        upgrade_available: h.upgrade_available,
+        image_path: h.image_path || null,
+        display_order: i,
+      })),
     addons: (formData.pricing.addons || [])
       .filter((a) => a.name && a.name.trim())
       .map((a, i) => ({

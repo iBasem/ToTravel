@@ -25,6 +25,7 @@ export const createInitialPackageFormData = (): PackageFormData => ({
     showDistances: true
   },
   itinerary: [],
+  hotels: [],
   pricing: {
     basePrice: "",
     flight_option: 'not_included',

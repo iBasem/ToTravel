@@ -16,6 +16,7 @@ import { TourHeader } from "@/features/packages/components/details/TourHeader";
 import { BookingWidget } from "@/features/packages/components/details/BookingWidget";
 import { RouteMap } from "@/features/packages/components/details/RouteMap";
 import { DetailedItinerary } from "@/features/packages/components/details/DetailedItinerary";
+import { WhereYoullStay } from "@/features/packages/components/details/WhereYoullStay";
 import { WhatsIncluded } from "@/features/packages/components/details/WhatsIncluded";
 import { OperatorInfo } from "@/features/packages/components/details/OperatorInfo";
 import { AvailabilitySection } from "@/features/packages/components/details/AvailabilitySection";
@@ -253,6 +254,11 @@ export default function PackageDetails() {
             {/* Detailed Itinerary (Accordion) */}
             {packageDetails.itineraries && packageDetails.itineraries.length > 0 && (
               <DetailedItinerary itinerary={packageDetails.itineraries} />
+            )}
+
+            {/* Where You'll Stay */}
+            {packageDetails.package_hotels && packageDetails.package_hotels.length > 0 && (
+              <WhereYoullStay hotels={packageDetails.package_hotels} />
             )}
 
             {/* What's Included */}

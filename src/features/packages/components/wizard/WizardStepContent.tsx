@@ -1,15 +1,16 @@
 import { useTranslation } from "react-i18next";
 import { BasicInfoStep } from "@/features/packages/components/wizard-steps/BasicInfoStep";
 import { PlanStep } from "@/features/packages/components/wizard-steps/PlanStep";
+import { StaysStep } from "@/features/packages/components/wizard-steps/StaysStep";
 import { PricingStep } from "@/features/packages/components/wizard-steps/PricingStep";
 import { MediaStep } from "@/features/packages/components/wizard-steps/MediaStep";
 import { DeparturesEditor } from "@/features/packages/components/editor/DeparturesEditor";
 import { CalendarDays } from "lucide-react";
 import type { PackageFormData } from "@/features/packages/types/wizard";
 
-// Wave C sections: 1 Basics · 2 Plan (route + day program) · 3 Pricing ·
-// 4 Departures (tour start dates) · 5 Media. The old Review step is replaced
-// by the persistent checklist in the editor chrome.
+// Editor sections: 1 Basics · 2 Plan (route + day program) · 3 Stays ·
+// 4 Pricing · 5 Departures (tour start dates) · 6 Media. The old Review step is
+// replaced by the persistent checklist in the editor chrome.
 interface WizardStepContentProps {
   currentStep: number;
   formData: PackageFormData;
@@ -47,12 +48,20 @@ export function WizardStepContent({
       );
     case 3:
       return (
+        <StaysStep
+          data={formData.hotels}
+          itinerary={formData.itinerary}
+          onUpdate={(data) => onUpdate('hotels', data)}
+        />
+      );
+    case 4:
+      return (
         <PricingStep
           data={formData.pricing}
           onUpdate={(data) => onUpdate('pricing', data)}
         />
       );
-    case 4:
+    case 5:
       if (!packageId) {
         return (
           <div className="border-2 border-dashed border-border rounded-lg p-10 text-center">
@@ -64,7 +73,7 @@ export function WizardStepContent({
         );
       }
       return <DeparturesEditor packageId={packageId} onChanged={onDeparturesChanged} />;
-    case 5:
+    case 6:
       return (
         <MediaStep
           data={formData.media}

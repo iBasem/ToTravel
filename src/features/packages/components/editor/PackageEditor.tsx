@@ -15,7 +15,7 @@ import { createInitialPackageFormData } from "@/features/packages/lib/packageFor
 import type { PackageFormData } from "@/features/packages/types/wizard";
 import { CheckCircle2, Loader2, Send } from "lucide-react";
 
-const TOTAL_STEPS = 5;
+const TOTAL_STEPS = 6;
 
 interface PackageEditorProps {
   mode: 'create' | 'edit';
