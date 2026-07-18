@@ -47,20 +47,28 @@ export function useDepartures(packageId: string | undefined) {
           .order('departure_date', { ascending: true }),
         supabase
           .from('package_bookings')
-          .select('booking_date, participants, status')
+          .select('booking_date, participants, status, departure_id')
           .eq('package_id', packageId),
       ]);
       if (depErr) throw depErr;
 
-      const bookedByDate = new Map<string, number>();
+      // Count by departure_id, mirroring the DB capacity trigger (AGY-18).
+      // Legacy free-date bookings (null departure_id) fall back to the date
+      // match so they aren't double-counted against linked bookings.
+      const bookedById = new Map<string, number>();
+      const legacyByDate = new Map<string, number>();
       (bookings || []).forEach((b) => {
         if (b.status === 'cancelled') return;
-        bookedByDate.set(b.booking_date, (bookedByDate.get(b.booking_date) || 0) + (b.participants || 0));
+        if (b.departure_id) {
+          bookedById.set(b.departure_id, (bookedById.get(b.departure_id) || 0) + (b.participants || 0));
+        } else {
+          legacyByDate.set(b.booking_date, (legacyByDate.get(b.booking_date) || 0) + (b.participants || 0));
+        }
       });
 
       setDepartures(
         (deps || []).map((d) => {
-          const booked = bookedByDate.get(d.departure_date) || 0;
+          const booked = (bookedById.get(d.id) || 0) + (legacyByDate.get(d.departure_date) || 0);
           return { ...d, booked, seats_remaining: Math.max(0, d.total_seats - booked) };
         })
       );
