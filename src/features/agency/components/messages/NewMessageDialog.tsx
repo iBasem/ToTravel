@@ -49,7 +49,7 @@ export function NewMessageDialog({ open, onOpenChange, onSelect }: NewMessageDia
                         <p className="py-8 text-center text-sm text-muted-foreground">
                             {travelers.length === 0
                                 ? t("agencyDashboard.noTravelersToMessage", "No travelers have booked with you yet.")
-                                : t("agencyDashboard.noPackagesFound")}
+                                : t("agencyDashboard.noTravelersFound", "No travelers found")}
                         </p>
                     ) : (
                         <ul className="space-y-1">

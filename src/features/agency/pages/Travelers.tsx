@@ -5,6 +5,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Search, MessageSquare } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { initials } from "@/lib/utils";
 import { useTranslation } from "react-i18next";
 import { useAgencyTravelers } from "@/features/agency/hooks/useAgencyTravelers";
 import { LoadingSpinner } from "@/ui/loading-spinner";
@@ -101,7 +102,7 @@ export default function Travelers() {
                     <div className="flex items-center gap-4">
                       <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
                         <span className="text-primary font-medium">
-                          {traveler.name.split(' ').map(n => n[0]).join('')}
+                          {initials(traveler.name)}
                         </span>
                       </div>
                       <div>

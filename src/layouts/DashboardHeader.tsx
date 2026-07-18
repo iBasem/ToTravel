@@ -62,17 +62,17 @@ export function DashboardHeader() {
   ];
 
   const getUserDisplayName = () => {
-    if (!profile) return 'User';
+    if (!profile) return t('common.user', 'User');
     return profile.first_name ? `${profile.first_name} ${profile.last_name}`.trim() : profile.email;
   };
 
   const getUserRole = () => {
-    if (!profile) return 'User';
+    if (!profile) return t('common.user', 'User');
     switch (profile.role) {
       case 'agency': return t('agencyDashboard.travelAgency');
-      case 'admin': return 'Admin';
+      case 'admin': return t('common.admin', 'Admin');
       case 'traveler': return t('common.traveler');
-      default: return 'User';
+      default: return t('common.user', 'User');
     }
   };
 

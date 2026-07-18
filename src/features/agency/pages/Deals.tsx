@@ -4,8 +4,10 @@ import { Badge } from "@/ui/badge";
 import { Plus, Percent, Calendar, Package, Trash2, Pencil } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { format } from "date-fns";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/features/auth/context/AuthContext";
 import { useAgencyDeals, type Deal } from "@/features/agency/hooks/useAgencyDeals";
-import { usePackages } from "@/features/packages/hooks/usePackages";
 import { validateDealForm, derivedDealStatus } from "@/features/agency/lib/dealValidation";
 import { formatDate } from "@/lib/formatters";
 import { LoadingSpinner } from "@/ui/loading-spinner";
@@ -25,7 +27,25 @@ const EMPTY_FORM = { title: '', discount_percentage: 10, start_date: '', end_dat
 export default function Deals() {
   const { t } = useTranslation();
   const { deals, loading, error, addDeal, updateDeal, deleteDeal } = useAgencyDeals();
-  const { packages } = usePackages();
+  const { user } = useAuth();
+
+  // Lightweight titles query (AGY-47): the old usePackages pulled itineraries
+  // + media for every package (all statuses) just to fill a dropdown.
+  const { data: packages = [] } = useQuery({
+    queryKey: ["agency", "package-titles", user?.id],
+    enabled: !!user?.id,
+    queryFn: async () => {
+      const { data, error: fetchError } = await supabase
+        .from("packages")
+        .select("id, title, status")
+        .eq("agency_id", user!.id)
+        .order("title");
+      if (fetchError) throw fetchError;
+      return data || [];
+    },
+  });
+  // Deals may only target packages travelers can see.
+  const selectablePackages = packages.filter((p) => p.status === "published");
 
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState<Deal | null>(null);
@@ -218,7 +238,7 @@ export default function Deals() {
                   <SelectValue placeholder={t('agencyDashboard.selectPackage', { defaultValue: 'Select a package' })} />
                 </SelectTrigger>
                 <SelectContent>
-                  {packages.map((pkg) => (
+                  {selectablePackages.map((pkg) => (
                     <SelectItem key={pkg.id} value={pkg.id}>{pkg.title}</SelectItem>
                   ))}
                 </SelectContent>

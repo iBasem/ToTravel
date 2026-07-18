@@ -1,32 +1,14 @@
 import { Outlet, useLocation } from "react-router-dom";
 import { AppSidebar } from "./AppSidebar";
 import { DashboardHeader } from "./DashboardHeader";
-import { SidebarProvider, SidebarInset } from "@/ui/sidebar";
+import { SidebarInset } from "@/ui/sidebar";
 import { ErrorBoundary } from "@/ui/error-boundary";
-import { useAuth } from "@/features/auth/context/AuthContext";
-import { Navigate } from "react-router-dom";
-import { Loader2 } from "lucide-react";
 
+// Route guarding lives in ProtectedRoute (one component above in
+// AgencyRoutes) — the duplicate copy here dropped the deep-link state and
+// drifted from the real gate (audit AGY-46).
 const DashboardLayout = () => {
-  const { user, profile, loading } = useAuth();
   const location = useLocation();
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin" />
-      </div>
-    );
-  }
-
-  if (!user) {
-    return <Navigate to="/auth?type=agency" replace />;
-  }
-
-  if (profile?.role !== 'agency') {
-    const redirectPath = profile?.role === 'admin' ? '/admin' : '/traveler/dashboard';
-    return <Navigate to={redirectPath} replace />;
-  }
 
   return (
     <div className="min-h-screen flex w-full bg-muted/30">
