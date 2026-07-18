@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/features/auth/context/AuthContext';
@@ -19,31 +19,21 @@ export interface FeedbackStats {
     satisfactionRate: number;
 }
 
-export function useAgencyFeedback() {
-    const [feedbacks, setFeedbacks] = useState<FeedbackItem[]>([]);
-    const [stats, setStats] = useState<FeedbackStats>({
-        averageRating: 0,
-        totalReviews: 0,
-        recentReviews: 0,
-        satisfactionRate: 0,
-    });
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
-    const { user } = useAuth();
-    const { t } = useTranslation();
+const EMPTY_STATS: FeedbackStats = {
+    averageRating: 0,
+    totalReviews: 0,
+    recentReviews: 0,
+    satisfactionRate: 0,
+};
 
-    useEffect(() => {
-        const fetchFeedback = async () => {
-            if (!user) return;
-
-            try {
-                setLoading(true);
-                setError(null);
-
-                // Fetch reviews for this agency's packages
-                const { data, error: fetchError } = await supabase
-                    .from('reviews')
-                    .select(`
+async function fetchFeedback(
+    userId: string,
+    t: (key: string, fallback?: string) => string,
+): Promise<{ feedbacks: FeedbackItem[]; stats: FeedbackStats }> {
+    // Bounded (audit AGY-28): stats derive from the 200 most recent reviews.
+    const { data, error } = await supabase
+        .from('reviews')
+        .select(`
             id,
             rating,
             comment,
@@ -51,57 +41,62 @@ export function useAgencyFeedback() {
             traveler:travelers ( first_name, last_name ),
             package:packages!inner ( title, agency_id )
           `)
-                    .eq('package.agency_id', user.id)
-                    .order('created_at', { ascending: false });
+        .eq('package.agency_id', userId)
+        .order('created_at', { ascending: false })
+        .limit(200);
 
-                if (fetchError) throw fetchError;
+    if (error) throw error;
 
-                const mapped: FeedbackItem[] = (data || []).map((r) => ({
-                    id: r.id,
-                    travelerName: r.traveler
-                        ? `${r.traveler.first_name ?? ''} ${r.traveler.last_name ?? ''}`.trim() || t('common.unknown', 'Unknown')
-                        : t('common.unknown', 'Unknown'),
-                    packageTitle: r.package?.title || t('common.unknownPackage'),
-                    rating: r.rating,
-                    comment: r.comment || '',
-                    date: r.created_at,
-                }));
+    const feedbacks: FeedbackItem[] = (data || []).map((r) => ({
+        id: r.id,
+        travelerName: r.traveler
+            ? `${r.traveler.first_name ?? ''} ${r.traveler.last_name ?? ''}`.trim() || t('common.unknown', 'Unknown')
+            : t('common.unknown', 'Unknown'),
+        packageTitle: r.package?.title || t('common.unknownPackage'),
+        rating: r.rating,
+        comment: r.comment || '',
+        date: r.created_at,
+    }));
 
-                setFeedbacks(mapped);
+    const totalReviews = feedbacks.length;
+    const avgRating = totalReviews > 0
+        ? feedbacks.reduce((sum, f) => sum + f.rating, 0) / totalReviews
+        : 0;
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+    const recentReviews = feedbacks.filter((f) => new Date(f.date) >= thirtyDaysAgo).length;
+    const satisfactionRate = totalReviews > 0
+        ? Math.round((feedbacks.filter((f) => f.rating >= 4).length / totalReviews) * 100)
+        : 0;
 
-                // Compute stats
-                const totalReviews = mapped.length;
-                const avgRating = totalReviews > 0
-                    ? mapped.reduce((sum, f) => sum + f.rating, 0) / totalReviews
-                    : 0;
-                const thirtyDaysAgo = new Date();
-                thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-                const recentReviews = mapped.filter(f => new Date(f.date) >= thirtyDaysAgo).length;
-                const satisfactionRate = totalReviews > 0
-                    ? Math.round(
-                        (mapped.filter(f => f.rating >= 4).length / totalReviews) * 100
-                    )
-                    : 0;
+    return {
+        feedbacks,
+        stats: {
+            averageRating: Math.round(avgRating * 10) / 10,
+            totalReviews,
+            recentReviews,
+            satisfactionRate,
+        },
+    };
+}
 
-                setStats({
-                    averageRating: Math.round(avgRating * 10) / 10,
-                    totalReviews,
-                    recentReviews,
-                    satisfactionRate,
-                });
+export function useAgencyFeedback() {
+    const { user } = useAuth();
+    const { t } = useTranslation();
+    const userId = user?.id;
 
-            } catch (err) {
-                console.error('Error fetching feedback:', err);
-                setError(err instanceof Error ? err.message : String(err));
-            } finally {
-                setLoading(false);
-            }
-        };
+    const query = useQuery({
+        queryKey: ['agency', 'feedback', userId],
+        enabled: !!userId,
+        queryFn: () => fetchFeedback(userId!, t),
+    });
 
-        fetchFeedback();
-        // Key on the id, not the object (auth events re-create the user object).
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [user?.id]);
-
-    return { feedbacks, stats, loading, error };
+    return {
+        feedbacks: query.data?.feedbacks ?? [],
+        stats: query.data?.stats ?? EMPTY_STATS,
+        loading: query.isPending,
+        error: query.error
+            ? (query.error instanceof Error ? query.error.message : String(query.error))
+            : null,
+    };
 }

@@ -1,9 +1,10 @@
 
 import { useState, useCallback } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/features/auth/context/AuthContext";
-import { startOfMonth, endOfMonth, format } from "date-fns";
+import { startOfMonth, endOfMonth, format, parseISO } from "date-fns";
 
 export interface CalendarBooking {
     id: string;
@@ -20,27 +21,20 @@ export interface CalendarBooking {
     };
 }
 
-export function useAgencyCalendar() {
-    const { user } = useAuth();
-    const { t } = useTranslation();
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
-    const [bookings, setBookings] = useState<CalendarBooking[]>([]);
+async function fetchMonth(
+    userId: string,
+    monthKey: string,
+    t: (key: string, fallback?: string) => string,
+): Promise<CalendarBooking[]> {
+    const monthStart = startOfMonth(parseISO(`${monthKey}-01`));
+    const start = format(monthStart, "yyyy-MM-dd");
+    const end = format(endOfMonth(monthStart), "yyyy-MM-dd");
 
-    const fetchMonthBookings = useCallback(async (date: Date) => {
-        if (!user) return;
-
-        setLoading(true);
-        setError(null);
-        const start = format(startOfMonth(date), 'yyyy-MM-dd');
-        const end = format(endOfMonth(date), 'yyyy-MM-dd');
-
-        try {
-            // travel_agencies.id IS the auth user id, so packages.agency_id
-            // can be matched against user.id directly (no agency lookup needed).
-            const { data, error: fetchError } = await supabase
-                .from('package_bookings')
-                .select(`
+    // travel_agencies.id IS the auth user id, so packages.agency_id
+    // can be matched against user.id directly (no agency lookup needed).
+    const { data, error } = await supabase
+        .from("package_bookings")
+        .select(`
           id,
           booking_date,
           status,
@@ -55,47 +49,53 @@ export function useAgencyCalendar() {
             last_name
           )
         `)
-                .eq('package.agency_id', user.id)
-                .gte('booking_date', start)
-                .lte('booking_date', end);
+        .eq("package.agency_id", userId)
+        .gte("booking_date", start)
+        .lte("booking_date", end);
 
-            if (fetchError) throw fetchError;
+    if (error) throw error;
 
-            const formattedData = (data || []).map((b) => ({
-                id: b.id,
-                booking_date: b.booking_date,
-                status: b.status,
-                total_price: b.total_price,
-                participants: b.participants,
-                package: {
-                    title: b.package?.title || t('common.unknownPackage')
-                },
-                traveler: {
-                    first_name: b.traveler?.first_name || t('common.unknown', 'Unknown'),
-                    last_name: b.traveler?.last_name || t('common.traveler')
-                }
-            }));
+    return (data || []).map((b) => ({
+        id: b.id,
+        booking_date: b.booking_date,
+        status: b.status,
+        total_price: b.total_price,
+        participants: b.participants,
+        package: {
+            title: b.package?.title || t("common.unknownPackage"),
+        },
+        traveler: {
+            first_name: b.traveler?.first_name || t("common.unknown", "Unknown"),
+            last_name: b.traveler?.last_name || t("common.traveler"),
+        },
+    }));
+}
 
-            setBookings(formattedData);
-        } catch (err) {
-            const message = err instanceof Error
-                ? err.message
-                : (err as { message?: string })?.message || 'Unknown error';
-            console.error('Error fetching calendar bookings:', message);
-            setError(message);
-            setBookings([]);
-        } finally {
-            setLoading(false);
-        }
-        // Key on the id, not the object: Supabase re-emits auth events on tab
-        // focus with a fresh user object, which would otherwise refetch/remount.
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [user?.id]);
+// React Query keyed by (user, month): month switches hit the cache, and an
+// in-flight response for a previously-viewed month can never clobber the
+// current one (audit AGY-26).
+export function useAgencyCalendar() {
+    const { user } = useAuth();
+    const { t } = useTranslation();
+    const userId = user?.id;
+    const [monthKey, setMonthKey] = useState<string | null>(null);
+
+    const query = useQuery({
+        queryKey: ["agency", "calendar", userId, monthKey],
+        enabled: !!userId && !!monthKey,
+        queryFn: () => fetchMonth(userId!, monthKey!, t),
+    });
+
+    const fetchMonthBookings = useCallback((date: Date) => {
+        setMonthKey(format(date, "yyyy-MM"));
+    }, []);
 
     return {
-        loading,
-        error,
-        bookings,
-        fetchMonthBookings
+        loading: !!monthKey && query.isPending,
+        error: query.error
+            ? (query.error instanceof Error ? query.error.message : String(query.error))
+            : null,
+        bookings: query.data ?? [],
+        fetchMonthBookings,
     };
 }

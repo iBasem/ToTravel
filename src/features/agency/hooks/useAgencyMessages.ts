@@ -49,7 +49,8 @@ export function useAgencyMessages() {
                 .from('messages')
                 .select('*')
                 .or(`sender_id.eq.${user.id},recipient_id.eq.${user.id}`)
-                .order('created_at', { ascending: false });
+                .order('created_at', { ascending: false })
+                .limit(500); // Bounded (audit AGY-9): conversation list from the 500 latest
 
             if (fetchError) throw fetchError;
 

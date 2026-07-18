@@ -194,6 +194,7 @@ export type Database = {
         Row: {
           agency_id: string
           approval_status: string
+          rejection_reason: string | null
           created_at: string
           discount_percentage: number
           end_date: string
@@ -207,6 +208,7 @@ export type Database = {
         Insert: {
           agency_id: string
           approval_status?: string
+          rejection_reason?: string | null
           created_at?: string
           discount_percentage: number
           end_date: string
@@ -220,6 +222,7 @@ export type Database = {
         Update: {
           agency_id?: string
           approval_status?: string
+          rejection_reason?: string | null
           created_at?: string
           discount_percentage?: number
           end_date?: string
@@ -512,6 +515,7 @@ export type Database = {
           payment_reference: string | null
           payment_status: string | null
           special_requests: string | null
+          cancellation_reason: string | null
           status: string | null
           total_price: number
           traveler_id: string
@@ -529,6 +533,7 @@ export type Database = {
           payment_reference?: string | null
           payment_status?: string | null
           special_requests?: string | null
+          cancellation_reason?: string | null
           status?: string | null
           total_price: number
           traveler_id: string
@@ -546,6 +551,7 @@ export type Database = {
           payment_reference?: string | null
           payment_status?: string | null
           special_requests?: string | null
+          cancellation_reason?: string | null
           status?: string | null
           total_price?: number
           traveler_id?: string

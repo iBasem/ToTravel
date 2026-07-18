@@ -32,7 +32,14 @@ const TravelerRoutes = lazy(() =>
   import("@/features/traveler/routes").then((m) => ({ default: m.TravelerRoutes }))
 );
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 60_000,
+      retry: 1,
+    },
+  },
+});
 
 const RouteFallback = () => (
   <div className="flex min-h-screen items-center justify-center">

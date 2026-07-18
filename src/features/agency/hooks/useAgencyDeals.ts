@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/features/auth/context/AuthContext';
 
@@ -10,38 +10,31 @@ export interface Deal {
     end_date: string;
     status: string;
     approval_status: string;
+    rejection_reason: string | null;
     package_id: string | null;
     created_at: string;
 }
 
 export function useAgencyDeals() {
-    const [deals, setDeals] = useState<Deal[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
     const { user } = useAuth();
+    const queryClient = useQueryClient();
+    const userId = user?.id;
 
-    const fetchDeals = async () => {
-        if (!user) return;
-
-        try {
-            setLoading(true);
-            setError(null);
-
-            const { data, error: fetchError } = await supabase
+    const query = useQuery({
+        queryKey: ['agency', 'deals', userId],
+        enabled: !!userId,
+        queryFn: async (): Promise<Deal[]> => {
+            const { data, error } = await supabase
                 .from('deals')
                 .select('*')
-                .eq('agency_id', user.id)
+                .eq('agency_id', userId!)
                 .order('created_at', { ascending: false });
+            if (error) throw error;
+            return data || [];
+        },
+    });
 
-            if (fetchError) throw fetchError;
-            setDeals(data || []);
-        } catch (err) {
-            console.error('Error fetching deals:', err);
-            setError(err instanceof Error ? err.message : String(err));
-        } finally {
-            setLoading(false);
-        }
-    };
+    const invalidate = () => queryClient.invalidateQueries({ queryKey: ['agency', 'deals', userId] });
 
     const addDeal = async (deal: {
         title: string;
@@ -52,43 +45,48 @@ export function useAgencyDeals() {
         package_id?: string;
     }) => {
         if (!user) return;
+        const { data, error } = await supabase
+            .from('deals')
+            .insert({ ...deal, agency_id: user.id })
+            .select()
+            .single();
+        if (error) throw error;
+        await invalidate();
+        return data;
+    };
 
-        try {
-            const { data, error: insertError } = await supabase
-                .from('deals')
-                .insert({ ...deal, agency_id: user.id })
-                .select()
-                .single();
-
-            if (insertError) throw insertError;
-            setDeals(prev => [data, ...prev]);
-            return data;
-        } catch (err) {
-            console.error('Error adding deal:', err);
-            throw err;
-        }
+    // A material edit (discount/dates/package) is sent back to review by the DB
+    // guard, which also clears any stale rejection_reason — the resubmit path.
+    const updateDeal = async (
+        dealId: string,
+        patch: Partial<Pick<Deal, 'title' | 'discount_percentage' | 'start_date' | 'end_date' | 'status' | 'package_id'>>,
+    ) => {
+        const { data, error } = await supabase
+            .from('deals')
+            .update(patch)
+            .eq('id', dealId)
+            .select()
+            .single();
+        if (error) throw error;
+        await invalidate();
+        return data;
     };
 
     const deleteDeal = async (dealId: string) => {
-        try {
-            const { error: deleteError } = await supabase
-                .from('deals')
-                .delete()
-                .eq('id', dealId);
-
-            if (deleteError) throw deleteError;
-            setDeals(prev => prev.filter(d => d.id !== dealId));
-        } catch (err) {
-            console.error('Error deleting deal:', err);
-            throw err;
-        }
+        const { error } = await supabase.from('deals').delete().eq('id', dealId);
+        if (error) throw error;
+        await invalidate();
     };
 
-    useEffect(() => {
-        fetchDeals();
-        // Key on the id, not the object (auth events re-create the user object).
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [user?.id]);
-
-    return { deals, loading, error, addDeal, deleteDeal, refetch: fetchDeals };
+    return {
+        deals: query.data ?? [],
+        loading: query.isPending,
+        error: query.error
+            ? (query.error instanceof Error ? query.error.message : String(query.error))
+            : null,
+        addDeal,
+        updateDeal,
+        deleteDeal,
+        refetch: query.refetch,
+    };
 }

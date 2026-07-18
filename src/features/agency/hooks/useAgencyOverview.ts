@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import {
     format,
     parseISO,
@@ -11,6 +11,7 @@ import {
 } from 'date-fns';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/features/auth/context/AuthContext';
+import { isRevenueBooking } from '@/features/agency/lib/revenue';
 
 /**
  * Single consolidated data source for the agency Overview page. One fetch of
@@ -97,7 +98,8 @@ function derive(
     const now = Date.now();
     const win1 = now - 30 * DAY_MS; // last 30 days
     const win2 = now - 60 * DAY_MS; // prior 30 days
-    const active = bookings.filter((b) => b.status !== 'cancelled');
+    // Shared revenue definition (AGY-22): confirmed + completed only.
+    const active = bookings.filter(isRevenueBooking);
 
     // KPI: bookings created per window
     const bookingsLast30 = bookings.filter((b) => new Date(b.created_at).getTime() >= win1).length;
@@ -213,19 +215,8 @@ function derive(
     };
 }
 
-export function useAgencyOverview() {
-    const { user } = useAuth();
-    const [data, setData] = useState<AgencyOverviewData | null>(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
-
-    const fetchOverview = useCallback(async () => {
-        if (!user) return;
-        try {
-            setLoading(true);
-            setError(null);
-
-            const [bookingsRes, packagesRes, reviewsRes] = await Promise.all([
+async function fetchOverview(userId: string): Promise<AgencyOverviewData> {
+    const [bookingsRes, packagesRes, reviewsRes] = await Promise.all([
                 supabase
                     .from('package_bookings')
                     .select(`
@@ -233,7 +224,7 @@ export function useAgencyOverview() {
                         travelers ( first_name, last_name ),
                         packages!inner ( title, destination, duration_days, agency_id )
                     `)
-                    .eq('packages.agency_id', user.id)
+                    .eq('packages.agency_id', userId)
                     .order('created_at', { ascending: false }),
                 supabase
                     .from('packages')
@@ -241,7 +232,7 @@ export function useAgencyOverview() {
                         id, title, destination, base_price, duration_days, duration_nights, status, created_at,
                         package_media ( file_path, is_primary, display_order )
                     `)
-                    .eq('agency_id', user.id)
+                    .eq('agency_id', userId)
                     .eq('status', 'published')
                     .order('created_at', { ascending: false }),
                 supabase
@@ -251,7 +242,7 @@ export function useAgencyOverview() {
                         traveler:travelers ( first_name, last_name ),
                         package:packages!inner ( title, agency_id )
                     `)
-                    .eq('package.agency_id', user.id)
+                    .eq('package.agency_id', userId)
                     .order('created_at', { ascending: false }),
             ]);
 
@@ -301,20 +292,25 @@ export function useAgencyOverview() {
                 packageTitle: r.package?.title ?? '',
             }));
 
-            setData(derive(bookings, packages, reviews));
-        } catch (err) {
-            console.error('Error fetching agency overview:', err);
-            setError(err instanceof Error ? err.message : String(err));
-        } finally {
-            setLoading(false);
-        }
-    }, [user?.id]);
+            return derive(bookings, packages, reviews);
+}
 
-    useEffect(() => {
-        fetchOverview();
-    }, [fetchOverview]);
+export function useAgencyOverview() {
+    const { user } = useAuth();
+    const userId = user?.id;
 
-    return { data, loading, error, refetch: fetchOverview };
+    const query = useQuery({
+        queryKey: ['agency', 'overview', userId],
+        enabled: !!userId,
+        queryFn: () => fetchOverview(userId!),
+    });
+
+    return {
+        data: query.data ?? null,
+        loading: query.isPending,
+        error: query.error ? (query.error instanceof Error ? query.error.message : String(query.error)) : null,
+        refetch: query.refetch,
+    };
 }
 
 /** Bookings that fall on a given month, for the mini-calendar. */

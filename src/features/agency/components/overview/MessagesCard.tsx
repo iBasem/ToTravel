@@ -3,16 +3,16 @@ import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/card";
 import { Button } from "@/ui/button";
 import { Avatar, AvatarFallback } from "@/ui/avatar";
-import { useAgencyMessages } from "@/features/agency/hooks/useAgencyMessages";
+import { useRecentConversations } from "@/features/agency/hooks/useRecentConversations";
 import { formatRelativeTime } from "@/lib/formatters";
 import { initials } from "@/lib/utils";
 
 export function MessagesCard() {
     const { t } = useTranslation();
     const navigate = useNavigate();
-    const { conversations, loading } = useAgencyMessages();
+    const { conversations, loading } = useRecentConversations(4);
 
-    const shown = conversations.slice(0, 4);
+    const shown = conversations;
 
     return (
         <Card>

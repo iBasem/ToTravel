@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/features/auth/context/AuthContext';
@@ -14,25 +14,14 @@ export interface Traveler {
     lastTripDate: string | null;
 }
 
-export function useAgencyTravelers() {
-    const [travelers, setTravelers] = useState<Traveler[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
-    const { user } = useAuth();
-    const { t } = useTranslation();
-
-    useEffect(() => {
-        const fetchTravelers = async () => {
-            if (!user) return;
-
-            try {
-                setLoading(true);
-                setError(null);
-
-                // Fetch bookings for this agency's packages, including traveler info
-                const { data, error } = await supabase
-                    .from('package_bookings')
-                    .select(`
+async function fetchTravelers(
+    userId: string,
+    t: (key: string, fallback?: string) => string,
+): Promise<Traveler[]> {
+    // Bounded (audit AGY-28): aggregate from the 1000 most recent bookings.
+    const { data, error } = await supabase
+        .from('package_bookings')
+        .select(`
             booking_date,
             traveler:travelers!inner (
               id,
@@ -46,53 +35,58 @@ export function useAgencyTravelers() {
               title
             )
           `)
-                    .eq('packages.agency_id', user.id)
-                    .order('booking_date', { ascending: false });
+        .eq('packages.agency_id', userId)
+        .order('booking_date', { ascending: false })
+        .limit(1000);
 
-                if (error) throw error;
+    if (error) throw error;
 
-                // Aggregate data by traveler
-                const travelerMap = new Map<string, Traveler>();
+    const travelerMap = new Map<string, Traveler>();
 
-                data?.forEach((booking) => {
-                    const travelerId = booking.traveler.id;
+    data?.forEach((booking) => {
+        const travelerId = booking.traveler.id;
 
-                    if (!travelerMap.has(travelerId)) {
-                        travelerMap.set(travelerId, {
-                            id: travelerId,
-                            name: `${booking.traveler.first_name ?? ''} ${booking.traveler.last_name ?? ''}`.trim() || t('common.unknown', 'Unknown'),
-                            email: booking.traveler.email,
-                            phone: booking.traveler.phone,
-                            totalBookings: 0,
-                            lastTrip: null,
-                            lastTripDate: null
-                        });
-                    }
+        if (!travelerMap.has(travelerId)) {
+            travelerMap.set(travelerId, {
+                id: travelerId,
+                name: `${booking.traveler.first_name ?? ''} ${booking.traveler.last_name ?? ''}`.trim() || t('common.unknown', 'Unknown'),
+                email: booking.traveler.email,
+                phone: booking.traveler.phone,
+                totalBookings: 0,
+                lastTrip: null,
+                lastTripDate: null,
+            });
+        }
 
-                    const traveler = travelerMap.get(travelerId)!;
-                    traveler.totalBookings += 1;
+        const traveler = travelerMap.get(travelerId)!;
+        traveler.totalBookings += 1;
 
-                    // Since we ordered by date desc, the first time we see a traveler, it's their latest trip
-                    if (!traveler.lastTrip) {
-                        traveler.lastTrip = `${booking.packages.title} - ${formatDate(booking.booking_date, 'PP')}`;
-                        traveler.lastTripDate = booking.booking_date;
-                    }
-                });
+        // Ordered by date desc: the first sighting is the latest trip.
+        if (!traveler.lastTrip) {
+            traveler.lastTrip = `${booking.packages.title} - ${formatDate(booking.booking_date, 'PP')}`;
+            traveler.lastTripDate = booking.booking_date;
+        }
+    });
 
-                setTravelers(Array.from(travelerMap.values()));
+    return Array.from(travelerMap.values());
+}
 
-            } catch (err) {
-                console.error('Error fetching agency travelers:', err);
-                setError(err instanceof Error ? err.message : String(err));
-            } finally {
-                setLoading(false);
-            }
-        };
+export function useAgencyTravelers() {
+    const { user } = useAuth();
+    const { t } = useTranslation();
+    const userId = user?.id;
 
-        fetchTravelers();
-        // Key on the id, not the object (auth events re-create the user object).
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [user?.id]);
+    const query = useQuery({
+        queryKey: ['agency', 'travelers', userId],
+        enabled: !!userId,
+        queryFn: () => fetchTravelers(userId!, t),
+    });
 
-    return { travelers, loading, error };
+    return {
+        travelers: query.data ?? [],
+        loading: query.isPending,
+        error: query.error
+            ? (query.error instanceof Error ? query.error.message : String(query.error))
+            : null,
+    };
 }
