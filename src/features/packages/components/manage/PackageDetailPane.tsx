@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import {
     Package, MapPin, Clock, Users, Tag, CheckCircle2, Edit, MoreHorizontal,
-    CalendarDays, Copy, Trash2, Eye, Send, EyeOff,
+    CalendarDays, Copy, Trash2, Eye, Send, EyeOff, Undo2,
 } from "lucide-react";
 import { Button } from "@/ui/button";
 import { Badge } from "@/ui/badge";
@@ -92,11 +92,14 @@ export function PackageDetailPane({
                                 <CalendarDays className="h-4 w-4 me-2" />
                                 {t("departures.manage", "Manage departures")}
                             </DropdownMenuItem>
-                            <DropdownMenuItem onClick={onTogglePublish}>
-                                {isPublished
-                                    ? <><EyeOff className="h-4 w-4 me-2" />{t("agencyDashboard.unpublish")}</>
-                                    : <><Send className="h-4 w-4 me-2" />{t("agencyDashboard.publish")}</>}
-                            </DropdownMenuItem>
+                            {pkg.status !== "archived" && (
+                                <DropdownMenuItem onClick={onTogglePublish}>
+                                    {isPublished && <><EyeOff className="h-4 w-4 me-2" />{t("agencyDashboard.unpublish")}</>}
+                                    {pkg.status === "draft" && <><Send className="h-4 w-4 me-2" />{t("packageWizard.submitForReview", "Submit for review")}</>}
+                                    {pkg.status === "pending" && <><Undo2 className="h-4 w-4 me-2" />{t("agencyDashboard.withdrawToDraft", "Withdraw to draft")}</>}
+                                    {pkg.status === "suspended" && <><Send className="h-4 w-4 me-2" />{t("agencyDashboard.resubmitForReview", "Resubmit for review")}</>}
+                                </DropdownMenuItem>
+                            )}
                             <DropdownMenuItem onClick={onDuplicate}>
                                 <Copy className="h-4 w-4 me-2" />
                                 {t("packageWizard.duplicate", "Duplicate")}

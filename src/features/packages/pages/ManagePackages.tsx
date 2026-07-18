@@ -17,7 +17,7 @@ import { PackageListItem } from "@/features/packages/components/manage/PackageLi
 import { PackageDetailPane } from "@/features/packages/components/manage/PackageDetailPane";
 import { TripSchedule } from "@/features/packages/components/manage/TripSchedule";
 
-type StatusFilter = "all" | "published" | "pending" | "draft";
+type StatusFilter = "all" | "published" | "pending" | "draft" | "archived" | "suspended";
 
 export default function Packages() {
   const [searchParams] = useSearchParams();
@@ -68,9 +68,19 @@ export default function Packages() {
 
   const handleCreate = () => navigate("/travel_agency/packages/create");
 
+  // One handler, per-status semantics (audit AGY-29):
+  //   draft     -> pending  (submit for review, departures-gated)
+  //   pending   -> draft    (withdraw the submission)
+  //   published -> draft    (unpublish)
+  //   suspended -> pending  (resubmit for admin review, confirmed first)
   const handleTogglePublish = async (pkg: PackageWithDetails) => {
     try {
-      const newStatus = pkg.status === "published" ? "draft" : "pending";
+      if (pkg.status === "archived") return;
+      if (pkg.status === "suspended" &&
+        !confirm(t("agencyDashboard.resubmitSuspendedConfirm", "Resubmit this suspended package for admin review?"))) {
+        return;
+      }
+      const newStatus = pkg.status === "draft" || pkg.status === "suspended" ? "pending" : "draft";
       // Submitting for review requires >=1 upcoming departure (same gate as
       // save_package and the DB trigger); check first for a friendly path.
       if (pkg.status === "draft" && newStatus === "pending") {
@@ -96,7 +106,9 @@ export default function Packages() {
       toast.success(
         newStatus === "pending"
           ? t("agencyDashboard.submittedForReview", "Submitted for review")
-          : t("agencyDashboard.unpublished", "Unpublished"),
+          : pkg.status === "pending"
+            ? t("agencyDashboard.withdrawnToDraft", "Submission withdrawn to draft")
+            : t("agencyDashboard.unpublished", "Unpublished"),
       );
     } catch {
       toast.error(t("agencyDashboard.errorLoadingPackages"));
@@ -108,8 +120,15 @@ export default function Packages() {
     try {
       await deletePackage(pkg.id);
       toast.success(t("packageWizard.packageDeleted", "Package deleted successfully"));
-    } catch {
-      toast.error(t("errors.somethingWentWrong", "Error deleting package"));
+    } catch (err) {
+      // FK RESTRICT from data3_protect_financial_history: booking history
+      // blocks hard deletes — explain instead of a generic failure (AGY-20).
+      if ((err as { code?: string })?.code === "23503") {
+        toast.error(t("agencyDashboard.deleteHasBookings",
+          "This package has bookings, so it can't be deleted. Unpublish it, or ask an admin to archive it."));
+      } else {
+        toast.error(t("errors.somethingWentWrong", "Error deleting package"));
+      }
     }
   };
 
@@ -118,6 +137,8 @@ export default function Packages() {
     { value: "published", label: t("agencyDashboard.published") },
     { value: "pending", label: t("agencyDashboard.pendingReview", "Pending review") },
     { value: "draft", label: t("agencyDashboard.draft") },
+    { value: "suspended", label: t("agencyDashboard.suspended", "Suspended") },
+    { value: "archived", label: t("agencyDashboard.archived", "Archived") },
   ];
 
   if (loading) {
