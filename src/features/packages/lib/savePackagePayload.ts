@@ -70,7 +70,12 @@ export function buildSavePackagePayload(formData: PackageFormData) {
         room_type: h.room_type?.trim() || null,
         room_type_ar: h.room_type_ar?.trim() || null,
         star_rating: h.star_rating ?? null,
-        day_numbers: h.day_numbers || [],
+        // Clamp to the itinerary's current day range (AGY-15): removing or
+        // renumbering plan days otherwise leaves stays pinned to days that no
+        // longer exist ("Days 4, 5" on a 4-day trip).
+        day_numbers: (h.day_numbers || []).filter(
+          (d) => d >= 1 && d <= (formData.itinerary || []).length,
+        ),
         upgrade_available: h.upgrade_available,
         image_path: h.image_path || null,
         display_order: i,

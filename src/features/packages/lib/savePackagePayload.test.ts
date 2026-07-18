@@ -90,4 +90,22 @@ describe('buildSavePackagePayload', () => {
     const after = JSON.stringify(buildSavePackagePayload(form));
     expect(after).toBe(before);
   });
+
+  it('clamps stay day_numbers to the current itinerary range (AGY-15)', () => {
+    const form = base();
+    const day = (n: number) => ({
+      day: n, title: `Day ${n}`, description: '', activities: [], meals: [],
+      accommodation: '', transportation: '', title_ar: null, description_ar: null, activities_ar: [],
+    });
+    form.itinerary = [day(1), day(2)];
+    form.hotels = [
+      {
+        id: 'h1', name: 'Hotel A', name_ar: null, kind: 'hotel', room_type: null,
+        room_type_ar: null, star_rating: null, day_numbers: [1, 2, 4, 9],
+        upgrade_available: false, image_path: null,
+      },
+    ];
+    const payload = buildSavePackagePayload(form);
+    expect(payload.hotels[0].day_numbers).toEqual([1, 2]);
+  });
 });

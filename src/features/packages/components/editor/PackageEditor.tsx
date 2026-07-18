@@ -257,7 +257,11 @@ export function PackageEditor({ mode, packageId: initialPackageId = null, initia
               <Button
                 variant={autosaveEnabled ? "outline" : "default"}
                 onClick={() => handleSave(false)}
-                disabled={saving || autosaving || missingRequiredFields(1, formData).length > 0}
+                // A published package's save auto-demotes it to pending review
+                // (RPC behavior), so it must clear the FULL submit bar — not
+                // just Basics. Price 0 / empty destination could previously
+                // reach the admin queue (AGY-16).
+                disabled={saving || autosaving || (isPublished ? missingSubmit.length > 0 : missingRequiredFields(1, formData).length > 0)}
               >
                 {saving && <Loader2 className="w-4 h-4 animate-spin me-2" aria-hidden />}
                 {autosaveEnabled
