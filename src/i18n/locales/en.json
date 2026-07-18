@@ -558,6 +558,7 @@
     "resubmitSuspendedConfirm": "Resubmit this suspended package for admin review?",
     "deleteHasBookings": "This package has bookings, so it can't be deleted. Unpublish it, or ask an admin to archive it.",
     "statusChangeFailed": "Couldn't change the package status",
+    "cancelBooking": "Cancel",
     "editDeal": "Edit deal",
     "editResubmitHint": "Saving changes resubmits this deal for admin review.",
     "dealUpdatedPendingApproval": "Deal updated — it will be re-reviewed before going public",

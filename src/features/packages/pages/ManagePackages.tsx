@@ -23,7 +23,7 @@ type StatusFilter = "all" | "published" | "pending" | "draft" | "archived" | "su
 export default function Packages() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const { packages, loading, error, deletePackage, updatePackage } = usePackages();
+  const { packages, loading, error, deletePackage, updatePackage, refetch } = usePackages();
   const audit = useAgencyAudit();
   const { t, i18n } = useTranslation();
   const isRTL = i18n.language === "ar";
@@ -173,7 +173,7 @@ export default function Packages() {
         icon="alert-triangle"
         title={t("agencyDashboard.errorLoadingPackages")}
         description={error}
-        action={{ label: t("common.retry"), onClick: () => window.location.reload() }}
+        action={{ label: t("common.retry"), onClick: () => void refetch() }}
       />
     );
   }

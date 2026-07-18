@@ -226,6 +226,19 @@ export default function Bookings() {
                             {t('agencyDashboard.markCompleted', 'Mark completed')}
                           </Button>
                         )}
+                        {booking.status === 'confirmed' && (
+                          // confirmed->cancelled is server-allowed but had no
+                          // UI (REG-12): forced cancellations (e.g. after a
+                          // departure cancel) reuse the decline dialog.
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="border-destructive/40 text-destructive hover:bg-destructive/10 text-xs px-2 py-1"
+                            onClick={() => setDeclineTarget(booking)}
+                          >
+                            {t('agencyDashboard.cancelBooking', 'Cancel')}
+                          </Button>
+                        )}
                         <Button
                           size="sm"
                           variant="outline"
