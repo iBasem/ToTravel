@@ -598,6 +598,7 @@
     "editDeal": "تعديل العرض",
     "editResubmitHint": "حفظ التعديلات يعيد إرسال هذا العرض لمراجعة الإدارة.",
     "dealUpdatedPendingApproval": "تم تحديث العرض — ستتم مراجعته مجددًا قبل نشره",
+    "dealUpdateFailed": "تعذّر تحديث العرض",
     "dealTitleRequired": "أدخل عنوانًا للعرض",
     "dealDiscountRange": "يجب أن يكون الخصم بين 1% و90%",
     "dealDatesRequired": "اختر تاريخ البداية والنهاية",

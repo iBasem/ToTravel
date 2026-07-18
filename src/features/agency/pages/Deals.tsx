@@ -120,7 +120,9 @@ export default function Deals() {
       setEditing(null);
       setDialogOpen(false);
     } catch {
-      toast.error(t('agencyDashboard.dealCreateFailed', { defaultValue: 'Failed to create deal' }));
+      toast.error(editing
+        ? t('agencyDashboard.dealUpdateFailed', { defaultValue: 'Failed to update deal' })
+        : t('agencyDashboard.dealCreateFailed', { defaultValue: 'Failed to create deal' }));
     }
   };
 

@@ -562,6 +562,7 @@
     "editDeal": "Edit deal",
     "editResubmitHint": "Saving changes resubmits this deal for admin review.",
     "dealUpdatedPendingApproval": "Deal updated — it will be re-reviewed before going public",
+    "dealUpdateFailed": "Failed to update deal",
     "dealTitleRequired": "Give the deal a title",
     "dealDiscountRange": "Discount must be between 1% and 90%",
     "dealDatesRequired": "Pick a start and end date",

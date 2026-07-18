@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import type { Json } from '@/integrations/supabase/types';
 import { useAuth } from '@/features/auth/context/AuthContext';
 
 export interface AgencyAuditEntry {
@@ -26,7 +27,7 @@ export async function logAgencyAction(
         action_description: entry.description,
         entity_type: entry.entityType ?? null,
         entity_id: entry.entityId ?? null,
-        metadata: (entry.metadata ?? {}) as never,
+        metadata: (entry.metadata ?? {}) as Json,
     });
     if (error) {
         console.error('Failed to write agency activity log:', error);

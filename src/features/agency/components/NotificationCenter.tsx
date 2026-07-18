@@ -9,7 +9,7 @@ import {
 import { cn } from "@/lib/utils";
 import { formatRelativeTime } from "@/lib/formatters";
 import { useNotifications } from "@/features/agency/hooks/useNotifications";
-import { useUnreadMessages } from "@/features/agency/hooks/useUnreadMessages";
+import { useUnreadMessages } from "@/hooks/useUnreadMessages";
 
 /**
  * The header bell: decision notifications (deal/package outcomes, written by
