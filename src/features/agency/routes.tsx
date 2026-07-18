@@ -1,5 +1,6 @@
 import { Route, Routes } from "react-router-dom";
 import ProtectedRoute from "@/features/auth/components/ProtectedRoute";
+import { AgencyStatusGuard } from "./components/AgencyStatusGuard";
 import { SidebarProvider } from "@/ui/sidebar";
 import DashboardLayout from "@/layouts/DashboardLayout";
 import Dashboard from "./pages/Dashboard";
@@ -19,6 +20,7 @@ import Feedback from "./pages/Feedback";
 export const AgencyRoutes = () => {
     return (
         <ProtectedRoute requiredRole="agency">
+            <AgencyStatusGuard>
             <SidebarProvider>
                 <Routes>
                     <Route element={<DashboardLayout />}>
@@ -38,6 +40,7 @@ export const AgencyRoutes = () => {
                     </Route>
                 </Routes>
             </SidebarProvider>
+            </AgencyStatusGuard>
         </ProtectedRoute>
     );
 };
