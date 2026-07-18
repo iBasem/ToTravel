@@ -1,5 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/features/auth/context/AuthContext';
+import { logAgencyAction } from '@/features/agency/lib/audit';
 
 export interface DepartureRow {
   id: string;
@@ -26,6 +28,7 @@ export interface NewDeparture {
  * booked / remaining are derived from bookings at read time.
  */
 export function useDepartures(packageId: string | undefined) {
+  const { user } = useAuth();
   const [departures, setDepartures] = useState<DepartureRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -89,19 +92,43 @@ export function useDepartures(packageId: string | undefined) {
     const { error } = await supabase
       .from('package_departures')
       .insert({ package_id: packageId, ...input });
-    if (!error) await fetchDepartures();
+    if (!error) {
+      void logAgencyAction(user?.id, {
+        actionType: 'departure_added',
+        description: `Departure ${input.departure_date} added to package ${packageId}`,
+        entityType: 'package',
+        entityId: packageId,
+      });
+      await fetchDepartures();
+    }
     return { error };
   };
 
   const updateDeparture = async (id: string, updates: Partial<NewDeparture & { status: string }>) => {
     const { error } = await supabase.from('package_departures').update(updates).eq('id', id);
-    if (!error) await fetchDepartures();
+    if (!error) {
+      void logAgencyAction(user?.id, {
+        actionType: updates.status === 'cancelled' ? 'departure_cancelled' : 'departure_updated',
+        description: `Departure ${id} ${updates.status === 'cancelled' ? 'cancelled' : 'updated'}`,
+        entityType: 'departure',
+        entityId: id,
+      });
+      await fetchDepartures();
+    }
     return { error };
   };
 
   const deleteDeparture = async (id: string) => {
     const { error } = await supabase.from('package_departures').delete().eq('id', id);
-    if (!error) await fetchDepartures();
+    if (!error) {
+      void logAgencyAction(user?.id, {
+        actionType: 'departure_deleted',
+        description: `Departure ${id} deleted`,
+        entityType: 'departure',
+        entityId: id,
+      });
+      await fetchDepartures();
+    }
     return { error };
   };
 

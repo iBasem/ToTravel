@@ -372,6 +372,66 @@ export type Database = {
           },
         ]
       }
+      agency_activity_logs: {
+        Row: {
+          id: string
+          agency_id: string
+          action_type: string
+          action_description: string
+          entity_type: string | null
+          entity_id: string | null
+          metadata: Json
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          agency_id: string
+          action_type: string
+          action_description: string
+          entity_type?: string | null
+          entity_id?: string | null
+          metadata?: Json
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          agency_id?: string
+          action_type?: string
+          action_description?: string
+          entity_type?: string | null
+          entity_id?: string | null
+          metadata?: Json
+          created_at?: string
+        }
+        Relationships: []
+      }
+      client_errors: {
+        Row: {
+          id: string
+          user_id: string | null
+          message: string
+          stack: string | null
+          path: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          user_id?: string | null
+          message: string
+          stack?: string | null
+          path?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string | null
+          message?: string
+          stack?: string | null
+          path?: string | null
+          created_at?: string
+        }
+        Relationships: []
+      }
       messages: {
         Row: {
           content: string

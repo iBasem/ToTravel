@@ -2,6 +2,7 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/features/auth/context/AuthContext';
+import { logAgencyAction } from '@/features/agency/lib/audit';
 
 export interface Booking {
   id: string;
@@ -95,6 +96,16 @@ export function useBookings() {
         .eq('id', bookingId);
 
       if (error) throw error;
+
+      if (role === 'agency') {
+        void logAgencyAction(userId, {
+          actionType: `booking_${status}`,
+          description: `Booking ${bookingId} set to ${status}`,
+          entityType: 'booking',
+          entityId: bookingId,
+          metadata: options?.cancellationReason ? { reason: options.cancellationReason } : {},
+        });
+      }
 
       // A status change moves revenue/trip numbers everywhere: refresh every
       // agency-scoped query (overview, bookings, calendar, travelers).

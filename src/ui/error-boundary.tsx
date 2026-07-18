@@ -24,6 +24,11 @@ export class ErrorBoundary extends Component<Props, State> {
 
     public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
         console.error("Uncaught error:", error, errorInfo);
+        // Fire-and-forget report to client_errors (audit AGY-31 pairing);
+        // dynamic import keeps the boundary dependency-free at module load.
+        import("@/features/agency/lib/audit")
+            .then(({ reportClientError }) => reportClientError(error, window.location.pathname))
+            .catch(() => undefined);
     }
 
     public render() {

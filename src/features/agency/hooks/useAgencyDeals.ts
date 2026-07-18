@@ -1,6 +1,7 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/features/auth/context/AuthContext';
+import { logAgencyAction } from '@/features/agency/lib/audit';
 
 export interface Deal {
     id: string;
@@ -51,6 +52,12 @@ export function useAgencyDeals() {
             .select()
             .single();
         if (error) throw error;
+        void logAgencyAction(userId, {
+            actionType: 'deal_created',
+            description: `Deal "${deal.title}" created`,
+            entityType: 'deal',
+            entityId: data?.id,
+        });
         await invalidate();
         return data;
     };
@@ -68,6 +75,12 @@ export function useAgencyDeals() {
             .select()
             .single();
         if (error) throw error;
+        void logAgencyAction(userId, {
+            actionType: 'deal_updated',
+            description: `Deal ${dealId} updated (resubmitted for review on material change)`,
+            entityType: 'deal',
+            entityId: dealId,
+        });
         await invalidate();
         return data;
     };
@@ -75,6 +88,12 @@ export function useAgencyDeals() {
     const deleteDeal = async (dealId: string) => {
         const { error } = await supabase.from('deals').delete().eq('id', dealId);
         if (error) throw error;
+        void logAgencyAction(userId, {
+            actionType: 'deal_deleted',
+            description: `Deal ${dealId} deleted`,
+            entityType: 'deal',
+            entityId: dealId,
+        });
         await invalidate();
     };
 

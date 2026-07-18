@@ -12,6 +12,7 @@ import {
 } from "@/ui/dropdown-menu";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { useAgencyAudit } from "@/features/agency/lib/audit";
 import { usePackages, type PackageWithDetails } from "@/features/packages/hooks/usePackages";
 import { PackageListItem } from "@/features/packages/components/manage/PackageListItem";
 import { PackageDetailPane } from "@/features/packages/components/manage/PackageDetailPane";
@@ -23,6 +24,7 @@ export default function Packages() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { packages, loading, error, deletePackage, updatePackage } = usePackages();
+  const audit = useAgencyAudit();
   const { t, i18n } = useTranslation();
   const isRTL = i18n.language === "ar";
 
@@ -103,6 +105,12 @@ export default function Packages() {
         }
       }
       await updatePackage(pkg.id, { status: newStatus });
+      void audit({
+        actionType: `package_${newStatus === "pending" ? "submitted" : pkg.status === "pending" ? "withdrawn" : "unpublished"}`,
+        description: `Package "${pkg.title}" ${pkg.status} -> ${newStatus}`,
+        entityType: "package",
+        entityId: pkg.id,
+      });
       toast.success(
         newStatus === "pending"
           ? t("agencyDashboard.submittedForReview", "Submitted for review")
@@ -119,6 +127,12 @@ export default function Packages() {
     if (!confirm(`${t("common.deletePackageConfirm", "Are you sure you want to delete")} "${pkg.title}"?`)) return;
     try {
       await deletePackage(pkg.id);
+      void audit({
+        actionType: "package_deleted",
+        description: `Package "${pkg.title}" deleted`,
+        entityType: "package",
+        entityId: pkg.id,
+      });
       toast.success(t("packageWizard.packageDeleted", "Package deleted successfully"));
     } catch (err) {
       // FK RESTRICT from data3_protect_financial_history: booking history
