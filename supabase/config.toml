@@ -1,1 +1,26 @@
 project_id = "saouviwryaswacjtfswc"
+
+# Per-function JWT verification (audit AGY-13, see docs/deploy-notes.md).
+# moyasar-webhook is called by Moyasar without a Supabase JWT; it authenticates
+# via the in-body secret_token instead. Everything else keeps gateway JWT
+# verification. Without these pins, a clean `supabase functions deploy` would
+# default moyasar-webhook to verify_jwt = true and silently break payment
+# reconciliation.
+
+[functions.moyasar-webhook]
+verify_jwt = false
+
+[functions.create-booking]
+verify_jwt = true
+
+[functions.cancel-booking]
+verify_jwt = true
+
+[functions.create-payment]
+verify_jwt = true
+
+[functions.create-review]
+verify_jwt = true
+
+[functions.admin-refund]
+verify_jwt = true
