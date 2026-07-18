@@ -53,8 +53,10 @@ export interface PackageDetails {
   featured: boolean;
   status: string;
   agency_id: string;
-  available_from: string;
-  available_to: string;
+  // Nullable in the DB and never written by the wizard/RPC (only seeds set
+  // them) — typing them non-null hid that from every consumer (AGY-43).
+  available_from: string | null;
+  available_to: string | null;
   created_at: string;
   updated_at: string;
   package_media?: Array<{

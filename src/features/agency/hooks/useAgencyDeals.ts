@@ -1,20 +1,12 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import type { Database } from '@/integrations/supabase/types';
 import { useAuth } from '@/features/auth/context/AuthContext';
 import { logAgencyAction } from '@/features/agency/lib/audit';
 
-export interface Deal {
-    id: string;
-    title: string;
-    discount_percentage: number;
-    start_date: string;
-    end_date: string;
-    status: string;
-    approval_status: string;
-    rejection_reason: string | null;
-    package_id: string | null;
-    created_at: string;
-}
+// Derived from the generated schema so column renames fail at compile time
+// instead of runtime (AGY-43).
+export type Deal = Database['public']['Tables']['deals']['Row'];
 
 export function useAgencyDeals() {
     const { user } = useAuth();
