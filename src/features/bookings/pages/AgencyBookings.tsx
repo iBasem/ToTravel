@@ -4,9 +4,11 @@ import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/card";
 import { Badge } from "@/ui/badge";
 import { Button } from "@/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/ui/dialog";
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/ui/dialog";
+import { Textarea } from "@/ui/textarea";
 import { Eye, MessageSquare, Calendar, Phone, Mail, Clock, CheckCircle2, DollarSign } from "lucide-react";
 import { shortId } from "@/lib/utils";
+import { totalRevenue as sumRevenue } from "@/features/agency/lib/revenue";
 import { LoadingSpinner } from "@/ui/loading-spinner";
 import { EmptyState } from "@/ui/empty-state";
 import { useBookings, type Booking } from "@/features/bookings/hooks/useBookings";
@@ -17,8 +19,10 @@ import { formatDate, formatCurrency } from "@/lib/formatters";
 export default function Bookings() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { bookings, loading, error, updateBookingStatus } = useBookings();
+  const { bookings, loading, error, updateBookingStatus, refetch } = useBookings();
   const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
+  const [declineTarget, setDeclineTarget] = useState<Booking | null>(null);
+  const [declineReason, setDeclineReason] = useState("");
 
   if (loading) {
     return (
@@ -32,7 +36,7 @@ export default function Bookings() {
     return (
       <div className="text-center py-8">
         <p className="text-destructive text-sm sm:text-base">{t('agencyDashboard.errorLoadingBookings')}: {error}</p>
-        <Button onClick={() => window.location.reload()} className="mt-4">
+        <Button onClick={() => refetch()} className="mt-4">
           {t('common.retry')}
         </Button>
       </div>
@@ -69,20 +73,40 @@ export default function Bookings() {
     }
   };
 
-  const handleStatusUpdate = async (bookingId: string, newStatus: string) => {
-    const result = await updateBookingStatus(bookingId, newStatus);
+  const handleStatusUpdate = async (
+    bookingId: string,
+    newStatus: string,
+    options?: { cancellationReason?: string },
+  ) => {
+    const result = await updateBookingStatus(bookingId, newStatus, options);
     if (result.success) {
       toast.success(t('packageWizard.bookingUpdated', { status: getStatusLabel(newStatus) }));
     } else {
       toast.error(result.error || t('packageWizard.failedToUpdate'));
     }
+    return result.success;
   };
+
+  const handleDecline = async () => {
+    if (!declineTarget) return;
+    const ok = await handleStatusUpdate(declineTarget.id, 'cancelled', {
+      cancellationReason: declineReason,
+    });
+    if (ok) {
+      setDeclineTarget(null);
+      setDeclineReason("");
+    }
+  };
+
+  // A confirmed, paid booking whose travel date has passed can be closed out.
+  const todayIso = new Date().toISOString().slice(0, 10);
+  const canComplete = (b: Booking) =>
+    b.status === 'confirmed' && b.payment_status === 'paid' && b.booking_date <= todayIso;
 
   const pendingBookings = bookings.filter(b => b.status === "pending").length;
   const confirmedBookings = bookings.filter(b => b.status === "confirmed").length;
-  const totalRevenue = bookings
-    .filter(b => b.status === "confirmed")
-    .reduce((sum, b) => sum + Number(b.total_price), 0);
+  // Shared revenue definition (AGY-22): confirmed + completed.
+  const totalRevenue = sumRevenue(bookings);
 
   return (
     <div className="space-y-4 sm:space-y-6 lg:space-y-8">
@@ -170,12 +194,32 @@ export default function Bookings() {
 
                       <div className="flex gap-2">
                         {booking.status === 'pending' && (
+                          <>
+                            <Button
+                              size="sm"
+                              onClick={() => handleStatusUpdate(booking.id, 'confirmed')}
+                              className="bg-green-600 hover:bg-green-700 text-white text-xs px-2 py-1"
+                            >
+                              {t('agencyDashboard.confirm')}
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="border-destructive/40 text-destructive hover:bg-destructive/10 text-xs px-2 py-1"
+                              onClick={() => setDeclineTarget(booking)}
+                            >
+                              {t('agencyDashboard.decline', 'Decline')}
+                            </Button>
+                          </>
+                        )}
+                        {canComplete(booking) && (
                           <Button
                             size="sm"
-                            onClick={() => handleStatusUpdate(booking.id, 'confirmed')}
-                            className="bg-green-600 hover:bg-green-700 text-white text-xs px-2 py-1"
+                            variant="outline"
+                            className="text-xs px-2 py-1"
+                            onClick={() => handleStatusUpdate(booking.id, 'completed')}
                           >
-                            {t('agencyDashboard.confirm')}
+                            {t('agencyDashboard.markCompleted', 'Mark completed')}
                           </Button>
                         )}
                         <Button
@@ -290,9 +334,42 @@ export default function Bookings() {
                     <p className="text-sm">{selectedBooking.special_requests}</p>
                   </div>
                 )}
+                {selectedBooking.status === 'cancelled' && selectedBooking.cancellation_reason && (
+                  <div className="border-t border-border pt-3">
+                    <p className="text-xs text-muted-foreground mb-1">{t('agencyDashboard.cancellationReason', 'Cancellation reason')}</p>
+                    <p className="text-sm">{selectedBooking.cancellation_reason}</p>
+                  </div>
+                )}
               </div>
             </>
           )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Decline booking dialog */}
+      <Dialog open={!!declineTarget} onOpenChange={(open) => { if (!open) { setDeclineTarget(null); setDeclineReason(""); } }}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>{t('agencyDashboard.declineBookingTitle', 'Decline this booking?')}</DialogTitle>
+          </DialogHeader>
+          <p className="text-sm text-muted-foreground text-start">
+            {t('agencyDashboard.declineBookingDesc', 'The traveler will see the booking as cancelled. You can add an optional reason.')}
+          </p>
+          <Textarea
+            value={declineReason}
+            onChange={(e) => setDeclineReason(e.target.value)}
+            placeholder={t('agencyDashboard.declineReasonPlaceholder', 'Reason (optional)')}
+            rows={3}
+            dir="auto"
+          />
+          <DialogFooter className="gap-2">
+            <Button variant="outline" onClick={() => { setDeclineTarget(null); setDeclineReason(""); }}>
+              {t('common.cancel', 'Cancel')}
+            </Button>
+            <Button variant="destructive" onClick={handleDecline}>
+              {t('agencyDashboard.decline', 'Decline')}
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>
