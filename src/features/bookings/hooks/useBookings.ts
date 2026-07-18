@@ -114,7 +114,12 @@ export function useBookings() {
       return { success: true };
     } catch (err) {
       console.error('Error updating booking status:', err);
-      return { success: false, error: err instanceof Error ? err.message : 'Failed to update booking' };
+      // PostgrestError is an Error subclass, but keep the plain-object path:
+      // guard rejections must surface their message (e.g. transition errors).
+      const message = err instanceof Error
+        ? err.message
+        : (err as { message?: string })?.message || 'Failed to update booking';
+      return { success: false, error: message };
     }
   };
 
