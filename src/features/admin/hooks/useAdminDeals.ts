@@ -58,6 +58,8 @@ interface DealApprovalInput {
     dealId: string;
     dealTitle: string;
     approval: 'approved' | 'rejected';
+    /** Shown to the agency on the rejected deal card (wave3, AGY audit dead-end). */
+    reason?: string;
 }
 
 export function useSetDealApproval() {
@@ -65,10 +67,13 @@ export function useSetDealApproval() {
     const audit = useAdminAudit();
 
     return useMutation({
-        mutationFn: async ({ dealId, approval }: DealApprovalInput) => {
+        mutationFn: async ({ dealId, approval, reason }: DealApprovalInput) => {
             const { error } = await supabase
                 .from('deals')
-                .update({ approval_status: approval })
+                .update({
+                    approval_status: approval,
+                    rejection_reason: approval === 'rejected' ? (reason?.trim() || null) : null,
+                })
                 .eq('id', dealId);
             if (error) throw error;
         },

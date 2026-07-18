@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Card, CardContent } from "@/ui/card";
 import { Button } from "@/ui/button";
 import { Input } from "@/ui/input";
+import { Textarea } from "@/ui/textarea";
 import { Badge } from "@/ui/badge";
 import { Skeleton } from "@/ui/skeleton";
 import {
@@ -39,6 +40,7 @@ export default function DealManagement() {
     const [searchTerm, setSearchTerm] = useState("");
     const [approvalFilter, setApprovalFilter] = useState<ApprovalFilter>('all');
     const [rejectDeal, setRejectDeal] = useState<AdminDeal | null>(null);
+    const [rejectReason, setRejectReason] = useState('');
     const { t, i18n } = useTranslation();
 
     const deals = data?.deals ?? [];
@@ -70,13 +72,14 @@ export default function DealManagement() {
     const handleReject = () => {
         if (!rejectDeal) return;
         setApproval.mutate(
-            { dealId: rejectDeal.id, dealTitle: rejectDeal.title, approval: 'rejected' },
+            { dealId: rejectDeal.id, dealTitle: rejectDeal.title, approval: 'rejected', reason: rejectReason },
             {
                 onSuccess: () => toast.success(t('adminDeals.rejectSuccess', 'Deal rejected')),
                 onError: () => toast.error(t('adminDeals.updateError', 'Failed to update deal')),
             },
         );
         setRejectDeal(null);
+        setRejectReason('');
     };
 
     const approvalBadge = (approval: string) => {
@@ -228,7 +231,7 @@ export default function DealManagement() {
             )}
 
             {/* Reject confirmation */}
-            <AlertDialog open={!!rejectDeal} onOpenChange={(open) => !open && setRejectDeal(null)}>
+            <AlertDialog open={!!rejectDeal} onOpenChange={(open) => { if (!open) { setRejectDeal(null); setRejectReason(''); } }}>
                 <AlertDialogContent>
                     <AlertDialogHeader>
                         <AlertDialogTitle>{t('adminDeals.confirmRejectTitle', 'Reject this deal?')}</AlertDialogTitle>
@@ -236,6 +239,13 @@ export default function DealManagement() {
                             {t('adminDeals.confirmRejectDesc', 'The deal will not be shown to travelers. The agency can edit and resubmit it.')}
                         </AlertDialogDescription>
                     </AlertDialogHeader>
+                    <Textarea
+                        value={rejectReason}
+                        onChange={(e) => setRejectReason(e.target.value)}
+                        placeholder={t('adminDeals.rejectReasonPlaceholder', 'Reason shown to the agency (optional)')}
+                        rows={3}
+                        dir="auto"
+                    />
                     <AlertDialogFooter>
                         <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
                         <AlertDialogAction
