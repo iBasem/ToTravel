@@ -21,7 +21,7 @@ export default function Messages() {
   const [searchParams] = useSearchParams();
 
   const {
-    conversations, messages, selectedConversation, loading, error, fetchMessages, sendMessage,
+    conversations, messages, selectedConversation, loading, error, threadError, fetchMessages, sendMessage,
   } = useAgencyMessages();
 
   const [search, setSearch] = useState("");
@@ -203,7 +203,17 @@ export default function Messages() {
 
       {/* Thread */}
       <section className={`flex-1 min-w-0 lg:flex flex-col min-h-0 ${mobileThreadOpen ? "flex" : "hidden lg:flex"}`}>
-        {selectedConversation ? (
+        {selectedConversation && threadError ? (
+          <div className="h-full grid place-items-center text-center text-muted-foreground p-6">
+            <div>
+              <MessageSquare className="h-14 w-14 mx-auto mb-3 text-muted-foreground/30" />
+              <p className="text-sm mb-3">{t("agencyDashboard.threadLoadFailed", "Couldn't load this conversation")}</p>
+              <Button variant="outline" size="sm" onClick={() => fetchMessages(selectedConversation)}>
+                {t("common.retry", "Retry")}
+              </Button>
+            </div>
+          </div>
+        ) : selectedConversation ? (
           <div key={selectedConversation} className="flex-1 min-h-0 flex flex-col animate-in fade-in-0 duration-200 motion-reduce:animate-none">
             <MessageThread
               conversation={activeConversation}

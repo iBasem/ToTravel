@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { shortId } from '@/lib/utils';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/features/auth/context/AuthContext';
@@ -28,6 +28,11 @@ export function useAgencyMessages() {
     const [selectedConversation, setSelectedConversation] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [threadLoading, setThreadLoading] = useState(false);
+    const [threadError, setThreadError] = useState<string | null>(null);
+    // Monotonic token so a slow response for a previously-selected thread can
+    // never overwrite the currently-selected one (rapid thread switching).
+    const threadFetchSeq = useRef(0);
     const { user } = useAuth();
 
     // Fetch all conversations (grouped by the other user). Background refreshes
@@ -107,9 +112,15 @@ export function useAgencyMessages() {
     const fetchMessages = async (otherUserId: string) => {
         if (!user) return;
 
-        try {
-            setSelectedConversation(otherUserId);
+        const seq = ++threadFetchSeq.current;
+        // Clear immediately so the previous thread's history never renders
+        // under the newly-selected conversation's header.
+        setSelectedConversation(otherUserId);
+        setMessages([]);
+        setThreadLoading(true);
+        setThreadError(null);
 
+        try {
             const { data, error: fetchError } = await supabase
                 .from('messages')
                 .select('*')
@@ -119,6 +130,7 @@ export function useAgencyMessages() {
                 .order('created_at', { ascending: true });
 
             if (fetchError) throw fetchError;
+            if (seq !== threadFetchSeq.current) return; // a newer selection won
             setMessages(data || []);
 
             // Mark unread messages as read
@@ -131,6 +143,11 @@ export function useAgencyMessages() {
 
         } catch (err) {
             console.error('Error fetching messages:', err);
+            if (seq === threadFetchSeq.current) {
+                setThreadError(err instanceof Error ? err.message : String(err));
+            }
+        } finally {
+            if (seq === threadFetchSeq.current) setThreadLoading(false);
         }
     };
 
@@ -204,6 +221,8 @@ export function useAgencyMessages() {
         selectedConversation,
         loading,
         error,
+        threadLoading,
+        threadError,
         fetchMessages,
         sendMessage,
         refetch: fetchConversations,

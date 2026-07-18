@@ -1,5 +1,6 @@
 import { useRef, useEffect, useState, Fragment } from "react";
 import { useTranslation } from "react-i18next";
+import { toast } from "sonner";
 import { ChevronLeft, Send, Check, CheckCheck, MoreHorizontal, MessageSquare } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/ui/avatar";
 import { Button } from "@/ui/button";
@@ -27,16 +28,27 @@ export function MessageThread({
 }: MessageThreadProps) {
     const { t } = useTranslation();
     const [input, setInput] = useState("");
+    const [sending, setSending] = useState(false);
     const endRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         endRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [messages]);
 
-    const send = () => {
-        if (!input.trim()) return;
-        onSend(input.trim());
+    const send = async () => {
+        const text = input.trim();
+        if (!text || sending) return;
+        setSending(true);
         setInput("");
+        try {
+            await onSend(text);
+        } catch {
+            // Restore the draft so a failed send never loses the message.
+            setInput(text);
+            toast.error(t("agencyDashboard.messageSendFailed", "Message failed to send. Your text was restored — try again."));
+        } finally {
+            setSending(false);
+        }
     };
 
     return (
@@ -155,7 +167,7 @@ export function MessageThread({
                         className="flex-1 h-10 rounded-full bg-muted border-transparent focus-visible:bg-background focus-visible:border-input"
                         dir="auto"
                     />
-                    <Button onClick={send} disabled={!input.trim()} size="icon" className="rounded-full shrink-0" aria-label={t("agencyDashboard.sendMessage", "Send message")}>
+                    <Button onClick={send} disabled={!input.trim() || sending} size="icon" className="rounded-full shrink-0" aria-label={t("agencyDashboard.sendMessage", "Send message")}>
                         <Send className="h-4 w-4 rtl-flip" />
                     </Button>
                 </div>
