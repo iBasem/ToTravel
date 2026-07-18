@@ -86,4 +86,8 @@ Security: no new warnings from any wave table — remaining items are the verifi
 
 ---
 
-*Generated 2026-07-18 by the four-auditor regression sweep; Critical/High claims re-verified against migration SQL. Original audit: 51 findings; post-wave state: 41 held, 2 broken fixes, 2 regressions, 2 unclaimed, 2 deferred-by-design.*
+## 6. Wave 4 closure (same day)
+
+Wave 4 landed as commits `ed1b549..e109787` and resolves **REG-1 through REG-22** except three accepted notes: REG-17's booking/account-status notification *coverage* (the service-role skip DID land; new notification types are future work), AGY-34 (seed GUC scope — accepted risk, documented), and the `support@totravel.demo` literal (product decision). Verification: guard probes P1–P6 on the remote (foreign-departure repoint blocked, title-edit resubmit + reason clearing, suspended agency blocked from bookings/messages server-side, no service-role notification spam), payments via the view only (33 rows view / 0 base-table), 65 tests green including the audit's two named priorities, and live browser checks (Cancel on confirmed bookings, payments card through the view, deep-link restore). Deferred by design remain: AGY-37, AGY-39.
+
+*Generated 2026-07-18 by the four-auditor regression sweep; Critical/High claims re-verified against migration SQL. Original audit: 51 findings; post-wave state: 41 held, 2 broken fixes, 2 regressions, 2 unclaimed, 2 deferred-by-design — all resolved or dispositioned by Wave 4.*
