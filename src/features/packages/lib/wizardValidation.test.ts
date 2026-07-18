@@ -42,9 +42,9 @@ describe('missingRequiredFields', () => {
   it('requires a positive base price on the pricing section', () => {
     const form = valid();
     form.pricing.basePrice = '0';
-    expect(missingRequiredFields(3, form)).toEqual(['packageWizard.basePrice']);
+    expect(missingRequiredFields(4, form)).toEqual(['packageWizard.basePrice']);
     form.pricing.basePrice = '899';
-    expect(missingRequiredFields(3, form)).toEqual([]);
+    expect(missingRequiredFields(4, form)).toEqual([]);
   });
 
   it('treats whitespace-only title and description as missing', () => {
@@ -57,16 +57,16 @@ describe('missingRequiredFields', () => {
     ]);
   });
 
-  it('leaves departures and media sections ungated at the form level', () => {
+  it('leaves stays, departures, and media sections ungated at the form level', () => {
     const pristine = createInitialPackageFormData();
-    for (const step of [4, 5]) {
+    for (const step of [3, 5, 6]) {
       expect(missingRequiredFields(step, pristine)).toEqual([]);
     }
   });
 });
 
 describe('missingForSubmit', () => {
-  it('aggregates the required fields across sections 1-3', () => {
+  it('aggregates the required fields across sections 1, 2 and 4', () => {
     expect(missingForSubmit(createInitialPackageFormData())).toEqual([
       'packageWizard.packageTitle',
       'packageWizard.category',
