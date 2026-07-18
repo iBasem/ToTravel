@@ -51,7 +51,7 @@ export function useAgencyFeedback() {
             traveler:travelers ( first_name, last_name ),
             package:packages!inner ( title, agency_id )
           `)
-                    .eq('packages.agency_id', user.id)
+                    .eq('package.agency_id', user.id)
                     .order('created_at', { ascending: false });
 
                 if (fetchError) throw fetchError;
