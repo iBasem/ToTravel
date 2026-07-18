@@ -59,6 +59,19 @@ export function StaysStep({ data, itinerary, onUpdate }: StaysStepProps) {
         patch(hotel.id, { day_numbers: next });
     };
 
+    // Best-effort storage cleanup on remove/replace (AGY-42): image_path
+    // stores the public URL, so recover the object path from it.
+    const removeStorageImage = (url: string | null) => {
+        if (!url) return;
+        const marker = "/package-media/";
+        const i = url.indexOf(marker);
+        if (i === -1) return;
+        const path = decodeURIComponent(url.slice(i + marker.length));
+        void supabase.storage.from("package-media").remove([path]).then(({ error }) => {
+            if (error) console.error("Failed to delete stay image:", error);
+        });
+    };
+
     // Same upload path as MediaStep: public package-media bucket, own folder.
     const handleUpload = async (hotel: PackageHotel, file: File) => {
         if (!user) return;
@@ -69,6 +82,7 @@ export function StaysStep({ data, itinerary, onUpdate }: StaysStepProps) {
             const { error } = await supabase.storage.from("package-media").upload(path, file);
             if (error) throw error;
             const { data: pub } = supabase.storage.from("package-media").getPublicUrl(path);
+            removeStorageImage(hotel.image_path); // replaced image is unreachable
             patch(hotel.id, { image_path: pub.publicUrl });
         } catch (err) {
             console.error("Hotel image upload failed:", err);
@@ -139,7 +153,10 @@ export function StaysStep({ data, itinerary, onUpdate }: StaysStepProps) {
                                                 <img src={hotel.image_path} alt={hotel.name} className="h-full w-full object-cover" />
                                                 <button
                                                     type="button"
-                                                    onClick={() => patch(hotel.id, { image_path: null })}
+                                                    onClick={() => {
+                                                        removeStorageImage(hotel.image_path);
+                                                        patch(hotel.id, { image_path: null });
+                                                    }}
                                                     className="absolute top-1 end-1 grid place-items-center h-7 w-7 rounded-full bg-background/90 text-destructive shadow-sm transition-colors hover:bg-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                                                     aria-label={t("packageWizard.removeImage", "Remove image")}
                                                 >
@@ -170,6 +187,7 @@ export function StaysStep({ data, itinerary, onUpdate }: StaysStepProps) {
                                         <div className="space-y-1.5">
                                             <Label htmlFor={`hotel-name-${hotel.id}`} className="text-start block">
                                                 {t("packageWizard.hotelName", "Name")}
+                                                <span className="text-destructive ms-0.5" aria-hidden="true">*</span>
                                             </Label>
                                             <Input
                                                 id={`hotel-name-${hotel.id}`}
@@ -177,7 +195,13 @@ export function StaysStep({ data, itinerary, onUpdate }: StaysStepProps) {
                                                 onChange={(e) => patch(hotel.id, { name: e.target.value })}
                                                 placeholder={t("packageWizard.hotelNamePlaceholder", "Apricot Hotel or similar")}
                                                 dir="auto"
+                                                aria-invalid={!hotel.name.trim()}
                                             />
+                                            {!hotel.name.trim() && (
+                                                <p className="text-xs text-destructive text-start">
+                                                    {t("packageWizard.unnamedStayWarning", "Unnamed stays are not saved — give this stay a name or it will be dropped.")}
+                                                </p>
+                                            )}
                                         </div>
 
                                         <div className="space-y-1.5">

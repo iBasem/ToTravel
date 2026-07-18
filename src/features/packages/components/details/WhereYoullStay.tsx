@@ -71,7 +71,6 @@ export function WhereYoullStay({ hotels }: { hotels: Hotel[] }) {
                                     <p className="flex items-center gap-2 text-sm text-muted-foreground">
                                         <Hotel className="h-4 w-4 shrink-0" aria-hidden="true" />
                                         {t(`packageWizard.hotelKind_${hotel.kind}`, hotel.kind)}
-                                        {hotel.star_rating ? ` ${hotel.star_rating}*` : ""}
                                     </p>
 
                                     {localizedText(hotel, "room_type") && (

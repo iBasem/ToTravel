@@ -113,7 +113,9 @@ export async function loadPackageFormData(
       id: item.id,
       type: (item.media_type || 'image') as 'image' | 'video',
       url: item.file_path,
-      caption: item.caption || item.file_name,
+      // Keep display fallbacks out of form state: with `|| file_name` here,
+      // one edit round-trip persisted raw filenames as captions (AGY-38).
+      caption: item.caption || '',
       isPrimary: item.is_primary || false,
       file_name: item.file_name,
       file_path: item.file_path

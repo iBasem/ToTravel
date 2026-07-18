@@ -1198,6 +1198,7 @@
     "available": "Available"
   },
   "packageWizard": {
+    "unnamedStayWarning": "Unnamed stays are not saved — give this stay a name or it will be dropped.",
     "stays": "Stays",
     "staysDesc": "The accommodations travellers will see on this package. Operators usually name a representative property — add “or similar” to keep your options open.",
     "noStaysYet": "No stays added yet. This section is optional — add one if you want travellers to see where they'll sleep.",
