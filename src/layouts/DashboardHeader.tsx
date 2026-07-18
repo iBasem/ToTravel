@@ -1,13 +1,13 @@
 import { useState } from "react";
-import { Search, Bell, ChevronDown, Menu, CalendarClock } from "lucide-react";
+import { Search, ChevronDown, Menu, CalendarClock } from "lucide-react";
 import { Input } from "@/ui/input";
 import { Button } from "@/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/ui/avatar";
 import { Sheet, SheetContent, SheetTrigger } from "@/ui/sheet";
 import { SidebarTrigger } from "@/ui/sidebar";
 import { useAuth } from "@/features/auth/context/AuthContext";
-import { useUnreadMessages } from "@/features/agency/hooks/useUnreadMessages";
 import { usePendingBookings } from "@/features/agency/hooks/usePendingBookings";
+import { NotificationCenter } from "@/features/agency/components/NotificationCenter";
 import { useTranslation } from "react-i18next";
 import { LanguageSwitcher } from "@/ui/LanguageSwitcher";
 import { ThemeToggle } from "@/ui/ThemeToggle";
@@ -36,7 +36,6 @@ import {
 export function DashboardHeader() {
   const { profile, signOut } = useAuth();
   const navigate = useNavigate();
-  const { unreadCount } = useUnreadMessages();
   const { pendingCount } = usePendingBookings();
   const [searchTerm, setSearchTerm] = useState("");
   const { t, i18n } = useTranslation();
@@ -178,21 +177,8 @@ export function DashboardHeader() {
             )}
           </Button>
 
-          {/* Notifications: unread messages */}
-          <Button
-            variant="ghost"
-            size="sm"
-            className="relative p-1 sm:p-2"
-            aria-label={t('agencyDashboard.notifications', 'Notifications')}
-            onClick={() => navigate('/travel_agency/messages')}
-          >
-            <Bell className="w-3 h-3 sm:w-4 sm:h-4 lg:w-5 lg:h-5" />
-            {unreadCount > 0 && (
-              <span className="absolute min-w-[10px] h-2.5 sm:min-w-[12px] sm:h-3 lg:min-w-[16px] lg:h-4 px-0.5 bg-destructive text-destructive-foreground text-[8px] sm:text-[10px] lg:text-xs rounded-full flex items-center justify-center -top-0.5 end-0 sm:-top-1 sm:end-0 tabular-nums">
-                {unreadCount > 9 ? '9+' : unreadCount}
-              </span>
-            )}
-          </Button>
+          {/* Notification center: decision notifications + unread messages */}
+          <NotificationCenter />
 
           {/* User menu */}
           <DropdownMenu>

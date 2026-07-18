@@ -555,6 +555,17 @@
     "gallery": "المعرض",
     "settings": "الإعدادات"
   },
+  "notifications": {
+    "title": "الإشعارات",
+    "markAllRead": "تعليم الكل كمقروء",
+    "empty": "لا جديد لديك",
+    "unreadMessages": "{{count}} رسائل غير مقروءة",
+    "dealApproved": "تمت الموافقة على العرض \"{{title}}\"",
+    "dealRejected": "تم رفض العرض \"{{title}}\"",
+    "packagePublished": "تم نشر الباقة \"{{title}}\"",
+    "packageSuspended": "تم إيقاف الباقة \"{{title}}\"",
+    "packageArchived": "تمت أرشفة الباقة \"{{title}}\""
+  },
   "agencyStatus": {
     "pendingTitle": "وكالتك قيد المراجعة",
     "pendingBody": "يقوم فريقنا بمراجعة تسجيل وكالتك. ستحصل على الوصول الكامل إلى لوحة التحكم بعد الموافقة على وكالتك.",

@@ -458,6 +458,42 @@ export type Database = {
           },
         ]
       }
+      notifications: {
+        Row: {
+          id: string
+          user_id: string
+          type: string
+          title_key: string
+          body_params: Json
+          entity_type: string | null
+          entity_id: string | null
+          read_at: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          type: string
+          title_key: string
+          body_params?: Json
+          entity_type?: string | null
+          entity_id?: string | null
+          read_at?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          type?: string
+          title_key?: string
+          body_params?: Json
+          entity_type?: string | null
+          entity_id?: string | null
+          read_at?: string | null
+          created_at?: string
+        }
+        Relationships: []
+      }
       package_addons: {
         Row: {
           created_at: string

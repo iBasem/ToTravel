@@ -519,6 +519,17 @@
     "gallery": "Gallery",
     "settings": "Settings"
   },
+  "notifications": {
+    "title": "Notifications",
+    "markAllRead": "Mark all read",
+    "empty": "You're all caught up",
+    "unreadMessages": "{{count}} unread messages",
+    "dealApproved": "Deal \"{{title}}\" was approved",
+    "dealRejected": "Deal \"{{title}}\" was rejected",
+    "packagePublished": "Package \"{{title}}\" was published",
+    "packageSuspended": "Package \"{{title}}\" was suspended",
+    "packageArchived": "Package \"{{title}}\" was archived"
+  },
   "agencyStatus": {
     "pendingTitle": "Your agency is under review",
     "pendingBody": "Our team is reviewing your registration. You'll get access to the full dashboard once your agency is approved.",
