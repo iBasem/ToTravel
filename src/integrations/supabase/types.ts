@@ -990,6 +990,7 @@ export type Database = {
       platform_settings: {
         Row: {
           auto_approve_agencies: boolean
+          demo_mode: boolean
           commission_rate: number
           email_notifications: boolean
           id: number
@@ -999,6 +1000,7 @@ export type Database = {
         }
         Insert: {
           auto_approve_agencies?: boolean
+          demo_mode?: boolean
           commission_rate?: number
           email_notifications?: boolean
           id?: number
@@ -1008,6 +1010,7 @@ export type Database = {
         }
         Update: {
           auto_approve_agencies?: boolean
+          demo_mode?: boolean
           commission_rate?: number
           email_notifications?: boolean
           id?: number
@@ -1290,6 +1293,19 @@ export type Database = {
       }
     }
     Views: {
+      agency_payments: {
+        Row: {
+          id: string | null
+          booking_id: string | null
+          amount: number | null
+          currency: string | null
+          status: string | null
+          created_at: string | null
+          package_title: string | null
+          traveler_name: string | null
+        }
+        Relationships: []
+      }
       active_deals: {
         Row: {
           agency_id: string | null
