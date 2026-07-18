@@ -592,6 +592,8 @@
     "deleteDealTitle": "حذف هذا العرض؟",
     "deleteDealDesc": "سيتم حذف العرض نهائيًا. العروض المعتمدة تختفي من الواجهة العامة فورًا.",
     "galleryLoadFailedDesc": "حدث خطأ أثناء تحميل الوسائط. صورك بأمان — حاول مرة أخرى.",
+    "notifications": "الإشعارات",
+    "pendingBookingsBadge": "الحجوزات المعلقة",
     "searchNameChat": "ابحث بالاسم أو المحادثة…",
     "noConversationsFound": "لا توجد محادثات",
     "newMessage": "رسالة جديدة",
