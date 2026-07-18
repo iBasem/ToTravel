@@ -35,7 +35,10 @@ interface OverviewKpisProps {
 
 export function OverviewKpis({ bookings, newCustomers, earnings }: OverviewKpisProps) {
     const { t } = useTranslation();
-    const vsPrev = t("agencyDashboard.vsPrev30", "vs prev 30 days");
+    // The big number is the ALL-TIME total while the delta compares 30-day
+    // windows — the caption must say so or the % reads as growth of the total
+    // (AGY-49).
+    const vsPrev = t("agencyDashboard.delta30v30", "last 30 days vs prior 30");
 
     return (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">

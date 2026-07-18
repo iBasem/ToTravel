@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { MapPin, Users, Plus } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/card";
 import { Button } from "@/ui/button";
-import { addDays } from "date-fns";
+import { addDays, parseISO } from "date-fns";
 import { formatDate } from "@/lib/formatters";
 import type { OverviewBooking } from "@/features/agency/hooks/useAgencyOverview";
 
@@ -35,7 +35,9 @@ export function UpcomingTripsCard({ trips }: { trips: OverviewBooking[] }) {
                 ) : (
                     <ul className="space-y-3">
                         {trips.map((trip) => {
-                            const end = addDays(new Date(trip.booking_date), Math.max(0, trip.durationDays - 1));
+                            // parseISO keeps the date local; new Date('yyyy-MM-dd') parses as
+                            // UTC midnight and shifts a day back in UTC- timezones (AGY-32).
+                            const end = addDays(parseISO(trip.booking_date), Math.max(0, trip.durationDays - 1));
                             return (
                                 <li key={trip.id}>
                                     <button
