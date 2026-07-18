@@ -383,6 +383,7 @@
     "shareFailed": "تعذّرت مشاركة هذه الصفحة"
   },
   "auth": {
+    "profileLoadFailed": "تعذّر تحميل ملف حسابك. تحقق من اتصالك وحاول مجددًا.",
     "welcomeBack": "مرحباً بعودتك",
     "createAccount": "أنشئ حسابك",
     "travelerPortal": "بوابة المسافر",
@@ -590,6 +591,7 @@
     "rejectionReason": "سبب الرفض",
     "deleteDealTitle": "حذف هذا العرض؟",
     "deleteDealDesc": "سيتم حذف العرض نهائيًا. العروض المعتمدة تختفي من الواجهة العامة فورًا.",
+    "galleryLoadFailedDesc": "حدث خطأ أثناء تحميل الوسائط. صورك بأمان — حاول مرة أخرى.",
     "searchNameChat": "ابحث بالاسم أو المحادثة…",
     "noConversationsFound": "لا توجد محادثات",
     "newMessage": "رسالة جديدة",

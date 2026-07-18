@@ -28,6 +28,8 @@ interface AuthContextType {
   signIn: (email: string, password: string) => Promise<{ error: ActionError }>
   signOut: () => Promise<void>
   updateProfile: (updates: Partial<Profile>) => Promise<{ error: ActionError }>
+  profileError: boolean
+  retryProfile: () => Promise<void>
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -37,6 +39,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [session, setSession] = useState<Session | null>(null)
   const [profile, setProfile] = useState<Profile | null>(null)
   const [loading, setLoading] = useState(true)
+  // A failed profile fetch used to strand ProtectedRoute on an infinite
+  // spinner (audit AGY-12) — track it so the UI can offer a retry.
+  const [profileError, setProfileError] = useState(false)
 
   const cleanupAuthState = () => {
     Object.keys(localStorage).forEach((key) => {
@@ -80,12 +85,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           setTimeout(async () => {
             if (!mounted) return
             const profileData = await fetchProfile(session.user.id);
-            if (profileData && mounted) {
+            if (!mounted) return
+            if (profileData) {
               setProfile(profileData);
+              setProfileError(false);
+            } else {
+              setProfileError(true);
             }
           }, 100)
         } else if (!session?.user) {
           setProfile(null)
+          setProfileError(false)
         }
 
         setLoading(false)
@@ -102,8 +112,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
         if (session?.user) {
           const profileData = await fetchProfile(session.user.id);
-          if (profileData && mounted) {
-            setProfile(profileData);
+          if (mounted) {
+            if (profileData) {
+              setProfile(profileData);
+              setProfileError(false);
+            } else {
+              setProfileError(true);
+            }
           }
         }
 
@@ -247,6 +262,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
+  const retryProfile = async () => {
+    if (!user?.id) return
+    const profileData = await fetchProfile(user.id)
+    if (profileData) {
+      setProfile(profileData)
+      setProfileError(false)
+    } else {
+      setProfileError(true)
+    }
+  }
+
   const value = {
     user,
     session,
@@ -255,7 +281,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     signUp,
     signIn,
     signOut,
-    updateProfile
+    updateProfile,
+    profileError,
+    retryProfile
   }
 
   return (

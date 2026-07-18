@@ -1,13 +1,15 @@
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import { AppSidebar } from "./AppSidebar";
 import { DashboardHeader } from "./DashboardHeader";
 import { SidebarProvider, SidebarInset } from "@/ui/sidebar";
+import { ErrorBoundary } from "@/ui/error-boundary";
 import { useAuth } from "@/features/auth/context/AuthContext";
 import { Navigate } from "react-router-dom";
 import { Loader2 } from "lucide-react";
 
 const DashboardLayout = () => {
   const { user, profile, loading } = useAuth();
+  const location = useLocation();
 
   if (loading) {
     return (
@@ -36,7 +38,12 @@ const DashboardLayout = () => {
         <DashboardHeader />
         <main id="main-content" className="flex-1 p-4 lg:p-6 xl:p-8 w-full">
           <div className="max-w-7xl mx-auto w-full">
-            <Outlet />
+            {/* Route-level boundary (AGY-30): a render crash in one page must
+                not white-out the whole shell. Keyed on pathname so navigating
+                away resets the boundary. */}
+            <ErrorBoundary key={location.pathname}>
+              <Outlet />
+            </ErrorBoundary>
           </div>
         </main>
       </SidebarInset>

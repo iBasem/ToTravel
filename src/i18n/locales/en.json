@@ -347,6 +347,7 @@
     "shareFailed": "Could not share this page"
   },
   "auth": {
+    "profileLoadFailed": "We couldn't load your account profile. Check your connection and try again.",
     "welcomeBack": "Welcome back",
     "createAccount": "Create your account",
     "travelerPortal": "Traveler Portal",
@@ -554,6 +555,7 @@
     "rejectionReason": "Reason for rejection",
     "deleteDealTitle": "Delete this deal?",
     "deleteDealDesc": "This permanently removes the deal. Approved deals disappear from the public feed immediately.",
+    "galleryLoadFailedDesc": "Something went wrong while loading your media. Your photos are safe — try again.",
     "searchNameChat": "Search name, chat, etc",
     "noConversationsFound": "No conversations found",
     "newMessage": "New Message",

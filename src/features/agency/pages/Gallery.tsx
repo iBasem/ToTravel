@@ -32,23 +32,31 @@ export default function Gallery() {
 
   const [images, setImages] = useState<GalleryImage[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [pendingDelete, setPendingDelete] = useState<string | null>(null);
 
-  // Fetch images from Supabase Storage
+  // Fetch images from Supabase Storage. Pages through the listing (AGY-27):
+  // the previous single call silently capped the gallery at 100 files.
   const fetchImages = async () => {
     if (!user) return;
 
     try {
       setLoading(true);
+      setLoadError(false);
 
-      const { data, error } = await supabase.storage
-        .from('agency-gallery')
-        .list(user.id, { limit: 100, sortBy: { column: 'created_at', order: 'desc' } });
+      const PAGE = 100;
+      const all: { name: string }[] = [];
+      for (let offset = 0; ; offset += PAGE) {
+        const { data, error } = await supabase.storage
+          .from('agency-gallery')
+          .list(user.id, { limit: PAGE, offset, sortBy: { column: 'created_at', order: 'desc' } });
+        if (error) throw error;
+        all.push(...(data || []));
+        if (!data || data.length < PAGE) break;
+      }
 
-      if (error) throw error;
-
-      const imageList: GalleryImage[] = (data || [])
+      const imageList: GalleryImage[] = all
         .filter(file => !file.name.startsWith('.'))
         .map(file => ({
           name: file.name,
@@ -58,6 +66,9 @@ export default function Gallery() {
       setImages(imageList);
     } catch (err) {
       console.error('Error fetching gallery:', err);
+      // Distinguish "failed to load" from "no media yet" — the onboarding
+      // empty state after a transient error misled agencies (AGY-27).
+      setLoadError(true);
       toast.error(t('agencyDashboard.galleryLoadFailed', 'Failed to load gallery'));
     } finally {
       setLoading(false);
@@ -162,7 +173,17 @@ export default function Gallery() {
         </div>
       </div>
 
-      {images.length === 0 ? (
+      {loadError ? (
+        <EmptyState
+          icon="image"
+          title={t('agencyDashboard.galleryLoadFailed', 'Failed to load gallery')}
+          description={t('agencyDashboard.galleryLoadFailedDesc', 'Something went wrong while loading your media. Your photos are safe — try again.')}
+          action={{
+            label: t('common.retry', 'Retry'),
+            onClick: () => void fetchImages(),
+          }}
+        />
+      ) : images.length === 0 ? (
         <EmptyState
           icon="image"
           title={t('agencyDashboard.noMediaYet', { defaultValue: 'No Media Yet' })}
