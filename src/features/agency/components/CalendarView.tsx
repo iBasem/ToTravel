@@ -25,7 +25,7 @@ import { formatCurrency, formatDate } from "@/lib/formatters";
 export function CalendarView() {
     const { t } = useTranslation();
     const [currentDate, setCurrentDate] = useState(new Date());
-    const { bookings, loading, error, fetchMonthBookings } = useAgencyCalendar();
+    const { bookings, loading, error, fetchMonthBookings, refetch } = useAgencyCalendar();
     const [selectedBooking, setSelectedBooking] = useState<CalendarBooking | null>(null);
 
     useEffect(() => {
@@ -88,7 +88,7 @@ export function CalendarView() {
                 <div className="flex flex-col items-center justify-center gap-3 h-[500px] border rounded-lg bg-muted/50">
                     <p className="font-medium text-foreground">{t('calendar.loadError')}</p>
                     <p className="text-sm text-muted-foreground">{error}</p>
-                    <Button variant="outline" onClick={() => fetchMonthBookings(currentDate)}>
+                    <Button variant="outline" onClick={() => refetch()}>
                         {t('common.retry')}
                     </Button>
                 </div>

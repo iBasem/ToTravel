@@ -59,10 +59,15 @@ export function StaysStep({ data, itinerary, onUpdate }: StaysStepProps) {
         patch(hotel.id, { day_numbers: next });
     };
 
-    // Best-effort storage cleanup on remove/replace (AGY-42): image_path
-    // stores the public URL, so recover the object path from it.
+    // Best-effort storage cleanup on remove/replace (AGY-42), but ONLY for
+    // files uploaded in this editing session (REG-1): previously-saved images
+    // are still referenced by the stored package (and, in the duplicate flow,
+    // by the ORIGINAL package) — deleting them before a successful save broke
+    // live packages. Mirrors MediaStep's sessionUploads pattern.
+    const sessionUploads = useRef<Set<string>>(new Set());
     const removeStorageImage = (url: string | null) => {
-        if (!url) return;
+        if (!url || !sessionUploads.current.has(url)) return;
+        sessionUploads.current.delete(url);
         const marker = "/package-media/";
         const i = url.indexOf(marker);
         if (i === -1) return;
@@ -82,7 +87,8 @@ export function StaysStep({ data, itinerary, onUpdate }: StaysStepProps) {
             const { error } = await supabase.storage.from("package-media").upload(path, file);
             if (error) throw error;
             const { data: pub } = supabase.storage.from("package-media").getPublicUrl(path);
-            removeStorageImage(hotel.image_path); // replaced image is unreachable
+            removeStorageImage(hotel.image_path); // no-op unless it was a this-session upload
+            sessionUploads.current.add(pub.publicUrl);
             patch(hotel.id, { image_path: pub.publicUrl });
         } catch (err) {
             console.error("Hotel image upload failed:", err);

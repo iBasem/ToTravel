@@ -84,8 +84,9 @@ export default function Packages() {
       }
       const newStatus = pkg.status === "draft" || pkg.status === "suspended" ? "pending" : "draft";
       // Submitting for review requires >=1 upcoming departure (same gate as
-      // save_package and the DB trigger); check first for a friendly path.
-      if (pkg.status === "draft" && newStatus === "pending") {
+      // save_package and the DB trigger, which since wave4 also covers
+      // suspended resubmits); check first for a friendly path.
+      if (newStatus === "pending") {
         const { count, error: depError } = await supabase
           .from("package_departures")
           .select("id", { count: "exact", head: true })
@@ -118,8 +119,11 @@ export default function Packages() {
             ? t("agencyDashboard.withdrawnToDraft", "Submission withdrawn to draft")
             : t("agencyDashboard.unpublished", "Unpublished"),
       );
-    } catch {
-      toast.error(t("agencyDashboard.errorLoadingPackages"));
+    } catch (err) {
+      // Surface the guard's own message (e.g. the departures gate) instead of
+      // the misleading "error loading packages" copy (REG-15).
+      const message = err instanceof Error && err.message ? err.message : null;
+      toast.error(message ?? t("agencyDashboard.statusChangeFailed", "Couldn't change the package status"));
     }
   };
 

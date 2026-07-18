@@ -15,6 +15,7 @@ import { EmptyState } from "@/ui/empty-state";
 import { useBookings, type Booking } from "@/features/bookings/hooks/useBookings";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
+import { format } from "date-fns";
 import { formatDate, formatCurrency } from "@/lib/formatters";
 
 export default function Bookings() {
@@ -101,7 +102,8 @@ export default function Bookings() {
   };
 
   // A confirmed, paid booking whose travel date has passed can be closed out.
-  const todayIso = new Date().toISOString().slice(0, 10);
+  // Local calendar date (REG-16) — UTC misfires by hours in Gulf timezones.
+  const todayIso = format(new Date(), 'yyyy-MM-dd');
   const canComplete = (b: Booking) =>
     b.status === 'confirmed' && b.payment_status === 'paid' && b.booking_date <= todayIso;
 

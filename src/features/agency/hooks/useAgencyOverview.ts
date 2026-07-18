@@ -225,7 +225,12 @@ async function fetchOverview(userId: string): Promise<AgencyOverviewData> {
                         packages!inner ( title, destination, duration_days, agency_id )
                     `)
                     .eq('packages.agency_id', userId)
-                    .order('created_at', { ascending: false }),
+                    .order('created_at', { ascending: false })
+                    // Safety ceiling (REG-5): stats stay exact until an agency
+                    // exceeds 2000 lifetime bookings; the real fix is an
+                    // aggregate RPC. Newest-first, so KPIs/deltas (30/60-day
+                    // windows) are unaffected even at the cap.
+                    .limit(2000),
                 supabase
                     .from('packages')
                     .select(`
@@ -243,7 +248,8 @@ async function fetchOverview(userId: string): Promise<AgencyOverviewData> {
                         package:packages!inner ( title, agency_id )
                     `)
                     .eq('package.agency_id', userId)
-                    .order('created_at', { ascending: false }),
+                    .order('created_at', { ascending: false })
+                    .limit(200),
             ]);
 
             if (bookingsRes.error) throw bookingsRes.error;

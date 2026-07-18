@@ -97,5 +97,8 @@ export function useAgencyCalendar() {
             : null,
         bookings: query.data ?? [],
         fetchMonthBookings,
+        // Error-state Retry must call this: fetchMonthBookings(sameMonth) is a
+        // no-op state update under React Query (REG-6).
+        refetch: query.refetch,
     };
 }

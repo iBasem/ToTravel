@@ -21,7 +21,7 @@ export default function Messages() {
   const [searchParams] = useSearchParams();
 
   const {
-    conversations, messages, selectedConversation, loading, error, threadError, fetchMessages, sendMessage,
+    conversations, messages, selectedConversation, loading, error, threadError, threadLoading, fetchMessages, sendMessage,
   } = useAgencyMessages();
 
   const [search, setSearch] = useState("");
@@ -212,6 +212,12 @@ export default function Messages() {
                 {t("common.retry", "Retry")}
               </Button>
             </div>
+          </div>
+        ) : selectedConversation && threadLoading ? (
+          // Without this branch a thread switch flashed the "start the
+          // conversation" empty state while history loaded (REG-14).
+          <div className="h-full grid place-items-center">
+            <LoadingSpinner />
           </div>
         ) : selectedConversation ? (
           <div key={selectedConversation} className="flex-1 min-h-0 flex flex-col animate-in fade-in-0 duration-200 motion-reduce:animate-none">
