@@ -518,8 +518,21 @@
     "gallery": "Gallery",
     "settings": "Settings"
   },
+  "agencyStatus": {
+    "pendingTitle": "Your agency is under review",
+    "pendingBody": "Our team is reviewing your registration. You'll get access to the full dashboard once your agency is approved.",
+    "suspendedTitle": "Your agency account is suspended",
+    "suspendedBody": "Your access has been temporarily suspended by the platform team. Contact support to resolve this.",
+    "rejectedTitle": "Your agency registration was declined",
+    "rejectedBody": "Your registration didn't meet the platform requirements. Contact support if you believe this is a mistake.",
+    "contactSupport": "Contact Support"
+  },
   "agencyDashboard": {
     "title": "Travel Agency Dashboard",
+    "departureRequiredBeforeSubmit": "Add at least one upcoming departure before submitting for review",
+    "submittedForReview": "Submitted for review",
+    "messageSendFailed": "Message failed to send. Your text was restored — try again.",
+    "threadLoadFailed": "Couldn't load this conversation",
     "searchNameChat": "Search name, chat, etc",
     "noConversationsFound": "No conversations found",
     "newMessage": "New Message",

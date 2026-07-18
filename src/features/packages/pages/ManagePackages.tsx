@@ -11,6 +11,7 @@ import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,
 } from "@/ui/dropdown-menu";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 import { usePackages, type PackageWithDetails } from "@/features/packages/hooks/usePackages";
 import { PackageListItem } from "@/features/packages/components/manage/PackageListItem";
 import { PackageDetailPane } from "@/features/packages/components/manage/PackageDetailPane";
@@ -70,6 +71,27 @@ export default function Packages() {
   const handleTogglePublish = async (pkg: PackageWithDetails) => {
     try {
       const newStatus = pkg.status === "published" ? "draft" : "pending";
+      // Submitting for review requires >=1 upcoming departure (same gate as
+      // save_package and the DB trigger); check first for a friendly path.
+      if (pkg.status === "draft" && newStatus === "pending") {
+        const { count, error: depError } = await supabase
+          .from("package_departures")
+          .select("id", { count: "exact", head: true })
+          .eq("package_id", pkg.id)
+          .eq("status", "scheduled")
+          .gte("departure_date", new Date().toISOString().slice(0, 10));
+        if (depError) throw depError;
+        if (!count) {
+          toast.error(
+            t(
+              "agencyDashboard.departureRequiredBeforeSubmit",
+              "Add at least one upcoming departure before submitting for review",
+            ),
+          );
+          navigate(`/travel_agency/packages/${pkg.id}/departures`);
+          return;
+        }
+      }
       await updatePackage(pkg.id, { status: newStatus });
       toast.success(
         newStatus === "pending"
