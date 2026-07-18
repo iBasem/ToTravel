@@ -1,6 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/features/auth/context/AuthContext';
 
 export interface PackageDetails {
   id: string;
@@ -100,6 +101,7 @@ export interface PackageDetails {
 }
 
 export function usePackageDetails(packageId: string | undefined) {
+  const { user } = useAuth();
   const [packageDetails, setPackageDetails] = useState<PackageDetails | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -186,7 +188,9 @@ export function usePackageDetails(packageId: string | undefined) {
             )
           `)
           .eq('id', packageId)
-          .eq('status', 'published')
+          // Owners may preview their own unpublished packages (AGY-11);
+          // everyone else sees published only. RLS enforces the same rule.
+          .or(user ? `status.eq.published,agency_id.eq.${user.id}` : 'status.eq.published')
           .single();
 
         if (supabaseError) {
@@ -203,7 +207,7 @@ export function usePackageDetails(packageId: string | undefined) {
     };
 
     fetchPackageDetails();
-  }, [packageId]);
+  }, [packageId, user?.id]);
 
   return { packageDetails, loading, error };
 }
