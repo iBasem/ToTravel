@@ -9,6 +9,7 @@ import { Textarea } from "@/ui/textarea";
 import { Eye, MessageSquare, Calendar, Phone, Mail, Clock, CheckCircle2, DollarSign } from "lucide-react";
 import { shortId } from "@/lib/utils";
 import { totalRevenue as sumRevenue } from "@/features/agency/lib/revenue";
+import { useAgencyPayments } from "@/features/agency/hooks/useAgencyPayments";
 import { LoadingSpinner } from "@/ui/loading-spinner";
 import { EmptyState } from "@/ui/empty-state";
 import { useBookings, type Booking } from "@/features/bookings/hooks/useBookings";
@@ -20,6 +21,7 @@ export default function Bookings() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { bookings, loading, error, updateBookingStatus, refetch } = useBookings();
+  const { payments } = useAgencyPayments(20);
   const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
   const [declineTarget, setDeclineTarget] = useState<Booking | null>(null);
   const [declineReason, setDeclineReason] = useState("");
@@ -267,6 +269,46 @@ export default function Bookings() {
           )}
         </CardContent>
       </Card>
+
+      {/* Recent payments — read-only ledger for this agency's bookings */}
+      {payments.length > 0 && (
+        <Card className="bg-card border-border">
+          <CardHeader className="p-3 sm:p-4 lg:p-6">
+            <CardTitle className="text-base sm:text-lg font-semibold">
+              {t('agencyDashboard.recentPayments', 'Recent Payments')}
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-3 sm:p-4 lg:p-6 pt-0">
+            <ul className="divide-y divide-border">
+              {payments.map((p) => (
+                <li key={p.id} className="flex items-center justify-between gap-3 py-2.5">
+                  <div className="min-w-0">
+                    <p className="text-sm font-medium truncate">{p.travelerName || t('packageWizard.unknownTraveler')}</p>
+                    <p className="text-xs text-muted-foreground truncate">{p.packageTitle} · {formatDate(p.created_at, 'PP')}</p>
+                  </div>
+                  <div className="flex items-center gap-2 shrink-0">
+                    <span className="text-sm font-semibold tabular-nums">{formatCurrency(p.amount)}</span>
+                    <Badge
+                      variant="outline"
+                      className={
+                        p.status === 'paid'
+                          ? 'bg-green-100 text-green-800 border-green-200 dark:bg-green-900/30 dark:text-green-300 dark:border-green-800'
+                          : p.status === 'refunded'
+                            ? 'bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-800'
+                            : p.status === 'failed'
+                              ? 'bg-red-100 text-red-800 border-red-200 dark:bg-red-900/30 dark:text-red-300 dark:border-red-800'
+                              : 'bg-muted text-muted-foreground border-border'
+                      }
+                    >
+                      {t(`agencyDashboard.payment_${p.status}`, p.status)}
+                    </Badge>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Booking details dialog */}
       <Dialog open={!!selectedBooking} onOpenChange={(open) => !open && setSelectedBooking(null)}>
